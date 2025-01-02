@@ -24,7 +24,7 @@ const setupRenderer = (canvas: HTMLCanvasElement) => {
 const createCodeStructure = () => {
   const codeStructure = new THREE.Group();
 
-  const jsGeometry = new THREE.BoxGeometry(5, 5, 5);
+  const jsGeometry = new THREE.BoxGeometry(7, 7, 7);
   const jsMaterial = new THREE.MeshPhongMaterial({
     color: "#f7df1e",
     wireframe: false,
@@ -83,6 +83,17 @@ const createResizeHandler =
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
 
+    if (width < 640) {
+      camera.position.z = 25;
+      codeStructure.scale.set(0.7, 0.7, 0.7);
+    } else if (width < 1024) {
+      camera.position.z = 20;
+      codeStructure.scale.set(0.85, 0.85, 0.85);
+    } else {
+      camera.position.z = 15;
+      codeStructure.scale.set(1.2, 1.2, 1.2);
+    }
+
     const containerWidth = width > 1024 ? width / 2 : width * 0.8;
     const containerHeight = height * 0.5;
 
@@ -99,7 +110,20 @@ const createAnimationLoop =
   ) => {
     function animate() {
       requestAnimationFrame(animate);
+      
       codeStructure.rotation.y += 0.003;
+
+      codeStructure.children.forEach((symbol, index) => {
+        if (symbol !== codeStructure.children[codeStructure.children.length - 1]) {
+          const time = Date.now() * 0.001;
+          const offset = index * (Math.PI * 2 / (codeStructure.children.length - 1));
+
+          symbol.position.y = Math.sin(time + offset) * 1.5;
+          symbol.rotation.x += 0.02;
+          symbol.rotation.z += 0.05;
+        }
+      });
+
       renderer.render(scene, camera);
     }
     return animate;

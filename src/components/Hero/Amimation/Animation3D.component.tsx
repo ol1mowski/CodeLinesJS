@@ -1,4 +1,4 @@
-import { useThreeAnimation } from "../../hooks/useThreeAnimation";
+import { useThreeAnimation } from "../../../Hooks/useThreeAnimation.hook";
 
 
 export const Animation3D = () => {

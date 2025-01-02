@@ -1,8 +1,8 @@
-import { Container } from "../UI/Container.component";
-import { Animation3D } from "./Animation3D.component";
-import { HeroContent } from "./HeroContent.component";
+import { Container } from "../UI/Container/Container.component";
+import { Animation3D } from "./Amimation/Animation3D.component";
+import { HeroContent } from "./HeroContent/HeroContent.component";
 
-import { BackgroundEffects } from "../UI/BackgroundEffects.component";
+import { BackgroundEffects } from "../UI/BackgroundEffect/BackgroundEffects.component";
 
 export const HeroSection = () => {
 

@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Button } from "../UI/Button.component";
+import { Button } from "../../UI/Button/Button.component";
 type HeroContentProps = {
   title: string;
   description: string;
