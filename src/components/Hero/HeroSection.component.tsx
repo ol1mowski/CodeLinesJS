@@ -7,7 +7,7 @@ import { BackgroundEffects } from "../UI/BackgroundEffect/BackgroundEffects.comp
 export const HeroSection = () => {
 
   return (
-    <main className="min-h-screen w-full bg-gradient-to-b from-gray-900 via-purple-900 to-violet-900 flex items-center justify-center relative overflow-hidden">
+    <main className="min-h-screen w-screen bg-gradient-to-b from-gray-900 via-purple-900 to-violet-900 flex items-center justify-center relative overflow-hidden">
       <Container className="flex flex-col lg:flex-row items-center justify-between gap-12">
         <HeroContent
           title="Code Lines JS"

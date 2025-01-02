@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
+
 import { motion } from "framer-motion";
+
 import { Container } from "../UI/Container/Container.component";
 import { Logo } from "./Logo/Logo.component";
 import { NavLinks } from "./Navigation/NavLinks.component";
