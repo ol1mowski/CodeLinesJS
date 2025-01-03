@@ -5,7 +5,7 @@ import { RoadmapList } from "./RoadmapList/RoadmapList.component";
 
 
 export const RoadmapSection = () => (
-  <section className="min-h-screen w-full relative py-16 md:py-24 bg-gradient-to-b from-purple-900 via-fuchsia-900 to-pink-900">
+  <section className="min-h-screen w-full relative py-16 md:py-24 bg-gradient-to-b from-purple-900 via-fuchsia-900 to-blue-900 ">
     <Container className="relative z-10">
       <div className="flex flex-col items-center gap-8 md:gap-16">
         <SectionTitle
