@@ -14,7 +14,7 @@ export const CodeAnimation = () => {
       whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true }}
       transition={{ duration: 0.8 }}
-      className="w-full xl:w-1/2 aspect-square relative"
+      className="w-full xl:w-1/2 aspect-square relative px-4 md:px-0 max-h-[600px]"
     >
       <canvas
         ref={canvasRef}

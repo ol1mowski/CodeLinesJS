@@ -5,7 +5,7 @@
 :root {
   line-height: 1.5;
   font-weight: 400;
-
+  overflow-x: hidden;
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
@@ -27,11 +27,8 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  overflow-x: hidden;
   min-width: 320px;
-  min-height: 100vh;
+  overflow-x: hidden;
 }
 
 h1 {
@@ -69,4 +66,8 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+#root {
+  width: 100%;
 }
