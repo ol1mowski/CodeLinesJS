@@ -5,7 +5,7 @@ import { ChallengesSection } from './components/Challenges/ChallengesSection.com
 import { ProgressSection } from './components/Progress/ProgressSection.component'
 import { RoadmapSection } from './components/Roadmap/RoadmapSection.component'
 import { CommunitySection } from './components/Community/CommunitySection.component'
-
+import { CallToActionSection } from './components/CallToAction/CallToActionSection.component'
 function App() {
   return (
     <div className="bg-gray-900">
@@ -16,6 +16,7 @@ function App() {
       <ProgressSection />
       <RoadmapSection />
       <CommunitySection />
+      <CallToActionSection />
     </div>
   )
 }
