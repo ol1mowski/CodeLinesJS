@@ -6,6 +6,8 @@ import { ProgressSection } from './components/Progress/ProgressSection.component
 import { RoadmapSection } from './components/Roadmap/RoadmapSection.component'
 import { CommunitySection } from './components/Community/CommunitySection.component'
 import { CallToActionSection } from './components/CallToAction/CallToActionSection.component'
+import { Footer } from './components/Footer/Footer.component'
+
 function App() {
   return (
     <div className="bg-gray-900">
@@ -17,6 +19,7 @@ function App() {
       <RoadmapSection />
       <CommunitySection />
       <CallToActionSection />
+      <Footer />
     </div>
   )
 }

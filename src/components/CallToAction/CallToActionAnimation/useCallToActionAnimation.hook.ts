@@ -19,11 +19,9 @@ export const useCallToActionAnimation = (containerRef: RefObject<HTMLDivElement>
 
     renderer.setClearColor(0x000000, 0);
 
-    // Tworzymy grupę dla kodu DNA
     const dnaGroup = new THREE.Group();
     scene.add(dnaGroup);
 
-    // Funkcja tworząca helisę DNA
     const createDNAHelix = () => {
       const points = [];
       const numPoints = 100;
@@ -32,9 +30,8 @@ export const useCallToActionAnimation = (containerRef: RefObject<HTMLDivElement>
       
       for (let i = 0; i < numPoints; i++) {
         const t = i / numPoints;
-        const angle = t * Math.PI * 4; // 2 pełne obroty
+        const angle = t * Math.PI * 4;
         
-        // Pierwsza helisa
         points.push(
           new THREE.Vector3(
             radius * Math.cos(angle),
@@ -43,7 +40,6 @@ export const useCallToActionAnimation = (containerRef: RefObject<HTMLDivElement>
           )
         );
         
-        // Druga helisa (przesunięta o 180 stopni)
         points.push(
           new THREE.Vector3(
             radius * Math.cos(angle + Math.PI),
@@ -58,7 +54,6 @@ export const useCallToActionAnimation = (containerRef: RefObject<HTMLDivElement>
 
     const points = createDNAHelix();
     
-    // Tworzymy cząsteczki DNA
     points.forEach((point) => {
       const geometry = new THREE.SphereGeometry(0.2, 8, 8);
       const material = new THREE.MeshPhongMaterial({
@@ -72,7 +67,6 @@ export const useCallToActionAnimation = (containerRef: RefObject<HTMLDivElement>
       dnaGroup.add(sphere);
     });
 
-    // Tworzymy połączenia między cząsteczkami
     for (let i = 0; i < points.length - 2; i += 2) {
       const geometry = new THREE.BufferGeometry().setFromPoints([
         points[i],
@@ -87,7 +81,6 @@ export const useCallToActionAnimation = (containerRef: RefObject<HTMLDivElement>
       dnaGroup.add(line);
     }
 
-    // Światła
     const lights = [
       new THREE.PointLight("#4f46e5", 2),
       new THREE.PointLight("#6366f1", 2),
@@ -120,7 +113,6 @@ export const useCallToActionAnimation = (containerRef: RefObject<HTMLDivElement>
     const animate = () => {
       requestAnimationFrame(animate);
 
-      // Rotacja DNA
       dnaGroup.rotation.y += 0.005;
       dnaGroup.rotation.x = mousePosition.current.y * 0.2;
       dnaGroup.rotation.z = mousePosition.current.x * 0.2;
