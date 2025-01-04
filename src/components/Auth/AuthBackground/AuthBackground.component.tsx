@@ -1,6 +1,8 @@
 import { useRef } from "react";
 import { motion } from "framer-motion";
+
 import { useAuthBackground } from "./useAuthBackground.hook";
+
 
 export const AuthBackground = () => {
   const containerRef = useRef<HTMLDivElement>(null);
