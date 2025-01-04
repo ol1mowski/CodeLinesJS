@@ -8,6 +8,5 @@ export const AuthSection = () => (
         <AuthContent />
       </div>
     </Container>
-    <AuthBackground />
   </main>
 ); 

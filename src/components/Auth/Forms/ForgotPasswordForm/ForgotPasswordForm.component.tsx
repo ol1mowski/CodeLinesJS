@@ -18,7 +18,7 @@ export const ForgotPasswordForm = () => {
 
   const onSubmit = async (data: ForgotPasswordFormData) => {
     try {
-      console.log(data); // Tutaj będzie integracja z API
+      console.log(data); 
     } catch (error) {
       console.error(error);
     }
