@@ -1,6 +1,10 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { AuthTabs } from "./AuthTabs.component";
+import { LoginForm } from "../Forms/LoginForm/LoginForm.component";
+import { RegisterForm } from "../Forms/RegisterForm/RegisterForm.component";
+import { ForgotPasswordForm } from "../Forms/ForgotPasswordForm/ForgotPasswordForm.component";
+
 
 type AuthMode = "login" | "register" | "forgot";
 
@@ -20,6 +24,12 @@ export const AuthContent = () => {
         {authMode === "forgot" && "Reset hasła"}
       </h1>
       <AuthTabs activeTab={authMode} onTabChange={setAuthMode} />
+      
+      <AnimatePresence mode="wait">
+        {authMode === "login" && <LoginForm key="login" />}
+        {authMode === "register" && <RegisterForm key="register" />}
+        {authMode === "forgot" && <ForgotPasswordForm key="forgot" />}
+      </AnimatePresence>
     </motion.div>
   );
 }; 
