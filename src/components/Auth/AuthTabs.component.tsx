@@ -39,7 +39,6 @@ export const AuthTabs = memo(({ activeTab, onTabChange }: AuthTabsProps) => (
   </div>
 ));
 
-AuthTabs.displayName = "AuthTabs";
 
 type TabButtonProps = {
   isActive: boolean;
@@ -64,11 +63,9 @@ const TabButton = memo(({ isActive, onClick, icon, label, id }: TabButtonProps) 
     aria-controls={`${id}-panel`}
     id={id}
     tabIndex={isActive ? 0 : -1}
+    aria-label={label}
   >
-    <span className="sr-only">{isActive ? "Aktywna zakładka:" : ""}</span>
     <span aria-hidden="true">{icon}</span>
     <span className="text-sm font-medium">{label}</span>
   </motion.button>
 ));
-
-TabButton.displayName = "TabButton"; 

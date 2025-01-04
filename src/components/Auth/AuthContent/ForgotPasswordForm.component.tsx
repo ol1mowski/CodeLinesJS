@@ -3,7 +3,7 @@ import { FaEnvelope } from "react-icons/fa";
 import { FormInput } from "../../UI/Form/FormInput.component";
 import { Button } from "../../UI/Button/Button.component";
 
-export const ForgotPasswordForm = () => {
+ const ForgotPasswordForm = () => {
   return (
     <motion.form
       initial={{ opacity: 0, x: 20 }}
@@ -29,3 +29,5 @@ export const ForgotPasswordForm = () => {
     </motion.form>
   );
 }; 
+
+export default ForgotPasswordForm;

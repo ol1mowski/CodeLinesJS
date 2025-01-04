@@ -7,18 +7,19 @@ import { Button } from "../../../UI/Button/Button.component";
 import { FormInput } from "../../../UI/Form/FormInput/FormInput.component";
 import { LoginFormData, loginSchema } from "../../../../schemas/auth.schema";
 
-export const LoginForm = () => {
+const LoginForm = () => {
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
+    mode: "onSubmit"
   });
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      console.log(data); // Tutaj będzie integracja z API
+      console.log(data);
     } catch (error) {
       console.error(error);
     }
@@ -34,7 +35,7 @@ export const LoginForm = () => {
       className="space-y-6"
     >
       <FormInput
-        type="email"
+        type="text"
         label="Email"
         placeholder="twoj@email.com"
         icon={<FaEnvelope />}
@@ -67,4 +68,6 @@ export const LoginForm = () => {
       </Button>
     </motion.form>
   );
-}; 
+};
+
+export default LoginForm; 

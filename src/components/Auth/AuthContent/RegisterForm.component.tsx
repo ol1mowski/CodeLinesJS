@@ -3,7 +3,7 @@ import { FaEnvelope, FaLock, FaUser } from "react-icons/fa";
 import { Button } from "../../UI/Button/Button.component";
 import { FormInput } from "../../UI/Form/FormInput.component";
 
-export const RegisterForm = () => {
+ const RegisterForm = () => {
   return (
     <motion.form
       initial={{ opacity: 0, x: 20 }}
@@ -46,3 +46,5 @@ export const RegisterForm = () => {
     </motion.form>
   );
 }; 
+
+export default RegisterForm;

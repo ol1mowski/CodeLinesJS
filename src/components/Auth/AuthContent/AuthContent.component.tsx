@@ -5,8 +5,8 @@ import { AuthTabs } from "./AuthTabs.component";
 type AuthMode = "login" | "register" | "forgot";
 
 const LoginForm = lazy(() => import("../Forms/LoginForm/LoginForm.component"));
-const RegisterForm = lazy(() => import("../Forms/RegisterForm/RegisterForm.component"));
-const ForgotPasswordForm = lazy(() => import("../Forms/ForgotPasswordForm/ForgotPasswordForm.component"));
+const RegisterForm = lazy(() => import("./RegisterForm.component"));
+const ForgotPasswordForm = lazy(() => import("./ForgotPasswordForm.component"));
 
 export const AuthContent = () => {
   const [authMode, setAuthMode] = useState<AuthMode>("login");
@@ -26,7 +26,7 @@ export const AuthContent = () => {
         {authMode === "forgot" && "Reset hasła"}
       </h1>
       <AuthTabs activeTab={authMode} onTabChange={setAuthMode} />
-      
+
       <Suspense fallback={<div className="text-center py-4">Ładowanie...</div>}>
         <AnimatePresence mode="wait">
           {authMode === "login" && <LoginForm key="login" />}
@@ -36,4 +36,4 @@ export const AuthContent = () => {
       </Suspense>
     </motion.div>
   );
-}; 
+};

@@ -13,7 +13,7 @@ export const FormInput = memo(forwardRef<HTMLInputElement, FormInputProps>(
   ({ type, label, placeholder, icon, error, id, ...props }, ref) => (
     <div className="space-y-2">
       <label 
-        htmlFor={id} 
+        htmlFor={id || props.name} 
         className="block text-sm font-medium text-gray-300"
       >
         {label}
@@ -27,18 +27,18 @@ export const FormInput = memo(forwardRef<HTMLInputElement, FormInputProps>(
         </div>
         <input
           ref={ref}
-          id={id}
+          id={id || props.name}
           type={type}
           className="block w-full pl-10 pr-3 py-2 border border-gray-700 rounded-lg bg-gray-800/50 text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors"
           placeholder={placeholder}
           aria-invalid={!!error}
-          aria-describedby={error ? `${id}-error` : undefined}
+          aria-describedby={error ? `${id || props.name}-error` : undefined}
           {...props}
         />
       </div>
       {error && (
         <motion.p
-          id={`${id}-error`}
+          id={`${id || props.name}-error`}
           role="alert"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}

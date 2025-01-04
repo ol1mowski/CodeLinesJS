@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
 import { FaEnvelope, FaLock } from "react-icons/fa";
-import { FormInput } from "../../UI/Form/FormInput.component";
+
 import { Button } from "../../UI/Button/Button.component";
+import { FormInput } from "../../UI/Form/FormInput.component";
 
 export const LoginForm = () => {
   return (

@@ -1,6 +1,7 @@
 import { Suspense } from "react";
-import { AuthSection } from "../components/Auth/AuthSection.component";
 import { LoadingScreen } from "../components/UI/LoadingScreen/LoadingScreen.component";
+import { AuthSection } from "../components/Auth/AuthSection.component";
+
 
 const Auth = () => {
   return (

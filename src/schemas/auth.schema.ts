@@ -5,9 +5,8 @@ export const loginSchema = z.object({
     .min(1, "Email jest wymagany")
     .email("Nieprawidłowy format email"),
   password: z.string()
-    .min(1, "Hasło jest wymagane")
-    .min(8, "Hasło musi mieć minimum 8 znaków"),
-  rememberMe: z.boolean().optional(),
+    .min(1, "Hasło jest wymagane"),
+  rememberMe: z.boolean().optional()
 });
 
 export const registerSchema = z.object({
