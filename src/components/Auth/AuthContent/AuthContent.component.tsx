@@ -1,12 +1,12 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import { AuthTabs } from "./AuthTabs.component";
-import { LoginForm } from "../Forms/LoginForm/LoginForm.component";
-import { RegisterForm } from "../Forms/RegisterForm/RegisterForm.component";
-import { ForgotPasswordForm } from "../Forms/ForgotPasswordForm/ForgotPasswordForm.component";
-
 
 type AuthMode = "login" | "register" | "forgot";
+
+const LoginForm = lazy(() => import("../Forms/LoginForm/LoginForm.component"));
+const RegisterForm = lazy(() => import("../Forms/RegisterForm/RegisterForm.component"));
+const ForgotPasswordForm = lazy(() => import("../Forms/ForgotPasswordForm/ForgotPasswordForm.component"));
 
 export const AuthContent = () => {
   const [authMode, setAuthMode] = useState<AuthMode>("login");
@@ -17,6 +17,8 @@ export const AuthContent = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       className="w-full bg-gray-800/50 backdrop-blur-lg rounded-2xl p-8 border border-gray-700/50"
+      role="main"
+      aria-label="Formularz autoryzacji"
     >
       <h1 className="text-3xl font-bold font-space text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400 mb-8">
         {authMode === "login" && "Logowanie"}
@@ -25,11 +27,13 @@ export const AuthContent = () => {
       </h1>
       <AuthTabs activeTab={authMode} onTabChange={setAuthMode} />
       
-      <AnimatePresence mode="wait">
-        {authMode === "login" && <LoginForm key="login" />}
-        {authMode === "register" && <RegisterForm key="register" />}
-        {authMode === "forgot" && <ForgotPasswordForm key="forgot" />}
-      </AnimatePresence>
+      <Suspense fallback={<div className="text-center py-4">Ładowanie...</div>}>
+        <AnimatePresence mode="wait">
+          {authMode === "login" && <LoginForm key="login" />}
+          {authMode === "register" && <RegisterForm key="register" />}
+          {authMode === "forgot" && <ForgotPasswordForm key="forgot" />}
+        </AnimatePresence>
+      </Suspense>
     </motion.div>
   );
 }; 

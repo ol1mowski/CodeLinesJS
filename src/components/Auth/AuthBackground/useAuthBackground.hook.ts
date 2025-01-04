@@ -6,7 +6,6 @@ export const useAuthBackground = (containerRef: RefObject<HTMLDivElement>) => {
   const mousePosition = useRef({ x: 0, y: 0 });
   const frameId = useRef<number>();
 
-  // Memoizacja stałych wartości
   const particleCount = useMemo(() => 100, []);
   const lights = useMemo(() => [
     new THREE.PointLight("#4f46e5", 2),
@@ -14,7 +13,6 @@ export const useAuthBackground = (containerRef: RefObject<HTMLDivElement>) => {
     new THREE.PointLight("#818cf8", 2),
   ], []);
 
-  // Memoizacja funkcji tworzących cząsteczki
   const createParticle = useCallback(() => {
     const geometry = new THREE.TetrahedronGeometry(0.5, 0);
     const material = new THREE.MeshPhongMaterial({
@@ -65,7 +63,6 @@ export const useAuthBackground = (containerRef: RefObject<HTMLDivElement>) => {
 
     renderer.setClearColor(0x000000, 0);
 
-    // Reszta kodu pozostaje bez zmian, ale używamy zmemoizowanych wartości
     const particlesGroup = new THREE.Group();
     const particles: THREE.Mesh[] = [];
 
@@ -103,7 +100,6 @@ export const useAuthBackground = (containerRef: RefObject<HTMLDivElement>) => {
     const animate = () => {
       frameId.current = requestAnimationFrame(animate);
 
-      // Animacja cząsteczek
       particles.forEach((particle, i) => {
         const time = Date.now() * 0.001 + i;
         particle.position.y += Math.sin(time * 0.5) * 0.02;
@@ -112,7 +108,6 @@ export const useAuthBackground = (containerRef: RefObject<HTMLDivElement>) => {
         particle.rotation.z += 0.01;
       });
 
-      // Rotacja całej grupy
       particlesGroup.rotation.y += 0.001;
       particlesGroup.rotation.x = mousePosition.current.y * 0.2;
       particlesGroup.rotation.z = mousePosition.current.x * 0.2;
