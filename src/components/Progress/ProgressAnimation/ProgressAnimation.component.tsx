@@ -1,6 +1,8 @@
 import { useRef } from "react";
 import { motion } from "framer-motion";
+
 import { useProgressAnimation } from "./useProgressAnimation.hook";
+
 
 export const ProgressAnimation = () => {
   const containerRef = useRef<HTMLDivElement>(null);
