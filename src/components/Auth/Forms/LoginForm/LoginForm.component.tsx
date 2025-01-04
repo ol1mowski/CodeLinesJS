@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { FaEnvelope, FaLock } from "react-icons/fa";
+import { FaEnvelope, FaLock, FaGoogle } from "react-icons/fa";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -62,6 +62,25 @@ const LoginForm = () => {
           <span className="text-sm text-gray-400">Zapamiętaj mnie</span>
         </label>
       </div>
+
+      <div className="relative my-6">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-gray-700"></div>
+        </div>
+        <div className="relative flex justify-center text-sm">
+          <span className="px-2 bg-gray-800/50 text-gray-400">Lub kontynuuj przez</span>
+        </div>
+      </div>
+
+      <Button 
+        type="button"
+        className="w-full bg-white hover:bg-gray-100 text-gray-900 font-bold"
+      >
+        <div className="flex items-center justify-center gap-2">
+          <FaGoogle className="text-xl" />
+          <span>Zaloguj się przez Google</span>
+        </div>
+      </Button>
 
       <Button type="submit" className="w-full" disabled={isSubmitting}>
         {isSubmitting ? "Logowanie..." : "Zaloguj się"}
