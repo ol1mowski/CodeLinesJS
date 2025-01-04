@@ -4,7 +4,7 @@ import { ChallengesList } from "./ChallengesList/ChallengesList.component";
 import { ChallengesAnimation } from "./ChallengesAnimation/ChallengesAnimation.component";
 
 export const ChallengesSection = () => (
-  <section className="min-h-screen w-full relative py-16 md:py-24 bg-gradient-to-b from-gray-900 via-purple-900 to-indigo-900">
+  <section id="wyzwania" className="min-h-screen w-full relative py-16 md:py-24 bg-gradient-to-b from-gray-900 via-purple-900 to-indigo-900">
     <Container className="relative z-10">
       <div className="flex flex-col items-center gap-8 md:gap-16">
         <SectionTitle
