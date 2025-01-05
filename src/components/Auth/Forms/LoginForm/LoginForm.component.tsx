@@ -16,7 +16,7 @@ const LoginForm = () => {
     formState: { errors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
-    mode: "onSubmit"
+    mode: "onSubmit",
   });
 
   const onSubmit = async (data: LoginFormData) => {
@@ -50,7 +50,7 @@ const LoginForm = () => {
         error={errors.email?.message}
         {...register("email")}
       />
-      
+
       <FormInput
         type="password"
         label="Hasło"
@@ -76,17 +76,19 @@ const LoginForm = () => {
           <div className="w-full border-t border-gray-700"></div>
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="px-2 bg-gray-800/50 text-gray-400">Lub kontynuuj przez</span>
+          <span className="px-2 bg-gray-800/50 text-gray-400">
+            Lub kontynuuj przez
+          </span>
         </div>
       </div>
 
-      <Button 
+      <Button
         type="button"
-        className="w-full text-gray-900 bg-white hover:bg-gray-100 font-bold"
+        className="w-full bg-white hover:bg-indigo-500 border-2 border-gray-200 text-black hover:text-white transition-colors duration-200"
       >
         <div className="flex items-center justify-center gap-2">
-          <FaGoogle className="text-xl text-gray-900" />
-          <span>Zaloguj się przez Google</span>
+          <FaGoogle className="text-xl" />
+          <span className="font-semibold">Zaloguj się przez Google</span>
         </div>
       </Button>
 
@@ -97,4 +99,4 @@ const LoginForm = () => {
   );
 };
 
-export default LoginForm; 
+export default LoginForm;
