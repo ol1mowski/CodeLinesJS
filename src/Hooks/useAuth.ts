@@ -22,7 +22,7 @@ export const useAuth = () => {
       localStorage.setItem('token', data.token);
       navigate('/dashboard');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong');
+      setError(err instanceof Error ? err.message : 'Wystąpił błąd podczas logowania');
     } finally {
       setLoading(false);
     }
@@ -42,7 +42,7 @@ export const useAuth = () => {
       localStorage.setItem('token', data.token);
       navigate('/dashboard');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong');
+      setError(err instanceof Error ? err.message : 'Wystąpił błąd podczas rejestracji');
     } finally {
       setLoading(false);
     }
@@ -57,11 +57,21 @@ export const useAuth = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       });
+      
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error);
+      
+      console.log('Response status:', response.status);
+      console.log('Response data:', data);
+      
+      if (!response.ok) {
+        throw new Error(data.message || data.error || 'Wystąpił błąd podczas resetowania hasła');
+      }
+      
       return data.message;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong');
+      console.error('Forgot password error:', err);
+      setError(err instanceof Error ? err.message : 'Wystąpił nieoczekiwany błąd');
+      throw err;
     } finally {
       setLoading(false);
     }

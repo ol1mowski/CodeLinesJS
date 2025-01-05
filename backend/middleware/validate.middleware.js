@@ -14,4 +14,16 @@ export const validateAuth = (req, res, next) => {
   }
 
   next();
+};
+
+export const validateEmail = (req, res, next) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({
+      error: 'Email jest wymagany'
+    });
+  }
+
+  next();
 }; 

@@ -61,6 +61,19 @@ export const login = async (req, res, next) => {
 export const forgotPassword = async (req, res, next) => {
   try {
     const { email } = req.body;
+    
+    if (!email) {
+      return res.status(400).json({ 
+        error: 'Email jest wymagany' 
+      });
+    }
+
+    if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+      return res.status(400).json({ 
+        error: 'Nieprawidłowy format emaila' 
+      });
+    }
+
     const user = await User.findOne({ email });
 
     if (!user) {
