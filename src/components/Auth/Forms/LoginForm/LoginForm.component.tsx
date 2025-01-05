@@ -6,23 +6,21 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../../../UI/Button/Button.component";
 import { FormInput } from "../../../UI/Form/FormInput/FormInput.component";
 import { LoginFormData, loginSchema } from "../../../../schemas/auth.schema";
+import { useAuth } from "../../../../hooks/useAuth";
 
 const LoginForm = () => {
+  const { login, loading, error } = useAuth();
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
-    mode: "onSubmit"
+    mode: "onSubmit",
   });
 
   const onSubmit = async (data: LoginFormData) => {
-    try {
-      console.log(data);
-    } catch (error) {
-      console.error(error);
-    }
+    await login(data.email, data.password);
   };
 
   return (
@@ -34,15 +32,25 @@ const LoginForm = () => {
       transition={{ duration: 0.3 }}
       className="space-y-6"
     >
+      {error && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm"
+        >
+          {error}
+        </motion.div>
+      )}
+
       <FormInput
-        type="text"
+        type="email"
         label="Email"
         placeholder="twoj@email.com"
         icon={<FaEnvelope />}
         error={errors.email?.message}
         {...register("email")}
       />
-      
+
       <FormInput
         type="password"
         label="Hasło"
@@ -68,25 +76,27 @@ const LoginForm = () => {
           <div className="w-full border-t border-gray-700"></div>
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="px-2 bg-gray-800/50 text-gray-400">Lub kontynuuj przez</span>
+          <span className="px-2 bg-gray-800/50 text-gray-400">
+            Lub kontynuuj przez
+          </span>
         </div>
       </div>
 
-      <Button 
+      <Button
         type="button"
-        className="w-full bg-white hover:bg-gray-100 text-gray-900 font-bold"
+        className="w-full bg-white hover:bg-indigo-500 border-2 border-gray-200 text-black hover:text-white transition-colors duration-200"
       >
         <div className="flex items-center justify-center gap-2">
           <FaGoogle className="text-xl" />
-          <span>Zaloguj się przez Google</span>
+          <span className="font-semibold">Zaloguj się przez Google</span>
         </div>
       </Button>
 
-      <Button type="submit" className="w-full" disabled={isSubmitting}>
-        {isSubmitting ? "Logowanie..." : "Zaloguj się"}
+      <Button type="submit" className="w-full" disabled={loading}>
+        {loading ? "Logowanie..." : "Zaloguj się"}
       </Button>
     </motion.form>
   );
 };
 
-export default LoginForm; 
+export default LoginForm;
