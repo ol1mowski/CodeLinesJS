@@ -14,6 +14,7 @@ const ForgotPasswordForm = () => {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<ForgotPasswordFormData>({
     resolver: zodResolver(forgotPasswordSchema),
@@ -23,6 +24,7 @@ const ForgotPasswordForm = () => {
     try {
       const message = await forgotPassword(data.email);
       toast.success(message);
+      reset();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Wystąpił błąd');
     }
