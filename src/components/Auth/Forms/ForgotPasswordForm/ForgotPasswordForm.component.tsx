@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { FaEnvelope } from "react-icons/fa";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "react-toastify";
 
 import { Button } from "../../../UI/Button/Button.component";
 import { FormInput } from "../../../UI/Form/FormInput/FormInput.component";
@@ -19,7 +20,12 @@ const ForgotPasswordForm = () => {
   });
 
   const onSubmit = async (data: ForgotPasswordFormData) => {
-    await forgotPassword(data.email);
+    try {
+      const message = await forgotPassword(data.email);
+      toast.success(message);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Wystąpił błąd');
+    }
   };
 
   return (
