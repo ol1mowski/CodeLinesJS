@@ -7,7 +7,7 @@ import { Button } from "../../../UI/Button/Button.component";
 import { FormInput } from "../../../UI/Form/FormInput/FormInput.component";
 import { ForgotPasswordFormData, forgotPasswordSchema } from "../../../../schemas/auth.schema";
 
-export const ForgotPasswordForm = () => {
+const ForgotPasswordForm = () => {
   const {
     register,
     handleSubmit,
@@ -51,4 +51,6 @@ export const ForgotPasswordForm = () => {
       </Button>
     </motion.form>
   );
-}; 
+};
+
+export default ForgotPasswordForm; 
