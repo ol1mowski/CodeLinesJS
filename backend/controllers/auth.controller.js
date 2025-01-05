@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { User } from '../models/user.model.js';
 import { AuthError } from '../utils/errors.js';
+import { transporter } from '../config/mailer.js';
 
 export const register = async (req, res, next) => {
   try {
@@ -90,9 +91,25 @@ export const forgotPassword = async (req, res, next) => {
     user.resetPasswordExpires = Date.now() + 3600000;
     await user.save();
 
+    const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+    
+    await transporter.sendMail({
+      from: '"Nazwa Twojej Aplikacji" <' + process.env.SMTP_USER + '>',
+      to: email,
+      subject: "Reset hasła",
+      html: `
+        <h1>Reset hasła</h1>
+        <p>Cześć!</p>
+        <p>Otrzymaliśmy prośbę o reset hasła dla Twojego konta.</p>
+        <p>Kliknij w poniższy link, aby zresetować hasło:</p>
+        <a href="${resetUrl}">Reset hasła</a>
+        <p>Link wygaśnie za godzinę.</p>
+        <p>Jeśli nie prosiłeś o reset hasła, zignoruj tę wiadomość.</p>
+      `
+    });
+
     res.json({ 
-      message: 'Wysłano email do resetowania hasła',
-      resetToken 
+      message: 'Wysłano email do resetowania hasła'
     });
   } catch (error) {
     next(error);
