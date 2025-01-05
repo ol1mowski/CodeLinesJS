@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { FaEnvelope } from "react-icons/fa";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "react-toastify";
+import { useState } from "react";
 
 import { Button } from "../../../UI/Button/Button.component";
 import { FormInput } from "../../../UI/Form/FormInput/FormInput.component";
@@ -20,13 +20,15 @@ const ForgotPasswordForm = () => {
     resolver: zodResolver(forgotPasswordSchema),
   });
 
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
   const onSubmit = async (data: ForgotPasswordFormData) => {
     try {
       const message = await forgotPassword(data.email);
-      toast.success(message);
+      setSuccessMessage(message);
       reset();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Wystąpił błąd');
+      setSuccessMessage(null);
     }
   };
 
@@ -46,6 +48,16 @@ const ForgotPasswordForm = () => {
           className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm"
         >
           {error}
+        </motion.div>
+      )}
+
+      {successMessage && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="p-3 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-sm"
+        >
+          {successMessage}
         </motion.div>
       )}
 
