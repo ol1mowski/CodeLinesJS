@@ -6,23 +6,21 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../../../UI/Button/Button.component";
 import { FormInput } from "../../../UI/Form/FormInput/FormInput.component";
 import { LoginFormData, loginSchema } from "../../../../schemas/auth.schema";
+import { useAuth } from "../../../../Hooks/useAuth";
 
 const LoginForm = () => {
+  const { login, loading, error } = useAuth();
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     mode: "onSubmit"
   });
 
   const onSubmit = async (data: LoginFormData) => {
-    try {
-      console.log(data);
-    } catch (error) {
-      console.error(error);
-    }
+    await login(data.email, data.password);
   };
 
   return (
@@ -34,8 +32,18 @@ const LoginForm = () => {
       transition={{ duration: 0.3 }}
       className="space-y-6"
     >
+      {error && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm"
+        >
+          {error}
+        </motion.div>
+      )}
+
       <FormInput
-        type="text"
+        type="email"
         label="Email"
         placeholder="twoj@email.com"
         icon={<FaEnvelope />}
@@ -82,8 +90,8 @@ const LoginForm = () => {
         </div>
       </Button>
 
-      <Button type="submit" className="w-full" disabled={isSubmitting}>
-        {isSubmitting ? "Logowanie..." : "Zaloguj się"}
+      <Button type="submit" className="w-full" disabled={loading}>
+        {loading ? "Logowanie..." : "Zaloguj się"}
       </Button>
     </motion.form>
   );
