@@ -114,4 +114,16 @@ export const forgotPassword = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+};
+
+export const verifyToken = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId).select('-password');
+    if (!user) {
+      return res.status(401).json({ error: 'Użytkownik nie znaleziony' });
+    }
+    res.json(user);
+  } catch (error) {
+    res.status(401).json({ error: 'Nieprawidłowy token' });
+  }
 }; 
