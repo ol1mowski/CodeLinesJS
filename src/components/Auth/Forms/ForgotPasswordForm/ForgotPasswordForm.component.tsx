@@ -6,22 +6,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../../../UI/Button/Button.component";
 import { FormInput } from "../../../UI/Form/FormInput/FormInput.component";
 import { ForgotPasswordFormData, forgotPasswordSchema } from "../../../../schemas/auth.schema";
+import { useAuth } from "../../../../Hooks/useAuth";
 
 const ForgotPasswordForm = () => {
+  const { forgotPassword, loading, error } = useAuth();
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<ForgotPasswordFormData>({
     resolver: zodResolver(forgotPasswordSchema),
   });
 
   const onSubmit = async (data: ForgotPasswordFormData) => {
-    try {
-      console.log(data); 
-    } catch (error) {
-      console.error(error);
-    }
+    await forgotPassword(data.email);
   };
 
   return (
@@ -33,6 +31,16 @@ const ForgotPasswordForm = () => {
       transition={{ duration: 0.3 }}
       className="space-y-6"
     >
+      {error && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm"
+        >
+          {error}
+        </motion.div>
+      )}
+
       <p className="text-gray-400 text-sm mb-6">
         Podaj swój adres email, a wyślemy Ci link do zresetowania hasła.
       </p>
@@ -46,8 +54,8 @@ const ForgotPasswordForm = () => {
         {...register("email")}
       />
 
-      <Button type="submit" className="w-full" disabled={isSubmitting}>
-        {isSubmitting ? "Wysyłanie..." : "Wyślij link resetujący"}
+      <Button type="submit" className="w-full" disabled={loading}>
+        {loading ? "Wysyłanie..." : "Wyślij link resetujący"}
       </Button>
     </motion.form>
   );
