@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const API_URL = 'http://localhost:5000/api/auth';
+const API_URL = 'http://localhost:5001/api/auth';
 
 export const useAuth = () => {
   const [loading, setLoading] = useState(false);

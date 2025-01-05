@@ -82,10 +82,10 @@ const LoginForm = () => {
 
       <Button 
         type="button"
-        className="w-full bg-white hover:bg-gray-100 text-gray-900 font-bold"
+        className="w-full text-gray-900 bg-white hover:bg-gray-100 font-bold"
       >
         <div className="flex items-center justify-center gap-2">
-          <FaGoogle className="text-xl" />
+          <FaGoogle className="text-xl text-gray-900" />
           <span>Zaloguj się przez Google</span>
         </div>
       </Button>

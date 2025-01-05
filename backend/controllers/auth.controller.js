@@ -11,7 +11,7 @@ export const register = async (req, res, next) => {
     });
 
     if (existingUser) {
-      throw new AuthError('User already exists');
+      throw new AuthError('Użytkownik już istnieje');
     }
 
     const user = await User.create({
@@ -38,12 +38,12 @@ export const login = async (req, res, next) => {
 
     const user = await User.findOne({ email });
     if (!user) {
-      throw new AuthError('Invalid credentials');
+      throw new AuthError('Nieprawidłowe dane logowania');
     }
 
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
-      throw new AuthError('Invalid credentials');
+      throw new AuthError('Nieprawidłowe dane logowania');
     }
 
     const token = jwt.sign(
@@ -64,7 +64,7 @@ export const forgotPassword = async (req, res, next) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      throw new AuthError('User not found');
+      throw new AuthError('Użytkownik nie znaleziony');
     }
 
     const resetToken = jwt.sign(
@@ -78,7 +78,7 @@ export const forgotPassword = async (req, res, next) => {
     await user.save();
 
     res.json({ 
-      message: 'Reset password email sent',
+      message: 'Wysłano email do resetowania hasła',
       resetToken 
     });
   } catch (error) {

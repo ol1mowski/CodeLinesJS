@@ -5,13 +5,13 @@ export const authMiddleware = (req, res, next) => {
   try {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) {
-      throw new AuthError('No token provided');
+      throw new AuthError('Brak tokenu');
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.userId = decoded.userId;
     next();
   } catch (error) {
-    next(new AuthError('Invalid token'));
+    next(new AuthError('Nieprawidłowy token'));
   }
 }; 

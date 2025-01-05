@@ -3,13 +3,13 @@ export const validateAuth = (req, res, next) => {
 
   if (!email || !password) {
     return res.status(400).json({
-      error: 'Email and password are required'
+      error: 'Email i hasło są wymagane'
     });
   }
 
   if (password.length < 6) {
     return res.status(400).json({
-      error: 'Password must be at least 6 characters long'
+      error: 'Hasło musi mieć co najmniej 6 znaków'
     });
   }
 
