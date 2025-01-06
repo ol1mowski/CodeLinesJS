@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { memo } from "react";
 import { dashboardContentStyles as styles } from "./DashboardContent.styles";
 import { CommunityBlock } from "./CommunityBlock/CommunityBlock.component";
+import { GameBlock } from "./GameBlock/GameBlock.component";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -64,9 +65,7 @@ export const DashboardContent = memo(() => {
             order-1 lg:order-2
           `}
         >
-          <div className={styles.card.header}>
-            <h2 className={styles.card.title}>Graj</h2>
-          </div>
+          <GameBlock />
         </motion.div>
 
         {/* Stats Block */}
