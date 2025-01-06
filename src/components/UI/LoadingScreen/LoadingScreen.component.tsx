@@ -40,5 +40,3 @@ export const LoadingScreen = memo(() => (
     </motion.div>
   </div>
 ));
-
-LoadingScreen.displayName = "LoadingScreen"; 
