@@ -44,7 +44,7 @@ CodeLinesJS to innowacyjna platforma edukacyjna, która przekształca naukę Jav
 - Google Authentication
 
 ### Database
-- Mongo DB
+- MongoDB
 
 ### Testing
 - Vitest
@@ -94,6 +94,9 @@ npm run test
 
 # Uruchomienie testów E2E
 npm run test:e2e
+
+# Uruchomienie testów jednostkowych
+npm run test:unit
 ```
 
 ## 📝 Licencja
