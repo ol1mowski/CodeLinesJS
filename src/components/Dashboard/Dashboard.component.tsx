@@ -3,12 +3,12 @@ import { DashboardNavigation } from "./Navigation/DashboardNavigation.component"
 
 const Dashboard = () => {
   return (
-    <div className="flex flex-col h-screen">
+    <main className="bg-gradient-to-b from-gray-900 via-blue-900 to-indigo-900 backdrop-blur-lgflex flex-col h-screen">
       <DashboardNavigation />
       <div className="flex-1">
         <Outlet />
       </div>
-    </div>
+    </main>
   )
 }
 
