@@ -1,6 +1,14 @@
+import { Outlet } from "react-router-dom"
+import { DashboardNavigation } from "./Navigation/DashboardNavigation.component"
+
 const Dashboard = () => {
   return (
-    <h1>Dashboard</h1>
+    <div className="flex flex-col h-screen">
+      <DashboardNavigation />
+      <div className="flex-1">
+        <Outlet />
+      </div>
+    </div>
   )
 }
 
