@@ -14,7 +14,7 @@ export const NavigationLogo = memo(({ isExpanded }: NavigationLogoProps) => (
       animate={{ opacity: 1 }}
       className="flex items-center gap-3"
     >
-      <div className="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center">
+      <div className="w-10 h-10 min-w-[40px] rounded-xl bg-indigo-500/20 flex items-center justify-center">
         <FaCode className="text-xl text-indigo-400" />
       </div>
       <AnimatePresence mode="wait">

@@ -8,7 +8,7 @@ export const navVariants = {
     },
   },
   collapsed: {
-    width: "72px",
+    width: "100px",
     transition: {
       type: "spring",
       stiffness: 300,

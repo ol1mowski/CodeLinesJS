@@ -38,7 +38,7 @@ export const NavigationButton = memo(({
     whileHover={{ scale: 1.02, x: 5 }}
     whileTap={{ scale: 0.98 }}
   >
-    <motion.span className="text-xl" whileHover={{ rotate: 10 }}>
+    <motion.span className="text-xl min-w-[24px]" whileHover={{ rotate: 10 }}>
       {icon}
     </motion.span>
     <AnimatePresence mode="wait">
@@ -56,5 +56,3 @@ export const NavigationButton = memo(({
     </AnimatePresence>
   </motion.button>
 ));
-
-NavigationButton.displayName = "NavigationButton"; 
