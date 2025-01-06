@@ -11,6 +11,7 @@ import {
 } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../hooks/useAuth';
+import { useNavigation } from '../../../hooks/useNavigation';
 
 type NavigationItem = {
   id: string;
@@ -68,8 +69,7 @@ const itemVariants = {
 };
 
 export const DashboardNavigation = () => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [activeItem, setActiveItem] = useState('dashboard');
+  const { isExpanded, setIsExpanded, activeItem, setActiveItem } = useNavigation();
   const navigate = useNavigate();
   const { logout } = useAuth();
 
@@ -77,6 +77,9 @@ export const DashboardNavigation = () => {
     setActiveItem(item.id);
     if (item.path) {
       navigate(item.path);
+      if (window.innerWidth < 768) {
+        setIsExpanded(false);
+      }
     }
   };
 
