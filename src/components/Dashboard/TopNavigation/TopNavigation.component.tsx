@@ -3,13 +3,14 @@ import { memo } from "react";
 import { topNavigationStyles as styles } from "./TopNavigation.styles";
 import { WelcomeSection } from "./WelcomeSection/WelcomeSection.component";
 import { NotificationsButton } from "./NotificationsSection/NotificationsButton.component";
+import { useDisplayName } from "../../../hooks/useDisplayName";
 
 type TopNavigationProps = {
   className?: string;
 };
 
 export const TopNavigation = memo(({ className }: TopNavigationProps) => {
-  const username = "John Doe";
+  const displayName = useDisplayName();
   const unreadNotifications = 3; // DUMMY DATA
 
   return (
@@ -29,7 +30,7 @@ export const TopNavigation = memo(({ className }: TopNavigationProps) => {
         ${className}
       `}
     >
-      <WelcomeSection username={username} />
+      <WelcomeSection username={displayName} />
       
       <div className="flex items-center gap-4">
         <NotificationsButton unreadCount={unreadNotifications} />
