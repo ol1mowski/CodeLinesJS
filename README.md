@@ -107,7 +107,7 @@ Copyright © 2024 CodeLinesJS. Wszelkie prawa zastrzeżone.
 
 - **Email**: [oliwier.markiewicz.dev@gmail.com]
 - **LinkedIn**: [Oliwier Markiewicz](https://www.linkedin.com/in/oliwier-markiewicz-47857228a/)
-- **GitHub**: [@username](https://github.com/ol1mowski)
+- **GitHub**: [@ol1mowski](https://github.com/ol1mowski)
 
 ---
 
