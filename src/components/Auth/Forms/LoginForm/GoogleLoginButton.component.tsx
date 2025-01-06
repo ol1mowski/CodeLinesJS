@@ -1,11 +1,9 @@
 import { memo } from "react";
-import { FaGoogle } from "react-icons/fa";
-import { motion } from "framer-motion";
-import { Button } from "../../../UI/Button/Button.component";
-import { useGoogleLogin } from "./hooks/useGoogleLogin.hook";
+import { GoogleLogin } from '@react-oauth/google';
+import { useAuth } from "../../../../hooks/useAuth";
 
 export const GoogleLoginButton = memo(() => {
-  const { handleGoogleLogin, isLoading } = useGoogleLogin();
+  const { loginWithGoogle } = useAuth();
 
   return (
     <>
@@ -20,23 +18,18 @@ export const GoogleLoginButton = memo(() => {
         </div>
       </div>
 
-      <Button
-        type="button"
-        onClick={handleGoogleLogin}
-        disabled={isLoading}
-        className="w-full bg-white hover:bg-indigo-500 border-2 border-gray-200 text-black hover:text-white transition-colors duration-200"
-      >
-        <motion.div 
-          className="flex items-center justify-center gap-2"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          <FaGoogle className="text-xl" />
-          <span className="font-semibold">
-            {isLoading ? "Logowanie..." : "Zaloguj się przez Google"}
-          </span>
-        </motion.div>
-      </Button>
+      <div className="flex justify-center">
+        <GoogleLogin
+          onSuccess={loginWithGoogle}
+          onError={() => {
+            console.error('Login Failed');
+          }}
+          theme="filled_black"
+          shape="pill"
+          text="continue_with"
+          locale="pl"
+        />
+      </div>
     </>
   );
 });
