@@ -28,6 +28,11 @@ export const GoogleLoginButton = memo(() => {
           shape="pill"
           text="continue_with"
           locale="pl"
+          useOneTap={false}
+          context="signin"
+          type="standard"
+          size="large"
+          width="300"
         />
       </div>
     </>
