@@ -8,12 +8,13 @@ export const useAuthCheck = (state: ReturnType<typeof useAuthState>) => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const token = localStorage.getItem('token');
-      if (token) {
+      const tokenLocalStorage = localStorage.getItem('token');
+      const tokenSessionStorage = sessionStorage.getItem('token');
+      if (tokenLocalStorage || tokenSessionStorage) {
         try {
           const response = await fetch(`${API_URL}/verify`, {
             headers: {
-              Authorization: `Bearer ${token}`
+              Authorization: `Bearer ${tokenLocalStorage || tokenSessionStorage}`
             }
           });
           
@@ -23,11 +24,13 @@ export const useAuthCheck = (state: ReturnType<typeof useAuthState>) => {
             setIsAuthenticated(true);
           } else {
             localStorage.removeItem('token');
+            sessionStorage.removeItem('token');
             setIsAuthenticated(false);
             setUser(null);
           }
         } catch (error) {
           localStorage.removeItem('token');
+          sessionStorage.removeItem('token');
           setIsAuthenticated(false);
           setUser(null);
         }

@@ -126,4 +126,96 @@ export const verifyToken = async (req, res) => {
   } catch (error) {
     res.status(401).json({ error: 'Nieprawidłowy token' });
   }
+};
+
+export const googleAuth = async (req, res, next) => {
+  try {
+    const { idToken, userData, rememberMe } = req.body;
+    
+    if (!idToken || !userData) {
+      throw new AuthError('Nieprawidłowe dane uwierzytelniające');
+    }
+
+    const { email, name, picture } = userData;
+
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      const baseUsername = name?.split(' ')[0].toLowerCase() || email.split('@')[0];
+      let username = baseUsername;
+      let counter = 1;
+
+      while (await User.findOne({ username })) {
+        username = `${baseUsername}${counter}`;
+        counter++;
+      }
+
+      user = await User.create({
+        email,
+        username,
+        avatar: picture,
+        isEmailVerified: true,
+        accountType: 'google',
+        profile: {
+          displayName: name,
+          bio: '',
+          socialLinks: {},
+          preferences: {
+            emailNotifications: true,
+            theme: 'dark'
+          }
+        },
+        stats: {
+          completedChallenges: 0,
+          totalPoints: 0,
+          streak: 0,
+          lastActive: new Date()
+        }
+      });
+
+      try {
+        await transporter.sendMail({
+          from: process.env.SMTP_USER,
+          to: email,
+          subject: "Witaj w CodeLinesJS!",
+          html: `
+            <h1>Witaj ${name || username}!</h1>
+            <p>Twoje konto zostało pomyślnie utworzone.</p>
+            <p>Możesz teraz rozpocząć naukę JavaScript poprzez interaktywne wyzwania!</p>
+          `
+        });
+      } catch (emailError) {
+        console.error('Błąd wysyłania emaila powitalnego:', emailError);
+      }
+    } else {
+      user.lastLogin = new Date();
+      user.avatar = picture || user.avatar;
+      await user.save();
+    }
+
+    const token = jwt.sign(
+      { 
+        userId: user._id,
+        email: user.email,
+        username: user.username,
+        accountType: user.accountType
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: rememberMe ? '30d' : '24h' }
+    );
+
+    res.json({ 
+      token,
+      user: {
+        id: user._id,
+        email: user.email,
+        username: user.username,
+        avatar: user.avatar,
+        isNewUser: !user.lastLogin,
+        stats: user.stats
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
 }; 
