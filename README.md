@@ -33,14 +33,18 @@ CodeLinesJS to innowacyjna platforma edukacyjna, która przekształca naukę Jav
 - Vite
 - Tailwind CSS
 - Framer Motion
+- Three js
 
 ### State Management & Routing
 - React Context API
 - React Router 6
 
 ### Backend & Auth
-- Firebase
+- Express js
 - Google Authentication
+
+### Database
+- Mongo DB
 
 ### Testing
 - Vitest
