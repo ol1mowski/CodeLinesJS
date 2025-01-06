@@ -57,5 +57,3 @@ export const WelcomeSection = memo(({ username }: WelcomeSectionProps) => {
     </motion.div>
   );
 });
-
-WelcomeSection.displayName = "WelcomeSection"; 

@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { memo } from "react";
 import { topNavigationStyles as styles } from "./TopNavigation.styles";
 import { WelcomeSection } from "./WelcomeSection/WelcomeSection.component";
+import { NotificationsButton } from "./NotificationsSection/NotificationsButton.component";
 
 type TopNavigationProps = {
   className?: string;
@@ -9,6 +10,7 @@ type TopNavigationProps = {
 
 export const TopNavigation = memo(({ className }: TopNavigationProps) => {
   const username = "John Doe";
+  const unreadNotifications = 3; // DUMMY DATA
 
   return (
     <motion.header
@@ -30,17 +32,8 @@ export const TopNavigation = memo(({ className }: TopNavigationProps) => {
       <WelcomeSection username={username} />
       
       <div className="flex items-center gap-4">
-        <motion.div
-          className="relative"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.3 }}
-        >
-          {/* Placeholder na powiadomienia */}
-        </motion.div>
+        <NotificationsButton unreadCount={unreadNotifications} />
       </div>
     </motion.header>
   );
 });
-
-TopNavigation.displayName = "TopNavigation"; 
