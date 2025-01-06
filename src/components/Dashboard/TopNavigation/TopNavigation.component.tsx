@@ -1,12 +1,15 @@
 import { motion } from "framer-motion";
 import { memo } from "react";
 import { topNavigationStyles as styles } from "./TopNavigation.styles";
+import { WelcomeSection } from "./WelcomeSection/WelcomeSection.component";
 
 type TopNavigationProps = {
   className?: string;
 };
 
 export const TopNavigation = memo(({ className }: TopNavigationProps) => {
+  const username = "John Doe";
+
   return (
     <motion.header
       initial={{ opacity: 0, y: -20 }}
@@ -24,17 +27,8 @@ export const TopNavigation = memo(({ className }: TopNavigationProps) => {
         ${className}
       `}
     >
-      <div className="flex items-center gap-4">
-        <motion.div 
-          className={`${styles.text.heading} text-2xl`}
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.2 }}
-        >
-          {/* Placeholder na powitanie */}
-        </motion.div>
-      </div>
-
+      <WelcomeSection username={username} />
+      
       <div className="flex items-center gap-4">
         <motion.div
           className="relative"
