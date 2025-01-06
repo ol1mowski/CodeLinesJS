@@ -11,7 +11,7 @@ type TopNavigationProps = {
 
 export const TopNavigation = memo(({ className }: TopNavigationProps) => {
   const displayName = useDisplayName();
-  const unreadNotifications = 3; // DUMMY DATA
+  const unreadNotifications = 1; // DUMMY DATA
 
   return (
     <motion.header
