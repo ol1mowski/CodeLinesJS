@@ -3,6 +3,7 @@ import { memo } from "react";
 import { dashboardContentStyles as styles } from "./DashboardContent.styles";
 import { CommunityBlock } from "./CommunityBlock/CommunityBlock.component";
 import { GameBlock } from "./GameBlock/GameBlock.component";
+import { StatsBlock } from "./StatsBlock/StatsBlock.component";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -78,9 +79,7 @@ export const DashboardContent = memo(() => {
             order-3
           `}
         >
-          <div className={styles.card.header}>
-            <h2 className={styles.card.title}>Statystyki</h2>
-          </div>
+          <StatsBlock />
         </motion.div>
       </div>
     </motion.div>
