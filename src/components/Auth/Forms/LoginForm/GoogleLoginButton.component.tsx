@@ -2,8 +2,16 @@ import { memo } from "react";
 import { GoogleLogin } from '@react-oauth/google';
 import { useAuth } from "../../../../hooks/useAuth";
 
-export const GoogleLoginButton = memo(() => {
+type GoogleLoginButtonProps = {
+  rememberMe: boolean;
+};
+
+export const GoogleLoginButton = memo(({ rememberMe }: GoogleLoginButtonProps) => {
   const { loginWithGoogle } = useAuth();
+
+  const handleSuccess = (credentialResponse: any) => {
+    loginWithGoogle(credentialResponse, rememberMe);
+  };
 
   return (
     <>
@@ -20,7 +28,7 @@ export const GoogleLoginButton = memo(() => {
 
       <div className="flex justify-center">
         <GoogleLogin
-          onSuccess={loginWithGoogle}
+          onSuccess={handleSuccess}
           onError={() => {
             console.error('Login Failed');
           }}

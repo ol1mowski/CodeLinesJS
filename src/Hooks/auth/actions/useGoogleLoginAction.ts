@@ -7,7 +7,7 @@ export const useGoogleLoginAction = (state: AuthState) => {
   const navigate = useNavigate();
   const { setLoading, setError, setIsAuthenticated, setUser } = state;
 
-  const loginWithGoogle = async (credentialResponse: any) => {
+  const loginWithGoogle = async (credentialResponse: any, rememberMe: boolean = false) => {
     try {
       setLoading(true);
       setError(null);
@@ -32,7 +32,8 @@ export const useGoogleLoginAction = (state: AuthState) => {
             email: decoded.email,
             name: decoded.name,
             picture: decoded.picture
-          }
+          },
+          rememberMe
         })
       });
 
@@ -43,7 +44,14 @@ export const useGoogleLoginAction = (state: AuthState) => {
 
       const data = await response.json();
       
-      localStorage.setItem('token', data.token);
+      if (rememberMe) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+      } else {
+        sessionStorage.setItem('token', data.token);
+        sessionStorage.setItem('user', JSON.stringify(data.user));
+      }
+
       setIsAuthenticated(true);
       setUser(data.user);
       

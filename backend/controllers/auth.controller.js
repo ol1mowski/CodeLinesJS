@@ -130,7 +130,7 @@ export const verifyToken = async (req, res) => {
 
 export const googleAuth = async (req, res, next) => {
   try {
-    const { idToken, userData } = req.body;
+    const { idToken, userData, rememberMe } = req.body;
     
     if (!idToken || !userData) {
       throw new AuthError('Nieprawidłowe dane uwierzytelniające');
@@ -201,7 +201,7 @@ export const googleAuth = async (req, res, next) => {
         accountType: user.accountType
       },
       process.env.JWT_SECRET,
-      { expiresIn: '24h' }
+      { expiresIn: rememberMe ? '30d' : '24h' }
     );
 
     res.json({ 

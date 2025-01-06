@@ -17,22 +17,23 @@ const LoginForm = () => {
     register,
     handleSubmit,
     formState: { errors },
+    watch,
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     mode: "onSubmit",
   });
 
+  const rememberMe: boolean = watch("rememberMe", false) || false;
+
   const onSubmit = async (data: LoginFormData) => {
-    await login(data.email, data.password);
+    await login(data.email, data.password, data.rememberMe);
   };
 
   return (
     <motion.form
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
       onSubmit={handleSubmit(onSubmit)}
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -20 }}
-      transition={{ duration: 0.3 }}
       className="space-y-6"
     >
       {error && <ErrorMessage message={error} />}
@@ -61,7 +62,7 @@ const LoginForm = () => {
         {loading ? "Logowanie..." : "Zaloguj się"}
       </Button>
 
-      <GoogleLoginButton />
+      <GoogleLoginButton rememberMe={rememberMe} />
     </motion.form>
   );
 };
