@@ -8,4 +8,16 @@ export type LearningPath = {
   difficulty: "beginner" | "intermediate" | "advanced";
   estimatedTime: string;
   tags: string[];
+};
+
+export type Lesson = {
+  id: string;
+  title: string;
+  description: string;
+  duration: string;
+  difficulty: "beginner" | "intermediate" | "advanced";
+  category: string;
+  isCompleted: boolean;
+  progress: number;
+  xp: number;
 }; 
