@@ -38,7 +38,7 @@ export const NavigationButton = memo(({
     whileHover={{ scale: 1.02, x: 5 }}
     whileTap={{ scale: 0.98 }}
   >
-    <motion.span className="text-xl min-w-[24px]" whileHover={{ rotate: 10 }}>
+    <motion.span className="text-white text-xl min-w-[24px]" whileHover={{ rotate: 10 }}>
       {icon}
     </motion.span>
     <AnimatePresence mode="wait">
@@ -48,7 +48,7 @@ export const NavigationButton = memo(({
           initial="collapsed"
           animate="expanded"
           exit="collapsed"
-          className="font-medium font-space whitespace-nowrap"
+          className="font-medium font-space text-white whitespace-nowrap"
         >
           {label}
         </motion.span>
