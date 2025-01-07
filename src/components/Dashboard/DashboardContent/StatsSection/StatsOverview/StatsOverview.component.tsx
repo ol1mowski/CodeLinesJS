@@ -4,6 +4,7 @@ import { FaTrophy, FaFire, FaClock, FaStar } from "react-icons/fa";
 import { UserStats } from "../../../../../types/stats.types";
 import { StatCard } from "./StatCard.component";
 import { LevelProgress } from "./LevelProgress.component";
+import { LoadingScreen } from "../../../../UI/LoadingScreen/LoadingScreen.component";
 
 type StatsOverviewProps = {
   stats: UserStats | null;
@@ -22,7 +23,7 @@ const container = {
 
 export const StatsOverview = memo(({ stats, isLoading }: StatsOverviewProps) => {
   if (isLoading) {
-    return <div>Loading...</div>; // TODO: Dodać komponent loadera
+    return <LoadingScreen />
   }
 
   if (!stats) return null;
