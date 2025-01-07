@@ -1,11 +1,11 @@
 import { memo } from "react";
 import { motion } from "framer-motion";
 import { FaTrophy, FaFire, FaClock, FaStar } from "react-icons/fa";
-import { UserStats } from "../../../../../types/stats.types";
-import { LoadingScreen } from "../../../../UI/LoadingScreen/LoadingScreen.component";
-import { LevelProgress } from "../../../StatsSection/StatsOverview/LevelProgress.component";
-import { StatCard } from "../../../StatsSection/StatsOverview/StatCard.component";
+import { UserStats } from "../../../../types/stats.types";
 
+import { LoadingScreen } from "../../../UI/LoadingScreen/LoadingScreen.component";
+import { LevelProgress } from "./LevelProgress.component";
+import { StatCard } from "./StatCard.component";
 
 type StatsOverviewProps = {
   stats: UserStats | null | undefined;
@@ -24,7 +24,7 @@ const container = {
 
 export const StatsOverview = memo(({ stats, isLoading }: StatsOverviewProps) => {
   if (isLoading) {
-    return <LoadingScreen />;
+    return <LoadingScreen />
   }
 
   if (!stats) return null;

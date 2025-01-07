@@ -1,8 +1,9 @@
 import { memo } from "react";
 import { motion } from "framer-motion";
+
+import { UserStats } from "../../../../types/stats.types";
 import { ProgressChart } from "./ProgressChart.component";
 import { CategoriesChart } from "./CategoriesChart.component";
-import { UserStats } from "../../../../../types/stats.types";
 
 type StatsChartsProps = {
   data: UserStats['chartData'] | undefined;
