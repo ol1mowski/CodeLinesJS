@@ -42,7 +42,7 @@ export const LearnSection = memo(() => {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="p-8 w-full min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900"
+      className="p-8 w-full min-h-screen"
     >
       <div className="max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold font-space text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 mb-8">

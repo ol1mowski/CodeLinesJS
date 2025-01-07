@@ -7,6 +7,7 @@ import { StatsSection } from "../components/Dashboard/StatsSection/StatsSection.
 import { DashboardContent } from "../components/Dashboard/DashboardContent/DashboardContent.component";
 import { LearnSection } from "../components/Dashboard/LearnSection/LearnSection.component";
 
+
 const Home = lazy(() => import("../pages/Home"));
 const Auth = lazy(() => import("../pages/Auth"));
 
