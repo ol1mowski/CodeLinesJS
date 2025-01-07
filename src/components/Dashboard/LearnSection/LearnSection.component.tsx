@@ -1,9 +1,10 @@
 import { motion } from "framer-motion";
 import { memo, useState } from "react";
-import { LearnTabs } from "./LearnTabs/LearnTabs.component";
-import { LearningPaths } from "./LearningPaths/LearningPaths.component";
+
 import { Lessons } from "./Lessons/Lessons.component";
 import { Resources } from "./Resources/Resources.component";
+import { LearningPaths } from "./LearningPaths/LearningPaths.component";
+import { LearnTabs } from "./LearnTabs/LearnTabs.component";
 
 
 type TabType = "paths" | "lessons" | "resources";

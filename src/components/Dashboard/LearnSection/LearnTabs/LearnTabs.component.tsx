@@ -41,17 +41,19 @@ export const LearnTabs = memo(({ activeTab, onTabChange }: LearnTabsProps) => {
             className={`
               relative flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium
               transition-colors duration-200
-              ${isActive ? "text-white" : "text-gray-400 hover:text-gray-300"}
+              ${isActive 
+                ? "text-indigo-400 bg-indigo-500/10" 
+                : "text-gray-400 hover:text-gray-300"}
             `}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
-            <Icon className="w-4 h-4" />
+            <Icon className={`w-4 h-4 ${isActive ? "text-indigo-400" : "text-gray-400"}`} />
             {tab.label}
             {isActive && (
               <motion.div
                 layoutId="activeTab"
-                className="absolute inset-0 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 rounded-lg -z-10"
+                className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-lg -z-10 border border-indigo-500/20"
                 transition={{ type: "spring", duration: 0.5 }}
               />
             )}
