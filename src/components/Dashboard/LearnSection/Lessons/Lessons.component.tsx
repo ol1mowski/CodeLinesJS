@@ -1,8 +1,9 @@
 import { motion } from "framer-motion";
 import { memo, useState } from "react";
 import { lessons } from "../../../../mocks/lessons.data";
-import { LessonCard } from "./LessonCard.component";
 import { LessonsFilter } from "./LessonsFilter.component";
+import { LessonCard } from "./LessonCard.component";
+
 
 type FilterType = "all" | "beginner" | "intermediate" | "advanced";
 

@@ -20,4 +20,15 @@ export type Lesson = {
   isCompleted: boolean;
   progress: number;
   xp: number;
+};
+
+export type Resource = {
+  id: string;
+  title: string;
+  description: string;
+  url: string;
+  type: "documentation" | "tutorial" | "article";
+  category: string;
+  difficulty: "beginner" | "intermediate" | "advanced";
+  isRecommended: boolean;
 }; 

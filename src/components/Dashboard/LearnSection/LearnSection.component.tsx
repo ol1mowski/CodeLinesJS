@@ -5,6 +5,7 @@ import { LearningPaths } from "./LearningPaths/LearningPaths.component";
 import { Lessons } from "./Lessons/Lessons.component";
 import { Resources } from "./Resources/Resources.component";
 
+
 type TabType = "paths" | "lessons" | "resources";
 
 export const LearnSection = memo(() => {
