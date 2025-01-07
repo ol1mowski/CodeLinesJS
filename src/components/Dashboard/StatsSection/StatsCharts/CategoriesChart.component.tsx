@@ -26,6 +26,23 @@ export const CategoriesChart = memo(({ data }: CategoriesChartProps) => {
     total: category.total,
   }));
 
+  const CustomTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-gray-900/90 px-4 py-2 rounded-lg border border-gray-700/50">
+          <p className="text-white font-medium">{payload[0].name}</p>
+          <p className="text-white">
+            Ukończono: {payload[0].value.toFixed(1)}%
+          </p>
+          <p className="text-gray-300 text-sm">
+            ({payload[0].payload.completed}/{payload[0].payload.total})
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
     <div className="w-full h-[300px]">
       <ResponsiveContainer>
@@ -46,15 +63,7 @@ export const CategoriesChart = memo(({ data }: CategoriesChartProps) => {
               />
             ))}
           </Pie>
-          <Tooltip
-            contentStyle={{
-              backgroundColor: "rgba(17, 24, 39, 0.8)",
-              border: "1px solid rgba(107, 114, 128, 0.3)",
-              borderRadius: "0.5rem",
-            }}
-            formatter={(value: number) => [`${value.toFixed(1)}%`, "Ukończone"]}
-            labelStyle={{ color: "#E5E7EB" }}
-          />
+          <Tooltip content={<CustomTooltip />} />
           <Legend 
             formatter={(value) => (
               <span className="text-gray-300">{value}</span>
