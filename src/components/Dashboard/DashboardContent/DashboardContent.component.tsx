@@ -43,7 +43,6 @@ export const DashboardContent = memo(() => {
       </motion.h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {/* Community Block */}
         <motion.div
           variants={itemVariants}
           className={`
@@ -56,7 +55,6 @@ export const DashboardContent = memo(() => {
           <CommunityBlock />
         </motion.div>
 
-        {/* Game Block */}
         <motion.div
           variants={itemVariants}
           className={`
@@ -69,7 +67,6 @@ export const DashboardContent = memo(() => {
           <GameBlock />
         </motion.div>
 
-        {/* Stats Block */}
         <motion.div
           variants={itemVariants}
           className={`
