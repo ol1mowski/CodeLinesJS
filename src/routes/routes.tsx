@@ -5,6 +5,7 @@ import { ProtectedRoute } from "../components/ProtectedRoute/ProtectedRoute.comp
 import { ErrorPage } from "../components/ErrorPage/ErrorPage.component";
 import { StatsSection } from "../components/Dashboard/StatsSection/StatsSection.component";
 import { DashboardContent } from "../components/Dashboard/DashboardContent/DashboardContent.component";
+import { LearnSection } from "../components/Dashboard/LearnSection/LearnSection.component";
 
 const Home = lazy(() => import("../pages/Home"));
 const Auth = lazy(() => import("../pages/Auth"));
@@ -33,6 +34,10 @@ export const router = createBrowserRouter([
       {
         path: "stats",
         element: <StatsSection />
+      },
+      {
+        path: "learn",
+        element: <LearnSection />
       }
     ]
   },
