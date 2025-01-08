@@ -1,12 +1,24 @@
-import { memo, useCallback } from "react";
+import { memo, useCallback, useEffect } from "react";
 import { motion } from "framer-motion";
 import { CommunityNavigation } from "./Navigation/CommunityNavigation.component";
 import { CommunityProvider, useCommunity } from "../../../contexts/CommunityContext";
 import { ErrorBoundary } from "../../Common/ErrorBoundary.component";
 import { AsyncComponent } from "../../Common/AsyncComponent";
+import { useQueryClient } from '@tanstack/react-query';
+import { prefetchPosts } from '../../../hooks/usePosts';
+import { prefetchRanking } from '../../../hooks/useRanking';
 
 const CommunityContent = memo(() => {
   const { state: { activeView }, setActiveView } = useCommunity();
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (activeView === 'feed') {
+      prefetchRanking(queryClient, 'weekly', 0);
+    } else if (activeView === 'ranking') {
+      prefetchPosts(queryClient);
+    }
+  }, [activeView, queryClient]);
 
   const renderContent = useCallback(() => {
     switch (activeView) {

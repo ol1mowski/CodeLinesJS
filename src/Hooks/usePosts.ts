@@ -1,7 +1,9 @@
-import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQueryClient, QueryClient } from '@tanstack/react-query';
+import { useCallback } from 'react';
 import { Post } from '../types/post.types';
 
-const PAGE_SIZE = 5;
+const POSTS_PER_PAGE = 5;
+const POSTS_QUERY_KEY = 'posts';
 
 const mockPosts: Post[] = Array.from({ length: 50 }, (_, i) => ({
   id: (i + 1).toString(),
@@ -17,6 +19,25 @@ const mockPosts: Post[] = Array.from({ length: 50 }, (_, i) => ({
   isLiked: false
 }));
 
+const fetchPosts = async (page: number) => {
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  const start = page * POSTS_PER_PAGE;
+  const end = start + POSTS_PER_PAGE;
+  const posts = mockPosts.slice(start, end);
+  return {
+    posts,
+    nextPage: end < mockPosts.length ? page + 1 : undefined
+  };
+};
+
+export const prefetchPosts = async (queryClient: QueryClient) => {
+  await queryClient.prefetchInfiniteQuery({
+    queryKey: [POSTS_QUERY_KEY],
+    queryFn: ({ pageParam = 0 }) => fetchPosts(pageParam),
+    initialPageParam: 0,
+  });
+};
+
 export const usePosts = () => {
   const queryClient = useQueryClient();
 
@@ -27,19 +48,10 @@ export const usePosts = () => {
     hasNextPage,
     fetchNextPage
   } = useInfiniteQuery({
-    queryKey: ['posts'],
-    queryFn: async ({ pageParam = 0 }) => {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      const start = pageParam * PAGE_SIZE;
-      const end = start + PAGE_SIZE;
-      const posts = mockPosts.slice(start, end);
-      return {
-        posts,
-        nextPage: end < mockPosts.length ? pageParam + 1 : undefined
-      };
-    },
+    queryKey: [POSTS_QUERY_KEY],
+    queryFn: ({ pageParam = 0 }) => fetchPosts(pageParam),
     getNextPageParam: (lastPage) => lastPage.nextPage,
-    initialPageParam: 0
+    initialPageParam: 0,
   });
 
   const likeMutation = useMutation({
@@ -48,7 +60,11 @@ export const usePosts = () => {
       return postId;
     },
     onSuccess: (postId) => {
-      queryClient.setQueryData(['posts'], (oldData: any) => ({
+      queryClient.invalidateQueries({ 
+        queryKey: [POSTS_QUERY_KEY]
+      });
+      
+      queryClient.setQueryData([POSTS_QUERY_KEY], (oldData: any) => ({
         pages: oldData.pages.map((page: any) => ({
           ...page,
           posts: page.posts.map((post: Post) =>
@@ -66,14 +82,24 @@ export const usePosts = () => {
     }
   });
 
-  const posts = data?.pages.flatMap(page => page.posts) ?? [];
+  const prefetchNextPage = useCallback(() => {
+    if (hasNextPage) {
+      const nextPage = data?.pages.length ?? 0;
+      queryClient.prefetchInfiniteQuery({
+        queryKey: [POSTS_QUERY_KEY],
+        queryFn: ({ pageParam = nextPage }) => fetchPosts(pageParam),
+        initialPageParam: nextPage,
+      });
+    }
+  }, [queryClient, hasNextPage, data?.pages.length]);
 
   return {
-    posts,
+    posts: data?.pages.flatMap(page => page.posts) ?? [],
     isLoading,
     isFetchingNextPage,
     hasNextPage,
     fetchNextPage,
+    prefetchNextPage,
     likePost: likeMutation.mutate
   };
 }; 
