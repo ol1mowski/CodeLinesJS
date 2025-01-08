@@ -1,6 +1,6 @@
-import { memo, useCallback } from "react";
+import { memo, useCallback, useState } from "react";
 import { motion } from "framer-motion";
-import { FaUserCircle, FaTrophy, FaCode, FaBullseye } from "react-icons/fa";
+import { FaUserCircle, FaTrophy, FaCode, FaBullseye, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useRanking } from "../../../../hooks/useRanking";
 import { RankingPeriod, RankingUser } from "../../../../types/ranking.types";
 
@@ -9,17 +9,70 @@ type RankingListProps = {
 };
 
 export const RankingList = memo(({ period }: RankingListProps) => {
-  const { users, isLoading } = useRanking(period);
+  const [page, setPage] = useState(0);
+  const {
+    users,
+    isLoading,
+    isPreviousData,
+    currentPage,
+    totalPages,
+    hasNextPage,
+    hasPreviousPage
+  } = useRanking(period, page);
+
+  const handlePreviousPage = useCallback(() => {
+    setPage(old => Math.max(0, old - 1));
+  }, []);
+
+  const handleNextPage = useCallback(() => {
+    if (!isPreviousData && hasNextPage) {
+      setPage(old => old + 1);
+    }
+  }, [isPreviousData, hasNextPage]);
 
   if (isLoading) {
     return <RankingListSkeleton />;
   }
 
   return (
-    <div className="space-y-4">
-      {users?.map((user) => (
-        <RankingCard key={user.id} user={user} />
-      ))}
+    <div className="space-y-6">
+      <div className="space-y-4">
+        {users?.map((user) => (
+          <RankingCard key={user.id} user={user} />
+        ))}
+      </div>
+
+      <div className="flex items-center justify-between pt-4 border-t border-gray-700/50">
+        <button
+          onClick={handlePreviousPage}
+          disabled={!hasPreviousPage}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors
+            ${hasPreviousPage
+              ? "text-gray-200 hover:bg-gray-700/30"
+              : "text-gray-600 cursor-not-allowed"
+            }`}
+        >
+          <FaChevronLeft />
+          Poprzednia
+        </button>
+
+        <span className="text-gray-400">
+          Strona {currentPage + 1} z {totalPages}
+        </span>
+
+        <button
+          onClick={handleNextPage}
+          disabled={isPreviousData || !hasNextPage}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors
+            ${hasNextPage && !isPreviousData
+              ? "text-gray-200 hover:bg-gray-700/30"
+              : "text-gray-600 cursor-not-allowed"
+            }`}
+        >
+          Następna
+          <FaChevronRight />
+        </button>
+      </div>
     </div>
   );
 });

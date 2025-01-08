@@ -1,96 +1,60 @@
 import { useQuery } from '@tanstack/react-query';
 import { RankingPeriod, RankingUser } from '../types/ranking.types';
 
-const mockRankingData: Record<RankingPeriod, RankingUser[]> = {
-  daily: [
-    {
-      id: '1',
-      name: 'Anna Kowalska',
-      avatar: 'https://i.pravatar.cc/150?img=1',
-      rank: 1,
-      points: 520,
-      level: 42,
-      badges: [
-        { id: '1', name: 'Daily Champion', icon: '👑' },
-        { id: '2', name: 'Code Master', icon: '💎' },
-      ],
-      stats: {
-        completedChallenges: 12,
-        winStreak: 5,
-        accuracy: 94,
-      },
-    }
-  ],
-  weekly: [
-    {
-      id: '1',
-      name: 'Anna Kowalska',
-      avatar: 'https://i.pravatar.cc/150?img=1',
-      rank: 1,
-      points: 15420,
-      level: 42,
-      badges: [
-        { id: '1', name: 'Weekly Leader', icon: '🏆' },
-        { id: '2', name: 'Code Master', icon: '💎' },
-      ],
-      stats: {
-        completedChallenges: 156,
-        winStreak: 12,
-        accuracy: 94,
-      },
-    }
-  ],
-  monthly: [
-    {
-      id: '1',
-      name: 'Anna Kowalska',
-      avatar: 'https://i.pravatar.cc/150?img=1',
-      rank: 1,
-      points: 45420,
-      level: 42,
-      badges: [
-        { id: '1', name: 'Monthly Champion', icon: '🌟' },
-        { id: '2', name: 'Code Master', icon: '💎' },
-      ],
-      stats: {
-        completedChallenges: 456,
-        winStreak: 25,
-        accuracy: 94,
-      },
-    }
-  ],
-  allTime: [
-    {
-      id: '1',
-      name: 'Anna Kowalska',
-      avatar: 'https://i.pravatar.cc/150?img=1',
-      rank: 1,
-      points: 145420,
-      level: 42,
-      badges: [
-        { id: '1', name: 'All-Time Legend', icon: '⭐' },
-        { id: '2', name: 'Code Master', icon: '💎' },
-      ],
-      stats: {
-        completedChallenges: 1256,
-        winStreak: 45,
-        accuracy: 94,
-      },
-    }
-  ]
+const PAGE_SIZE = 10;
+
+// Generowanie większej ilości danych testowych
+const generateMockData = (period: RankingPeriod): RankingUser[] => {
+  return Array.from({ length: 100 }, (_, i) => ({
+    id: (i + 1).toString(),
+    name: `Użytkownik ${i + 1}`,
+    avatar: `https://i.pravatar.cc/150?img=${(i % 10) + 1}`,
+    rank: i + 1,
+    points: Math.floor(Math.random() * 100000),
+    level: Math.floor(Math.random() * 100),
+    badges: [
+      { id: '1', name: `${period} Champion`, icon: '👑' },
+      { id: '2', name: 'Code Master', icon: '💎' },
+    ],
+    stats: {
+      completedChallenges: Math.floor(Math.random() * 1000),
+      winStreak: Math.floor(Math.random() * 50),
+      accuracy: Math.floor(Math.random() * 20) + 80,
+    },
+  }));
 };
 
-export const useRanking = (period: RankingPeriod) => {
-  const { data, isLoading } = useQuery({
-    queryKey: ['ranking', period],
+const mockRankingData: Record<RankingPeriod, RankingUser[]> = {
+  daily: generateMockData('daily'),
+  weekly: generateMockData('weekly'),
+  monthly: generateMockData('monthly'),
+  allTime: generateMockData('allTime'),
+};
+
+export const useRanking = (period: RankingPeriod, page: number = 0) => {
+  const { data, isLoading, isPreviousData } = useQuery({
+    queryKey: ['ranking', period, page],
     queryFn: async () => {
       await new Promise(resolve => setTimeout(resolve, 1000));
-      return mockRankingData[period];
-    }
+      const start = page * PAGE_SIZE;
+      const end = start + PAGE_SIZE;
+      const users = mockRankingData[period].slice(start, end);
+      const totalPages = Math.ceil(mockRankingData[period].length / PAGE_SIZE);
+      
+      return {
+        users,
+        totalPages,
+        currentPage: page,
+        hasNextPage: page < totalPages - 1,
+        hasPreviousPage: page > 0
+      };
+    },
+    keepPreviousData: true
   });
 
   return {
-    users: data,
-    isLoading
+    ...data,
+    isLoading,
+    isPreviousData
   };
 }; 
