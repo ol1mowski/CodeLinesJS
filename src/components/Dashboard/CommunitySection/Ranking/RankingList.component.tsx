@@ -62,7 +62,7 @@ export const RankingList = memo(({ period }: RankingListProps) => {
         </button>
 
         <span className="text-gray-400">
-          Strona {currentPage + 1} z {totalPages}
+          Strona {currentPage || 1} z {totalPages}
         </span>
 
         <button

@@ -1,8 +1,7 @@
-import { RankingPeriod, RankingUser } from '../types/ranking.types';
+import { RankingUser } from '../types/ranking.types';
 
 const ctx: Worker = self as any;
 
-// Funkcje pomocnicze do obliczeń
 const calculateUserStats = (user: RankingUser) => {
   const efficiency = (user.stats.completedChallenges * user.stats.accuracy) / 100;
   const streakBonus = user.stats.winStreak * 10;
@@ -17,9 +16,8 @@ const sortUsers = (users: RankingUser[]) => {
   });
 };
 
-// Nasłuchiwanie wiadomości
 ctx.addEventListener('message', (event) => {
-  const { users, period, type } = event.data;
+  const { users, type } = event.data;
 
   switch (type) {
     case 'SORT_USERS':
@@ -28,7 +26,7 @@ ctx.addEventListener('message', (event) => {
       break;
 
     case 'CALCULATE_STATS':
-      const stats = users.map(user => ({
+      const stats = users.map((user: RankingUser) => ({
         id: user.id,
         stats: calculateUserStats(user)
       }));

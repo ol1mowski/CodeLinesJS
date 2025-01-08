@@ -10,7 +10,7 @@ const mockPosts: Post[] = Array.from({ length: 50 }, (_, i) => ({
   author: {
     id: '1',
     name: 'Jan Kowalski',
-    avatar: `https://i.pravatar.cc/150?img=${(i % 10) + 1}`
+    avatar: `https://i.pravatar.cc/150?u=${i + 1}`
   },
   content: `Post numer ${i + 1} o programowaniu! 🚀`,
   createdAt: new Date(Date.now() - i * 3600000),

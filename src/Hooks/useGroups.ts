@@ -5,18 +5,13 @@ const mockGroups: Group[] = [
   {
     id: '1',
     name: 'React Masters',
-    description: 'Grupa dla pasjonatów React i nowoczesnego front-endu',
-    image: 'https://picsum.photos/200',
-    membersCount: 1234,
-    postsCount: 567,
-    tags: ['react', 'typescript', 'frontend'],
+    description: 'Grupa dla zaawansowanych programistów React',
+    image: 'https://i.pravatar.cc/150?u=react_masters',
+    membersCount: 1250,
+    postsCount: 450,
+    lastActive: new Date('2024-03-10T15:00:00'),
     isJoined: false,
-    lastActive: new Date('2024-03-15T10:30:00'),
-    owner: {
-      id: '1',
-      name: 'Anna Kowalska',
-      avatar: 'https://i.pravatar.cc/150?img=1'
-    }
+    tags: ['react', 'javascript', 'frontend']
   },
   {
     id: '2',

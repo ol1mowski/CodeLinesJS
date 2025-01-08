@@ -4,7 +4,7 @@ import { RankingStats } from "./RankingStats.component";
 import { RankingPeriod } from "../../../../types/ranking.types";
 import { RankingPeriodSelect } from "./RankingPeriodSelect.component";
 
-export const CommunityRanking = memo(() => {
+const CommunityRanking = memo(() => {
   const [period, setPeriod] = useState<RankingPeriod>("weekly");
 
   return (
@@ -28,5 +28,7 @@ export const CommunityRanking = memo(() => {
     </div>
   );
 });
+
+export default CommunityRanking;
 
 CommunityRanking.displayName = "CommunityRanking"; 

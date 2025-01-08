@@ -12,14 +12,12 @@ export const useGroupsFilters = (groups: Group[] | undefined) => {
 
     let filtered = [...groups];
 
-    // Filtrowanie po typie
     if (filterType === "joined") {
       filtered = filtered.filter(group => group.isJoined);
     } else if (filterType === "recommended") {
       filtered = filtered.filter(group => !group.isJoined);
     }
 
-    // Filtrowanie po wyszukiwaniu
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(group => 

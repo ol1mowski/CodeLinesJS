@@ -42,7 +42,7 @@ export const useComments = (postId: string) => {
   });
 
   const addCommentMutation = useMutation({
-    mutationFn: async ({ postId, content }: { postId: string; content: string }) => {
+    mutationFn: async ({ content }: { postId: string; content: string }) => {
       await new Promise(resolve => setTimeout(resolve, 500));
       const newComment: Comment = {
         id: Date.now().toString(),

@@ -7,7 +7,23 @@ const RANKING_QUERY_KEY = 'ranking';
 const PAGE_SIZE = 10;
 
 const generateMockData = (period: RankingPeriod): RankingUser[] => {
-  // ... istniejący kod
+  return Array.from({ length: 100 }, (_, i) => ({
+    id: (i + 1).toString(),
+    name: `Użytkownik ${i + 1}`,
+    avatar: `https://i.pravatar.cc/150?u=${i + 1}`,
+    rank: i + 1,
+    points: Math.floor(Math.random() * 100000),
+    level: Math.floor(Math.random() * 100),
+    badges: [
+      { id: '1', name: `${period} Champion`, icon: '👑' },
+      { id: '2', name: 'Code Master', icon: '💎' },
+    ],
+    stats: {
+      completedChallenges: Math.floor(Math.random() * 1000),
+      winStreak: Math.floor(Math.random() * 50),
+      accuracy: Math.floor(Math.random() * 20) + 80,
+    },
+  }));
 };
 
 const mockRankingData: Record<RankingPeriod, RankingUser[]> = {
@@ -48,15 +64,14 @@ export const useRanking = (period: RankingPeriod, page: number = 0) => {
   const queryClient = useQueryClient();
   const { sortUsers } = useRankingWorker();
 
-  const { data, isLoading, isPreviousData } = useQuery({
+  const { data, isLoading, isPlaceholderData } = useQuery({
     queryKey: [RANKING_QUERY_KEY, period, page],
     queryFn: async () => {
       const result = await fetchRanking(period, page);
-  
       const sortedUsers = await sortUsers(result.users);
       return { ...result, users: sortedUsers };
     },
-    keepPreviousData: true,
+    placeholderData: (oldData) => oldData,
     staleTime: 10 * 60 * 1000,
   });
 
@@ -73,6 +88,6 @@ export const useRanking = (period: RankingPeriod, page: number = 0) => {
   return {
     ...data,
     isLoading,
-    isPreviousData
+    isPreviousData: isPlaceholderData
   };
 }; 

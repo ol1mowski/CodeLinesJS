@@ -1,10 +1,14 @@
 import { memo, useCallback, useEffect } from "react";
+
 import { motion } from "framer-motion";
-import { CommunityNavigation } from "./Navigation/CommunityNavigation.component";
+
+import { useQueryClient } from '@tanstack/react-query';
+
 import { CommunityProvider, useCommunity } from "../../../contexts/CommunityContext";
+
+import { CommunityNavigation } from "./Navigation/CommunityNavigation.component";
 import { ErrorBoundary } from "../../Common/ErrorBoundary.component";
 import { AsyncComponent } from "../../Common/AsyncComponent";
-import { useQueryClient } from '@tanstack/react-query';
 import { prefetchPosts } from '../../../hooks/usePosts';
 import { prefetchRanking } from '../../../hooks/useRanking';
 
