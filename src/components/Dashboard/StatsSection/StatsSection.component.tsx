@@ -1,8 +1,9 @@
 import { memo } from "react";
 import { motion } from "framer-motion";
+import { useStats } from "../../../hooks/useStats";
 import { StatsOverview } from "./StatsOverview/StatsOverview.component";
 import { StatsCharts } from "./StatsCharts/StatsCharts.component";
-import { useStats } from "../../../../hooks/useStats";
+
 
 export const StatsSection = memo(() => {
   const { stats, isLoading } = useStats();

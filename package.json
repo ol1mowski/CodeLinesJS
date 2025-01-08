@@ -16,6 +16,7 @@
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
     "@react-oauth/google": "^0.12.1",
+    "@tanstack/react-query": "^5.62.16",
     "@types/three": "^0.171.0",
     "framer-motion": "^11.15.0",
     "jwt-decode": "^4.0.0",
@@ -27,6 +28,7 @@
     "react-icons": "^5.4.0",
     "react-router-dom": "^7.1.1",
     "react-toastify": "^11.0.2",
+    "recharts": "^2.15.0",
     "three": "^0.172.0",
     "zod": "^3.24.1"
   },
