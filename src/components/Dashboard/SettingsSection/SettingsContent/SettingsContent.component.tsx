@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { memo } from "react";
 import { ProfileForm } from "./ProfileForm/ProfileForm.component";
 import { SecurityForm } from "./SecurityForm/SecurityForm.component";
+import { PreferencesForm } from "./PreferencesForm/PreferencesForm.component";
 
 type SettingsView = "profile" | "security" | "preferences" | "delete";
 
@@ -28,6 +29,7 @@ export const SettingsContent = memo(({ activeView }: SettingsContentProps) => (
       
       {activeView === "profile" && <ProfileForm />}
       {activeView === "security" && <SecurityForm />}
+      {activeView === "preferences" && <PreferencesForm />}
     </motion.div>
   </AnimatePresence>
 ));

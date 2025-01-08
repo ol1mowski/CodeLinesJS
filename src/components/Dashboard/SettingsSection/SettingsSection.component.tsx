@@ -3,6 +3,7 @@ import { memo, useState } from "react";
 import { SettingsSidebar } from "./SettingsSidebar/SettingsSidebar.component";
 import { SettingsContent } from "./SettingsContent/SettingsContent.component";
 
+
 type SettingsView = "profile" | "security" | "preferences" | "delete";
 
 export const SettingsSection = memo(() => {
