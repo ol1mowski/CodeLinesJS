@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { memo } from "react";
 import { CreatePost } from "./CreatePost.component";
 import { PostsList } from "./PostsList.component";

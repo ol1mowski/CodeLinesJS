@@ -19,7 +19,39 @@ const mockRankingData: RankingUser[] = [
       accuracy: 94,
     },
   },
-  // Więcej użytkowników...
+  {
+    id: '2',
+    name: 'Jan Nowak',
+    avatar: 'https://i.pravatar.cc/150?img=2',
+    rank: 2,
+    points: 14250,
+    level: 38,
+    badges: [
+      { id: '3', name: 'Problem Solver', icon: '🔥' },
+      { id: '4', name: 'Quick Learner', icon: '⚡' },
+    ],
+    stats: {
+      completedChallenges: 142,
+      winStreak: 8,
+      accuracy: 91,
+    },
+  },
+  {
+    id: '3',
+    name: 'Marta Wiśniewska',
+    avatar: 'https://i.pravatar.cc/150?img=3',
+    rank: 3,
+    points: 13800,
+    level: 35,
+    badges: [
+      { id: '5', name: 'Code Ninja', icon: '🥷' },
+    ],
+    stats: {
+      completedChallenges: 128,
+      winStreak: 15,
+      accuracy: 88,
+    },
+  }
 ];
 
 export const useRanking = (period: RankingPeriod) => {

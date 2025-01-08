@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { memo, useState } from "react";
 import { RankingList } from "./RankingList.component";
 import { RankingPeriodSelect } from "./RankingPeriodSelect.component";
