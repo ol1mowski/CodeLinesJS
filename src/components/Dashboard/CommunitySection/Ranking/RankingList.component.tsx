@@ -4,6 +4,7 @@ import { FaUserCircle, FaTrophy, FaCode, FaBullseye, FaChevronLeft, FaChevronRig
 import { useRanking } from "../../../../hooks/useRanking";
 import { RankingPeriod, RankingUser } from "../../../../types/ranking.types";
 import { LazyImage } from "../../../Common/LazyImage.component";
+import { MemoizedVirtualList } from "../../../Common/VirtualList.component";
 
 type RankingListProps = {
   period: RankingPeriod;
@@ -37,10 +38,13 @@ export const RankingList = memo(({ period }: RankingListProps) => {
 
   return (
     <div className="space-y-6">
-      <div className="space-y-4">
-        {users?.map((user) => (
-          <RankingCard key={user.id} user={user} />
-        ))}
+      <div className="h-[600px]">
+        <MemoizedVirtualList
+          items={users || []}
+          renderItem={(user) => <RankingCard key={user.id} user={user} />}
+          itemHeight={100}
+          className="h-full"
+        />
       </div>
 
       <div className="flex items-center justify-between pt-4 border-t border-gray-700/50">

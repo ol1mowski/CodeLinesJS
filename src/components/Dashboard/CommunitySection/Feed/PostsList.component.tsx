@@ -1,6 +1,7 @@
 import { memo, useCallback, useRef, useEffect } from "react";import { Post } from "./Post.component";
 import { PostsListSkeleton } from "./PostsListSkeleton.component";
 import { usePosts } from "../../../../hooks/usePosts";
+import { MemoizedVirtualList } from "../../../Common/VirtualList.component";
 
 export const PostsList = memo(() => {
   const {
@@ -41,9 +42,16 @@ export const PostsList = memo(() => {
 
   return (
     <div className="space-y-6">
-      {posts.map((post) => (
-        <Post key={post.id} post={post} onLike={handleLike} />
-      ))}
+      <div className="h-[800px]">
+        <MemoizedVirtualList
+          items={posts}
+          renderItem={(post) => (
+            <Post key={post.id} post={post} onLike={handleLike} />
+          )}
+          itemHeight={200}
+          className="h-full"
+        />
+      </div>
       
       {isFetchingNextPage && (
         <div className="py-4">
