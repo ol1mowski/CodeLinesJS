@@ -1,25 +1,37 @@
-import { memo, useCallback } from "react";
+import { memo, useCallback, Suspense } from "react";
 import { motion } from "framer-motion";
 import { CommunityNavigation } from "./Navigation/CommunityNavigation.component";
 import { CommunityFeed } from "./Feed/CommunityFeed.component";
 import { CommunityRanking } from "./Ranking/CommunityRanking.component";
 import { CommunityGroups } from "./Groups/CommunityGroups.component";
 import { CommunityProvider, useCommunity } from "../../../contexts/CommunityContext";
+import { ErrorBoundary } from "../../Common/ErrorBoundary.component";
+import { LoadingFallback } from "../../Common/LoadingFallback.component";
 
 const CommunityContent = memo(() => {
   const { state: { activeView }, setActiveView } = useCommunity();
 
   const renderContent = useCallback(() => {
-    switch (activeView) {
-      case "feed":
-        return <CommunityFeed />;
-      case "ranking":
-        return <CommunityRanking />;
-      case "groups":
-        return <CommunityGroups />;
-      default:
-        return null;
-    }
+    const content = (() => {
+      switch (activeView) {
+        case "feed":
+          return <CommunityFeed />;
+        case "ranking":
+          return <CommunityRanking />;
+        case "groups":
+          return <CommunityGroups />;
+        default:
+          return null;
+      }
+    })();
+
+    return (
+      <ErrorBoundary>
+        <Suspense fallback={<LoadingFallback />}>
+          {content}
+        </Suspense>
+      </ErrorBoundary>
+    );
   }, [activeView]);
 
   return (
@@ -55,9 +67,11 @@ const CommunityContent = memo(() => {
 });
 
 export const CommunitySection = memo(() => (
-  <CommunityProvider>
-    <CommunityContent />
-  </CommunityProvider>
+  <ErrorBoundary>
+    <CommunityProvider>
+      <CommunityContent />
+    </CommunityProvider>
+  </ErrorBoundary>
 ));
 
 CommunityContent.displayName = "CommunityContent";
