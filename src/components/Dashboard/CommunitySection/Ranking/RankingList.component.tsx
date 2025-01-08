@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { FaUserCircle, FaTrophy, FaCode, FaBullseye, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useRanking } from "../../../../hooks/useRanking";
 import { RankingPeriod, RankingUser } from "../../../../types/ranking.types";
+import { LazyImage } from "../../../Common/LazyImage.component";
 
 type RankingListProps = {
   period: RankingPeriod;
@@ -101,10 +102,10 @@ const RankingCard = memo(({ user }: { user: RankingUser }) => {
       <div className="flex items-center gap-4">
         <div className="w-12 h-12 relative">
           {user.avatar ? (
-            <img
+            <LazyImage
               src={user.avatar}
               alt={user.name}
-              className="w-full h-full rounded-full"
+              className="w-full h-full rounded-full relative"
             />
           ) : (
             <FaUserCircle className="w-full h-full text-gray-600" />
