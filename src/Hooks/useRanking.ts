@@ -1,5 +1,7 @@
-import { useQuery, useQueryClient, QueryClient, useEffect } from '@tanstack/react-query';
+import { useQuery, useQueryClient, QueryClient } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import { RankingPeriod, RankingUser } from '../types/ranking.types';
+import { useRankingWorker } from './useRankingWorker';
 
 const RANKING_QUERY_KEY = 'ranking';
 const PAGE_SIZE = 10;
@@ -44,15 +46,21 @@ export const prefetchRanking = async (
 
 export const useRanking = (period: RankingPeriod, page: number = 0) => {
   const queryClient = useQueryClient();
+  const { sortUsers } = useRankingWorker();
 
   const { data, isLoading, isPreviousData } = useQuery({
     queryKey: [RANKING_QUERY_KEY, period, page],
-    queryFn: () => fetchRanking(period, page),
+    queryFn: async () => {
+      const result = await fetchRanking(period, page);
+  
+      const sortedUsers = await sortUsers(result.users);
+      return { ...result, users: sortedUsers };
+    },
     keepPreviousData: true,
-    staleTime: 10 * 60 * 1000, // 10 minut dla rankingu
+    staleTime: 10 * 60 * 1000,
   });
 
-  // Prefetch next page
+
   useEffect(() => {
     if (data?.hasNextPage) {
       queryClient.prefetchQuery({
