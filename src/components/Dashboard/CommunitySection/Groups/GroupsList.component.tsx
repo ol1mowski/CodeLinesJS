@@ -4,6 +4,7 @@ import { FaUsers, FaComments, FaClock } from "react-icons/fa";
 import { useGroups } from "../../../../hooks/useGroups";
 import { formatDistanceToNow } from "date-fns";
 import { pl } from "date-fns/locale";
+import { Group } from "../../../../types/groups.types";
 
 export const GroupsList = memo(() => {
   const { groups, isLoading } = useGroups();
@@ -14,7 +15,7 @@ export const GroupsList = memo(() => {
 
   return (
     <div className="space-y-4">
-      {groups?.map((group) => (
+      {groups?.map((group: Group) => (
         <motion.div
           key={group.id}
           initial={{ opacity: 0, y: 20 }}
