@@ -1,6 +1,4 @@
-import { memo, useCallback, useRef, useEffect } from "react";
-import { motion } from "framer-motion";
-import { Post } from "./Post.component";
+import { memo, useCallback, useRef, useEffect } from "react";import { Post } from "./Post.component";
 import { PostsListSkeleton } from "./PostsListSkeleton.component";
 import { usePosts } from "../../../../hooks/usePosts";
 

@@ -1,37 +1,36 @@
-import { memo, useCallback, Suspense } from "react";
+import { memo, useCallback } from "react";
 import { motion } from "framer-motion";
 import { CommunityNavigation } from "./Navigation/CommunityNavigation.component";
-import { CommunityFeed } from "./Feed/CommunityFeed.component";
-import { CommunityRanking } from "./Ranking/CommunityRanking.component";
-import { CommunityGroups } from "./Groups/CommunityGroups.component";
 import { CommunityProvider, useCommunity } from "../../../contexts/CommunityContext";
 import { ErrorBoundary } from "../../Common/ErrorBoundary.component";
-import { LoadingFallback } from "../../Common/LoadingFallback.component";
+import { AsyncComponent } from "../../Common/AsyncComponent";
 
 const CommunityContent = memo(() => {
   const { state: { activeView }, setActiveView } = useCommunity();
 
   const renderContent = useCallback(() => {
-    const content = (() => {
-      switch (activeView) {
-        case "feed":
-          return <CommunityFeed />;
-        case "ranking":
-          return <CommunityRanking />;
-        case "groups":
-          return <CommunityGroups />;
-        default:
-          return null;
-      }
-    })();
-
-    return (
-      <ErrorBoundary>
-        <Suspense fallback={<LoadingFallback />}>
-          {content}
-        </Suspense>
-      </ErrorBoundary>
-    );
+    switch (activeView) {
+      case "feed":
+        return (
+          <AsyncComponent
+            importFn={() => import("./Feed/CommunityFeed.component")}
+          />
+        );
+      case "ranking":
+        return (
+          <AsyncComponent
+            importFn={() => import("./Ranking/CommunityRanking.component")}
+          />
+        );
+      case "groups":
+        return (
+          <AsyncComponent
+            importFn={() => import("./Groups/CommunityGroups.component")}
+          />
+        );
+      default:
+        return null;
+    }
   }, [activeView]);
 
   return (
