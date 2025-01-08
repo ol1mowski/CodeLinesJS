@@ -1,5 +1,4 @@
 import { memo, useCallback, useState } from "react";
-import { motion } from "framer-motion";
 import { FaSearch } from "react-icons/fa";
 
 type FilterValue = "all" | "joined" | "recommended";

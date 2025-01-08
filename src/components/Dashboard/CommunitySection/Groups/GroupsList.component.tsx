@@ -1,16 +1,16 @@
 import { memo, useCallback } from "react";
 import { motion } from "framer-motion";
 import { FaUsers, FaComments, FaClock } from "react-icons/fa";
-import { useGroups } from "../../../../hooks/useGroups";
+
 import { formatDistanceToNow } from "date-fns";
 import { pl } from "date-fns/locale";
 import { Group } from "../../../../types/groups.types";
+import { useGroups } from "../../../../hooks/useGroups";
 
 export const GroupsList = memo(() => {
   const { groups, isLoading } = useGroups();
 
   const handleJoinGroup = useCallback((groupId: string) => {
-    // TODO: Implementacja dołączania do grupy
     console.log('Dołączanie do grupy:', groupId);
   }, []);
 
@@ -31,7 +31,7 @@ export const GroupsList = memo(() => {
   );
 });
 
-// Wydzielenie karty grupy do osobnego komponentu dla lepszej memoizacji
+
 const GroupCard = memo(({ 
   group, 
   onJoin 

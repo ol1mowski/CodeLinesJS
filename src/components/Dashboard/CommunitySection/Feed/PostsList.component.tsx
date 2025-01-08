@@ -1,12 +1,15 @@
+import { memo, useCallback } from "react";
 import { motion } from "framer-motion";
-import { memo } from "react";
+import { Post } from "./Post.component";
 import { PostsListSkeleton } from "./PostsListSkeleton.component";
 import { usePosts } from "../../../../hooks/usePosts";
-import { Post } from "./Post.component";
-
 
 export const PostsList = memo(() => {
-  const { posts, isLoading } = usePosts();
+  const { posts, isLoading, likePost } = usePosts();
+
+  const handleLike = useCallback((postId: string) => {
+    likePost(postId);
+  }, [likePost]);
 
   if (isLoading) {
     return <PostsListSkeleton />;
@@ -18,8 +21,8 @@ export const PostsList = memo(() => {
       animate={{ opacity: 1 }}
       className="space-y-6"
     >
-      {posts.map((post) => (
-        <Post key={post.id} post={post} />
+      {posts?.map((post) => (
+        <Post key={post.id} post={post} onLike={handleLike} />
       ))}
     </motion.div>
   );

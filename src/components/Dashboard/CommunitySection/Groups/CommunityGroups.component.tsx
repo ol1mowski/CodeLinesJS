@@ -1,9 +1,10 @@
 import { memo } from "react";
 import { GroupsList } from "./GroupsList.component";
-import { CreateGroupButton } from "./CreateGroupButton.component";
-import { GroupsFilter } from "./GroupsFilter.component";
+
 import { YourGroups } from "./YourGroups.component";
 import { PopularTags } from "./PopularTags.component";
+import { GroupsFilter } from "./GroupsFilter.component";
+import { CreateGroupButton } from "./CreateGroupButton.component";
 
 export const CommunityGroups = memo(() => {
   return (

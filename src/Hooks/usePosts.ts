@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Post } from '../types/post.types';
 
 const mockPosts: Post[] = [
@@ -18,12 +18,41 @@ const mockPosts: Post[] = [
 ];
 
 export const usePosts = () => {
-  return useQuery({
+  const queryClient = useQueryClient();
+
+  const { data: posts, isLoading } = useQuery({
     queryKey: ['posts'],
     queryFn: async () => {
-      // !!! delete in future
       await new Promise(resolve => setTimeout(resolve, 1000));
       return mockPosts;
     }
   });
+
+  const likeMutation = useMutation({
+    mutationFn: async (postId: string) => {
+      // Symulacja API
+      await new Promise(resolve => setTimeout(resolve, 500));
+      return postId;
+    },
+    onSuccess: (postId) => {
+      queryClient.setQueryData(['posts'], (oldPosts: Post[] | undefined) => {
+        if (!oldPosts) return [];
+        return oldPosts.map(post => 
+          post.id === postId 
+            ? { 
+                ...post, 
+                isLiked: !post.isLiked,
+                likesCount: post.isLiked ? post.likesCount - 1 : post.likesCount + 1
+              }
+            : post
+        );
+      });
+    }
+  });
+
+  return {
+    posts,
+    isLoading,
+    likePost: likeMutation.mutate
+  };
 }; 
