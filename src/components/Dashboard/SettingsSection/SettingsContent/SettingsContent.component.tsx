@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { memo } from "react";
+import { ProfileForm } from "./ProfileForm/ProfileForm.component";
 
 type SettingsView = "profile" | "security" | "preferences" | "delete";
 
@@ -24,7 +25,7 @@ export const SettingsContent = memo(({ activeView }: SettingsContentProps) => (
         {activeView === "delete" && "Usuń Konto"}
       </h2>
       
-      {/* Tutaj będą renderowane odpowiednie formularze */}
+      {activeView === "profile" && <ProfileForm />}
     </motion.div>
   </AnimatePresence>
 ));
