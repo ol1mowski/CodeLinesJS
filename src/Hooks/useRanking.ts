@@ -3,7 +3,6 @@ import { RankingPeriod, RankingUser } from '../types/ranking.types';
 
 const PAGE_SIZE = 10;
 
-// Generowanie większej ilości danych testowych
 const generateMockData = (period: RankingPeriod): RankingUser[] => {
   return Array.from({ length: 100 }, (_, i) => ({
     id: (i + 1).toString(),

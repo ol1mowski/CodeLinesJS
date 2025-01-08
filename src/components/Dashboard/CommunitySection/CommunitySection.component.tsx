@@ -1,18 +1,13 @@
-import { memo, useCallback, useState } from "react";
+import { memo, useCallback } from "react";
 import { motion } from "framer-motion";
 import { CommunityNavigation } from "./Navigation/CommunityNavigation.component";
 import { CommunityFeed } from "./Feed/CommunityFeed.component";
 import { CommunityRanking } from "./Ranking/CommunityRanking.component";
 import { CommunityGroups } from "./Groups/CommunityGroups.component";
+import { CommunityProvider, useCommunity } from "../../../contexts/CommunityContext";
 
-type CommunityView = "feed" | "ranking" | "groups";
-
-export const CommunitySection = memo(() => {
-  const [activeView, setActiveView] = useState<CommunityView>("feed");
-
-  const handleViewChange = useCallback((view: CommunityView) => {
-    setActiveView(view);
-  }, []);
+const CommunityContent = memo(() => {
+  const { state: { activeView }, setActiveView } = useCommunity();
 
   const renderContent = useCallback(() => {
     switch (activeView) {
@@ -41,7 +36,7 @@ export const CommunitySection = memo(() => {
 
         <CommunityNavigation 
           activeView={activeView} 
-          onViewChange={handleViewChange} 
+          onViewChange={setActiveView} 
         />
         
         <motion.div
@@ -59,4 +54,11 @@ export const CommunitySection = memo(() => {
   );
 });
 
+export const CommunitySection = memo(() => (
+  <CommunityProvider>
+    <CommunityContent />
+  </CommunityProvider>
+));
+
+CommunityContent.displayName = "CommunityContent";
 CommunitySection.displayName = "CommunitySection"; 
