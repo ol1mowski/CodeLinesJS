@@ -29,7 +29,6 @@ export const ProfileForm = memo(() => {
   });
 
   const onSubmit = async (data: UserProfile) => {
-    // Tutaj będzie integracja z API
     console.log(data);
   };
 
