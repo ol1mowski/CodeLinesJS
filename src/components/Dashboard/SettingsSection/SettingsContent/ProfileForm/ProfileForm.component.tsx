@@ -3,6 +3,7 @@ import { memo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { FaUser, FaEnvelope } from "react-icons/fa";
 import { UserProfile } from "../../../../../types/settings.types";
 import { FormInput } from "../../../../UI/Form/FormInput/FormInput.component";
 import { Button } from "../../../../UI/Button/Button.component";
@@ -56,7 +57,10 @@ export const ProfileForm = memo(() => {
         </div>
         <div className="flex-1">
           <FormInput
+            type="text"
             label="Nazwa użytkownika"
+            placeholder="Wprowadź nazwę użytkownika"
+            icon={<FaUser />}
             error={errors.username?.message}
             {...register("username")}
           />
@@ -64,8 +68,10 @@ export const ProfileForm = memo(() => {
       </div>
 
       <FormInput
-        label="Email"
         type="email"
+        label="Email"
+        placeholder="Wprowadź adres email"
+        icon={<FaEnvelope />}
         error={errors.email?.message}
         {...register("email")}
       />
@@ -76,6 +82,7 @@ export const ProfileForm = memo(() => {
         </label>
         <textarea
           {...register("bio")}
+          placeholder="Napisz coś o sobie..."
           className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors resize-none h-32"
         />
       </div>
