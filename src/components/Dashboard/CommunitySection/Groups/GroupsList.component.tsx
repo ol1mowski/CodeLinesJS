@@ -6,7 +6,7 @@ import { formatDistanceToNow } from "date-fns";
 import { pl } from "date-fns/locale";
 import { Group } from "../../../../types/groups.types";
 import { useGroups } from "../../../../hooks/useGroups";
-import { LazyImage } from "../../../Common/LazyImage.component";
+
 
 export const GroupsList = memo(() => {
   const { groups, isLoading } = useGroups();
@@ -52,7 +52,7 @@ const GroupCard = memo(({
     >
       <div className="flex gap-6">
         {group.image ? (
-          <LazyImage
+          <img
             src={group.image}
             alt={group.name}
             className="w-24 h-24 rounded-lg object-cover relative"

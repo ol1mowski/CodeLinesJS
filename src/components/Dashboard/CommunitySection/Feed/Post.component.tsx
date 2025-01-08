@@ -5,7 +5,7 @@ import { formatDistanceToNow } from "date-fns";
 import { pl } from "date-fns/locale";
 import { Comments } from "./Comments.component";
 import { Post as PostType } from "../../../../types/post.types";
-import { LazyImage } from "../../../Common/LazyImage.component";
+
 
 type PostProps = {
   post: PostType;
@@ -50,7 +50,7 @@ export const Post = memo(({ post, onLike }: PostProps) => {
 const PostHeader = memo(({ post }: { post: PostType }) => (
   <div className="flex items-start gap-4 mb-4">
     {post.author.avatar ? (
-      <LazyImage
+      <img
         src={post.author.avatar}
         alt={post.author.name}
         className="w-10 h-10 rounded-full relative"
