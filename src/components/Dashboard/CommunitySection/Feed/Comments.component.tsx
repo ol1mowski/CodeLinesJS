@@ -4,6 +4,7 @@ import { FaUserCircle, FaHeart } from "react-icons/fa";
 import { formatDistanceToNow } from "date-fns";
 import { pl } from "date-fns/locale";
 import { useComments } from "../../../../hooks/useComments";
+import { Comment } from "../../../../types/post.types";
 
 type CommentsProps = {
   postId: string;
@@ -52,7 +53,7 @@ export const Comments = memo(({ postId }: CommentsProps) => {
         </div>
       </div>
 
-      {comments?.map((comment) => (
+      {comments?.map((comment: Comment) => (
         <div key={comment.id} className="flex items-start gap-3">
           {comment.author.avatar ? (
             <img

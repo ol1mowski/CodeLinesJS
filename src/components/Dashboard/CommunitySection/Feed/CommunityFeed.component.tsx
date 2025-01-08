@@ -2,6 +2,8 @@ import { motion } from "framer-motion";
 import { memo } from "react";
 import { CreatePost } from "./CreatePost.component";
 import { PostsList } from "./PostsList.component";
+import { TrendingTopics } from "./TrendingTopics.component";
+import { OnlineUsers } from "./OnlineUsers.component";
 
 export const CommunityFeed = memo(() => {
   return (

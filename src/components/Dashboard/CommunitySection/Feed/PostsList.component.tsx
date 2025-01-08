@@ -1,7 +1,9 @@
 import { motion } from "framer-motion";
 import { memo } from "react";
-import { Post } from "./Post.component";
+import { PostsListSkeleton } from "./PostsListSkeleton.component";
 import { usePosts } from "../../../../hooks/usePosts";
+import { Post } from "./Post.component";
+
 
 export const PostsList = memo(() => {
   const { posts, isLoading } = usePosts();

@@ -17,11 +17,16 @@ const mockComments: Comment[] = [
 ];
 
 export const useComments = (postId: string) => {
-  return useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['comments', postId],
     queryFn: async () => {
       await new Promise(resolve => setTimeout(resolve, 1000));
       return mockComments;
     }
   });
+
+  return {
+    comments: data,
+    isLoading
+  };
 }; 
