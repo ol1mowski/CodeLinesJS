@@ -1,8 +1,8 @@
 import { memo, useState } from "react";
 import { RankingList } from "./RankingList.component";
-import { RankingPeriodSelect } from "./RankingPeriodSelect.component";
 import { RankingStats } from "./RankingStats.component";
 import { RankingPeriod } from "../../../../types/ranking.types";
+import { RankingPeriodSelect } from "./RankingPeriodSelect.component";
 
 export const CommunityRanking = memo(() => {
   const [period, setPeriod] = useState<RankingPeriod>("weekly");

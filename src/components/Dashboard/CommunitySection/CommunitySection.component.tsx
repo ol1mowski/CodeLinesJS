@@ -1,9 +1,10 @@
 import { motion } from "framer-motion";
 import { memo, useState } from "react";
-import { CommunityNavigation } from "./Navigation/CommunityNavigation.component";
-import { CommunityFeed } from "./Feed/CommunityFeed.component";
+
 import { CommunityRanking } from "./Ranking/CommunityRanking.component";
 import { CommunityGroups } from "./Groups/CommunityGroups.component";
+import { CommunityFeed } from "./Feed/CommunityFeed.component";
+import { CommunityNavigation } from "./Navigation/CommunityNavigation.component";
 
 type CommunityView = "feed" | "ranking" | "groups";
 
