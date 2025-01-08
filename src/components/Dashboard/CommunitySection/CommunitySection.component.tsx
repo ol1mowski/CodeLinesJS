@@ -1,29 +1,20 @@
+import { memo, useCallback, useState } from "react";
 import { motion } from "framer-motion";
-import { memo, useState } from "react";
-
+import { CommunityNavigation } from "./Navigation/CommunityNavigation.component";
+import { CommunityFeed } from "./Feed/CommunityFeed.component";
 import { CommunityRanking } from "./Ranking/CommunityRanking.component";
 import { CommunityGroups } from "./Groups/CommunityGroups.component";
-import { CommunityFeed } from "./Feed/CommunityFeed.component";
-import { CommunityNavigation } from "./Navigation/CommunityNavigation.component";
 
 type CommunityView = "feed" | "ranking" | "groups";
 
 export const CommunitySection = memo(() => {
   const [activeView, setActiveView] = useState<CommunityView>("feed");
 
-  const containerVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        ease: "easeOut"
-      }
-    }
-  };
+  const handleViewChange = useCallback((view: CommunityView) => {
+    setActiveView(view);
+  }, []);
 
-  const renderContent = () => {
+  const renderContent = useCallback(() => {
     switch (activeView) {
       case "feed":
         return <CommunityFeed />;
@@ -34,13 +25,13 @@ export const CommunitySection = memo(() => {
       default:
         return null;
     }
-  };
+  }, [activeView]);
 
   return (
     <motion.div
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
       className="p-8 w-full min-h-screen bg-gradient-to-br from-gray-900 via-indigo-900 to-violet-900"
     >
       <div className="max-w-7xl mx-auto">
@@ -48,7 +39,10 @@ export const CommunitySection = memo(() => {
           Społeczność
         </h1>
 
-        <CommunityNavigation activeView={activeView} onViewChange={setActiveView} />
+        <CommunityNavigation 
+          activeView={activeView} 
+          onViewChange={handleViewChange} 
+        />
         
         <motion.div
           key={activeView}
