@@ -1,25 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
 import { UserStats } from '../types/stats.types';
-import { API_URL } from '../config/api.config';
-
-const fetchStats = async (): Promise<UserStats> => {
-  const response = await fetch(`${API_URL}/user/stats`, {
-    headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`
-    }
-  });
-  
-  if (!response.ok) {
-    throw new Error('Failed to fetch stats');
-  }
-  
-  return response.json();
-};
+import { mockStatsData } from '../mocks/statsData.mock';
 
 export const useStats = () => {
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['userStats'],
-    queryFn: fetchStats,
+    queryFn: async () => {
+      // Symulacja opóźnienia sieciowego
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      return mockStatsData as UserStats;
+    },
     staleTime: 1000 * 60 * 5, // 5 minutes
     refetchOnWindowFocus: false,
   });
