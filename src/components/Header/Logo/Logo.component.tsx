@@ -1,12 +1,17 @@
 import { motion } from "framer-motion";
 
 export const Logo = () => (
-  <motion.div whileHover={{ scale: 1.05 }} className="flex items-center z-50">
+  <motion.div 
+    whileHover={{ scale: 1.02 }} 
+    className="flex items-center z-50 relative"
+  >
     <a
       href="/"
-      className="text-4xl md:text-5xl font-bold font-space text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-400 bg-300% animate-gradient"
+      className="text-3xl font-bold font-space text-[#f7df1e] hover:text-[#f7df1e]/90 
+                 transition-colors flex items-center gap-2"
     >
-      CodeLinesJS
+      <span className="text-2xl bg-[#f7df1e] text-black px-2 py-1 rounded">JS</span>
+      <span>CodeLines</span>
     </a>
   </motion.div>
 );

@@ -9,11 +9,13 @@ export const MobileMenuButton = ({ isOpen, onClick }: MobileMenuButtonProps) => 
   <motion.button
     whileTap={{ scale: 0.95 }}
     onClick={onClick}
-    className="xl:hidden z-50 w-16 h-16 flex items-center justify-center rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 hover:shadow-lg hover:shadow-indigo-500/25 transition-shadow"
+    className="xl:hidden z-50 w-10 h-10 flex items-center justify-center rounded-lg 
+               border border-[#f7df1e]/20 bg-[#1a1a1a]/50 hover:bg-[#f7df1e]/10 
+               backdrop-blur-sm transition-all"
     aria-label={isOpen ? "Zamknij menu" : "Otwórz menu"}
   >
     <svg
-      className="w-16 h-16 text-white"
+      className="w-5 h-5 text-[#f7df1e]"
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
