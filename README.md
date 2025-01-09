@@ -1,50 +1,114 @@
-# React + TypeScript + Vite
+# CodeLinesJS - Interaktywna Platforma do Nauki JavaScript
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![CodeLinesJS](public/vite.svg)
 
-Currently, two official plugins are available:
+## 🚀 O Projekcie
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+CodeLinesJS to innowacyjna platforma edukacyjna, która przekształca naukę JavaScript w fascynującą przygodę. Łącząc elementy grywalizacji z praktyczną nauką programowania, tworzymy unikalne doświadczenie edukacyjne dla początkujących i średniozaawansowanych programistów.
 
-## Expanding the ESLint configuration
+### 👨‍💻 Autor
+**Oliwier Markiewicz**
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## ✨ Kluczowe Funkcje
 
-- Configure the top-level `parserOptions` property like this:
+### 🎮 Interaktywna Nauka
+- Wciągający system nauki oparty na grywalizacji
+- Praktyczne wyzwania programistyczne
+- Natychmiastowa informacja zwrotna
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+### 🏆 System Osiągnięć
+- Punkty za ukończone wyzwania
+- Rankingi społeczności
+- Odznaki za specjalne osiągnięcia
+
+### 👥 Społeczność
+- Interakcja z innymi programistami
+- Wymiana wiedzy i doświadczeń
+- System powiadomień o aktywnościach
+
+## 🛠 Technologie
+
+### Frontend
+- React 18 + TypeScript
+- Vite
+- Tailwind CSS
+- Framer Motion
+- Three js
+
+### State Management & Routing
+- React Context API
+- React Router 6
+
+### Backend & Auth
+- Express js
+- Google Authentication
+
+### Database
+- MongoDB
+
+### Testing
+- Vitest
+- Playwright
+
+## 🚀 Rozpoczęcie Pracy
+
+```bash
+# Klonowanie repozytorium
+git clone https://github.com/ol1mowski/CodeLinesJS.git
+
+# Instalacja zależności
+cd CodeLinesJS
+npm install
+
+# Zmienne środowiskowe
+cp .env.example .env
+# Uzupełnij zmienne w pliku .env
+
+# Uruchomienie w trybie developerskim
+npm run dev
+
+# Build produkcyjny
+npm run build
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## 📁 Struktura Projektu
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
 ```
+src/
+├── components/         # Komponenty React
+│   ├── Auth/          # Komponenty autoryzacji
+│   ├── Dashboard/     # Dashboard i jego komponenty
+│   ├── Game/          # Komponenty związane z grą
+│   └── UI/            # Współdzielone komponenty UI
+├── hooks/             # Custom hooks
+├── context/          # Context API
+├── services/         # Serwisy (Firebase, API)
+└── utils/            # Funkcje pomocnicze
+```
+
+## 🧪 Testy
+
+```bash
+# Uruchomienie testów jednostkowych
+npm run test
+
+# Uruchomienie testów E2E
+npm run test:e2e
+
+# Uruchomienie testów jednostkowych
+npm run test:unit
+```
+
+## 📝 Licencja
+
+Copyright © 2024 CodeLinesJS. Wszelkie prawa zastrzeżone.
+
+## 📫 Kontakt
+
+- **Email**: [oliwier.markiewicz.dev@gmail.com]
+- **LinkedIn**: [Oliwier Markiewicz](https://www.linkedin.com/in/oliwier-markiewicz-47857228a/)
+- **GitHub**: [@ol1mowski](https://github.com/ol1mowski)
+
+---
+
+*Projekt jest w aktywnym rozwoju. Dokumentacja będzie na bieżąco aktualizowana.*

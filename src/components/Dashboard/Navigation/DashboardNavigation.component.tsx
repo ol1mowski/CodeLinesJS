@@ -71,7 +71,7 @@ export const DashboardNavigation = () => {
       </motion.button>
 
       <div className="overflow-x-hidden flex-1 px-3 space-y-6 overflow-y-auto scrollbar-thin scrollbar-track-gray-800/50 scrollbar-thumb-indigo-500/20">
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="sync">
           {sections.map(([section, items], index) => (
             <NavigationSection
               key={section}
