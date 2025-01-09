@@ -1,5 +1,5 @@
-import { motion, useAnimationControls } from "framer-motion";
-import { useEffect } from "react";
+import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 
 const codeLines = [
   {
@@ -61,45 +61,54 @@ const codeLines = [
 ];
 
 export const CodeEditor = () => {
-  const controls = useAnimationControls();
+  const [currentLineIndex, setCurrentLineIndex] = useState(0);
+  const [visibleLines, setVisibleLines] = useState<typeof codeLines>([]);
 
   useEffect(() => {
-    const animateCode = async () => {
-      await controls.start("visible");
-    };
-    animateCode();
-  }, [controls]);
+    const interval = setInterval(() => {
+      if (currentLineIndex < codeLines.length) {
+        setVisibleLines(prev => [...prev, codeLines[currentLineIndex]]);
+        setCurrentLineIndex(prev => prev + 1);
+      } else {
+        clearInterval(interval);
+      }
+    }, 200); 
+
+    return () => clearInterval(interval);
+  }, [currentLineIndex]);
 
   return (
     <div className="p-6 font-mono text-sm md:text-base h-full overflow-y-auto custom-scrollbar">
       <pre className="flex flex-col">
-        {codeLines.map((code, index) => (
+        {visibleLines.map((code, index) => (
           <motion.span
             key={index}
-            initial={{ opacity: 0, x: -10 }}
-            animate={controls}
-            custom={index}
-            variants={{
-              visible: (i) => ({
-                opacity: 1,
-                x: 0,
-                transition: {
-                  delay: i * 0.1,
-                },
-              }),
-            }}
-            className="whitespace-pre"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.2 }}
+            className="whitespace-pre relative"
           >
             <span className="text-gray-500 select-none w-8 inline-block">
               {index + 1}
             </span>
             <span className="text-gray-400 select-none">│ </span>
-            <span
+            <motion.span
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.2 }}
               style={{ paddingLeft: `${code.indent * 20}px` }}
               className={getLineColor(code.line)}
             >
               {code.line}
-            </span>
+            </motion.span>
+            {index === visibleLines.length - 1 && currentLineIndex < codeLines.length && (
+              <motion.span
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0, 1, 0] }}
+                transition={{ duration: 0.8, repeat: Infinity }}
+                className="absolute bottom-0 ml-1 h-[2px] w-3 bg-[#f7df1e]"
+              />
+            )}
           </motion.span>
         ))}
       </pre>
