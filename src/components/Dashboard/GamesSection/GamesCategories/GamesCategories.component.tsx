@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { memo } from "react";
 import { gameCategories } from "./gameCategories.data";
 
+
 export const GamesCategories = memo(() => {
   return (
     <motion.div
