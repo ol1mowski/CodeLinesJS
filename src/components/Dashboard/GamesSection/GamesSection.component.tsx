@@ -1,12 +1,12 @@
 import { motion } from "framer-motion";
 import { memo, useState } from "react";
-
 import { GamesCategories } from "./GamesCategories/GamesCategories.component";
 import { GamesHeader } from "./GamesHeader/GamesHeader.component";
 import { GamesList } from "./GamesList/GamesList.component";
 import { GamesSorting } from "./GamesSorting/GamesSorting.component";
 import { GamesSearch } from "./GamesSearch/GamesSearch.component";
-
+import { GamesDifficulty } from "./GamesDifficulty/GamesDifficulty.component";
+import { GameDifficulty } from "../../../types/games.types";
 
 export type ActiveCategory = "all" | "basics" | "algorithms" | "challenges" | "competitions";
 export type SortOption = "newest" | "popular" | "difficulty" | "xp";
@@ -15,6 +15,7 @@ export const GamesSection = memo(() => {
   const [activeCategory, setActiveCategory] = useState<ActiveCategory>("all");
   const [sortBy, setSortBy] = useState<SortOption>("newest");
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedDifficulty, setSelectedDifficulty] = useState<GameDifficulty | "all">("all");
 
   return (
     <motion.div
@@ -32,10 +33,15 @@ export const GamesSection = memo(() => {
             <GamesSorting activeSortOption={sortBy} onSortChange={setSortBy} />
           </div>
         </div>
+        <GamesDifficulty 
+          selectedDifficulty={selectedDifficulty} 
+          onDifficultyChange={setSelectedDifficulty} 
+        />
         <GamesList 
           activeCategory={activeCategory} 
           sortBy={sortBy} 
           searchQuery={searchQuery}
+          selectedDifficulty={selectedDifficulty}
         />
       </div>
     </motion.div>

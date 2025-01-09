@@ -2,11 +2,13 @@ import { useQuery } from "@tanstack/react-query";
 import { Game } from "../types/games.types";
 import { mockGames } from "../mocks/gamesData.mock";
 import { SortOption } from "../components/Dashboard/GamesSection/GamesSection.component";
+import { GameDifficulty } from "../types/games.types";
 
 const filterAndSortGames = (
   games: Game[], 
   sortBy: SortOption,
-  searchQuery: string
+  searchQuery: string,
+  difficulty: GameDifficulty | "all"
 ): Game[] => {
   let filteredGames = [...games];
 
@@ -17,6 +19,10 @@ const filterAndSortGames = (
         game.title.toLowerCase().includes(query) ||
         game.description.toLowerCase().includes(query)
     );
+  }
+
+  if (difficulty !== "all") {
+    filteredGames = filteredGames.filter(game => game.difficulty === difficulty);
   }
 
   switch (sortBy) {
@@ -34,12 +40,16 @@ const filterAndSortGames = (
   }
 };
 
-export const useGames = (sortBy: SortOption = "newest", searchQuery: string = "") => {
+export const useGames = (
+  sortBy: SortOption = "newest", 
+  searchQuery: string = "",
+  difficulty: GameDifficulty | "all" = "all"
+) => {
   const { data: games = [], isLoading } = useQuery<Game[]>({
-    queryKey: ["games", sortBy, searchQuery],
+    queryKey: ["games", sortBy, searchQuery, difficulty],
     queryFn: async () => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      return filterAndSortGames(mockGames, sortBy, searchQuery);
+      return filterAndSortGames(mockGames, sortBy, searchQuery, difficulty);
     },
     staleTime: 1000 * 60 * 5,
   });
