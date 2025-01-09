@@ -7,7 +7,7 @@ type NoGamesFoundProps = {
   activeCategory?: string;
 };
 
-export const NoGamesFound = memo(({ searchQuery, activeCategory }: NoGamesFoundProps) => {
+export const NoGamesFound = memo(({ searchQuery }: NoGamesFoundProps) => {
   const getMessage = () => {
     if (searchQuery) {
       return {

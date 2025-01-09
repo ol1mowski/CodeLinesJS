@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { memo } from "react";
 import { FaRegCircle, FaCircle } from "react-icons/fa";
 import { GameDifficulty } from "../../../../types/games.types";
@@ -17,7 +17,11 @@ const difficulties = [
 
 export const GamesDifficulty = memo(({ selectedDifficulty, onDifficultyChange }: GamesDifficultyProps) => {
   return (
-    <div className="flex items-center gap-4">
+    <motion.div
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="flex items-center gap-4"
+    >
       <span className="text-gray-400 text-sm">Poziom:</span>
       <div className="flex gap-3">
         {difficulties.map((difficulty) => (
@@ -26,22 +30,39 @@ export const GamesDifficulty = memo(({ selectedDifficulty, onDifficultyChange }:
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => onDifficultyChange(difficulty.value)}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm transition-colors
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm transition-all relative
               ${selectedDifficulty === difficulty.value
-                ? `bg-gray-800/50 border border-${difficulty.color || 'gray-400'}`
+                ? `text-${difficulty.color || 'gray-200'}`
                 : "text-gray-400 hover:text-gray-300"
               }`}
           >
-            {selectedDifficulty === difficulty.value ? (
-              <FaCircle className={`w-3 h-3 ${difficulty.color || 'text-gray-400'}`} />
-            ) : (
-              <FaRegCircle className="w-3 h-3" />
+            {selectedDifficulty === difficulty.value && (
+              <motion.div
+                layoutId="difficulty-background"
+                className={`absolute inset-0 bg-gray-800/50 border rounded-lg -z-10 border-${difficulty.color || 'gray-400'}`}
+                transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+              />
             )}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={selectedDifficulty === difficulty.value ? "circle" : "circle-outline"}
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                exit={{ scale: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                {selectedDifficulty === difficulty.value ? (
+                  <FaCircle className={`w-3 h-3 ${difficulty.color || 'text-gray-400'}`} />
+                ) : (
+                  <FaRegCircle className="w-3 h-3" />
+                )}
+              </motion.div>
+            </AnimatePresence>
             {difficulty.label}
           </motion.button>
         ))}
       </div>
-    </div>
+    </motion.div>
   );
 });
 
