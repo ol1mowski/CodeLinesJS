@@ -6,6 +6,7 @@ import { GamesHeader } from "./GamesHeader/GamesHeader.component";
 import { GamesList } from "./GamesList/GamesList.component";
 import { GamesSorting } from "./GamesSorting/GamesSorting.component";
 
+
 export type ActiveCategory = "all" | "basics" | "algorithms" | "challenges" | "competitions";
 export type SortOption = "newest" | "popular" | "difficulty" | "xp";
 

@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
+
 import { memo } from "react";
+
 import { FaClock, FaFire, FaStar, FaTrophy } from "react-icons/fa";
 import { SortOption } from "../GamesSection.component";
 

@@ -1,7 +1,10 @@
 import { motion, AnimatePresence } from "framer-motion";
+
 import { memo, useMemo } from "react";
-import { GameCard } from "./GameCard.component";
+
 import { useGames } from "../../../../hooks/useGames";
+
+import { GameCard } from "./GameCard.component";
 import { GamesListSkeleton } from "./GamesListSkeleton.component";
 import { ActiveCategory } from "../GamesSection.component";
 
