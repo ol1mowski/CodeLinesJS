@@ -1,12 +1,21 @@
 import { motion } from "framer-motion";
-import { memo } from "react";
+import { memo, useMemo } from "react";
 import { GameCard } from "./GameCard.component";
 import { useGames } from "../../../../hooks/useGames";
 import { GamesListSkeleton } from "./GamesListSkeleton.component";
-import { Game } from "../../../../types/games.types";
+import { ActiveCategory } from "../GamesSection.component";
 
-export const GamesList = memo(() => {
+type GamesListProps = {
+  activeCategory: ActiveCategory;
+};
+
+export const GamesList = memo(({ activeCategory }: GamesListProps) => {
   const { games, isLoading } = useGames();
+
+  const filteredGames = useMemo(() => {
+    if (activeCategory === "all") return games;
+    return games.filter(game => game.category === activeCategory);
+  }, [games, activeCategory]);
 
   if (isLoading) {
     return <GamesListSkeleton />;
@@ -19,7 +28,7 @@ export const GamesList = memo(() => {
       transition={{ delay: 0.3 }}
       className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
     >
-      {games.map((game: Game) => (
+      {filteredGames.map((game) => (
         <GameCard key={game.id} game={game} />
       ))}
     </motion.div>

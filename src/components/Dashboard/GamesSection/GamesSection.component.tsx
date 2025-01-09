@@ -1,11 +1,15 @@
 import { motion } from "framer-motion";
-import { memo } from "react";
+import { memo, useState } from "react";
 
 import { GamesCategories } from "./GamesCategories/GamesCategories.component";
 import { GamesHeader } from "./GamesHeader/GamesHeader.component";
 import { GamesList } from "./GamesList/GamesList.component";
 
+export type ActiveCategory = "all" | "basics" | "algorithms" | "challenges" | "competitions";
+
 export const GamesSection = memo(() => {
+  const [activeCategory, setActiveCategory] = useState<ActiveCategory>("all");
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -15,9 +19,11 @@ export const GamesSection = memo(() => {
     >
       <div className="space-y-8">
         <GamesHeader />
-        <GamesCategories />
-        <GamesList />
+        <GamesCategories activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
+        <GamesList activeCategory={activeCategory} />
       </div>
     </motion.div>
   );
 });
+
+GamesSection.displayName = "GamesSection";

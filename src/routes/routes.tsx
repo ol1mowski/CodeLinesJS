@@ -52,7 +52,7 @@ export const router = createBrowserRouter([
         element: <SettingsSection />
       },
       {
-        path: "games",
+        path: "play",
         element: <GamesSection />
       }
     ]
