@@ -44,4 +44,11 @@ export const navigationItems: NavigationItem[] = [
     section: "social",
     path: "/dashboard/settings",
   },
+  {
+    id: "games",
+    label: "Gry",
+    icon: <FaGamepad />,
+    section: "main",
+    path: "/dashboard/games",
+  },
 ]; 
