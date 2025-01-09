@@ -1,8 +1,9 @@
 import { motion } from "framer-motion";
 import { memo } from "react";
-import { GamesList } from "./GamesList/GamesList.component";
+
 import { GamesCategories } from "./GamesCategories/GamesCategories.component";
 import { GamesHeader } from "./GamesHeader/GamesHeader.component";
+import { GamesList } from "./GamesList/GamesList.component";
 
 export const GamesSection = memo(() => {
   return (
