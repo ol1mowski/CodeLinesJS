@@ -18,6 +18,7 @@
     "@react-oauth/google": "^0.12.1",
     "@tanstack/react-query": "^5.62.16",
     "@types/three": "^0.171.0",
+    "date-fns": "^4.1.0",
     "framer-motion": "^11.15.0",
     "jwt-decode": "^4.0.0",
     "react": "^18.3.1",
