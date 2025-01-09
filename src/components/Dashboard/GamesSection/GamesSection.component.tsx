@@ -5,6 +5,7 @@ import { GamesCategories } from "./GamesCategories/GamesCategories.component";
 import { GamesHeader } from "./GamesHeader/GamesHeader.component";
 import { GamesList } from "./GamesList/GamesList.component";
 import { GamesSorting } from "./GamesSorting/GamesSorting.component";
+import { GamesSearch } from "./GamesSearch/GamesSearch.component";
 
 
 export type ActiveCategory = "all" | "basics" | "algorithms" | "challenges" | "competitions";
@@ -13,6 +14,7 @@ export type SortOption = "newest" | "popular" | "difficulty" | "xp";
 export const GamesSection = memo(() => {
   const [activeCategory, setActiveCategory] = useState<ActiveCategory>("all");
   const [sortBy, setSortBy] = useState<SortOption>("newest");
+  const [searchQuery, setSearchQuery] = useState("");
 
   return (
     <motion.div
@@ -25,9 +27,16 @@ export const GamesSection = memo(() => {
         <GamesHeader />
         <div className="flex flex-col lg:flex-row gap-6">
           <GamesCategories activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
-          <GamesSorting activeSortOption={sortBy} onSortChange={setSortBy} />
+          <div className="flex flex-col lg:flex-row gap-4 lg:ml-auto">
+            <GamesSearch value={searchQuery} onChange={setSearchQuery} />
+            <GamesSorting activeSortOption={sortBy} onSortChange={setSortBy} />
+          </div>
         </div>
-        <GamesList activeCategory={activeCategory} sortBy={sortBy} />
+        <GamesList 
+          activeCategory={activeCategory} 
+          sortBy={sortBy} 
+          searchQuery={searchQuery}
+        />
       </div>
     </motion.div>
   );

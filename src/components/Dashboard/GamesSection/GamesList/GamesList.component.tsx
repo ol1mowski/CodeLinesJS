@@ -6,14 +6,17 @@ import { useGames } from "../../../../hooks/useGames";
 
 import { GameCard } from "./GameCard.component";
 import { GamesListSkeleton } from "./GamesListSkeleton.component";
-import { ActiveCategory } from "../GamesSection.component";
+import { NoGamesFound } from "./NoGamesFound.component";
+import { ActiveCategory, SortOption } from "../GamesSection.component";
 
 type GamesListProps = {
   activeCategory: ActiveCategory;
+  sortBy: SortOption;
+  searchQuery: string;
 };
 
-export const GamesList = memo(({ activeCategory }: GamesListProps) => {
-  const { games, isLoading } = useGames();
+export const GamesList = memo(({ activeCategory, sortBy, searchQuery }: GamesListProps) => {
+  const { games, isLoading } = useGames(sortBy, searchQuery);
 
   const filteredGames = useMemo(() => {
     if (activeCategory === "all") return games;
@@ -22,6 +25,10 @@ export const GamesList = memo(({ activeCategory }: GamesListProps) => {
 
   if (isLoading) {
     return <GamesListSkeleton />;
+  }
+
+  if (filteredGames.length === 0) {
+    return <NoGamesFound searchQuery={searchQuery} activeCategory={activeCategory} />;
   }
 
   return (
