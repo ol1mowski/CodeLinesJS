@@ -4,11 +4,14 @@ import { memo, useState } from "react";
 import { GamesCategories } from "./GamesCategories/GamesCategories.component";
 import { GamesHeader } from "./GamesHeader/GamesHeader.component";
 import { GamesList } from "./GamesList/GamesList.component";
+import { GamesSorting } from "./GamesSorting/GamesSorting.component";
 
 export type ActiveCategory = "all" | "basics" | "algorithms" | "challenges" | "competitions";
+export type SortOption = "newest" | "popular" | "difficulty" | "xp";
 
 export const GamesSection = memo(() => {
   const [activeCategory, setActiveCategory] = useState<ActiveCategory>("all");
+  const [sortBy, setSortBy] = useState<SortOption>("newest");
 
   return (
     <motion.div
@@ -19,8 +22,11 @@ export const GamesSection = memo(() => {
     >
       <div className="space-y-8">
         <GamesHeader />
-        <GamesCategories activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
-        <GamesList activeCategory={activeCategory} />
+        <div className="flex flex-col lg:flex-row gap-6">
+          <GamesCategories activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
+          <GamesSorting activeSortOption={sortBy} onSortChange={setSortBy} />
+        </div>
+        <GamesList activeCategory={activeCategory} sortBy={sortBy} />
       </div>
     </motion.div>
   );
