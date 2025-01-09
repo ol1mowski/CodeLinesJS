@@ -20,5 +20,3 @@ export const GamesSection = memo(() => {
     </motion.div>
   );
 });
-
-GamesSection.displayName = "GamesSection"; 
