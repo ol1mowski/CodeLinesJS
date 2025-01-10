@@ -1,7 +1,34 @@
 import { Container } from "../UI/Container/Container.component";
 import { FooterContent } from "./FooterContent/FooterContent.component";
-import { FaGithub } from "react-icons/fa";
+import { FaGithub, FaYoutube, FaLinkedin } from "react-icons/fa";
 import { motion } from "framer-motion";
+
+const socialLinks = [
+  { 
+    icon: FaGithub, 
+    href: "https://github.com/oliwier",
+    bgColor: "bg-[#333]/20",
+    textColor: "text-white",
+    hoverBg: "hover:bg-[#333]/20",
+    iconColor: "group-hover:text-white"
+  },
+  { 
+    icon: FaYoutube, 
+    href: "https://youtube.com/@oliwier",
+    bgColor: "bg-[#FF0000]/10",
+    textColor: "text-[#FF0000]",
+    hoverBg: "hover:bg-[#FF0000]/20",
+    iconColor: "group-hover:text-white"
+  },
+  { 
+    icon: FaLinkedin, 
+    href: "https://linkedin.com/in/oliwier",
+    bgColor: "bg-[#0077B5]/10",
+    textColor: "text-[#0077B5]",
+    hoverBg: "hover:bg-[#0077B5]/20",
+    iconColor: "group-hover:text-white"
+  }
+];
 
 export const Footer = () => (
   <footer className="w-full relative py-16 md:py-24 bg-gradient-to-b from-[#1a1a1a] via-[#242424] to-[#1a1a1a] overflow-hidden">
@@ -22,7 +49,7 @@ export const Footer = () => (
       <div className="flex flex-col gap-16">
         <FooterContent />
         
-        <div className="pt-8 border-t border-[#f7df1e]/10">
+        <div className="pt-8 border-t border-gray-800">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <motion.p 
               initial={{ opacity: 0 }}
@@ -31,25 +58,31 @@ export const Footer = () => (
               className="text-sm text-gray-400"
             >
               © 2024 Aplikację wykonał{' '}
-              <span className="text-[#f7df1e] font-medium">
+              <a href="https://oliwiermarkiewicz.pl/" target="_blank" rel="noopener noreferrer" className="text-[#f7df1e] hover:text-[#f7df1e]/80">
                 Oliwier Markiewicz
-              </span>
+              </a>
             </motion.p>
             
-            <motion.a
-              href="https://github.com/oliwier"
-              target="_blank"
-              rel="noopener noreferrer"
-              initial={{ opacity: 0, scale: 0.5 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              viewport={{ once: true }}
-              className="p-2 rounded-lg bg-[#f7df1e]/10 text-[#f7df1e] hover:bg-[#f7df1e]/20 
-                         transition-all duration-300"
-            >
-              <FaGithub className="w-6 h-6" />
-            </motion.a>
+            <div className="flex items-center gap-3">
+              {socialLinks.map((link, index) => (
+                <motion.a
+                  key={link.href}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  transition={{ delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                  className={`p-2 rounded-lg ${link.bgColor} ${link.textColor} 
+                             ${link.hoverBg} transition-all duration-300 group`}
+                >
+                  <link.icon className={`w-5 h-5 transition-colors duration-300 ${link.iconColor}`} />
+                </motion.a>
+              ))}
+            </div>
           </div>
         </div>
       </div>

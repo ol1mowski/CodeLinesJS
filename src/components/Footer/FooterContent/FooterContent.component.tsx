@@ -1,63 +1,96 @@
 import { motion } from "framer-motion";
-import { footerLinks, socialLinks } from "../../../data/footer.data";
+import { FaDiscord, FaGithub, FaYoutube, FaBook, FaRocket, FaCode } from "react-icons/fa";
 
+const links = {
+  resources: [
+    { label: "Dokumentacja", href: "#", icon: FaBook },
+    { label: "Przykłady", href: "#", icon: FaCode },
+    { label: "Roadmapa", href: "#", icon: FaRocket }
+  ],
+  social: [
+    { label: "Discord", href: "#", icon: FaDiscord },
+    { label: "GitHub", href: "#", icon: FaGithub },
+    { label: "YouTube", href: "#", icon: FaYoutube }
+  ]
+};
 
 export const FooterContent = () => (
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.5 }}
-      className="col-span-1 md:col-span-2 lg:col-span-1"
+      className="lg:col-span-2"
     >
-      <h2 className="text-2xl font-bold font-space text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400 mb-4">
-        Code Lines JS
-      </h2>
-      <p className="text-gray-400 font-inter mb-6">
-        Odkryj świat JavaScript poprzez wciągającą grę. Rozwijaj swoje umiejętności programowania w interaktywny sposób.
+      <h3 className="text-xl font-bold text-[#f7df1e] mb-4">
+        JavaScript Learning Platform
+      </h3>
+      <p className="text-gray-400 mb-6 leading-relaxed">
+        Platforma do nauki JavaScript stworzona z myślą o społeczności programistów. 
+        Dołącz do nas i rozwijaj swoje umiejętności w przyjaznym środowisku.
       </p>
-      <div className="flex gap-4">
-        {socialLinks.map((link) => (
-          <motion.a
-            key={link.name}
-            href={link.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            className="w-10 h-10 rounded-lg bg-gray-800 hover:bg-indigo-600 transition-colors flex items-center justify-center text-gray-400 hover:text-white"
-          >
-            <link.Icon className="w-5 h-5" />
-          </motion.a>
-        ))}
+      <div className="flex items-center gap-4">
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="px-6 py-2 bg-[#f7df1e] text-black font-medium rounded-lg 
+                     hover:bg-[#f7df1e]/90 transition-colors"
+        >
+          Rozpocznij Naukę
+        </motion.button>
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="px-6 py-2 border border-[#f7df1e]/20 text-[#f7df1e] font-medium rounded-lg
+                     hover:bg-[#f7df1e]/10 transition-colors"
+        >
+          Dołącz do Nas
+        </motion.button>
       </div>
     </motion.div>
 
-    {footerLinks.map((section, index) => (
-      <motion.div
-        key={section.title}
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5, delay: index * 0.1 }}
-      >
-        <h3 className="text-lg font-bold font-space text-gray-200 mb-4">
-          {section.title}
-        </h3>
-        <ul className="space-y-3">
-          {section.links.map((link) => (
-            <li key={link.text}>
-              <a
-                href={link.url}
-                className="text-gray-400 hover:text-indigo-400 transition-colors font-inter"
-              >
-                {link.text}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </motion.div>
-    ))}
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: 0.2 }}
+    >
+      <h4 className="text-lg font-bold text-[#f7df1e] mb-4">Zasoby</h4>
+      <ul className="space-y-3">
+        {links.resources.map((link) => (
+          <motion.li key={link.label} whileHover={{ x: 5 }}>
+            <a 
+              href={link.href}
+              className="flex items-center gap-3 text-gray-400 hover:text-[#f7df1e] transition-colors"
+            >
+              <link.icon className="w-5 h-5" />
+              {link.label}
+            </a>
+          </motion.li>
+        ))}
+      </ul>
+    </motion.div>
+
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: 0.3 }}
+    >
+      <h4 className="text-lg font-bold text-[#f7df1e] mb-4">Social Media</h4>
+      <ul className="space-y-3">
+        {links.social.map((link) => (
+          <motion.li key={link.label} whileHover={{ x: 5 }}>
+            <a 
+              href={link.href}
+              className="flex items-center gap-3 text-gray-400 hover:text-[#f7df1e] transition-colors"
+            >
+              <link.icon className="w-5 h-5" />
+              {link.label}
+            </a>
+          </motion.li>
+        ))}
+      </ul>
+    </motion.div>
   </div>
 ); 
