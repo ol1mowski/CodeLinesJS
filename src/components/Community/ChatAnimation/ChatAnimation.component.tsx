@@ -89,15 +89,16 @@ export const ChatAnimation = () => (
     <div className="flex gap-3">
       <input
         type="text"
-        placeholder="Napisz wiadomość..."
-        className="flex-1 bg-[#1a1a1a]/50 border border-[#f7df1e]/20 rounded-lg px-4 py-2 text-gray-300 
-                   placeholder-gray-500 focus:outline-none focus:border-[#f7df1e]/50"
+        value="Dziękuję za pomoc! 🙏"
+        disabled
+        className="flex-1 bg-[#1a1a1a]/50 border border-[#f7df1e]/20 rounded-lg px-4 py-2 
+                   text-[#f7df1e]/60 cursor-not-allowed select-none
+                   focus:outline-none focus:border-[#f7df1e]/50"
       />
       <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        className="px-6 py-2 rounded-lg bg-[#f7df1e]/10 text-[#f7df1e] font-medium
-                   hover:bg-[#f7df1e]/20 transition-colors"
+        disabled
+        className="px-6 py-2 rounded-lg bg-[#f7df1e]/10 text-[#f7df1e]/60 font-medium
+                   cursor-not-allowed select-none"
       >
         Wyślij
       </motion.button>
