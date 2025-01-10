@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 const socialLinks = [
   { 
     icon: FaGithub, 
-    href: "https://github.com/oliwier",
+    href: "https://github.com/ol1mowski",
     bgColor: "bg-[#333]/20",
     textColor: "text-white",
     hoverBg: "hover:bg-[#333]/20",
@@ -14,7 +14,7 @@ const socialLinks = [
   },
   { 
     icon: FaYoutube, 
-    href: "https://youtube.com/@oliwier",
+    href: "https://youtube.com/@oliwier.markiewicz",
     bgColor: "bg-[#FF0000]/10",
     textColor: "text-[#FF0000]",
     hoverBg: "hover:bg-[#FF0000]/20",
@@ -22,7 +22,7 @@ const socialLinks = [
   },
   { 
     icon: FaLinkedin, 
-    href: "https://linkedin.com/in/oliwier",
+    href: "https://www.linkedin.com/in/oliwier-markiewicz-47857228a/",
     bgColor: "bg-[#0077B5]/10",
     textColor: "text-[#0077B5]",
     hoverBg: "hover:bg-[#0077B5]/20",
