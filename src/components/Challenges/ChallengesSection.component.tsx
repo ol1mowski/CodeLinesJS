@@ -10,8 +10,8 @@ export const ChallengesSection = () => (
   >
     <div className="absolute inset-0">
       <div className="absolute top-0 left-0 w-full h-full bg-[#1a1a1a] opacity-90" />
-      <div className="absolute -top-40 -right-40 w-96 h-96 bg-[#f7df1e] rounded-full blur-[150px] opacity-20" />
-      <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-[#f7df1e] rounded-full blur-[150px] opacity-20" />
+      <div className="absolute -top-40 -left-40 w-96 h-96 bg-[#f7df1e] rounded-full blur-[150px] opacity-20" />
+      <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-[#f7df1e] rounded-full blur-[150px] opacity-20" />
       
       <div className="absolute inset-0 opacity-[0.02]" 
            style={{ 
