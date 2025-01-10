@@ -10,7 +10,7 @@ export const CallToActionContent = () => (
       transition={{ duration: 0.6 }}
       className="text-center xl:text-left"
     >
-      <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold font-space text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 mb-6">
+      <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold font-space text-[#f7df1e] mb-6">
         Wejdź do Świata JavaScript
       </h2>
       <p className="text-lg md:text-xl text-gray-300 font-inter mb-8 max-w-2xl">
@@ -21,7 +21,7 @@ export const CallToActionContent = () => (
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="px-8 py-4 rounded-xl bg-gradient-to-r from-indigo-600 to-blue-600 text-white font-bold font-space flex items-center justify-center gap-2 hover:from-indigo-500 hover:to-blue-500 transition-all shadow-lg shadow-indigo-500/25"
+          className="px-8 py-4 rounded-xl bg-[#f7df1e] text-black font-bold font-space flex items-center justify-center gap-2 hover:bg-[#f7df1e]/90 transition-all shadow-lg shadow-[#f7df1e]/25"
         >
           <FaRocket className="text-xl" />
           Zacznij Grę
@@ -29,7 +29,7 @@ export const CallToActionContent = () => (
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="px-8 py-4 rounded-xl border-2 border-indigo-500/50 text-white font-bold font-space flex items-center justify-center gap-2 bg-indigo-500/10 transition-all"
+          className="px-8 py-4 rounded-xl border-2 border-[#f7df1e]/50 text-[#f7df1e] font-bold font-space flex items-center justify-center gap-2 hover:bg-[#f7df1e]/10 transition-all"
         >
           <FaCode className="text-xl" />
           Wypróbuj Demo
@@ -43,9 +43,9 @@ export const CallToActionContent = () => (
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: index * 0.1 }}
-            className="text-center"
+            className="text-center p-4 rounded-lg bg-black/20 border border-[#f7df1e]/10"
           >
-            <p className="text-3xl md:text-4xl font-bold font-space text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">
+            <p className="text-3xl md:text-4xl font-bold font-space text-[#f7df1e]">
               {stat.value}
             </p>
             <p className="text-sm md:text-base text-gray-400 font-inter">
