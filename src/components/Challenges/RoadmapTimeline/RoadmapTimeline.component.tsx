@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { roadmapSteps } from "./roadmapSteps.data";
 
+
 export const RoadmapTimeline = () => (
   <div className="p-6 space-y-6">
     <div className="flex items-center justify-between border-b border-[#f7df1e]/20 pb-4">
