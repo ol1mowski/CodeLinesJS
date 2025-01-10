@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+
 import { Container } from "../UI/Container/Container.component";
 import { Logo } from "./Logo/Logo.component";
 import { DesktopNavigation } from "./Navigation/DesktopNavigation.component";
-import { HeaderActions } from "./Navigation/HeaderActions.component";
 import { MobileMenu } from "./Navigation/MobileMenu/MobileMenu.component";
+import { HeaderActions } from "./Navigation/HeaderActions/HeaderActions.component";
 
 export const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
