@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 import { motion } from "framer-motion";
 
@@ -7,27 +7,18 @@ import { Logo } from "./Logo/Logo.component";
 import { NavLinks } from "./Navigation/NavLinks.component";
 import { MobileMenuButton } from "./Navigation/MobileMenu/MobileMenuButton.component";
 import { MobileMenu } from "./Navigation/MobileMenu/MobileMenu.component";
-import { useScrollEffect } from "./hooks/useScrollEffect.hook";
 import { Button } from "../UI/Button/Button.component";
 import { FaGithub } from "react-icons/fa";
 
 export const Header = () => {
-  const isScrolled = useScrollEffect(20);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    document.body.style.overflow = isMobileMenuOpen ? "hidden" : "unset";
-  }, [isMobileMenuOpen]);
 
   return (
     <motion.header
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      className={`fixed w-full z-50 transition-all duration-500 ${
-        isScrolled
-          ? "bg-[#1a1a1a]/90 backdrop-blur-xl border-b border-[#f7df1e]/10 py-2"
-          : "bg-transparent py-6"
-      }`}
+      className={`fixed w-full z-50 transition-all duration-500 
+        bg-[#1a1a1a]/90 backdrop-blur-xl border-b border-[#f7df1e]/10 py-5`}
     >
       <Container>
         <nav className="flex items-center justify-between relative">
@@ -49,13 +40,13 @@ export const Header = () => {
             <Button className="hidden xl:flex text-sm px-5 py-2.5">
               Zaloguj się
             </Button>
-            <MobileMenuButton 
+            <MobileMenuButton
               isOpen={isMobileMenuOpen}
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             />
           </div>
         </nav>
-        <MobileMenu 
+        <MobileMenu
           isOpen={isMobileMenuOpen}
           onClose={() => setIsMobileMenuOpen(false)}
         />
