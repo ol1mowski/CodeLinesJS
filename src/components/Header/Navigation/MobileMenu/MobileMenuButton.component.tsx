@@ -9,7 +9,7 @@ export const MobileMenuButton = ({ isOpen, onClick }: MobileMenuButtonProps) => 
   <motion.button
     whileTap={{ scale: 0.95 }}
     onClick={onClick}
-    className="xl:hidden z-50 w-10 h-10 flex items-center justify-center rounded-lg 
+    className="xl:hidden z-50 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg 
                border border-[#f7df1e]/20 bg-[#1a1a1a]/50 hover:bg-[#f7df1e]/10 
                backdrop-blur-sm transition-all"
     aria-label={isOpen ? "Zamknij menu" : "Otwórz menu"}
