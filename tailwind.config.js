@@ -22,6 +22,9 @@ export default {
           light: 'rgb(26, 26, 26, 0.3)',
           medium: 'rgb(26, 26, 26, 0.5)',
         }
+      },
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
       }
     },
   },

@@ -1,13 +1,6 @@
 import { FaCode, FaLayerGroup, FaReact, FaServer } from "react-icons/fa";
-import { IconType } from "react-icons";
+import { RoadmapStep } from "./types";
 
-interface RoadmapStep {
-  title: string;
-  description: string;
-  duration: string;
-  icon: IconType;
-  skills: string[];
-}
 
 export const roadmapSteps: RoadmapStep[] = [
   {
