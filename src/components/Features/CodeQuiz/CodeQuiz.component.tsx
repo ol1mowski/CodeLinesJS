@@ -2,7 +2,6 @@ import { useState, useCallback, memo } from 'react';
 import { QuizHeader } from './components/QuizHeader.component';
 import { QuizCode } from './components/QuizCode.component';
 import { QuizAnswer } from './components/QuizAnswer.component';
-
 import { QUIZ_DATA } from '../constants/QuizData.data';
 
 export const CodeQuiz = memo(() => {
@@ -12,24 +11,26 @@ export const CodeQuiz = memo(() => {
     setSelectedAnswer(index);
   }, []);
 
-  const { title, subtitle, code, answers, correctAnswer } = QUIZ_DATA;
+  const { title, code, options, correctAnswer } = QUIZ_DATA;
 
   return (
     <div className="flex flex-col">
       <QuizHeader 
         title={title}
-        subtitle={subtitle}
+        subtitle="Wybierz poprawną odpowiedź"
       />
       <QuizCode code={code} />
-      <div className="p-6 flex flex-col gap-4">
-        {answers.map((answer, index) => (
-          <QuizAnswer
-            key={answer}
-            answer={answer}
-            isCorrect={selectedAnswer === correctAnswer && index === selectedAnswer}
-            onClick={() => handleAnswerClick(index)}
-          />
-        ))}
+      <div className="p-6">
+        <div className="grid grid-cols-2 gap-4">
+          {options.map((option) => (
+            <QuizAnswer
+              key={option.id}
+              answer={option.text}
+              isCorrect={selectedAnswer === correctAnswer && option.id === selectedAnswer}
+              onClick={() => handleAnswerClick(option.id)}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
