@@ -1,5 +1,5 @@
 import { FaCode, FaLayerGroup, FaReact, FaServer } from "react-icons/fa";
-import { Challenge } from "./types";
+import { Challenge } from "../types";
 
 export const challengesList: Challenge[] = [
   {
