@@ -1,16 +1,16 @@
-import { useState } from 'react';
+import { useState, useCallback, memo } from 'react';
 import { QuizHeader } from './components/QuizHeader.component';
 import { QuizCode } from './components/QuizCode.component';
 import { QuizAnswer } from './components/QuizAnswer.component';
 
-import { QUIZ_DATA } from './QuizData.data';
+import { QUIZ_DATA } from '../constants/QuizData.data';
 
-export const CodeQuiz = () => {
+export const CodeQuiz = memo(() => {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
 
-  const handleAnswerClick = (index: number) => {
+  const handleAnswerClick = useCallback((index: number) => {
     setSelectedAnswer(index);
-  };
+  }, []);
 
   const { title, subtitle, code, answers, correctAnswer } = QUIZ_DATA;
 
@@ -33,4 +33,6 @@ export const CodeQuiz = () => {
       </div>
     </div>
   );
-}; 
+});
+
+CodeQuiz.displayName = 'CodeQuiz'; 

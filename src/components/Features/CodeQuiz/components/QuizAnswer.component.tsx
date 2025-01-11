@@ -1,10 +1,12 @@
+import { memo } from 'react';
+
 type QuizAnswerProps = {
   answer: string;
   isCorrect: boolean;
   onClick: () => void;
 };
 
-export const QuizAnswer = ({ answer, isCorrect, onClick }: QuizAnswerProps) => (
+export const QuizAnswer = memo(({ answer, isCorrect, onClick }: QuizAnswerProps) => (
   <button
     onClick={onClick}
     className={`w-full p-4 text-left rounded-lg transition-all duration-300
@@ -14,4 +16,6 @@ export const QuizAnswer = ({ answer, isCorrect, onClick }: QuizAnswerProps) => (
   >
     {answer}
   </button>
-); 
+));
+
+QuizAnswer.displayName = 'QuizAnswer'; 
