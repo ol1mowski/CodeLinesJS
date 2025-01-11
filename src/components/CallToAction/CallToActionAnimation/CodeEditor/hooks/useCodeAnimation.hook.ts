@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { CodeLine } from '../types';
 import { TYPING_INTERVAL } from '../constants';
 import { codeLines } from '../data/codeExample';
@@ -7,6 +7,8 @@ export const useCodeAnimation = () => {
   const [currentLineIndex, setCurrentLineIndex] = useState(0);
   const [visibleLines, setVisibleLines] = useState<CodeLine[]>([]);
   const [isAnimationComplete, setIsAnimationComplete] = useState(false);
+
+  const memoizedCodeLines = useMemo(() => codeLines, []);
 
   const resetAnimation = useCallback(() => {
     if (isAnimationComplete) {
@@ -18,8 +20,8 @@ export const useCodeAnimation = () => {
 
   useEffect(() => {
     const typingInterval = setInterval(() => {
-      if (currentLineIndex < codeLines.length) {
-        setVisibleLines(prev => [...prev, codeLines[currentLineIndex]]);
+      if (currentLineIndex < memoizedCodeLines.length) {
+        setVisibleLines(prev => [...prev, memoizedCodeLines[currentLineIndex]]);
         setCurrentLineIndex(prev => prev + 1);
       } else {
         clearInterval(typingInterval);
@@ -28,7 +30,7 @@ export const useCodeAnimation = () => {
     }, TYPING_INTERVAL);
 
     return () => clearInterval(typingInterval);
-  }, [currentLineIndex]);
+  }, [currentLineIndex, memoizedCodeLines]);
 
   return {
     visibleLines,
