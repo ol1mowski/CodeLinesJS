@@ -1,7 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, lazy, Suspense } from "react";
 import { AuthTabs } from "./AuthTabs.component";
-import { FaCode } from "react-icons/fa";
 
 type AuthMode = "login" | "register" | "forgot";
 
@@ -17,20 +16,18 @@ export const AuthContent = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="w-full bg-gray-800/50 backdrop-blur-lg rounded-2xl p-8 border border-gray-700/50"
+      className="w-full bg-dark/50 backdrop-blur-lg rounded-2xl p-8 border border-js/20"
       role="main"
       aria-label="Formularz autoryzacji"
     >
-      <div className="flex flex-col items-center mb-8">
-        <div className="w-16 h-16 bg-indigo-500/20 rounded-xl flex items-center justify-center mb-4">
-          <FaCode className="w-8 h-8 text-indigo-400" />
-        </div>
-        <h2 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">
+      <div className="flex flex-col justify-center items-center mb-8">
+        <span className="block text-2xl bg-[#f7df1e] text-black px-2 py-1 rounded">JS</span>
+        <h2 className="mt-2 text-xl font-bold text-js">
           CodeLinesJS
         </h2>
       </div>
 
-      <h1 className="text-3xl font-bold font-space text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400 mb-8">
+      <h1 className="text-3xl font-bold text-center text-js mb-8">
         {authMode === "login" && "Logowanie"}
         {authMode === "register" && "Rejestracja"}
         {authMode === "forgot" && "Reset hasła"}

@@ -11,7 +11,7 @@ export const RememberMeCheckbox = memo(({ register }: RememberMeCheckboxProps) =
     <label className="flex items-center gap-2">
       <input
         type="checkbox"
-        className="w-4 h-4 rounded border-gray-600 bg-gray-700 text-indigo-500 focus:ring-indigo-500"
+        className="w-4 h-4 rounded border-js/20 bg-dark text-js focus:ring-js"
         {...register("rememberMe")}
       />
       <span className="text-sm text-gray-400">Zapamiętaj mnie</span>
