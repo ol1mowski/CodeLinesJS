@@ -45,8 +45,8 @@ const TabButton = ({ isActive, onClick, icon, label }: TabButtonProps) => (
     onClick={onClick}
     className={`flex flex-col items-center gap-2 p-3 rounded-lg transition-colors ${
       isActive
-        ? "bg-indigo-500/20 text-indigo-400"
-        : "text-gray-400 hover:text-indigo-400"
+        ? "bg-js/20 text-js"
+        : "text-gray-400 hover:text-js"
     }`}
   >
     {icon}
