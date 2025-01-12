@@ -10,6 +10,10 @@
 ![{46B0A73D-B83C-4A48-958F-DF9E65BFA99C}](https://github.com/user-attachments/assets/5d1a3e9a-759e-4063-8b57-89e6372a5496)
 ![{B074E8A3-57C3-4505-8AA8-62801D4912C2}](https://github.com/user-attachments/assets/55a9a73f-b8d0-42df-8cf4-20d25912e121)
 
+## Auth page
+![{A7EEB451-0609-459D-B53A-4D2BBC789ABA}](https://github.com/user-attachments/assets/9982dedc-5104-424a-ae17-6d5ccf06fd44)
+
+
 
 ## 🚀 O Projekcie
 
