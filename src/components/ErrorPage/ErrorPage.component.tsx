@@ -5,7 +5,6 @@ import { GiTakeMyMoney } from "react-icons/gi";
 import { useNavigate } from "react-router-dom";
 import { JSGame } from "./JSGame/JSGame.component";
 
-
 export const ErrorPage = memo(() => {
   const navigate = useNavigate();
   const [showGame, setShowGame] = useState(false);
@@ -17,11 +16,26 @@ export const ErrorPage = memo(() => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-b from-dark via-dark-medium to-dark flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Background */}
+      <div className="absolute inset-0">
+        <div className="absolute top-0 left-0 w-full h-full bg-dark opacity-90" />
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-js rounded-full blur-[150px] opacity-20" />
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-js rounded-full blur-[150px] opacity-20" />
+        
+        <div className="absolute inset-0 opacity-[0.02]" 
+          style={{ 
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23f7df1e' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+            backgroundSize: '30px 30px'
+          }}
+        />
+      </div>
+
+      {/* Content */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="max-w-2xl w-full"
+        className="max-w-2xl w-full relative z-10"
       >
         <div className="text-center mb-8">
           <motion.div
@@ -30,11 +44,11 @@ export const ErrorPage = memo(() => {
             transition={{ type: "spring", stiffness: 200, damping: 15 }}
             className="inline-block"
           >
-            <GiTakeMyMoney className="text-[150px] text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-500 to-yellow-600" />
+            <GiTakeMyMoney className="text-[150px] text-js" />
           </motion.div>
           
           <motion.h1 
-            className="text-7xl font-bold font-space bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 mb-4"
+            className="text-7xl font-bold text-js mb-4"
             initial={{ x: -100, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ delay: 0.2 }}
@@ -58,17 +72,17 @@ export const ErrorPage = memo(() => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
-              className="bg-gray-800/50 backdrop-blur-lg rounded-xl p-6 border border-gray-700/50"
+              className="bg-dark/50 backdrop-blur-lg rounded-xl p-6 border border-js/20"
             >
-              <h2 className="text-xl font-space text-white mb-4 flex items-center gap-2">
-                <FaGamepad className="text-indigo-400" />
+              <h2 className="text-xl text-js mb-4 flex items-center gap-2">
+                <FaGamepad className="text-js" />
                 Zagraj w mini-grę JavaScript!
               </h2>
               <p className="text-gray-400 mb-4">
                 Rozwiąż zadania JavaScript i zdobądź punkty. Może nawet pobijesz swój rekord?
               </p>
               {score > 0 && (
-                <p className="text-lg text-indigo-400 font-bold mb-4">
+                <p className="text-lg text-js font-bold mb-4">
                   Twój ostatni wynik: {score} pkt
                 </p>
               )}
@@ -77,7 +91,8 @@ export const ErrorPage = memo(() => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setShowGame(true)}
-                  className="px-6 py-3 rounded-lg bg-gradient-to-r from-indigo-600 to-blue-600 text-white font-bold flex items-center gap-2 hover:from-indigo-500 hover:to-blue-500 transition-all"
+                  className="px-6 py-3 rounded-lg bg-js text-dark font-bold flex items-center gap-2 
+                           hover:bg-js/90 transition-all"
                 >
                   <FaGamepad />
                   {score > 0 ? 'Zagraj ponownie' : 'Rozpocznij grę'}
@@ -86,7 +101,8 @@ export const ErrorPage = memo(() => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => navigate('/')}
-                  className="px-6 py-3 rounded-lg border-2 border-gray-700 text-gray-400 font-bold flex items-center gap-2 hover:bg-gray-800/30 transition-all"
+                  className="px-6 py-3 rounded-lg border border-js/20 text-js font-bold flex items-center gap-2 
+                           hover:bg-js/10 transition-all"
                 >
                   <FaHome />
                   Wróć do strony głównej

@@ -62,22 +62,22 @@ export const JSGame = memo(({ onComplete }: JSGameProps) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className="bg-gray-800/50 backdrop-blur-lg rounded-xl p-6 border border-gray-700/50"
+      className="bg-dark/50 backdrop-blur-lg rounded-xl p-6 border border-js/20"
     >
       <div className="mb-6">
         <div className="flex justify-between items-center mb-4">
           <span className="text-gray-400">
             Pytanie {currentQuestion + 1}/{questions.length}
           </span>
-          <span className="text-indigo-400 font-bold">
+          <span className="text-js font-bold">
             Wynik: {score}
           </span>
         </div>
-        <h3 className="text-xl text-white mb-4">
+        <h3 className="text-xl text-js mb-4">
           {questions[currentQuestion].question}
         </h3>
-        <pre className="bg-gray-900/50 p-4 rounded-lg mb-6 overflow-x-auto">
-          <code className="text-indigo-300 font-mono">
+        <pre className="bg-dark/50 p-4 rounded-lg mb-6 overflow-x-auto border border-js/10">
+          <code className="text-js/90 font-mono">
             {questions[currentQuestion].code}
           </code>
         </pre>
@@ -94,14 +94,14 @@ export const JSGame = memo(({ onComplete }: JSGameProps) => {
             className={`
               p-4 rounded-lg text-left transition-all
               ${selectedAnswer === null 
-                ? 'bg-gray-700/30 hover:bg-gray-700/50 text-white' 
+                ? 'bg-dark/50 hover:bg-dark/70 text-js border border-js/10' 
                 : selectedAnswer === index
                   ? isCorrect 
-                    ? 'bg-green-500/20 border-2 border-green-500'
-                    : 'bg-red-500/20 border-2 border-red-500'
+                    ? 'bg-green-500/20 border-2 border-green-500/50'
+                    : 'bg-red-500/20 border-2 border-red-500/50'
                   : index === questions[currentQuestion].correctAnswer && !isCorrect
-                    ? 'bg-green-500/20 border-2 border-green-500'
-                    : 'bg-gray-700/30 opacity-50'
+                    ? 'bg-green-500/20 border-2 border-green-500/50'
+                    : 'bg-dark/50 opacity-50 border border-js/10'
               }
             `}
           >
