@@ -1,33 +1,35 @@
 import { memo } from 'react';
 import { motion } from "framer-motion";
-import { FooterSection } from '../types/type';
+import { FooterLink } from '../types/types';
 
 type FooterLinksProps = {
-  sections: FooterSection[];
+  title: string;
+  links: FooterLink[];
+  delay?: number;
 };
 
-export const FooterLinks = memo(({ sections }: FooterLinksProps) => (
-  <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-    {sections.map((section) => (
-      <div key={section.title}>
-        <h3 className="font-bold text-js mb-4">{section.title}</h3>
-        <ul className="space-y-2">
-          {section.links.map((link) => (
-            <motion.li
-              key={link.label}
-              whileHover={{ x: 5 }}
-              className="text-gray-400 hover:text-js transition-colors duration-200"
-            >
-              <a href={link.href} className="flex items-center gap-2">
-                <link.icon className="w-4 h-4" />
-                {link.label}
-              </a>
-            </motion.li>
-          ))}
-        </ul>
-      </div>
-    ))}
-  </div>
+export const FooterLinks = memo(({ title, links, delay = 0 }: FooterLinksProps) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true }}
+    transition={{ delay }}
+  >
+    <h4 className="text-lg font-bold text-[#f7df1e] mb-4">{title}</h4>
+    <ul className="space-y-3">
+      {links.map((link) => (
+        <motion.li key={link.label} whileHover={{ x: 5 }}>
+          <a 
+            href={link.href}
+            className="flex items-center gap-3 text-gray-400 hover:text-[#f7df1e] transition-colors"
+          >
+            <link.icon className="w-5 h-5" />
+            {link.label}
+          </a>
+        </motion.li>
+      ))}
+    </ul>
+  </motion.div>
 ));
 
 FooterLinks.displayName = 'FooterLinks'; 

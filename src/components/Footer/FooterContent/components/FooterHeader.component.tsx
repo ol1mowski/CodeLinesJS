@@ -13,7 +13,7 @@ export const FooterHeader = () => (
       </motion.div>
     </div>
     <h2 className="text-2xl font-bold text-js">
-      JavaScript Playground
+      CodeLinesJs
     </h2>
   </div>
 ); 
