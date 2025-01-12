@@ -1,7 +1,6 @@
 # CodeLinesJS - Interaktywna Platforma do Nauki JavaScript
 
-![CodeLinesJS](public/vite.svg)
-
+## Landing page
 
 ![{F953484C-28A7-4177-84FA-8380813F80B4}](https://github.com/user-attachments/assets/969a5ba6-0bc2-48e4-be1d-42e4b1bd7b00)
 ![{4ABB0556-EFDE-4DB5-B191-699B24CD3EFE}](https://github.com/user-attachments/assets/11c3d27a-eeee-4dba-afe1-63557cc658a5)
