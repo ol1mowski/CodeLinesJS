@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { memo } from "react";
-import { itemVariants } from "./animations";
+import { itemVariants } from '../../animations/navigationAnimations';
+
 
 type NavigationButtonProps = {
   icon: React.ReactNode;

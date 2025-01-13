@@ -1,8 +1,9 @@
 import { motion } from "framer-motion";
-import { NavigationButton } from "./NavigationButton.component";
-import { NavigationItem } from "./Navigation.types";
-import { itemVariants } from "./animations";
+
 import { memo } from "react";
+import { itemVariants } from '../../animations/navigationAnimations';
+import { NavigationButton } from '../NavigationButton';
+import { NavigationItem } from "../../types/navigation.types";
 
 type NavigationSectionProps = {
   title: string;

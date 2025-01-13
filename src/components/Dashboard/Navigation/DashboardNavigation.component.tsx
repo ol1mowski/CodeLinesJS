@@ -3,14 +3,15 @@ import { FaSignOutAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../Hooks/useAuth";
 import { useNavigation } from "../../../Hooks/useNavigation";
-import { NavigationLogo } from "./NavigationLogo.component";
-import { NavigationButton } from "./NavigationButton.component";
-import { NavigationSection } from "./NavigationSection.component";
+import { NavigationLogo } from "./components/NavigationLogo";
+import { NavigationButton } from "./components/NavigationButton";
+import { NavigationSection } from "./components/NavigationSection";
 
-import { navVariants } from "./animations";
+import { navVariants } from "./animations/navigationAnimations";
 import { useMemo, useCallback } from "react";
-import { NavigationItem } from "./Navigation.types";
-import { navigationItems } from "./navigationItems.tsx";
+import type { NavigationItem } from ".";
+import { navigationItems } from "./constants/navigationItems";
+
 
 const sectionTitles: Record<string, string> = {
   main: "Główne",

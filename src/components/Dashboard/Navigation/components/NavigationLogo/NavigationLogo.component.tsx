@@ -1,7 +1,8 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { FaCode } from "react-icons/fa";
-import { itemVariants } from "./animations";
+
 import { memo } from "react";
+import { itemVariants } from "../../animations/navigationAnimations";
 
 type NavigationLogoProps = {
   isExpanded: boolean;
