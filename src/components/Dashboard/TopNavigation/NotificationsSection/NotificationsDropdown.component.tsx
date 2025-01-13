@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
-import { memo, useEffect, useRef } from "react";
+import { memo } from "react";
+import { topNavigationStyles as styles } from "../TopNavigation.styles";
+import { useNotificationsDropdown } from "./hooks/useNotificationsDropdown";
 
 type NotificationsDropdownProps = {
   onClose: () => void;
@@ -27,39 +29,40 @@ const dropdownVariants = {
 };
 
 export const NotificationsDropdown = memo(({ onClose }: NotificationsDropdownProps) => {
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        onClose();
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [onClose]);
+  const { dropdownRef } = useNotificationsDropdown({ onClose });
 
   return (
     <motion.div
       ref={dropdownRef}
-      className="absolute right-0 top-12 w-80 bg-dark/95 backdrop-blur-lg rounded-lg border border-js/10 shadow-xl"
+      className={`
+        absolute right-0 top-12 w-80 
+        bg-dark/95 ${styles.effects.blur}
+        rounded-lg border ${styles.borders.base}
+        shadow-xl ${styles.effects.glow}
+      `}
       variants={dropdownVariants}
       initial="hidden"
       animate="visible"
       exit="exit"
+      role="dialog"
+      aria-label="Powiadomienia"
     >
       <div className="p-4">
-        <h3 className="text-js font-bold text-lg mb-4">Powiadomienia</h3>
+        <h3 className={`${styles.text.heading} mb-4`}>Powiadomienia</h3>
         <div className="space-y-2">
           <motion.div
-            className="p-3 rounded-lg bg-js/5 hover:bg-js/10 cursor-pointer border border-js/10"
+            className={`
+              p-3 rounded-lg 
+              bg-dark/50 ${styles.gradients.hover}
+              border ${styles.borders.base} ${styles.borders.hover}
+              cursor-pointer
+            `}
             whileHover={{ x: 5 }}
           >
-            <p className="text-gray-200 text-sm">
+            <p className={styles.text.primary}>
               Nowe wyzwanie jest dostępne!
             </p>
-            <span className="text-gray-400 text-xs">
+            <span className={styles.text.secondary}>
               2 minuty temu
             </span>
           </motion.div>

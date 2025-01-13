@@ -3,6 +3,7 @@ import { memo } from "react";
 import { WelcomeSection } from "./WelcomeSection/WelcomeSection.component";
 import { NotificationsButton } from "./NotificationsSection/NotificationsButton.component";
 import { useDisplayName } from "../../../Hooks/useDisplayName";
+import { topNavigationStyles } from "./TopNavigation.styles";
 
 type TopNavigationProps = {
   className?: string;
@@ -22,10 +23,12 @@ export const TopNavigation = memo(({ className }: TopNavigationProps) => {
         ml-[100px]
         flex items-center justify-between
         px-8 py-4
-       
-  
+        ${topNavigationStyles.gradients.background}
+        ${topNavigationStyles.effects.blur}
+        border-b ${topNavigationStyles.borders.base}
         z-40 w-[calc(100%-100px)]
-        transition-all duration-200
+        ${topNavigationStyles.transitions.base}
+        ${topNavigationStyles.effects.glow}
         ${className}
       `}
     >
