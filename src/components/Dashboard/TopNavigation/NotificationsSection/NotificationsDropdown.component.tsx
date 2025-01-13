@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
 import { memo, useEffect, useRef } from "react";
-import { topNavigationStyles as styles } from "../TopNavigation.styles";
 
 type NotificationsDropdownProps = {
   onClose: () => void;
@@ -44,24 +43,23 @@ export const NotificationsDropdown = memo(({ onClose }: NotificationsDropdownPro
   return (
     <motion.div
       ref={dropdownRef}
-      className="absolute right-0 top-12 w-80 bg-gray-900/95 backdrop-blur-lg rounded-lg border border-gray-700/50 shadow-xl"
+      className="absolute right-0 top-12 w-80 bg-dark/95 backdrop-blur-lg rounded-lg border border-js/10 shadow-xl"
       variants={dropdownVariants}
       initial="hidden"
       animate="visible"
       exit="exit"
     >
       <div className="p-4">
-        <h3 className={`${styles.text.heading} mb-4`}>Powiadomienia</h3>
+        <h3 className="text-js font-bold text-lg mb-4">Powiadomienia</h3>
         <div className="space-y-2">
-          {/* Przykładowe powiadomienie */}
           <motion.div
-            className="p-3 rounded-lg bg-gray-800/50 hover:bg-gray-800/70 cursor-pointer"
+            className="p-3 rounded-lg bg-js/5 hover:bg-js/10 cursor-pointer border border-js/10"
             whileHover={{ x: 5 }}
           >
-            <p className={`${styles.text.primary} text-sm`}>
+            <p className="text-gray-200 text-sm">
               Nowe wyzwanie jest dostępne!
             </p>
-            <span className={`${styles.text.secondary} text-xs`}>
+            <span className="text-gray-400 text-xs">
               2 minuty temu
             </span>
           </motion.div>
