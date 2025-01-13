@@ -21,12 +21,6 @@ const notificationIcons = {
   ranking: FaStar,
 };
 
-const notificationGradients = {
-  achievement: 'from-yellow-500 to-amber-500',
-  challenge: 'from-blue-500 to-indigo-500',
-  social: 'from-green-500 to-emerald-500',
-  ranking: 'from-purple-500 to-indigo-500',
-};
 
 // DUMMY DATA
 const notifications: CommunityNotification[] = [
@@ -62,9 +56,32 @@ const notifications: CommunityNotification[] = [
   },
 ];
 
+const notificationStyles = {
+  achievement: {
+    iconBg: "bg-amber-500/20",
+    iconColor: "text-amber-500",
+    borderHover: "group-hover:border-amber-500/30"
+  },
+  challenge: {
+    iconBg: "bg-emerald-500/20",
+    iconColor: "text-emerald-500",
+    borderHover: "group-hover:border-emerald-500/30"
+  },
+  social: {
+    iconBg: "bg-blue-500/20",
+    iconColor: "text-blue-500",
+    borderHover: "group-hover:border-blue-500/30"
+  },
+  ranking: {
+    iconBg: "bg-purple-500/20",
+    iconColor: "text-purple-500",
+    borderHover: "group-hover:border-purple-500/30"
+  }
+};
+
 const NotificationItem = memo(({ notification }: { notification: CommunityNotification }) => {
   const Icon = notificationIcons[notification.type];
-  const gradient = notificationGradients[notification.type];
+  const style = notificationStyles[notification.type];
 
   return (
     <motion.div
@@ -72,18 +89,20 @@ const NotificationItem = memo(({ notification }: { notification: CommunityNotifi
       animate={{ opacity: 1, x: 0 }}
       className={`
         flex items-start gap-4 p-4 rounded-lg
-        bg-gray-800/30 hover:bg-gray-800/50
-        transition-colors cursor-pointer
+        bg-dark/30 hover:bg-dark/50
+        border border-js/10 ${style.borderHover}
+        transition-all cursor-pointer
         group
       `}
     >
       <div className={`
         w-10 h-10 rounded-lg
-        bg-gradient-to-r ${gradient}
+        ${style.iconBg}
         flex items-center justify-center
         flex-shrink-0
+        group-hover:scale-110 transition-transform
       `}>
-        <Icon className="text-white text-lg" />
+        <Icon className={`text-lg ${style.iconColor}`} />
       </div>
       <div className="flex-1 min-w-0">
         <h3 className={`${styles.text.primary} font-medium truncate group-hover:text-white transition-colors`}>
@@ -95,7 +114,7 @@ const NotificationItem = memo(({ notification }: { notification: CommunityNotifi
         <div className="flex items-center gap-2 mt-2">
           {notification.user && (
             <div className="flex items-center gap-1">
-              <FaUserCircle className="text-gray-400 text-sm" />
+              <FaUserCircle className={style.iconColor + " text-sm opacity-80"} />
               <span className="text-xs text-gray-400">{notification.user}</span>
             </div>
           )}
@@ -113,7 +132,7 @@ export const CommunityBlock = memo(() => {
     <div className="space-y-6">
       <div className={styles.card.header}>
         <h2 className={styles.card.title}>Społeczność</h2>
-        <span className={`${styles.text.secondary} px-3 py-1 rounded-full bg-indigo-500/10`}>
+        <span className="text-gray-400 px-3 py-1 rounded-full bg-js/10">
           4 nowe
         </span>
       </div>
