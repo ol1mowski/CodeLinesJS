@@ -14,35 +14,63 @@ const buttonVariants = {
   }
 };
 
-const GameButton = memo(({ icon: Icon, title, subtitle, gradient, onClick }: {
+const buttonStyles = {
+  play: {
+    iconBg: "bg-emerald-500/20",
+    iconColor: "text-emerald-500",
+    borderHover: "group-hover:border-emerald-500/30",
+    bgHover: "hover:bg-emerald-500/10"
+  },
+  challenge: {
+    iconBg: "bg-blue-500/20",
+    iconColor: "text-blue-500",
+    borderHover: "group-hover:border-blue-500/30",
+    bgHover: "hover:bg-blue-500/10"
+  },
+  continue: {
+    iconBg: "bg-amber-500/20",
+    iconColor: "text-amber-500",
+    borderHover: "group-hover:border-amber-500/30",
+    bgHover: "hover:bg-amber-500/10"
+  }
+};
+
+const GameButton = memo(({ icon: Icon, title, subtitle, type = 'play', onClick }: {
   icon: typeof FaPlay;
   title: string;
   subtitle: string;
-  gradient: string;
+  type?: 'play' | 'challenge' | 'continue';
   onClick: () => void;
-}) => (
-  <motion.button
-    variants={buttonVariants}
-    whileHover="hover"
-    whileTap="tap"
-    onClick={onClick}
-    className={`
-      w-full flex items-center gap-4 p-4
-      ${gradient}
-      rounded-lg
-      group transition-all
-      hover:shadow-lg hover:shadow-indigo-500/10
-    `}
-  >
-    <div className="w-12 h-12 rounded-lg bg-white/10 flex items-center justify-center">
-      <Icon className="text-2xl text-white" />
-    </div>
-    <div className="text-left">
-      <h3 className="text-white font-medium">{title}</h3>
-      <p className="text-white/70 text-sm">{subtitle}</p>
-    </div>
-  </motion.button>
-));
+}) => {
+  const style = buttonStyles[type];
+  
+  return (
+    <motion.button
+      variants={buttonVariants}
+      whileHover="hover"
+      whileTap="tap"
+      onClick={onClick}
+      className={`
+        w-full flex items-center gap-4 p-4
+        bg-dark/30 ${style.bgHover}
+        rounded-lg border border-js/10 ${style.borderHover}
+        group transition-all
+      `}
+    >
+      <div className={`
+        w-12 h-12 rounded-lg ${style.iconBg}
+        flex items-center justify-center
+        group-hover:scale-110 transition-transform
+      `}>
+        <Icon className={`text-2xl ${style.iconColor}`} />
+      </div>
+      <div className="text-left">
+        <h3 className={`font-medium ${style.iconColor}`}>{title}</h3>
+        <p className="text-gray-400 text-sm">{subtitle}</p>
+      </div>
+    </motion.button>
+  );
+});
 
 GameButton.displayName = "GameButton";
 
@@ -58,7 +86,7 @@ export const GameBlock = memo(() => {
           icon={FaPlay}
           title="Nowa gra"
           subtitle="Rozpocznij nową przygodę"
-          gradient="bg-gradient-to-r from-blue-500 to-indigo-500"
+          type="play"
           onClick={() => console.log('Nowa gra')}
         />
 
@@ -66,7 +94,7 @@ export const GameBlock = memo(() => {
           icon={FaCode}
           title="Wyzwania"
           subtitle="Sprawdź swoje umiejętności"
-          gradient="bg-gradient-to-r from-indigo-500 to-purple-500"
+          type="challenge"
           onClick={() => console.log('Wyzwania')}
         />
 
@@ -74,7 +102,7 @@ export const GameBlock = memo(() => {
           icon={FaRedo}
           title="Kontynuuj"
           subtitle="Wróć do ostatniej gry"
-          gradient="bg-gradient-to-r from-emerald-500 to-green-500"
+          type="continue"
           onClick={() => console.log('Kontynuuj')}
         />
       </div>

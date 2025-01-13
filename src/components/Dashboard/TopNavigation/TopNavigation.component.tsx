@@ -1,9 +1,9 @@
 import { motion } from "framer-motion";
 import { memo } from "react";
-import { topNavigationStyles as styles } from "./TopNavigation.styles";
 import { WelcomeSection } from "./WelcomeSection/WelcomeSection.component";
 import { NotificationsButton } from "./NotificationsSection/NotificationsButton.component";
-import { useDisplayName } from "../../../hooks/useDisplayName";
+import { useDisplayName } from "../../../Hooks/useDisplayName";
+import { topNavigationStyles } from "./TopNavigation.styles";
 
 type TopNavigationProps = {
   className?: string;
@@ -11,7 +11,7 @@ type TopNavigationProps = {
 
 export const TopNavigation = memo(({ className }: TopNavigationProps) => {
   const displayName = useDisplayName();
-  const unreadNotifications = 1; // DUMMY DATA
+  const unreadNotifications = 1;
 
   return (
     <motion.header
@@ -23,10 +23,12 @@ export const TopNavigation = memo(({ className }: TopNavigationProps) => {
         ml-[100px]
         flex items-center justify-between
         px-8 py-4
-        ${styles.gradients.background}
-        backdrop-blur-lg border-b border-gray-700/50
+        ${topNavigationStyles.gradients.background}
+        ${topNavigationStyles.effects.blur}
+        border-b ${topNavigationStyles.borders.base}
         z-40 w-[calc(100%-100px)]
-        ${styles.transitions.base}
+        ${topNavigationStyles.transitions.base}
+        ${topNavigationStyles.effects.glow}
         ${className}
       `}
     >

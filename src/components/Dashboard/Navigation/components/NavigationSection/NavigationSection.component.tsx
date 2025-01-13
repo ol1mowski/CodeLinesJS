@@ -1,8 +1,9 @@
 import { motion } from "framer-motion";
-import { NavigationButton } from "./NavigationButton.component";
-import { NavigationItem } from "./Navigation.types";
-import { itemVariants } from "./animations";
+
 import { memo } from "react";
+import { itemVariants } from '../../animations/navigationAnimations';
+import { NavigationButton } from '../NavigationButton';
+import { NavigationItem } from "../../types/navigation.types";
 
 type NavigationSectionProps = {
   title: string;
@@ -36,7 +37,7 @@ export const NavigationSection = memo(({
         initial="collapsed"
         animate="expanded"
         exit="collapsed"
-        className="text-xs font-bold text-gray-400 uppercase tracking-wider px-3 mb-2"
+        className="text-xs font-bold text-js/60 uppercase tracking-wider px-3 mb-2"
       >
         {title}
       </motion.h2>
@@ -53,7 +54,7 @@ export const NavigationSection = memo(({
     ))}
     {!isLastSection && (
       <div className="mx-3 my-4">
-        <div className="border-t border-white/5" />
+        <div className="border-t border-js/5" />
       </div>
     )}
   </motion.div>
