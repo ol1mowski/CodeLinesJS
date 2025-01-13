@@ -1,8 +1,8 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { FaSignOutAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../../hooks/useAuth";
-import { useNavigation } from "../../../hooks/useNavigation";
+import { useAuth } from "../../../Hooks/useAuth";
+import { useNavigation } from "../../../Hooks/useNavigation";
 import { NavigationLogo } from "./NavigationLogo.component";
 import { NavigationButton } from "./NavigationButton.component";
 import { NavigationSection } from "./NavigationSection.component";
@@ -52,7 +52,7 @@ export const DashboardNavigation = () => {
       initial="collapsed"
       animate={isExpanded ? "expanded" : "collapsed"}
       variants={navVariants}
-      className="fixed left-0 top-0 h-screen bg-gradient-to-b from-gray-900 via-blue-900 to-indigo-900 backdrop-blur-lg border-r border-gray-700/50 flex flex-col py-6 z-50 shadow-xl shadow-black/10"
+      className="fixed left-0 top-0 h-screen bg-gradient-to-b from-dark via-dark-medium to-dark backdrop-blur-lg border-r border-js/10 flex flex-col py-6 z-50 shadow-xl shadow-black/10"
     >
       <NavigationLogo isExpanded={isExpanded} />
 
@@ -60,17 +60,17 @@ export const DashboardNavigation = () => {
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         onClick={() => setIsExpanded(!isExpanded)}
-        className="absolute -right-3 top-8 w-6 h-6 bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 rounded-full flex items-center justify-center hover:opacity-90 transition-all shadow-lg shadow-indigo-500/20"
+        className="absolute -right-3 top-8 w-6 h-6 bg-js rounded-full flex items-center justify-center hover:opacity-90 transition-all shadow-lg shadow-js/20"
       >
         <motion.span
           animate={{ rotate: isExpanded ? 180 : 0 }}
-          className="text-gray-900 text-sm"
+          className="text-dark text-sm font-bold"
         >
           →
         </motion.span>
       </motion.button>
 
-      <div className="overflow-x-hidden flex-1 px-3 space-y-6 overflow-y-auto scrollbar-thin scrollbar-track-gray-800/50 scrollbar-thumb-indigo-500/20">
+      <div className="overflow-x-hidden flex-1 px-3 space-y-6 overflow-y-auto scrollbar-thin scrollbar-track-dark/50 scrollbar-thumb-js/20">
         <AnimatePresence mode="sync">
           {sections.map(([section, items], index) => (
             <NavigationSection
@@ -87,7 +87,7 @@ export const DashboardNavigation = () => {
         </AnimatePresence>
       </div>
 
-      <div className="pt-4 border-t border-gray-700/50">
+      <div className="pt-4 border-t border-js/10">
         <NavigationButton
           icon={<FaSignOutAlt />}
           label="Wyloguj się"

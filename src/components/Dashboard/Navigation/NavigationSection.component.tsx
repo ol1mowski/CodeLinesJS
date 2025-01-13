@@ -36,7 +36,7 @@ export const NavigationSection = memo(({
         initial="collapsed"
         animate="expanded"
         exit="collapsed"
-        className="text-xs font-bold text-gray-400 uppercase tracking-wider px-3 mb-2"
+        className="text-xs font-bold text-js/60 uppercase tracking-wider px-3 mb-2"
       >
         {title}
       </motion.h2>
@@ -53,7 +53,7 @@ export const NavigationSection = memo(({
     ))}
     {!isLastSection && (
       <div className="mx-3 my-4">
-        <div className="border-t border-white/5" />
+        <div className="border-t border-js/5" />
       </div>
     )}
   </motion.div>

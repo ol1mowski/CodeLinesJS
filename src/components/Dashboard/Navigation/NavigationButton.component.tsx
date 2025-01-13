@@ -13,11 +13,11 @@ type NavigationButtonProps = {
 
 const variants = {
   default: {
-    active: "bg-gradient-to-r from-indigo-500/20 to-blue-500/20 border-l-2 border-indigo-500 text-indigo-400",
-    inactive: "text-gray-400 hover:text-indigo-400 hover:bg-indigo-500/10",
+    active: "bg-js/20 border-l-2 border-js text-js",
+    inactive: "text-gray-400 hover:text-js hover:bg-js/10",
   },
   danger: {
-    active: "bg-gradient-to-r from-red-500/20 to-pink-500/20 text-red-400",
+    active: "bg-red-500/20 text-red-400",
     inactive: "text-red-400 hover:bg-red-500/10",
   },
 };
