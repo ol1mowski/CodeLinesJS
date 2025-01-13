@@ -3,7 +3,7 @@ import { memo } from "react";
 import { topNavigationStyles as styles } from "./TopNavigation.styles";
 import { WelcomeSection } from "./WelcomeSection/WelcomeSection.component";
 import { NotificationsButton } from "./NotificationsSection/NotificationsButton.component";
-import { useDisplayName } from "../../../hooks/useDisplayName";
+import { useDisplayName } from "../../../Hooks/useDisplayName";
 
 type TopNavigationProps = {
   className?: string;
