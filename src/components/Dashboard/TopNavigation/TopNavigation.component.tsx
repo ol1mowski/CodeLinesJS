@@ -1,18 +1,23 @@
-import { memo } from "react";
+import { memo, useMemo } from "react";
 import { motion } from "framer-motion";
 import { WelcomeSection } from "./WelcomeSection/WelcomeSection.component";
 import { NotificationsButton } from "./NotificationsSection/NotificationsButton.component";
-
 import { topNavigationStyles as styles } from "./style/TopNavigation.styles";
 import { useTopNavAnimation } from "./hooks/useTopNavAnimation";
-import { DashboardProfile } from "../../../types/dashboard.types";
+import { useDashboardData } from "../DashboardContent/hooks/useDashboardData";
 
-type TopNavigationProps = {
-  profile?: DashboardProfile;
-};
-
-export const TopNavigation = memo(({ profile }: TopNavigationProps) => {
+export const TopNavigation = memo(() => {
   const animations = useTopNavAnimation();
+  const { data } = useDashboardData();
+
+  const username = useMemo(() => {
+    const userData = localStorage.getItem('user') || sessionStorage.getItem('user');
+    if (userData) {
+      const { username } = JSON.parse(userData);
+      return username;
+    }
+    return data?.profile?.username ?? 'Użytkowniku';
+  }, [data?.profile?.username]);
 
   return (
     <motion.nav
@@ -22,7 +27,7 @@ export const TopNavigation = memo(({ profile }: TopNavigationProps) => {
       className={styles.container}
     >
       <div className={styles.content}>
-        <WelcomeSection username={profile?.username ?? 'Użytkowniku'} />
+        <WelcomeSection username={username} />
         
         <div className={styles.actions}>
           <NotificationsButton />

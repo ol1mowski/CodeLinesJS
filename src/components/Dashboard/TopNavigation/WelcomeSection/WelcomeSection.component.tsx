@@ -21,3 +21,5 @@ export const WelcomeSection = memo(({ username }: WelcomeSectionProps) => (
     </div>
   </motion.div>
 ));
+
+WelcomeSection.displayName = "WelcomeSection";
