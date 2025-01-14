@@ -1,101 +1,47 @@
-import { motion } from "framer-motion";
 import { memo } from "react";
-import { dashboardContentStyles as styles } from "./DashboardContent.styles";
+import { motion } from "framer-motion";
+import { dashboardContentStyles as styles } from "./style/DashboardContent.styles";
 import { CommunityBlock } from "./CommunityBlock/CommunityBlock.component";
 import { GameBlock } from "./GameBlock/GameBlock.component";
 import { StatsBlock } from "./StatsBlock/StatsBlock.component";
+import { DashboardState } from "./components/DashboardState.component";
 import { useDashboardData } from "./hooks/useDashboardData";
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.5,
-      ease: "easeOut"
-    }
-  }
-};
+import { useDashboardAnimation } from "./hooks/useDashboardAnimation";
 
 export const DashboardContent = memo(() => {
   const { data, isLoading, error } = useDashboardData();
+  const animations = useDashboardAnimation();
 
   if (isLoading) {
-    return (
-      <div className="p-8 w-full flex items-center justify-center min-h-[400px]">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="text-xl text-gray-400"
-        >
-          Ładowanie danych...
-        </motion.div>
-      </div>
-    );
+    return <DashboardState type="loading" />;
   }
 
   if (error) {
-    return (
-      <div className="p-8 w-full flex items-center justify-center min-h-[400px]">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="text-xl text-red-400"
-        >
-          {error.message || 'Wystąpił błąd podczas ładowania danych'}
-        </motion.div>
-      </div>
-    );
+    return <DashboardState type="error" message={error.message} />;
   }
 
   if (!data) {
-    return (
-      <div className="p-8 w-full flex items-center justify-center min-h-[400px]">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="text-xl text-gray-400"
-        >
-          Brak danych do wyświetlenia
-        </motion.div>
-      </div>
-    );
+    return <DashboardState type="empty" />;
   }
 
   return (
     <motion.div
       className="p-8 w-full"
-      variants={containerVariants}
+      variants={animations.container}
       initial="hidden"
       animate="visible"
     >
       <motion.h1 
         className={`${styles.text.heading} text-3xl mb-12`}
-        variants={itemVariants}
+        variants={animations.item}
       >
         Dashboard
       </motion.h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className={styles.grid}>
         <motion.div
-          variants={itemVariants}
-          className={`
-            ${styles.card.base}
-            ${styles.effects.glow}
-            col-span-1 md:col-span-2 lg:col-span-1
-            order-2 lg:order-1
-          `}
+          variants={animations.item}
+          className={styles.card.community}
         >
           <CommunityBlock 
             notifications={data.notifications} 
@@ -104,25 +50,15 @@ export const DashboardContent = memo(() => {
         </motion.div>
 
         <motion.div
-          variants={itemVariants}
-          className={`
-            ${styles.card.base}
-            ${styles.effects.glow}
-            col-span-1 md:col-span-2 lg:col-span-1
-            order-1 lg:order-2
-          `}
+          variants={animations.item}
+          className={styles.card.game}
         >
           <GameBlock />
         </motion.div>
 
         <motion.div
-          variants={itemVariants}
-          className={`
-            ${styles.card.base}
-            ${styles.effects.glow}
-            col-span-1 md:col-span-2 lg:col-span-1
-            order-3
-          `}
+          variants={animations.item}
+          className={styles.card.stats}
         >
           <StatsBlock stats={data.stats} />
         </motion.div>
