@@ -1,53 +1,50 @@
+import { memo, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { memo, useState } from "react";
 import { FaBell } from "react-icons/fa";
 import { NotificationsDropdown } from "./NotificationsDropdown.component";
-import { topNavigationStyles as styles } from "../TopNavigation.styles";
+import { notificationsStyles as styles } from "./style/Notifications.styles";
+import { useDashboardData } from "../../DashboardContent/hooks/useDashboardData";
 
-type NotificationsButtonProps = {
-  unreadCount: number;
-};
-
-export const NotificationsButton = memo(({ unreadCount }: NotificationsButtonProps) => {
+export const NotificationsButton = memo(() => {
   const [isOpen, setIsOpen] = useState(false);
+  const { data } = useDashboardData();
+  const unreadCount = data?.unreadCount ?? 0;
 
-  const toggleDropdown = () => setIsOpen(prev => !prev);
+  const handleClose = useCallback(() => setIsOpen(false), []);
+  const handleToggle = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsOpen(prev => !prev);
+  }, []);
 
   return (
-    <div className="relative">
+    <div className={styles.button.wrapper}>
       <motion.button
-        className={`
-          relative p-2 rounded-lg 
-          bg-dark/50 border ${styles.borders.base}
-          ${styles.gradients.hover} 
-          ${styles.transitions.base}
-          ${isOpen ? 'bg-red-500/10 border-red-500/30' : ''}
-        `}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        onClick={toggleDropdown}
-        aria-expanded={isOpen}
-        aria-label="Powiadomienia"
+        onClick={handleToggle}
+        className={`${styles.button.base} ${isOpen ? styles.button.active : ''}`}
       >
-        <FaBell 
-          className={`text-xl ${isOpen ? 'text-red-500' : styles.gradients.text}`} 
-        />
+        <FaBell className={`
+          ${styles.button.icon.base}
+          ${isOpen ? styles.button.icon.active : styles.button.icon.inactive}
+        `} />
+        
         <AnimatePresence>
-          {unreadCount > 0 && !isOpen && (
+          {unreadCount > 0 && (
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0 }}
-              className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-js flex items-center justify-center"
+              className={styles.button.badge}
             >
-              <span className="text-xs text-dark font-bold">{unreadCount}</span>
+              {unreadCount > 9 ? '9+' : unreadCount}
             </motion.div>
           )}
         </AnimatePresence>
       </motion.button>
 
       <AnimatePresence>
-        {isOpen && <NotificationsDropdown onClose={toggleDropdown} />}
+        {isOpen && <NotificationsDropdown onClose={handleClose} />}
       </AnimatePresence>
     </div>
   );

@@ -18,6 +18,22 @@ class DashboardController {
       next(error);
     }
   };
+
+  markNotificationAsRead = async (req, res, next) => {
+    try {
+      const { notificationId } = req.params;
+      const userId = req.user.userId;
+      
+      const notification = await this.dashboardService.markNotificationAsRead(
+        userId,
+        notificationId
+      );
+      
+      res.json(notification);
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export default DashboardController; 

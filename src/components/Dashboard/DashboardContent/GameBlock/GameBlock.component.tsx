@@ -1,118 +1,55 @@
-import { motion } from "framer-motion";
 import { memo } from "react";
-import { FaPlay, FaCode, FaRedo } from "react-icons/fa";
-import { dashboardContentStyles as styles } from "../DashboardContent.styles";
-import { Link } from "react-router-dom";
-
-const buttonVariants = {
-  hover: {
-    scale: 1.02,
-    transition: { duration: 0.2 }
-  },
-  tap: {
-    scale: 0.98,
-    transition: { duration: 0.1 }
-  }
-};
-
-const buttonStyles = {
-  play: {
-    iconBg: "bg-emerald-500/20",
-    iconColor: "text-emerald-500",
-    borderHover: "group-hover:border-emerald-500/30",
-    bgHover: "hover:bg-emerald-500/10"
-  },
-  challenge: {
-    iconBg: "bg-blue-500/20",
-    iconColor: "text-blue-500",
-    borderHover: "group-hover:border-blue-500/30",
-    bgHover: "hover:bg-blue-500/10"
-  },
-  continue: {
-    iconBg: "bg-amber-500/20",
-    iconColor: "text-amber-500",
-    borderHover: "group-hover:border-amber-500/30",
-    bgHover: "hover:bg-amber-500/10"
-  }
-};
-
-const GameButton = memo(({ icon: Icon, title, subtitle, type = 'play', onClick }: {
-  icon: typeof FaPlay;
-  title: string;
-  subtitle: string;
-  type?: 'play' | 'challenge' | 'continue';
-  onClick: () => void;
-}) => {
-  const style = buttonStyles[type];
-
-  return (
-    <motion.button
-      variants={buttonVariants}
-      whileHover="hover"
-      whileTap="tap"
-      onClick={onClick}
-      className={`
-        w-full flex items-center gap-4 p-4
-        bg-dark/30 ${style.bgHover}
-        rounded-lg border border-js/10 ${style.borderHover}
-        group transition-all
-      `}
-    >
-      <div className={`
-        w-12 h-12 rounded-lg ${style.iconBg}
-        flex items-center justify-center
-        group-hover:scale-110 transition-transform
-      `}>
-        <Icon className={`text-2xl ${style.iconColor}`} />
-      </div>
-      <div className="text-left">
-        <h3 className={`font-medium ${style.iconColor}`}>{title}</h3>
-        <p className="text-gray-400 text-sm">{subtitle}</p>
-      </div>
-    </motion.button>
-  );
-});
-
-GameButton.displayName = "GameButton";
+import { motion } from "framer-motion";
+import { FaGamepad } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { gameBlockStyles as styles } from "./style/GameBlock.styles";
+import { useGameBlockAnimation } from "./hooks/useGameBlockAnimation";
 
 export const GameBlock = memo(() => {
+  const navigate = useNavigate();
+  const animations = useGameBlockAnimation();
+
+  const handleStartGame = () => {
+    navigate('/game');
+  };
+
   return (
-    <div className="space-y-6">
-      <div className={styles.card.header}>
-        <h2 className={styles.card.title}>Graj</h2>
+    <motion.div
+      variants={animations.container}
+      initial="hidden"
+      animate="show"
+      className={styles.container}
+    >
+      <div className={styles.header.wrapper}>
+        <h2 className={styles.header.title}>
+          <FaGamepad className={styles.header.icon} />
+          Tryb Gry
+        </h2>
       </div>
 
-      <div className="grid gap-4">
-        <Link to="/dashboard/play">
-          <GameButton
-            icon={FaPlay}
-            title="Nowa gra"
-            subtitle="Rozpocznij nową przygodę"
-            type="play"
-            onClick={() => console.log('Nowa gra')}
-          /></Link>
+      <div className={styles.content.wrapper}>
+        <p className={styles.content.description}>
+          Rozpocznij nową sesję gry, rozwiązuj wyzwania i zdobywaj punkty.
+          Sprawdź swoje umiejętności w praktyce!
+        </p>
 
-        <Link to="/dashboard/play">
-          <GameButton
-            icon={FaCode}
-            title="Wyzwania"
-            subtitle="Sprawdź swoje umiejętności"
-            type="challenge"
-            onClick={() => console.log('Wyzwania')}
-          />  
-        </Link>
-
-        <Link to="/dashboard/play"> 
-          <GameButton
-            icon={FaRedo}
-            title="Kontynuuj"
-            subtitle="Wróć do ostatniej gry"
-            type="continue"
-            onClick={() => console.log('Kontynuuj')}
-          />
-        </Link>
+        <div className={styles.content.button.wrapper}>
+          <motion.button
+            onClick={handleStartGame}
+            whileHover="hover"
+            whileTap="tap"
+            variants={animations.button}
+            className={`
+              ${styles.content.button.base}
+              ${styles.content.button.hover}
+              ${styles.content.button.active}
+            `}
+          >
+            Rozpocznij Grę
+          </motion.button>
+        </div>
       </div>
-    </div>
+    </motion.div>
   );
 });
 

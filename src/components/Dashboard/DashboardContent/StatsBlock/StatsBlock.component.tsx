@@ -1,7 +1,8 @@
 import { memo } from "react";
 import { FaTrophy, FaStar, FaChartLine } from "react-icons/fa";
-import { dashboardContentStyles as styles } from "../DashboardContent.styles";
 import { DashboardStats } from "../../../../types/dashboard.types";
+import { statsBlockStyles as styles } from "./style/StatsBlock.styles";
+import { useDateFormat } from "./hooks/useDateFormat";
 
 type StatItemProps = {
   icon: React.ReactNode;
@@ -10,11 +11,11 @@ type StatItemProps = {
 };
 
 const StatItem = memo(({ icon, label, value }: StatItemProps) => (
-  <div className="flex items-center gap-4 p-4 bg-dark/30 rounded-lg">
-    <div className="text-2xl text-js">{icon}</div>
-    <div>
-      <p className="text-sm text-gray-400">{label}</p>
-      <p className="text-xl font-bold text-js">{value}</p>
+  <div className={styles.stats.item.wrapper}>
+    <div className={styles.stats.item.icon}>{icon}</div>
+    <div className={styles.stats.item.content.wrapper}>
+      <p className={styles.stats.item.content.label}>{label}</p>
+      <p className={styles.stats.item.content.value}>{value}</p>
     </div>
   </div>
 ));
@@ -26,21 +27,11 @@ interface StatsBlockProps {
 }
 
 export const StatsBlock = memo(({ stats }: StatsBlockProps) => {
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat('pl-PL', {
-      day: 'numeric',
-      month: 'long',
-      hour: '2-digit',
-      minute: '2-digit'
-    }).format(date);
-  };
+  const formatDate = useDateFormat();
 
   return (
-    <div className={styles.card.content}>
-      <h2 className={styles.text.subtitle}>Twoje Statystyki</h2>
-      
-      <div className="space-y-4 mt-6">
+    <div className={styles.container}>
+      <div className={styles.stats.grid}>
         <StatItem
           icon={<FaTrophy />}
           label="Ukończone Wyzwania"
@@ -60,7 +51,7 @@ export const StatsBlock = memo(({ stats }: StatsBlockProps) => {
         />
       </div>
 
-      <p className="text-sm text-gray-400 mt-4">
+      <p className={styles.lastActive}>
         Ostatnia aktywność: {formatDate(stats.lastActive)}
       </p>
     </div>
