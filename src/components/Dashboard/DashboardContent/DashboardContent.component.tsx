@@ -33,11 +33,11 @@ export const DashboardContent = memo(() => {
 
   if (isLoading) {
     return (
-      <div className="p-8 w-full flex items-center justify-center">
+      <div className="p-8 w-full flex items-center justify-center min-h-[400px]">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="text-xl text-gray-600 dark:text-gray-400"
+          className="text-xl text-gray-400"
         >
           Ładowanie danych...
         </motion.div>
@@ -47,13 +47,27 @@ export const DashboardContent = memo(() => {
 
   if (error) {
     return (
-      <div className="p-8 w-full flex items-center justify-center">
+      <div className="p-8 w-full flex items-center justify-center min-h-[400px]">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="text-xl text-red-600 dark:text-red-400"
+          className="text-xl text-red-400"
         >
-          Wystąpił błąd podczas ładowania danych
+          {error.message || 'Wystąpił błąd podczas ładowania danych'}
+        </motion.div>
+      </div>
+    );
+  }
+
+  if (!stats) {
+    return (
+      <div className="p-8 w-full flex items-center justify-center min-h-[400px]">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-xl text-gray-400"
+        >
+          Brak danych do wyświetlenia
         </motion.div>
       </div>
     );
@@ -83,7 +97,10 @@ export const DashboardContent = memo(() => {
             order-2 lg:order-1
           `}
         >
-          <CommunityBlock notifications={notifications} unreadCount={unreadCount} />
+          <CommunityBlock 
+            notifications={notifications} 
+            unreadCount={unreadCount} 
+          />
         </motion.div>
 
         <motion.div
