@@ -1,12 +1,11 @@
 import { motion } from "framer-motion";
-import { memo } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { memo, useEffect } from "react";
 import { format } from "date-fns";
 import { pl } from "date-fns/locale";
 import { topNavigationStyles as styles } from "../TopNavigation.styles";
-import { useNotificationsDropdown } from "./hooks/useNotificationsDropdown";
-import { useDashboardData } from "../../DashboardContent/hooks/useDashboardData";
 import { FaCheckCircle, FaTrophy, FaUsers, FaBell } from "react-icons/fa";
+import { useDashboardData } from "../../DashboardContent/hooks/useDashboardData";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const getNotificationIcon = (type: string) => {
   switch (type) {
@@ -17,7 +16,7 @@ const getNotificationIcon = (type: string) => {
     case 'social':
       return <FaUsers className="text-blue-500" />;
     default:
-      return <FaBell className="text-gray-500" />;
+      return <FaBell className="text-gray-400" />;
   }
 };
 
@@ -29,31 +28,20 @@ type NotificationsDropdownProps = {
   onClose: () => void;
 };
 
-const dropdownVariants = {
-  hidden: { opacity: 0, y: -20, scale: 0.95 },
-  visible: { 
-    opacity: 1, 
-    y: 0, 
-    scale: 1,
-    transition: {
-      duration: 0.2,
-      ease: "easeOut"
-    }
-  },
-  exit: {
-    opacity: 0,
-    y: -10,
-    scale: 0.95,
-    transition: {
-      duration: 0.15
-    }
-  }
-};
-
 export const NotificationsDropdown = memo(({ onClose }: NotificationsDropdownProps) => {
-  const { dropdownRef } = useNotificationsDropdown({ onClose });
   const { data, isLoading } = useDashboardData();
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [onClose]);
 
   const markAsReadMutation = useMutation({
     mutationFn: async (notificationId: string) => {
@@ -77,19 +65,16 @@ export const NotificationsDropdown = memo(({ onClose }: NotificationsDropdownPro
 
   return (
     <motion.div
-      ref={dropdownRef}
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.2 }}
       className={`
-        absolute right-0 top-12 w-80 
-        bg-dark/95 ${styles.effects.blur}
-        rounded-lg border ${styles.borders.base}
-        shadow-xl ${styles.effects.glow}
+        absolute right-0 top-12 w-80 bg-dark/95 rounded-xl 
+        border ${styles.borders.base} shadow-xl backdrop-blur-sm
+        z-50
       `}
-      variants={dropdownVariants}
-      initial="hidden"
-      animate="visible"
-      exit="exit"
-      role="dialog"
-      aria-label="Powiadomienia"
+      onClick={(e) => e.stopPropagation()}
     >
       <div className="p-4">
         <div className="flex justify-between items-center mb-4">
@@ -105,13 +90,13 @@ export const NotificationsDropdown = memo(({ onClose }: NotificationsDropdownPro
           <div className="py-8 text-center text-gray-400">
             Ładowanie powiadomień...
           </div>
-        ) : data?.notifications.length === 0 ? (
+        ) : !data?.notifications?.length ? (
           <div className="py-8 text-center text-gray-400">
             Brak nowych powiadomień
           </div>
         ) : (
-          <div className="space-y-2 max-h-[400px] overflow-y-auto">
-            {data?.notifications.map((notification) => (
+          <div className="space-y-2 max-h-[400px] overflow-y-auto custom-scrollbar">
+            {data.notifications.map((notification) => (
               <motion.div
                 key={notification._id}
                 className={`
