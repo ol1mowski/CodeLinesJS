@@ -5,7 +5,7 @@ import { LoadingScreen } from "../../../../UI/LoadingScreen/LoadingScreen.compon
 
 import { useTimeFormat } from "./hooks/useTimeFormat";
 import { useStatsCards } from "./hooks/useStatsCards";
-import { statsOverviewStyles as styles } from "./StatsOverview.styles";
+import { statsOverviewStyles as styles } from "./style/StatsOverview.styles";
 import { LevelProgress } from "../../../StatsSection/StatsOverview/LevelProgress.component";
 import { StatCard } from "./StatCard.component";
 

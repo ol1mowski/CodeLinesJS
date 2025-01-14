@@ -17,6 +17,9 @@ export interface DashboardNotification {
   type: 'challenge' | 'achievement' | 'system' | 'social';
   read: boolean;
   createdAt: string;
+  username: string;
+  avatar: string;
+  time: string;
 }
 
 export interface DashboardData {

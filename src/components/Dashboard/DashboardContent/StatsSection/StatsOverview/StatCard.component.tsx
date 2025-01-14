@@ -1,7 +1,7 @@
 import { memo } from "react";
 import { motion } from "framer-motion";
 import { IconType } from "react-icons";
-import { statsOverviewStyles as styles } from "./StatsOverview.styles";
+import { statsOverviewStyles as styles } from "./style/StatsOverview.styles";
 
 type StatCardProps = {
   icon: IconType;

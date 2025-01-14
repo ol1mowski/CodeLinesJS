@@ -1,81 +1,48 @@
 import { memo } from "react";
-import { FaBell } from "react-icons/fa";
 import { motion } from "framer-motion";
-import { dashboardContentStyles as styles } from "../DashboardContent.styles";
+import { FaBell } from "react-icons/fa";
 import { DashboardNotification } from "../../../../types/dashboard.types";
+import { communityBlockStyles as styles } from "./style/CommunityBlock.styles";
+import { useNotificationAnimation } from "./hooks/useNotificationAnimation";
+import { NotificationItem } from "./components/NotificationItem.component";
 
-interface NotificationItemProps {
-  notification: DashboardNotification;
-}
-
-const NotificationItem = memo(({ notification }: NotificationItemProps) => {
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return new Intl.RelativeTimeFormat('pl', { numeric: 'auto' })
-      .format(Math.ceil((date.getTime() - Date.now()) / (1000 * 60 * 60 * 24)), 'day');
-  };
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className={`
-        p-4 rounded-lg bg-dark/30
-        ${notification.read ? 'opacity-60' : ''}
-        border-l-4
-        ${notification.type === 'achievement' ? 'border-green-500' : ''}
-        ${notification.type === 'social' ? 'border-blue-500' : ''}
-        ${notification.type === 'info' ? 'border-yellow-500' : ''}
-      `}
-    >
-      <div className="flex justify-between items-start">
-        <p className="text-sm text-gray-300">{notification.message}</p>
-        <span className="text-xs text-gray-500 ml-2">
-          {formatDate(notification.createdAt)}
-        </span>
-      </div>
-    </motion.div>
-  );
-});
-
-NotificationItem.displayName = "NotificationItem";
-
-interface CommunityBlockProps {
+type CommunityBlockProps = {
   notifications: DashboardNotification[];
-  unreadCount: number;
-}
+};
 
-export const CommunityBlock = memo(({ notifications, unreadCount }: CommunityBlockProps) => {
+export const CommunityBlock = memo(({ notifications }: CommunityBlockProps) => {
+  const animations = useNotificationAnimation();
+
   return (
-    <div className={styles.card.content}>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className={styles.text.subtitle}>Powiadomienia</h2>
-        {unreadCount > 0 && (
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            className="flex items-center gap-2 bg-js/20 px-3 py-1 rounded-full"
-          >
-            <FaBell className="text-js text-sm" />
-            <span className="text-sm text-js">{unreadCount}</span>
-          </motion.div>
-        )}
+    <div className={styles.container}>
+      <div className={styles.header.wrapper}>
+        <h2 className={styles.header.title}>
+          <FaBell className={styles.header.icon} />
+          Aktywność społeczności
+        </h2>
       </div>
 
-      <div className="space-y-4">
+      <motion.div
+        variants={animations.container}
+        initial="hidden"
+        animate="show"
+      >
         {notifications.length > 0 ? (
-          notifications.map((notification) => (
-            <NotificationItem
-              key={notification.id}
-              notification={notification}
-            />
-          ))
+          <div className={styles.notifications.list}>
+            {notifications.map((notification) => (
+              <NotificationItem
+                key={notification._id}
+                notification={notification}
+                variants={animations.item}
+              />
+            ))}
+          </div>
         ) : (
-          <p className="text-center text-gray-400 py-8">
+          <p className={styles.notifications.empty}>
             Brak nowych powiadomień
           </p>
         )}
-      </div>
+      </motion.div>
     </div>
   );
 });
