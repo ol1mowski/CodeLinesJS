@@ -1,44 +1,37 @@
-import { useState, useEffect } from "react";
-
+import { useState } from "react";
 import { motion } from "framer-motion";
 
 import { Container } from "../UI/Container/Container.component";
 import { Logo } from "./Logo/Logo.component";
-import { NavLinks } from "./Navigation/NavLinks.component";
-import { MobileMenuButton } from "./Navigation/MobileMenu/MobileMenuButton.component";
+import { DesktopNavigation } from "./Navigation/DesktopNavigation.component";
 import { MobileMenu } from "./Navigation/MobileMenu/MobileMenu.component";
-import { useScrollEffect } from "./hooks/useScrollEffect.hook";
+import { HeaderActions } from "./Navigation/HeaderActions/HeaderActions.component";
 
 export const Header = () => {
-  const isScrolled = useScrollEffect(20);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  useEffect(() => {
-    document.body.style.overflow = isMobileMenuOpen ? "hidden" : "unset";
-  }, [isMobileMenuOpen]);
+  const handleMobileMenuToggle = () => setIsMobileMenuOpen(!isMobileMenuOpen);
+  const handleMobileMenuClose = () => setIsMobileMenuOpen(false);
 
   return (
     <motion.header
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      className={`fixed w-full z-50 transition-all duration-300 ${
-        isScrolled
-          ? "bg-gray-900/95 backdrop-blur-md shadow-lg"
-          : "bg-transparent"
-      }`}
+      className={`fixed w-full z-50 transition-all duration-500 
+        bg-dark-medium/90 backdrop-blur-xl border-b border-js-light py-5`}
     >
       <Container>
-        <nav className="flex items-center justify-between py-6">
+        <nav className="flex items-center justify-between relative">
           <Logo />
-          <NavLinks />
-          <MobileMenuButton 
-            isOpen={isMobileMenuOpen}
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          <DesktopNavigation />
+          <HeaderActions 
+            isMobileMenuOpen={isMobileMenuOpen}
+            onMobileMenuToggle={handleMobileMenuToggle}
           />
         </nav>
-        <MobileMenu 
+        <MobileMenu
           isOpen={isMobileMenuOpen}
-          onClose={() => setIsMobileMenuOpen(false)}
+          onClose={handleMobileMenuClose}
         />
       </Container>
     </motion.header>
