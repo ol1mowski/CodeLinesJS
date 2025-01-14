@@ -99,7 +99,7 @@ export const DashboardContent = memo(() => {
         >
           <CommunityBlock 
             notifications={data.notifications} 
-            unreadCount={data.unreadCount} 
+            unreadCount={data.unreadCount}
           />
         </motion.div>
 

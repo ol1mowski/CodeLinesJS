@@ -8,6 +8,7 @@ import { NotificationItem } from "./components/NotificationItem.component";
 
 type CommunityBlockProps = {
   notifications: DashboardNotification[];
+  unreadCount?: number;
 };
 
 export const CommunityBlock = memo(({ notifications }: CommunityBlockProps) => {
