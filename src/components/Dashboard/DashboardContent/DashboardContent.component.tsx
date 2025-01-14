@@ -29,7 +29,7 @@ const itemVariants = {
 };
 
 export const DashboardContent = memo(() => {
-  const { stats, notifications, unreadCount, isLoading, error } = useDashboardData();
+  const { data, isLoading, error } = useDashboardData();
 
   if (isLoading) {
     return (
@@ -59,7 +59,7 @@ export const DashboardContent = memo(() => {
     );
   }
 
-  if (!stats) {
+  if (!data) {
     return (
       <div className="p-8 w-full flex items-center justify-center min-h-[400px]">
         <motion.div
@@ -98,8 +98,8 @@ export const DashboardContent = memo(() => {
           `}
         >
           <CommunityBlock 
-            notifications={notifications} 
-            unreadCount={unreadCount} 
+            notifications={data.notifications} 
+            unreadCount={data.unreadCount} 
           />
         </motion.div>
 
@@ -124,7 +124,7 @@ export const DashboardContent = memo(() => {
             order-3
           `}
         >
-          <StatsBlock stats={stats} />
+          <StatsBlock stats={data.stats} />
         </motion.div>
       </div>
     </motion.div>

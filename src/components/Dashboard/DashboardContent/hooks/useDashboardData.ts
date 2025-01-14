@@ -5,10 +5,11 @@ import { useAuth } from '../../../../Hooks/useAuth';
 const API_URL = 'http://localhost:5001';
 
 const fetchDashboardData = async (): Promise<DashboardData> => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token');
   if (!token) throw new Error('Brak autoryzacji');
 
   const response = await fetch(`${API_URL}/api/dashboard`, {
+    method: 'GET',
     credentials: 'include',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -17,6 +18,9 @@ const fetchDashboardData = async (): Promise<DashboardData> => {
   });
 
   if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error('Brak autoryzacji - zaloguj się ponownie');
+    }
     const error = await response.json();
     throw new Error(error.message || 'Błąd podczas pobierania danych');
   }
@@ -25,22 +29,15 @@ const fetchDashboardData = async (): Promise<DashboardData> => {
 };
 
 export const useDashboardData = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, token } = useAuth();
 
-  const { data, isLoading, error } = useQuery<DashboardData, Error>({
+  return useQuery<DashboardData, Error>({
     queryKey: ['dashboard'],
     queryFn: fetchDashboardData,
-    enabled: isAuthenticated,
+    enabled: isAuthenticated && !!token,
     staleTime: 1000 * 60 * 5,
-    retry: 1
+    retry: (failureCount, error) => {
+      return failureCount < 2 && !error.message.includes('autoryzacji');
+    }
   });
-
-  return {
-    stats: data?.stats,
-    profile: data?.profile,
-    notifications: data?.notifications || [],
-    unreadCount: data?.unreadCount || 0,
-    isLoading,
-    error
-  };
 }; 
