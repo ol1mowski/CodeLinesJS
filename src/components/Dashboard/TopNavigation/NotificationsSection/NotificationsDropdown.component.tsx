@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { memo, useEffect } from "react";
 import { format } from "date-fns";
 import { pl } from "date-fns/locale";
-import { topNavigationStyles as styles } from "../TopNavigation.styles";
+import { topNavigationStyles as styles } from "../style/TopNavigation.styles";
 import { FaCheckCircle, FaTrophy, FaUsers, FaBell } from "react-icons/fa";
 import { useDashboardData } from "../../DashboardContent/hooks/useDashboardData";
 import { useMutation, useQueryClient } from "@tanstack/react-query";

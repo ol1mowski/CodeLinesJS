@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { memo, useState, useCallback } from "react";
 import { FaBell } from "react-icons/fa";
 import { NotificationsDropdown } from "./NotificationsDropdown.component";
-import { topNavigationStyles as styles } from "../TopNavigation.styles";
+import { topNavigationStyles as styles } from "../style/TopNavigation.styles";
 import { useDashboardData } from "../../DashboardContent/hooks/useDashboardData";
 
 export const NotificationsButton = memo(() => {
