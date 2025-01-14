@@ -1,125 +1,38 @@
-import { motion } from "framer-motion";
 import { memo } from "react";
-import { FaUserCircle, FaTrophy, FaCode, FaStar } from "react-icons/fa";
+import { FaBell } from "react-icons/fa";
+import { motion } from "framer-motion";
 import { dashboardContentStyles as styles } from "../DashboardContent.styles";
+import { DashboardNotification } from "../../../../types/dashboard.types";
 
-type NotificationType = 'achievement' | 'challenge' | 'social' | 'ranking';
+interface NotificationItemProps {
+  notification: DashboardNotification;
+}
 
-type CommunityNotification = {
-  id: string;
-  type: NotificationType;
-  title: string;
-  message: string;
-  time: string;
-  user?: string;
-};
-
-const notificationIcons = {
-  achievement: FaTrophy,
-  challenge: FaCode,
-  social: FaUserCircle,
-  ranking: FaStar,
-};
-
-
-// DUMMY DATA
-const notifications: CommunityNotification[] = [
-  {
-    id: '1',
-    type: 'achievement',
-    title: 'Nowe osiągnięcie!',
-    message: 'Ukończyłeś 5 wyzwań z rzędu',
-    time: '2 min temu',
-  },
-  {
-    id: '2',
-    type: 'social',
-    title: 'Nowy follower',
-    message: 'JSMaster zaczął Cię obserwować',
-    time: '5 min temu',
-    user: 'JSMaster',
-  },
-  {
-    id: '3',
-    type: 'challenge',
-    title: 'Wyzwanie ukończone',
-    message: 'CodeNinja rozwiązał Twoje wyzwanie',
-    time: '15 min temu',
-    user: 'CodeNinja',
-  },
-  {
-    id: '4',
-    type: 'ranking',
-    title: 'Awans w rankingu!',
-    message: 'Awansowałeś do TOP 50 graczy',
-    time: '1h temu',
-  },
-];
-
-const notificationStyles = {
-  achievement: {
-    iconBg: "bg-amber-500/20",
-    iconColor: "text-amber-500",
-    borderHover: "group-hover:border-amber-500/30"
-  },
-  challenge: {
-    iconBg: "bg-emerald-500/20",
-    iconColor: "text-emerald-500",
-    borderHover: "group-hover:border-emerald-500/30"
-  },
-  social: {
-    iconBg: "bg-blue-500/20",
-    iconColor: "text-blue-500",
-    borderHover: "group-hover:border-blue-500/30"
-  },
-  ranking: {
-    iconBg: "bg-purple-500/20",
-    iconColor: "text-purple-500",
-    borderHover: "group-hover:border-purple-500/30"
-  }
-};
-
-const NotificationItem = memo(({ notification }: { notification: CommunityNotification }) => {
-  const Icon = notificationIcons[notification.type];
-  const style = notificationStyles[notification.type];
+const NotificationItem = memo(({ notification }: NotificationItemProps) => {
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return new Intl.RelativeTimeFormat('pl', { numeric: 'auto' })
+      .format(Math.ceil((date.getTime() - Date.now()) / (1000 * 60 * 60 * 24)), 'day');
+  };
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
       className={`
-        flex items-start gap-4 p-4 rounded-lg
-        bg-dark/30 hover:bg-dark/50
-        border border-js/10 ${style.borderHover}
-        transition-all cursor-pointer
-        group
+        p-4 rounded-lg bg-dark/30
+        ${notification.read ? 'opacity-60' : ''}
+        border-l-4
+        ${notification.type === 'achievement' ? 'border-green-500' : ''}
+        ${notification.type === 'social' ? 'border-blue-500' : ''}
+        ${notification.type === 'info' ? 'border-yellow-500' : ''}
       `}
     >
-      <div className={`
-        w-10 h-10 rounded-lg
-        ${style.iconBg}
-        flex items-center justify-center
-        flex-shrink-0
-        group-hover:scale-110 transition-transform
-      `}>
-        <Icon className={`text-lg ${style.iconColor}`} />
-      </div>
-      <div className="flex-1 min-w-0">
-        <h3 className={`${styles.text.primary} font-medium truncate group-hover:text-white transition-colors`}>
-          {notification.title}
-        </h3>
-        <p className={`${styles.text.secondary} text-sm mt-1 truncate`}>
-          {notification.message}
-        </p>
-        <div className="flex items-center gap-2 mt-2">
-          {notification.user && (
-            <div className="flex items-center gap-1">
-              <FaUserCircle className={style.iconColor + " text-sm opacity-80"} />
-              <span className="text-xs text-gray-400">{notification.user}</span>
-            </div>
-          )}
-          <span className="text-xs text-gray-500">{notification.time}</span>
-        </div>
+      <div className="flex justify-between items-start">
+        <p className="text-sm text-gray-300">{notification.message}</p>
+        <span className="text-xs text-gray-500 ml-2">
+          {formatDate(notification.createdAt)}
+        </span>
       </div>
     </motion.div>
   );
@@ -127,20 +40,41 @@ const NotificationItem = memo(({ notification }: { notification: CommunityNotifi
 
 NotificationItem.displayName = "NotificationItem";
 
-export const CommunityBlock = memo(() => {
+interface CommunityBlockProps {
+  notifications: DashboardNotification[];
+  unreadCount: number;
+}
+
+export const CommunityBlock = memo(({ notifications, unreadCount }: CommunityBlockProps) => {
   return (
-    <div className="space-y-6">
-      <div className={styles.card.header}>
-        <h2 className={styles.card.title}>Społeczność</h2>
-        <span className="text-gray-400 px-3 py-1 rounded-full bg-js/10">
-          4 nowe
-        </span>
+    <div className={styles.card.content}>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className={styles.text.subtitle}>Powiadomienia</h2>
+        {unreadCount > 0 && (
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            className="flex items-center gap-2 bg-js/20 px-3 py-1 rounded-full"
+          >
+            <FaBell className="text-js text-sm" />
+            <span className="text-sm text-js">{unreadCount}</span>
+          </motion.div>
+        )}
       </div>
 
-      <div className="space-y-3">
-        {notifications.map((notification) => (
-          <NotificationItem key={notification.id} notification={notification} />
-        ))}
+      <div className="space-y-4">
+        {notifications.length > 0 ? (
+          notifications.map((notification) => (
+            <NotificationItem
+              key={notification.id}
+              notification={notification}
+            />
+          ))
+        ) : (
+          <p className="text-center text-gray-400 py-8">
+            Brak nowych powiadomień
+          </p>
+        )}
       </div>
     </div>
   );
