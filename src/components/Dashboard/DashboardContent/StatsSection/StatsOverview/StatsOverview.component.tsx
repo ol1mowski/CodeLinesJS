@@ -1,11 +1,13 @@
 import { memo } from "react";
 import { motion } from "framer-motion";
-import { FaTrophy, FaFire, FaClock, FaStar } from "react-icons/fa";
 import { UserStats } from "../../../../../types/stats.types";
 import { LoadingScreen } from "../../../../UI/LoadingScreen/LoadingScreen.component";
-import { LevelProgress } from "../../../StatsSection/StatsOverview/LevelProgress.component";
-import { StatCard } from "../../../StatsSection/StatsOverview/StatCard.component";
 
+import { useTimeFormat } from "./hooks/useTimeFormat";
+import { useStatsCards } from "./hooks/useStatsCards";
+import { statsOverviewStyles as styles } from "./StatsOverview.styles";
+import { LevelProgress } from "../../../StatsSection/StatsOverview/LevelProgress.component";
+import { StatCard } from "./StatCard.component";
 
 type StatsOverviewProps = {
   stats: UserStats | null | undefined;
@@ -23,24 +25,19 @@ const container = {
 };
 
 export const StatsOverview = memo(({ stats, isLoading }: StatsOverviewProps) => {
-  if (isLoading) {
-    return <LoadingScreen />;
-  }
-
+  const formatTime = useTimeFormat();
+  
+  if (isLoading) return <LoadingScreen />;
   if (!stats) return null;
 
-  const formatTime = (minutes: number): string => {
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    return `${hours}h ${mins}m`;
-  };
+  const statsCards = useStatsCards(stats, formatTime);
 
   return (
     <motion.div
       variants={container}
       initial="hidden"
       animate="show"
-      className="space-y-6"
+      className={styles.container}
     >
       <LevelProgress
         level={stats.level}
@@ -48,35 +45,10 @@ export const StatsOverview = memo(({ stats, isLoading }: StatsOverviewProps) => 
         nextLevel={stats.nextLevelThreshold}
       />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <StatCard
-          icon={FaTrophy}
-          label="Ukończone Wyzwania"
-          value={stats.completedChallenges.toString()}
-          gradient="from-amber-500 to-orange-500"
-        />
-        
-        <StatCard
-          icon={FaFire}
-          label="Aktualny Streak"
-          value={`${stats.currentStreak} dni`}
-          subValue={`Najlepszy: ${stats.bestStreak} dni`}
-          gradient="from-red-500 to-pink-500"
-        />
-
-        <StatCard
-          icon={FaStar}
-          label="Średni Wynik"
-          value={`${stats.averageScore}%`}
-          gradient="from-indigo-500 to-purple-500"
-        />
-
-        <StatCard
-          icon={FaClock}
-          label="Czas Nauki"
-          value={formatTime(stats.totalTimeSpent)}
-          gradient="from-emerald-500 to-teal-500"
-        />
+      <div className={styles.grid}>
+        {statsCards.map((card, index) => (
+          <StatCard key={index} {...card} />
+        ))}
       </div>
     </motion.div>
   );
