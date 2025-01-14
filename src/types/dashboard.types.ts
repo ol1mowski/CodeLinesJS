@@ -12,9 +12,9 @@ export interface DashboardProfile {
 }
 
 export interface DashboardNotification {
-  id: string;
-  type: 'info' | 'achievement' | 'social';
+  _id: string;
   message: string;
+  type: 'challenge' | 'achievement' | 'system' | 'social';
   read: boolean;
   createdAt: string;
 }

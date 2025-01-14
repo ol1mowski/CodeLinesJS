@@ -2,6 +2,8 @@ import { memo } from "react";
 import { FaTrophy, FaStar, FaChartLine } from "react-icons/fa";
 import { dashboardContentStyles as styles } from "../DashboardContent.styles";
 import { DashboardStats } from "../../../../types/dashboard.types";
+import { format } from "date-fns";
+import { pl } from "date-fns/locale";
 
 type StatItemProps = {
   icon: React.ReactNode;
@@ -27,13 +29,16 @@ interface StatsBlockProps {
 
 export const StatsBlock = memo(({ stats }: StatsBlockProps) => {
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat('pl-PL', {
-      day: 'numeric',
-      month: 'long',
-      hour: '2-digit',
-      minute: '2-digit'
-    }).format(date);
+    try {
+      if (!dateString) return 'Brak danych';
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return 'Nieprawidłowa data';
+      
+      return format(date, "dd MMM, HH:mm", { locale: pl });
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return 'Nieprawidłowa data';
+    }
   };
 
   return (
