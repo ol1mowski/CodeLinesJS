@@ -2,13 +2,14 @@ import { motion } from "framer-motion";
 import { memo } from "react";
 import { FaPlay, FaCode, FaRedo } from "react-icons/fa";
 import { dashboardContentStyles as styles } from "../DashboardContent.styles";
+import { Link } from "react-router-dom";
 
 const buttonVariants = {
-  hover: { 
+  hover: {
     scale: 1.02,
     transition: { duration: 0.2 }
   },
-  tap: { 
+  tap: {
     scale: 0.98,
     transition: { duration: 0.1 }
   }
@@ -43,7 +44,7 @@ const GameButton = memo(({ icon: Icon, title, subtitle, type = 'play', onClick }
   onClick: () => void;
 }) => {
   const style = buttonStyles[type];
-  
+
   return (
     <motion.button
       variants={buttonVariants}
@@ -82,29 +83,34 @@ export const GameBlock = memo(() => {
       </div>
 
       <div className="grid gap-4">
-        <GameButton
-          icon={FaPlay}
-          title="Nowa gra"
-          subtitle="Rozpocznij nową przygodę"
-          type="play"
-          onClick={() => console.log('Nowa gra')}
-        />
+        <Link to="/dashboard/play">
+          <GameButton
+            icon={FaPlay}
+            title="Nowa gra"
+            subtitle="Rozpocznij nową przygodę"
+            type="play"
+            onClick={() => console.log('Nowa gra')}
+          /></Link>
 
-        <GameButton
-          icon={FaCode}
-          title="Wyzwania"
-          subtitle="Sprawdź swoje umiejętności"
-          type="challenge"
-          onClick={() => console.log('Wyzwania')}
-        />
+        <Link to="/dashboard/play">
+          <GameButton
+            icon={FaCode}
+            title="Wyzwania"
+            subtitle="Sprawdź swoje umiejętności"
+            type="challenge"
+            onClick={() => console.log('Wyzwania')}
+          />  
+        </Link>
 
-        <GameButton
-          icon={FaRedo}
-          title="Kontynuuj"
-          subtitle="Wróć do ostatniej gry"
-          type="continue"
-          onClick={() => console.log('Kontynuuj')}
-        />
+        <Link to="/dashboard/play"> 
+          <GameButton
+            icon={FaRedo}
+            title="Kontynuuj"
+            subtitle="Wróć do ostatniej gry"
+            type="continue"
+            onClick={() => console.log('Kontynuuj')}
+          />
+        </Link>
       </div>
     </div>
   );

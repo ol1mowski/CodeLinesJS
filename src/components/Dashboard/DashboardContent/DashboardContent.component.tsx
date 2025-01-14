@@ -4,6 +4,7 @@ import { dashboardContentStyles as styles } from "./DashboardContent.styles";
 import { CommunityBlock } from "./CommunityBlock/CommunityBlock.component";
 import { GameBlock } from "./GameBlock/GameBlock.component";
 import { StatsBlock } from "./StatsBlock/StatsBlock.component";
+import { useDashboardData } from "./hooks/useDashboardData";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -28,6 +29,50 @@ const itemVariants = {
 };
 
 export const DashboardContent = memo(() => {
+  const { data, isLoading, error } = useDashboardData();
+
+  if (isLoading) {
+    return (
+      <div className="p-8 w-full flex items-center justify-center min-h-[400px]">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-xl text-gray-400"
+        >
+          Ładowanie danych...
+        </motion.div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-8 w-full flex items-center justify-center min-h-[400px]">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-xl text-red-400"
+        >
+          {error.message || 'Wystąpił błąd podczas ładowania danych'}
+        </motion.div>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="p-8 w-full flex items-center justify-center min-h-[400px]">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-xl text-gray-400"
+        >
+          Brak danych do wyświetlenia
+        </motion.div>
+      </div>
+    );
+  }
+
   return (
     <motion.div
       className="p-8 w-full"
@@ -52,7 +97,10 @@ export const DashboardContent = memo(() => {
             order-2 lg:order-1
           `}
         >
-          <CommunityBlock />
+          <CommunityBlock 
+            notifications={data.notifications} 
+            unreadCount={data.unreadCount} 
+          />
         </motion.div>
 
         <motion.div
@@ -76,7 +124,7 @@ export const DashboardContent = memo(() => {
             order-3
           `}
         >
-          <StatsBlock />
+          <StatsBlock stats={data.stats} />
         </motion.div>
       </div>
     </motion.div>
