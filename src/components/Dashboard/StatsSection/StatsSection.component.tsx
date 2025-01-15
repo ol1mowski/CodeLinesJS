@@ -61,7 +61,10 @@ export const StatsSection = memo(() => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <StatsOverview stats={stats} isLoading={isLoading} />
-          <StatsCharts data={stats.chartData} isLoading={isLoading} />
+          <StatsCharts 
+            data={stats?.chartData} 
+            isLoading={isLoading} 
+          />
         </div>
       </motion.div>
 

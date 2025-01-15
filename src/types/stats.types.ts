@@ -18,6 +18,12 @@ export type UserStats = {
   totalTimeSpent: number;
   badges: Badge[];
   unlockedFeatures: UnlockedFeature[];
+  levelUp?: boolean;
+  rewards?: {
+    badges: Badge[];
+    bonusPoints: number;
+    unlockedFeatures: UnlockedFeature[];
+  };
   chartData: {
     daily: Array<{
       date: string;

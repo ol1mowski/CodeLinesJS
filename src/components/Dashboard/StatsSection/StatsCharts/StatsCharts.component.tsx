@@ -1,47 +1,54 @@
-import { memo, useMemo } from "react";
+import { memo } from "react";
 import { motion } from "framer-motion";
-import { statsSectionStyles as styles } from "../style/StatsSection.styles";
-
-import { UserStats } from "../../../../types/stats.types";
-import { ProgressChart } from "./ProgressChart.component";
+import { DailyChart } from "./DailyChart.component";
 import { CategoriesChart } from "./CategoriesChart.component";
+import { LoadingScreen } from "../../../UI/LoadingScreen/LoadingScreen.component";
 
 type StatsChartsProps = {
-  data: UserStats['chartData'];
+  data?: {
+    daily: Array<{
+      date: string;
+      points: number;
+      challenges: number;
+    }>;
+    categories: Array<{
+      name: string;
+      completed: number;
+      total: number;
+    }>;
+  };
   isLoading: boolean;
 };
 
 export const StatsCharts = memo(({ data, isLoading }: StatsChartsProps) => {
-  const progressData = useMemo(() => 
-    data.daily.map(item => ({
-      date: item.date,
-      progress: item.points
-    }))
-  , [data.daily]);
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
 
-  if (isLoading) return null;
+  if (!data) {
+    return null;
+  }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.3 }}
-      className="space-y-6"
-    >
-      <div className={styles.card.base}>
-        <h3 className={styles.card.title}>
-          Postęp w Czasie
-        </h3>
-        <ProgressChart data={progressData} />
-      </div>
+    <div className="space-y-6">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-dark/50 rounded-lg p-6"
+      >
+        <h3 className="text-xl font-bold text-js mb-6">Aktywność</h3>
+        <DailyChart data={data.daily} />
+      </motion.div>
 
-      <div className={styles.card.base}>
-        <h3 className={styles.card.title}>
-          Kategorie Zadań
-        </h3>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-dark/50 rounded-lg p-6"
+      >
+        <h3 className="text-xl font-bold text-js mb-6">Postęp w Kategoriach</h3>
         <CategoriesChart data={data.categories} />
-      </div>
-    </motion.div>
+      </motion.div>
+    </div>
   );
 });
 

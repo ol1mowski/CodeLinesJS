@@ -26,7 +26,7 @@ const generateInitialCategories = () => [
 
 export const getStats = async (req, res, next) => {
   try {
-    const userId = req.user?.id;
+    const userId = req.user?.userId;
     if (!userId) throw new AuthError('Brak autoryzacji');
 
     let stats = await Stats.findOne({ userId });
@@ -34,8 +34,20 @@ export const getStats = async (req, res, next) => {
     if (!stats) {
       stats = await Stats.create({
         userId,
-        daily: generateInitialDailyStats(),
-        categories: generateInitialCategories()
+        level: 1,
+        experiencePoints: 0,
+        nextLevelThreshold: 1000,
+        completedChallenges: 0,
+        currentStreak: 0,
+        bestStreak: 0,
+        averageScore: 0,
+        totalTimeSpent: 0,
+        badges: [],
+        unlockedFeatures: [],
+        chartData: {
+          daily: generateInitialDailyStats(),
+          categories: generateInitialCategories()
+        }
       });
     }
 
@@ -47,7 +59,7 @@ export const getStats = async (req, res, next) => {
 
 export const updateStats = async (req, res, next) => {
   try {
-    const userId = req.user?.id;
+    const userId = req.user?.userId;
     if (!userId) throw new AuthError('Brak autoryzacji');
 
     const updatedStats = await StatsService.updateStats(userId, req.body);
@@ -59,7 +71,7 @@ export const updateStats = async (req, res, next) => {
 
 export const updateCategory = async (req, res, next) => {
   try {
-    const userId = req.user?.id;
+    const userId = req.user?.userId;
     const { categoryName } = req.params;
     if (!userId) throw new AuthError('Brak autoryzacji');
 
