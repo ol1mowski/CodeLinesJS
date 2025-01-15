@@ -1,4 +1,5 @@
 import { Stats } from '../models/stats.model.js';
+import LevelService from './level.service.js';
 
 class StatsService {
   async updateStats(userId, updates) {
@@ -30,6 +31,10 @@ class StatsService {
         points: updates.points || 0,
         challenges: updates.challenges || 0
       });
+    }
+
+    if (updates.points) {
+      await LevelService.updateExperience(stats, updates.points);
     }
 
     Object.assign(stats, updates);
