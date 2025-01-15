@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useMemo } from "react";
 import { motion } from "framer-motion";
 import { statsSectionStyles as styles } from "../style/StatsSection.styles";
 
@@ -7,12 +7,19 @@ import { ProgressChart } from "./ProgressChart.component";
 import { CategoriesChart } from "./CategoriesChart.component";
 
 type StatsChartsProps = {
-  data: UserStats['chartData'] | undefined;
+  data: UserStats['chartData'];
   isLoading: boolean;
 };
 
 export const StatsCharts = memo(({ data, isLoading }: StatsChartsProps) => {
-  if (isLoading || !data) return null;
+  const progressData = useMemo(() => 
+    data.daily.map(item => ({
+      date: item.date,
+      progress: item.points
+    }))
+  , [data.daily]);
+
+  if (isLoading) return null;
 
   return (
     <motion.div
@@ -25,12 +32,7 @@ export const StatsCharts = memo(({ data, isLoading }: StatsChartsProps) => {
         <h3 className={styles.card.title}>
           Postęp w Czasie
         </h3>
-        <ProgressChart 
-          data={data.daily.map(item => ({
-            date: item.date,
-            progress: item.points 
-          }))} 
-        />
+        <ProgressChart data={progressData} />
       </div>
 
       <div className={styles.card.base}>
