@@ -1,5 +1,24 @@
 import mongoose from 'mongoose';
 
+const badgeSchema = new mongoose.Schema({
+  id: {
+    type: String,
+    required: true
+  },
+  name: {
+    type: String,
+    required: true
+  },
+  icon: {
+    type: String,
+    required: true
+  },
+  earnedAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
 const statsSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -42,6 +61,11 @@ const statsSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   },
+  badges: [badgeSchema],
+  unlockedFeatures: [{
+    type: String,
+    enum: ['custom_themes', 'create_challenges']
+  }],
   daily: [{
     date: String,
     points: Number,
