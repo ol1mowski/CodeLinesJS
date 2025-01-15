@@ -1,14 +1,13 @@
-import { memo } from "react";
+import { memo, useMemo } from "react";
 import { motion } from "framer-motion";
-import { FaTrophy, FaFire, FaClock, FaStar } from "react-icons/fa";
 import { UserStats } from "../../../../types/stats.types";
-
 import { LoadingScreen } from "../../../UI/LoadingScreen/LoadingScreen.component";
 import { LevelProgress } from "./LevelProgress.component";
 import { StatCard } from "./StatCard.component";
+import { FaTrophy, FaFire, FaClock, FaStar } from "react-icons/fa";
 
 type StatsOverviewProps = {
-  stats: UserStats | null | undefined;
+  stats: UserStats;
   isLoading: boolean;
 };
 
@@ -23,17 +22,39 @@ const container = {
 };
 
 export const StatsOverview = memo(({ stats, isLoading }: StatsOverviewProps) => {
-  if (isLoading) {
-    return <LoadingScreen />
-  }
-
-  if (!stats) return null;
-
-  const formatTime = (minutes: number): string => {
+  const formatTime = useMemo(() => (minutes: number): string => {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
     return `${hours}h ${mins}m`;
-  };
+  }, []);
+
+  const statsCards = useMemo(() => [
+    {
+      icon: FaTrophy,
+      label: "Ukończone Wyzwania",
+      value: stats.completedChallenges.toString()
+    },
+    {
+      icon: FaFire,
+      label: "Aktualny Streak",
+      value: `${stats.currentStreak} dni`,
+      subValue: `Najlepszy: ${stats.bestStreak} dni`
+    },
+    {
+      icon: FaStar,
+      label: "Średni Wynik",
+      value: `${stats.averageScore}%`
+    },
+    {
+      icon: FaClock,
+      label: "Czas Nauki",
+      value: formatTime(stats.totalTimeSpent)
+    }
+  ], [stats, formatTime]);
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <motion.div
@@ -49,34 +70,9 @@ export const StatsOverview = memo(({ stats, isLoading }: StatsOverviewProps) => 
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <StatCard
-          icon={FaTrophy}
-          label="Ukończone Wyzwania"
-          value={stats.completedChallenges.toString()}
-          gradient="from-amber-500 to-orange-500"
-        />
-        
-        <StatCard
-          icon={FaFire}
-          label="Aktualny Streak"
-          value={`${stats.currentStreak} dni`}
-          subValue={`Najlepszy: ${stats.bestStreak} dni`}
-          gradient="from-red-500 to-pink-500"
-        />
-
-        <StatCard
-          icon={FaStar}
-          label="Średni Wynik"
-          value={`${stats.averageScore}%`}
-          gradient="from-indigo-500 to-purple-500"
-        />
-
-        <StatCard
-          icon={FaClock}
-          label="Czas Nauki"
-          value={formatTime(stats.totalTimeSpent)}
-          gradient="from-emerald-500 to-teal-500"
-        />
+        {statsCards.map((card, index) => (
+          <StatCard key={index} {...card} />
+        ))}
       </div>
     </motion.div>
   );

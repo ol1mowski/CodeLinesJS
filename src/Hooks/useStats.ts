@@ -1,23 +1,37 @@
 import { useQuery } from '@tanstack/react-query';
 import { UserStats } from '../types/stats.types';
-import { mockStatsData } from '../mocks/statsData.mock';
+import { useAuth } from './useAuth';
 
-export const useStats = () => {
-  const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ['userStats'],
-    queryFn: async () => {
-      // Symulacja opóźnienia sieciowego
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      return mockStatsData as UserStats;
-    },
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    refetchOnWindowFocus: false,
+const API_URL = 'http://localhost:5001';
+
+const fetchStats = async (token: string): Promise<UserStats> => {
+  const response = await fetch(`${API_URL}/api/stats`, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    }
   });
 
-  return {
-    stats: data,
-    isLoading,
-    error: error ? (error as Error).message : null,
-    refetch
-  };
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Błąd podczas pobierania statystyk');
+  }
+
+  return response.json();
+};
+
+export const useStats = () => {
+  const { token, isAuthenticated } = useAuth();
+
+  return useQuery<UserStats, Error>({
+    queryKey: ['stats'],
+    queryFn: () => fetchStats(token as string),
+    enabled: isAuthenticated && !!token,
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 30,
+    refetchOnWindowFocus: false,
+    retry: (failureCount, error) => {
+      return failureCount < 2 && !error.message.includes('autoryzacji');
+    }
+  });
 }; 
