@@ -47,24 +47,31 @@ export const StatsSection = memo(() => {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="space-y-6 p-6"
+        className="flex flex-col h-full p-6 gap-6"
       >
-        <div className="flex items-center justify-between mb-8">
-          <motion.h1 
-            initial={{ x: -20, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            className="text-3xl font-bold font-space text-js"
-          >
+        <motion.div 
+          initial={{ x: -20, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          className="flex items-center justify-between"
+        >
+          <h1 className="text-3xl font-bold font-space text-js">
             Statystyki i Postępy
-          </motion.h1>
-        </div>
+          </h1>
+        </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <StatsOverview stats={stats} isLoading={isLoading} />
-          <StatsCharts 
-            data={stats?.chartData} 
-            isLoading={isLoading} 
-          />
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 flex-1">
+          <div className="flex flex-col gap-6">
+            <StatsOverview 
+              stats={stats} 
+              isLoading={isLoading} 
+            />
+          </div>
+          <div className="flex flex-col gap-6 h-full">
+            <StatsCharts 
+              data={stats?.chartData} 
+              isLoading={isLoading} 
+            />
+          </div>
         </div>
       </motion.div>
 

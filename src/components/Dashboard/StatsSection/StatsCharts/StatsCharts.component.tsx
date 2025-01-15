@@ -1,5 +1,4 @@
 import { memo } from "react";
-import { motion } from "framer-motion";
 import { DailyChart } from "./DailyChart.component";
 import { CategoriesChart } from "./CategoriesChart.component";
 import { LoadingScreen } from "../../../UI/LoadingScreen/LoadingScreen.component";
@@ -30,24 +29,20 @@ export const StatsCharts = memo(({ data, isLoading }: StatsChartsProps) => {
   }
 
   return (
-    <div className="space-y-6">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-dark/50 rounded-lg p-6"
-      >
+    <div className="flex flex-col gap-6 h-full">
+      <div className="bg-dark/50 rounded-lg p-6 flex-1">
         <h3 className="text-xl font-bold text-js mb-6">Aktywność</h3>
-        <DailyChart data={data.daily} />
-      </motion.div>
+        <div className="h-[300px]">
+          <DailyChart data={data.daily} />
+        </div>
+      </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-dark/50 rounded-lg p-6"
-      >
+      <div className="bg-dark/50 rounded-lg p-6 flex-1">
         <h3 className="text-xl font-bold text-js mb-6">Postęp w Kategoriach</h3>
-        <CategoriesChart data={data.categories} />
-      </motion.div>
+        <div className="h-[300px]">
+          <CategoriesChart data={data.categories} />
+        </div>
+      </div>
     </div>
   );
 });

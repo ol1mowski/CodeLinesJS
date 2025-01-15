@@ -23,10 +23,14 @@ export const useStats = () => {
       }
 
       const data = await response.json();
+      console.log('Received stats:', data);
+      
       return {
         ...data,
-        badges: data.badges || [],
-        unlockedFeatures: data.unlockedFeatures || []
+        chartData: {
+          daily: data.chartData?.daily || [],
+          categories: data.chartData?.categories || []
+        }
       };
     },
     enabled: isAuthenticated && !!token,

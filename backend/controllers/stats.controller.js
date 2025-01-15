@@ -32,7 +32,7 @@ export const getStats = async (req, res, next) => {
     let stats = await Stats.findOne({ userId });
     
     if (!stats) {
-      stats = await Stats.create({
+      const initialData = {
         userId,
         level: 1,
         experiencePoints: 0,
@@ -48,9 +48,21 @@ export const getStats = async (req, res, next) => {
           daily: generateInitialDailyStats(),
           categories: generateInitialCategories()
         }
-      });
+      };
+
+      stats = await Stats.create(initialData);
     }
 
+    // Upewnij się, że dane są zawsze dostępne
+    if (!stats.chartData) {
+      stats.chartData = {
+        daily: generateInitialDailyStats(),
+        categories: generateInitialCategories()
+      };
+      await stats.save();
+    }
+
+    console.log('Sending stats:', stats); // Dodaj log do debugowania
     res.json(stats);
   } catch (error) {
     next(error);
