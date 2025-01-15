@@ -1,3 +1,12 @@
+export interface Badge {
+  id: string;
+  name: string;
+  icon: string;
+  earnedAt: string;
+}
+
+export type UnlockedFeature = 'custom_themes' | 'create_challenges';
+
 export interface UserStats {
   level: number;
   experiencePoints: number;
@@ -7,6 +16,8 @@ export interface UserStats {
   bestStreak: number;
   averageScore: number;
   totalTimeSpent: number;
+  badges: Badge[];
+  unlockedFeatures: UnlockedFeature[];
   chartData: {
     daily: Array<{
       date: string;
