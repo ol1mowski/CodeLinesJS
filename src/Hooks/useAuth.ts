@@ -14,6 +14,7 @@ type AuthState = {
   token: string | null;
   loading: boolean;
   error: string | null;
+  login: (email: string, password: string, rememberMe?: boolean) => Promise<void>;
 }
 
 export const useAuth = (): AuthState => {
