@@ -21,7 +21,7 @@ export const DailyChart = memo(({ data }: DailyChartProps) => {
   return (
     <ResponsiveContainer width="100%" height={300}>
       <LineChart data={data} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#2A2A2A" />
+        <CartesianGrid strokeDasharray="3 3" stroke="#2A2A2A" />    
         <XAxis 
           dataKey="date" 
           stroke="#666"
