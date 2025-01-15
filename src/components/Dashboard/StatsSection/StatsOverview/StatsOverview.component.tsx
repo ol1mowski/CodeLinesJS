@@ -4,6 +4,7 @@ import { UserStats } from "../../../../types/stats.types";
 import { LoadingScreen } from "../../../UI/LoadingScreen/LoadingScreen.component";
 import { LevelProgress } from "./LevelProgress.component";
 import { StatCard } from "./StatCard.component";
+import { BadgesGrid } from "./BadgesGrid.component";
 import { FaTrophy, FaFire, FaClock, FaStar } from "react-icons/fa";
 
 type StatsOverviewProps = {
@@ -74,6 +75,8 @@ export const StatsOverview = memo(({ stats, isLoading }: StatsOverviewProps) => 
           <StatCard key={index} {...card} />
         ))}
       </div>
+
+      <BadgesGrid badges={stats.badges} />
     </motion.div>
   );
 });

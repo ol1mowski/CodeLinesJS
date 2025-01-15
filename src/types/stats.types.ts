@@ -7,7 +7,7 @@ export interface Badge {
 
 export type UnlockedFeature = 'custom_themes' | 'create_challenges';
 
-export interface UserStats {
+export type UserStats = {
   level: number;
   experiencePoints: number;
   nextLevelThreshold: number;
@@ -30,7 +30,7 @@ export interface UserStats {
       total: number;
     }>;
   };
-}
+};
 
 export type StatsContextType = {
   stats: UserStats | null;
