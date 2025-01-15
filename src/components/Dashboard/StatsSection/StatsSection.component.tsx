@@ -1,9 +1,8 @@
 import { memo } from "react";
 import { motion } from "framer-motion";
-import { useStats } from "../../../hooks/useStats";
+import { useStats } from "../../../Hooks/useStats";
 import { StatsOverview } from "./StatsOverview/StatsOverview.component";
 import { StatsCharts } from "./StatsCharts/StatsCharts.component";
-
 
 export const StatsSection = memo(() => {
   const { stats, isLoading } = useStats();
@@ -18,7 +17,7 @@ export const StatsSection = memo(() => {
         <motion.h1 
           initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
-          className="text-3xl font-bold font-space bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400"
+          className="text-3xl font-bold font-space text-js"
         >
           Statystyki i Postępy
         </motion.h1>

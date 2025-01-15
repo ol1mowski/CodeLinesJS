@@ -16,7 +16,12 @@ type CategoriesChartProps = {
   }>;
 };
 
-const COLORS = ['#818CF8', '#34D399', '#F472B6', '#FBBF24', '#60A5FA'];
+const COLORS = [
+  '#f7df1e', 
+  '#fbbf24', 
+  '#f59e0b', 
+  '#92400e'
+];
 
 export const CategoriesChart = memo(({ data }: CategoriesChartProps) => {
   const chartData = data.map(category => ({
