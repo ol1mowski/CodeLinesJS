@@ -9,6 +9,7 @@ import { LearnSection } from "../components/Dashboard/LearnSection/LearnSection.
 import { CommunitySection } from "../components/Dashboard/CommunitySection/CommunitySection.component";
 import { SettingsSection } from "../components/Dashboard/SettingsSection/SettingsSection.component";
 import { GamesSection } from "../components/Dashboard/GamesSection/GamesSection.component";
+import { CodeEditor } from "../components/Dashboard/CodeEditor/CodeEditor.component";
 
 const Home = lazy(() => import("../pages/Home"));
 const Auth = lazy(() => import("../pages/Auth"));
@@ -54,6 +55,10 @@ export const router = createBrowserRouter([
       {
         path: "play",
         element: <GamesSection />
+      },
+      {
+        path: "code",
+        element: <CodeEditor />
       }
     ]
   },
