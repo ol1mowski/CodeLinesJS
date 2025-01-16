@@ -1,7 +1,7 @@
 import { memo, useCallback, useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import Editor, { loader } from "@monaco-editor/react";
-import { FaHistory, FaSpinner, FaDownload, FaSave } from "react-icons/fa";
+import { FaHistory, FaSpinner, FaDownload } from "react-icons/fa";
 import { ConsoleOutput } from "./components/ConsoleOutput.component";
 import { CodeHistory } from "./components/CodeHistory.component";
 import { useCodeExecution } from "./hooks/useCodeExecution";
@@ -9,7 +9,6 @@ import { useCodeHistory } from "./hooks/useCodeHistory";
 import { useEditorConfig } from "./hooks/useEditorConfig";
 import { defaultCode } from "./constants";
 import { useFileOperations } from "./hooks/useFileOperations";
-import { useCodeApi } from './hooks/useCodeApi';
 
 
 loader.init().then(monaco => {
@@ -28,9 +27,6 @@ export const CodeEditor = memo(() => {
   const [showHistory, setShowHistory] = useState(false);
   const [isEditorReady, setIsEditorReady] = useState(false);
   const { saveToFile } = useFileOperations();
-  const { saveCode, isSaving, saveError } = useCodeApi();
-  const [codeTitle, setCodeTitle] = useState('');
-  const [showSaveDialog, setShowSaveDialog] = useState(false);
 
   const handleEditorDidMount = (editor: any) => {
     editorRef.current = editor;
@@ -58,20 +54,6 @@ export const CodeEditor = memo(() => {
     setCode(selectedCode);
     setShowHistory(false);
   }, []);
-
-  const handleSaveCode = useCallback(async () => {
-    if (!codeTitle.trim()) {
-      return;
-    }
-
-    await saveCode({
-      code,
-      title: codeTitle.trim()
-    });
-
-    setShowSaveDialog(false);
-    setCodeTitle('');
-  }, [code, codeTitle, saveCode]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -108,14 +90,6 @@ export const CodeEditor = memo(() => {
           Edytor Kodu JavaScript
         </h1>
         <div className="flex items-center gap-4">
-          <button
-            onClick={() => setShowSaveDialog(true)}
-            disabled={!isEditorReady || isSaving}
-            className="px-4 py-2 text-sm text-js border border-js/20 rounded hover:bg-js/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <FaSave className="w-4 h-4 mr-2 inline-block" />
-            {isSaving ? 'Zapisywanie...' : 'Zapisz w Chmurze'}
-          </button>
           <button
             onClick={() => saveToFile(code)}
             disabled={!isEditorReady}
@@ -188,39 +162,6 @@ export const CodeEditor = memo(() => {
           />
         </div>
       </div>
-
-      {showSaveDialog && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
-          <div className="bg-dark/95 p-6 rounded-lg border border-js/20 w-96">
-            <h3 className="text-xl font-bold text-js mb-4">Zapisz Kod</h3>
-            <input
-              type="text"
-              value={codeTitle}
-              onChange={(e) => setCodeTitle(e.target.value)}
-              placeholder="Nazwa kodu..."
-              className="w-full px-4 py-2 bg-dark/50 border border-js/20 rounded text-white mb-4"
-            />
-            {saveError && (
-              <p className="text-red-500 text-sm mb-4">{saveError}</p>
-            )}
-            <div className="flex justify-end gap-4">
-              <button
-                onClick={() => setShowSaveDialog(false)}
-                className="px-4 py-2 text-gray-400 hover:text-white transition-colors"
-              >
-                Anuluj
-              </button>
-              <button
-                onClick={handleSaveCode}
-                disabled={!codeTitle.trim() || isSaving}
-                className="px-4 py-2 bg-js text-dark font-medium rounded hover:bg-js/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isSaving ? 'Zapisywanie...' : 'Zapisz'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </motion.div>
   );
 });
