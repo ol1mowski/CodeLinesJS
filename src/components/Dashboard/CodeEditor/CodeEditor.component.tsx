@@ -1,13 +1,14 @@
 import { memo, useCallback, useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import Editor, { loader } from "@monaco-editor/react";
-import { FaHistory, FaSpinner } from "react-icons/fa";
+import { FaHistory, FaSpinner, FaDownload } from "react-icons/fa";
 import { ConsoleOutput } from "./components/ConsoleOutput.component";
 import { CodeHistory } from "./components/CodeHistory.component";
 import { useCodeExecution } from "./hooks/useCodeExecution";
 import { useCodeHistory } from "./hooks/useCodeHistory";
 import { useEditorConfig } from "./hooks/useEditorConfig";
 import { defaultCode } from "./constants";
+import { useFileOperations } from "./hooks/useFileOperations";
 
 
 loader.init().then(monaco => {
@@ -21,10 +22,11 @@ export const CodeEditor = memo(() => {
   const editorRef = useRef<any>(null);
   const { output, isExecuting, executeCode, clearConsole } = useCodeExecution();
   const { history, addToHistory, clearHistory } = useCodeHistory();
-  const { formatCode, editorOptions } = useEditorConfig();
+  const { formatCode, editorOptions, setupEditor } = useEditorConfig();
   const [code, setCode] = useState(defaultCode);
   const [showHistory, setShowHistory] = useState(false);
   const [isEditorReady, setIsEditorReady] = useState(false);
+  const { saveToFile } = useFileOperations();
 
   const handleEditorDidMount = (editor: any) => {
     editorRef.current = editor;
@@ -67,6 +69,16 @@ export const CodeEditor = memo(() => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleRunCode, handleFormatCode]);
 
+  useEffect(() => {
+    loader.init().then(monaco => {
+      monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+        noSemanticValidation: false,
+        noSyntaxValidation: false,
+      });
+      setupEditor(monaco);
+    });
+  }, [setupEditor]);
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -78,6 +90,14 @@ export const CodeEditor = memo(() => {
           Edytor Kodu JavaScript
         </h1>
         <div className="flex items-center gap-4">
+          <button
+            onClick={() => saveToFile(code)}
+            disabled={!isEditorReady}
+            className="px-4 py-2 text-sm text-js border border-js/20 rounded hover:bg-js/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <FaDownload className="w-4 h-4 mr-2 inline-block" />
+            Zapisz do Pliku
+          </button>
           <button
             onClick={handleFormatCode}
             disabled={!isEditorReady}
