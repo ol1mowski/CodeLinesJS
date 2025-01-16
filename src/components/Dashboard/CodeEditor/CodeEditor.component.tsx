@@ -1,13 +1,18 @@
 import { memo, useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Editor from "@monaco-editor/react";
+import { FaHistory } from "react-icons/fa";
 import { ConsoleOutput } from "./components/ConsoleOutput.component";
+import { CodeHistory } from "./components/CodeHistory.component";
 import { useCodeExecution } from "./hooks/useCodeExecution";
+import { useCodeHistory } from "./hooks/useCodeHistory";
 import { defaultCode } from "./constants";
 
 export const CodeEditor = memo(() => {
   const { output, isExecuting, executeCode, clearConsole } = useCodeExecution();
+  const { history, addToHistory, clearHistory } = useCodeHistory();
   const [code, setCode] = useState(defaultCode);
+  const [showHistory, setShowHistory] = useState(false);
 
   const handleEditorChange = useCallback((value: string | undefined) => {
     if (value) setCode(value);
@@ -15,7 +20,13 @@ export const CodeEditor = memo(() => {
 
   const handleRunCode = useCallback(async () => {
     await executeCode(code);
-  }, [code, executeCode]);
+    addToHistory(code);
+  }, [code, executeCode, addToHistory]);
+
+  const handleHistorySelect = useCallback((selectedCode: string) => {
+    setCode(selectedCode);
+    setShowHistory(false);
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -38,6 +49,22 @@ export const CodeEditor = memo(() => {
         <h1 className="text-3xl font-bold font-space text-js">
           Edytor Kodu JavaScript
         </h1>
+        <div className="relative">
+          <button
+            onClick={() => setShowHistory(prev => !prev)}
+            className="p-2 text-gray-400 hover:text-js transition-colors"
+            title="Historia kodu"
+          >
+            <FaHistory className="w-5 h-5" />
+          </button>
+          {showHistory && (
+            <CodeHistory
+              history={history}
+              onSelect={handleHistorySelect}
+              onClear={clearHistory}
+            />
+          )}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-12rem)]">
