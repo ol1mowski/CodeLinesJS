@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { memo } from "react";
-import { useTrending } from "../../../../hooks/useTrending";
+import { useTrending } from "../../../../Hooks/useTrending";
 
 export const TrendingTopics = memo(() => {
   const { topics, isLoading } = useTrending();
