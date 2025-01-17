@@ -9,6 +9,7 @@ import groupsRoutes from "./routes/groups.routes.js";
 import rankingRoutes from "./routes/ranking.routes.js";
 import trendingRoutes from "./routes/trending.routes.js";
 import { errorHandler } from "./middleware/error.middleware.js";
+import postsRoutes from './routes/posts.routes.js';
 
 dotenv.config();
 
@@ -30,6 +31,7 @@ app.use("/api/stats", statsRoutes);
 app.use("/api/groups", groupsRoutes);
 app.use("/api/ranking", rankingRoutes);
 app.use("/api/trending", trendingRoutes);
+app.use("/api/posts", postsRoutes);
 app.use(errorHandler);
 
 mongoose

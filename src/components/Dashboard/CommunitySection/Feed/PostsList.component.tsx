@@ -1,12 +1,22 @@
-import { memo, useCallback, useRef, useEffect } from "react";import { Post } from "./Post.component";
+import { memo, useCallback, useRef, useEffect } from "react";
 import { PostsListSkeleton } from "./PostsListSkeleton.component";
 import { usePosts } from "../../../../Hooks/usePosts";
 import { MemoizedVirtualList } from "../../../Common/VirtualList.component";
+import { Post as PostType } from '../../../../types/post.types';
+import { Post as PostComponent } from "./Post.component";
+import { FaRegCommentDots } from "react-icons/fa";
 
-export const PostsList = memo(() => {
+interface PostsListProps {
+  posts: PostType[];
+  isLoading: boolean;
+  isFetchingMore: boolean;
+  hasMore: boolean;
+  onLoadMore: () => void;
+  onLike: (postId: string) => void;
+}
+
+export const PostsList = memo(({ posts, isLoading }: PostsListProps) => {
   const {
-    posts,
-    isLoading,
     isFetchingNextPage,
     hasNextPage,
     fetchNextPage,
@@ -40,13 +50,27 @@ export const PostsList = memo(() => {
     return <PostsListSkeleton />;
   }
 
+  if (posts.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center p-8 text-center bg-dark/30 rounded-xl border border-js/10">
+        <FaRegCommentDots className="w-16 h-16 text-gray-500 mb-4" />
+        <h3 className="text-xl font-medium text-gray-300 mb-2">
+          Brak postów
+        </h3>
+        <p className="text-gray-400">
+          Bądź pierwszą osobą, która coś opublikuje!
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="h-[800px]">
         <MemoizedVirtualList
           items={posts}
           renderItem={(post) => (
-            <Post key={post.id} post={post} onLike={handleLike} />
+            <PostComponent key={post.id} post={post} onLike={handleLike} />
           )}
           itemHeight={200}
           className="h-full"

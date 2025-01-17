@@ -9,7 +9,6 @@ import { CommunityProvider, useCommunity } from "../../../contexts/CommunityCont
 import { CommunityNavigation } from "./Navigation/CommunityNavigation.component";
 import { ErrorBoundary } from "../../Common/ErrorBoundary.component";
 import { AsyncComponent } from "../../Common/AsyncComponent";
-import { prefetchPosts } from '../../../Hooks/usePosts';
 import { prefetchRanking } from './Ranking/hooks/useRanking';
 
 const CommunityContent = memo(() => {
@@ -20,7 +19,7 @@ const CommunityContent = memo(() => {
     if (activeView === 'feed') {
       prefetchRanking(queryClient, 'weekly');
     } else if (activeView === 'ranking') {
-      prefetchPosts(queryClient);
+      prefetchRanking(queryClient, 'weekly');
     }
   }, [activeView, queryClient]);
 
