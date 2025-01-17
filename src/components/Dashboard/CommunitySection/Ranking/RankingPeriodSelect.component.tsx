@@ -14,29 +14,27 @@ const periods: Array<{ value: RankingPeriod; label: string }> = [
   { value: "allTime", label: "Wszystko" },
 ];
 
-export const RankingPeriodSelect = memo(({ value, onChange }: RankingPeriodSelectProps) => {
-  return (
-    <div className="flex space-x-2">
-      {periods.map((period) => (
-        <motion.button
-          key={period.value}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => onChange(period.value)}
-          className={`
-            px-4 py-2 rounded-lg text-sm font-medium
-            transition-colors duration-200
-            ${value === period.value
-              ? "bg-indigo-500 text-white"
-              : "bg-gray-700/50 text-gray-400 hover:text-gray-300"
-            }
-          `}
-        >
-          {period.label}
-        </motion.button>
-      ))}
-    </div>
-  );
-});
+export const RankingPeriodSelect = memo(({ value, onChange }: RankingPeriodSelectProps) => (
+  <div className="flex gap-2">
+    {periods.map(period => (
+      <motion.button
+        key={period.value}
+        onClick={() => onChange(period.value)}
+        className={`
+          px-4 py-2 rounded-lg text-sm font-medium
+          transition-colors duration-200
+          ${value === period.value
+            ? "bg-js text-dark"
+            : "bg-dark/50 text-gray-400 hover:text-js"
+          }
+        `}
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+      >
+        {period.label}
+      </motion.button>
+    ))}
+  </div>
+));
 
 RankingPeriodSelect.displayName = "RankingPeriodSelect"; 

@@ -7,9 +7,8 @@ export type Post = {
   };
   content: string;
   createdAt: Date;
-  likesCount: number;
+  likes: string[];
   commentsCount: number;
-  isLiked: boolean;
 };
 
 export type Comment = {
