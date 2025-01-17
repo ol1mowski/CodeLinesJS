@@ -10,7 +10,8 @@ type RankingListProps = {
 };
 
 export const RankingList = memo(({ period }: RankingListProps) => {
-  const { data: users, isLoading } = useRanking(period);
+  const { data, isLoading } = useRanking(period);
+  const users = data?.users;
 
   if (isLoading) {
     return (
@@ -45,7 +46,7 @@ export const RankingList = memo(({ period }: RankingListProps) => {
 
   return (
     <div className="space-y-4">
-      {users.map((user, index) => (
+      {users?.map((user, index) => (
         <motion.div
           key={user.id}
           initial={{ opacity: 0, y: 20 }}

@@ -1,7 +1,12 @@
 export type RankingPeriod = 'daily' | 'weekly' | 'monthly' | 'allTime';
 
 export interface RankingStats {
+  rank: number;
+  rankChange: number;
+  activePlayers: number;
+  activePlayersChange: number;
   completedChallenges: number;
+  challengesChange: number;
   accuracy: number;
 }
 
