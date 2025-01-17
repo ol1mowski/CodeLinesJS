@@ -1,101 +1,30 @@
-import { memo, useCallback, useState } from "react";
+import { memo } from "react";
 import { motion } from "framer-motion";
-import { FaUserCircle, FaTrophy, FaCode, FaBullseye, FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { useRanking } from "../../../../Hooks/useRanking";
+import { FaUserCircle, FaTrophy, FaCode, FaBullseye } from "react-icons/fa";
+import { useRanking } from "../../../../hooks/useRanking";
 import { RankingPeriod, RankingUser } from "../../../../types/ranking.types";
-import { MemoizedVirtualList } from "../../../Common/VirtualList.component";
 
 type RankingListProps = {
   period: RankingPeriod;
 };
 
 export const RankingList = memo(({ period }: RankingListProps) => {
-  const [page, setPage] = useState(0);
-  const {
-    users,
-    isLoading,
-    isPreviousData,
-    currentPage,
-    totalPages,
-    hasNextPage,
-    hasPreviousPage
-  } = useRanking(period, page);
-
-  const handlePreviousPage = useCallback(() => {
-    setPage(old => Math.max(0, old - 1));
-  }, []);
-
-  const handleNextPage = useCallback(() => {
-    if (!isPreviousData && hasNextPage) {
-      setPage(old => old + 1);
-    }
-  }, [isPreviousData, hasNextPage]);
+  const { data: users, isLoading } = useRanking(period);
 
   if (isLoading) {
     return <RankingListSkeleton />;
   }
 
   return (
-    <div className="space-y-6">
-      <div className="h-[600px]">
-        <MemoizedVirtualList
-          items={users || []}
-          renderItem={(user) => <RankingCard key={user.id} user={user} />}
-          itemHeight={100}
-          className="h-full"
-        />
-      </div>
-
-      <div className="flex items-center justify-between pt-4 border-t border-gray-700/50">
-        <button
-          onClick={handlePreviousPage}
-          disabled={!hasPreviousPage}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors
-            ${hasPreviousPage
-              ? "text-gray-200 hover:bg-gray-700/30"
-              : "text-gray-600 cursor-not-allowed"
-            }`}
-        >
-          <FaChevronLeft />
-          Poprzednia
-        </button>
-
-        <span className="text-gray-400">
-          Strona {currentPage || 1} z {totalPages}
-        </span>
-
-        <button
-          onClick={handleNextPage}
-          disabled={isPreviousData || !hasNextPage}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors
-            ${hasNextPage && !isPreviousData
-              ? "text-gray-200 hover:bg-gray-700/30"
-              : "text-gray-600 cursor-not-allowed"
-            }`}
-        >
-          Następna
-          <FaChevronRight />
-        </button>
-      </div>
+    <div className="space-y-4">
+      {users?.map((user) => (
+        <RankingCard key={user.id} user={user} />
+      ))}
     </div>
   );
 });
 
 const RankingCard = memo(({ user }: { user: RankingUser }) => {
-  const renderBadges = useCallback(() => (
-    <div className="flex gap-1">
-      {user.badges.map((badge) => (
-        <span
-          key={badge.id}
-          title={badge.name}
-          className="text-lg"
-        >
-          {badge.icon}
-        </span>
-      ))}
-    </div>
-  ), [user.badges]);
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -122,7 +51,6 @@ const RankingCard = memo(({ user }: { user: RankingUser }) => {
           <div className="flex items-center gap-2 mb-1">
             <span className="font-bold text-gray-200">{user.name}</span>
             <span className="text-sm text-gray-400">Poziom {user.level}</span>
-            {renderBadges()}
           </div>
           
           <div className="flex items-center gap-6 text-sm">
