@@ -1,22 +1,30 @@
-const topics = [
-  { id: 1, name: "React", count: 234 },
-  { id: 2, name: "TypeScript", count: 156 },
-  { id: 3, name: "JavaScript", count: 142 },
-  { id: 4, name: "NextJS", count: 98 }
-];
-
-const tags = [
-  { name: "react", count: 234 },
-  { name: "typescript", count: 156 },
-  { name: "javascript", count: 142 },
-  { name: "frontend", count: 98 },
-  { name: "webdev", count: 76 }
-];
+import { Topic } from '../models/topic.model.js';
+import { Tag } from '../models/tag.model.js';
 
 export const getTopics = async () => {
-  return topics;
+  return await Topic.find()
+    .sort({ count: -1 })
+    .limit(10);
 };
 
 export const getTags = async () => {
-  return tags;
+  return await Tag.find()
+    .sort({ count: -1 })
+    .limit(10);
+};
+
+export const incrementTopicCount = async (topicName) => {
+  await Topic.findOneAndUpdate(
+    { name: topicName },
+    { $inc: { count: 1 } },
+    { upsert: true }
+  );
+};
+
+export const incrementTagCount = async (tagName) => {
+  await Tag.findOneAndUpdate(
+    { name: tagName },
+    { $inc: { count: 1 } },
+    { upsert: true }
+  );
 }; 

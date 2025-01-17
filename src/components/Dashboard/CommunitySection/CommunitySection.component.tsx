@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect } from "react";
+import { memo, useCallback, useEffect, lazy, Suspense } from "react";
 
 import { motion } from "framer-motion";
 
@@ -8,8 +8,27 @@ import { CommunityProvider, useCommunity } from "../../../contexts/CommunityCont
 
 import { CommunityNavigation } from "./Navigation/CommunityNavigation.component";
 import { ErrorBoundary } from "../../Common/ErrorBoundary.component";
-import { AsyncComponent } from "../../Common/AsyncComponent";
-import { prefetchRanking } from './Ranking/hooks/useRanking';
+import { prefetchRanking } from "./Ranking/hooks/useRanking";
+
+type AsyncComponentProps<T> = {
+  importFn: () => Promise<{ default: T }>;
+  fallback: React.ReactNode;
+};
+
+const AsyncComponent = <T extends React.ComponentType>({ 
+  importFn,
+  fallback 
+}: AsyncComponentProps<T>) => {
+  const Component = lazy(() => 
+    importFn().then(module => ({ default: module.default as React.ComponentType }))
+  );
+  
+  return (
+    <Suspense fallback={fallback}>
+      <Component />
+    </Suspense>
+  );
+};
 
 const CommunityContent = memo(() => {
   const { state: { activeView }, setActiveView } = useCommunity();
@@ -29,18 +48,21 @@ const CommunityContent = memo(() => {
         return (
           <AsyncComponent
             importFn={() => import("./Feed/CommunityFeed.component")}
+            fallback={<div className="text-center text-gray-400">Ładowanie feed...</div>}
           />
         );
       case "ranking":
         return (
           <AsyncComponent
             importFn={() => import("./Ranking/CommunityRanking.component")}
+            fallback={<div className="text-center text-gray-400">Ładowanie rankingu...</div>}
           />
         );
       case "groups":
         return (
           <AsyncComponent
             importFn={() => import("./Groups/CommunityGroups.component")}
+            fallback={<div className="text-center text-gray-400">Ładowanie grup...</div>}
           />
         );
       default:

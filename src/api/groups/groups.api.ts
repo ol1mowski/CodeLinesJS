@@ -1,10 +1,10 @@
 import { Group } from '../../types/groups.types';
 
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = 'http://localhost:5001';
 
 export const groupsApi = {
   getGroups: async (): Promise<Group[]> => {
-    const response = await fetch(`${BASE_URL}/groups`);
+    const response = await fetch(`${BASE_URL}/api/groups`);
     if (!response.ok) {
       throw new Error('Failed to fetch groups');
     }
@@ -12,7 +12,7 @@ export const groupsApi = {
   },
   
   joinGroup: async (groupId: string): Promise<void> => {
-    const response = await fetch(`${BASE_URL}/groups/${groupId}/join`, {
+    const response = await fetch(`${BASE_URL}/api/groups/${groupId}/join`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

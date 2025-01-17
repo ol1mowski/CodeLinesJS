@@ -1,10 +1,10 @@
 import { Topic, Tag } from '../../types/trending.types';
 
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = 'http://localhost:5001';
 
 export const trendingApi = {
   getPopularTags: async (): Promise<Tag[]> => {
-    const response = await fetch(`${BASE_URL}/trending/tags`);
+    const response = await fetch(`${BASE_URL}/api/trending/tags`);
     if (!response.ok) {
       throw new Error('Failed to fetch popular tags');
     }
@@ -12,7 +12,7 @@ export const trendingApi = {
   },
 
   getTrendingTopics: async (): Promise<Topic[]> => {
-    const response = await fetch(`${BASE_URL}/trending/topics`);
+    const response = await fetch(`${BASE_URL}/api/trending/topics`);
     if (!response.ok) {
       throw new Error('Failed to fetch trending topics');
     }

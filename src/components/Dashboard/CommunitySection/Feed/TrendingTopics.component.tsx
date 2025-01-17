@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { memo } from "react";
+import { HiOutlineChatBubbleBottomCenterText } from "react-icons/hi2";
 import { useTrending } from "../../../../Hooks/useTrending";
 
 export const TrendingTopics = memo(() => {
@@ -21,6 +22,7 @@ export const TrendingTopics = memo(() => {
     );
   }
 
+
   return (
     <motion.div className="bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10 p-6 shadow-lg">
       <h2 className="text-xl font-bold text-js mb-4">Popularne tematy</h2>
@@ -31,6 +33,12 @@ export const TrendingTopics = memo(() => {
             <span className="text-js">{topic.count}</span>
           </div>
         ))}
+        { !topics?.length && (
+          <div className="text-center text-gray-400 py-8">
+            <HiOutlineChatBubbleBottomCenterText className="w-12 h-12 mx-auto mb-3 opacity-50" />
+            <div>Brak popularnych tematów do wyświetlenia</div>
+          </div>
+        )}
       </div>
     </motion.div>
   );
