@@ -1,25 +1,29 @@
-const generateRankingData = (count = 50) => {
-  return Array.from({ length: count }, (_, i) => ({
-    id: (i + 1).toString(),
-    name: `User ${i + 1}`,
-    avatar: `https://i.pravatar.cc/150?img=${i + 1}`,
-    rank: i + 1,
-    points: Math.floor(Math.random() * 10000),
-    level: Math.floor(Math.random() * 100) + 1,
-    stats: {
-      completedChallenges: Math.floor(Math.random() * 500),
-      accuracy: Math.floor(Math.random() * 30) + 70
+import { User } from '../models/user.model.js';
+
+class RankingService {
+  async getRanking(period) {
+    try {
+      const users = await User.find()
+        .select('name avatar level points stats')
+        .sort({ points: -1 })
+        .limit(50);
+
+      return users.map((user, index) => ({
+        id: user._id,
+        name: user.name,
+        avatar: user.avatar,
+        level: user.level,
+        points: user.points,
+        stats: {
+          completedChallenges: user.stats?.completedChallenges || 0,
+          accuracy: user.stats?.accuracy || 0
+        }
+      }));
+    } catch (error) {
+      console.error('Error fetching ranking:', error);
+      throw new Error('Failed to fetch ranking data');
     }
-  }));
-};
+  }
+}
 
-const rankingData = {
-  daily: generateRankingData(),
-  weekly: generateRankingData(),
-  monthly: generateRankingData(),
-  allTime: generateRankingData()
-};
-
-export const getRanking = async (period) => {
-  return rankingData[period] || [];
-}; 
+export default new RankingService(); 
