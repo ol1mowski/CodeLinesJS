@@ -1,6 +1,6 @@
 import { memo, useCallback, useRef, useEffect } from "react";import { Post } from "./Post.component";
 import { PostsListSkeleton } from "./PostsListSkeleton.component";
-import { usePosts } from "../../../../hooks/usePosts";
+import { usePosts } from "../../../../Hooks/usePosts";
 import { MemoizedVirtualList } from "../../../Common/VirtualList.component";
 
 export const PostsList = memo(() => {

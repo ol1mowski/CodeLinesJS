@@ -31,9 +31,19 @@ export const Post = memo(({ post, onLike }: PostProps) => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-gray-800/50 backdrop-blur-lg rounded-xl p-6 border border-gray-700/50"
+      className="bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10 p-6 shadow-lg"
     >
-      <PostHeader post={post} />
+      <div className="flex items-center gap-4 mb-4">
+        <div className="w-10 h-10 rounded-full bg-js/20 flex items-center justify-center">
+          <FaUserCircle className="w-6 h-6 text-js" />
+        </div>
+        <div>
+          <h3 className="font-medium text-js">{post.author.name}</h3>
+          <span className="text-sm text-gray-400">
+            {formatDistanceToNow(post.createdAt, { addSuffix: true, locale: pl })}
+          </span>
+        </div>
+      </div>
       <PostContent content={post.content} />
       <PostActions
         isLiked={isLiked}
@@ -46,26 +56,6 @@ export const Post = memo(({ post, onLike }: PostProps) => {
     </motion.div>
   );
 });
-
-const PostHeader = memo(({ post }: { post: PostType }) => (
-  <div className="flex items-start gap-4 mb-4">
-    {post.author.avatar ? (
-      <img
-        src={post.author.avatar}
-        alt={post.author.name}
-        className="w-10 h-10 rounded-full relative"
-      />
-    ) : (
-      <FaUserCircle className="w-10 h-10 text-gray-600" />
-    )}
-    <div>
-      <span className="font-medium text-gray-200">{post.author.name}</span>
-      <span className="text-sm text-gray-500 ml-2">
-        {formatDistanceToNow(post.createdAt, { addSuffix: true, locale: pl })}
-      </span>
-    </div>
-  </div>
-));
 
 const PostContent = memo(({ content }: { content: string }) => (
   <p className="text-gray-300 mb-4">{content}</p>
@@ -91,7 +81,7 @@ const PostActions = memo(({
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
       onClick={onLike}
-      className={`flex items-center gap-2 ${
+      className={`flex items-center gap-2 focus:outline-none ${
         isLiked ? "text-pink-500" : "text-gray-400 hover:text-pink-500"
       } transition-colors`}
     >
@@ -118,7 +108,6 @@ const PostActions = memo(({
   </div>
 ));
 
-PostHeader.displayName = "PostHeader";
 PostContent.displayName = "PostContent";
 PostActions.displayName = "PostActions";
 Post.displayName = "Post"; 

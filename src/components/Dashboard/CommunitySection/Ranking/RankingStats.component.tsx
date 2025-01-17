@@ -8,62 +8,41 @@ const stats = [
     label: "Twoja pozycja",
     value: "#42",
     change: "+5",
-    gradient: "from-amber-500 to-yellow-500",
+    gradient: "from-js/20 to-js/30",
   },
   {
     icon: FaUsers,
     label: "Aktywni gracze",
     value: "2,547",
     change: "+123",
-    gradient: "from-blue-500 to-indigo-500",
+    gradient: "from-js/20 to-js/30",
   },
   {
     icon: FaCode,
     label: "Ukończone wyzwania",
     value: "156",
     change: "+12",
-    gradient: "from-emerald-500 to-green-500",
+    gradient: "from-js/20 to-js/30",
   },
 ];
 
-export const RankingStats = memo(() => {
-  return (
-    <div className="space-y-4">
-      {stats.map((stat, index) => {
-        const Icon = stat.icon;
-        
-        return (
-          <motion.div
-            key={stat.label}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: index * 0.1 }}
-            className="bg-gray-800/50 backdrop-blur-lg rounded-xl p-6 border border-gray-700/50"
-          >
-            <div className="flex items-center gap-4">
-              <div className={`
-                p-3 rounded-lg bg-gradient-to-br ${stat.gradient}
-                flex items-center justify-center
-              `}>
-                <Icon className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-400">{stat.label}</p>
-                <div className="flex items-center gap-2">
-                  <span className="text-2xl font-bold text-white">
-                    {stat.value}
-                  </span>
-                  <span className="text-sm text-emerald-400">
-                    {stat.change}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        );
-      })}
+export const RankingStats = memo(() => (
+  <motion.div className="bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10 p-6 shadow-lg">
+    <h2 className="text-xl font-bold text-js mb-6">Twoje Statystyki</h2>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {stats.map(stat => (
+        <motion.div
+          key={stat.label}
+          className="bg-dark/20 rounded-lg p-4 border border-js/5"
+          whileHover={{ scale: 1.02 }}
+        >
+          <stat.icon className="w-6 h-6 text-js mb-2" />
+          <p className="text-gray-400 text-sm">{stat.label}</p>
+          <p className="text-2xl font-bold text-js">{stat.value}</p>
+        </motion.div>
+      ))}
     </div>
-  );
-});
+  </motion.div>
+));
 
 RankingStats.displayName = "RankingStats"; 

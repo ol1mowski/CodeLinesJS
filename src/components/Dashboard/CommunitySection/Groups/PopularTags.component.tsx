@@ -1,6 +1,5 @@
 import { memo } from "react";
 import { motion } from "framer-motion";
-import { FaHashtag } from "react-icons/fa";
 
 const popularTags = [
   { name: "react", count: 234 },
@@ -12,25 +11,13 @@ const popularTags = [
 
 export const PopularTags = memo(() => {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="bg-gray-800/50 backdrop-blur-lg rounded-xl p-6 border border-gray-700/50"
-    >
-      <h3 className="text-lg font-bold font-space text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400 mb-4">
-        Popularne tagi
-      </h3>
-      <div className="space-y-3">
+    <motion.div className="bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10 p-6 shadow-lg">
+      <h2 className="text-xl font-bold text-js mb-4">Popularne tagi</h2>
+      <div className="space-y-4">
         {popularTags.map(tag => (
-          <div
-            key={tag.name}
-            className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-700/30 transition-colors cursor-pointer"
-          >
-            <div className="flex items-center gap-2">
-              <FaHashtag className="text-gray-400" />
-              <span className="text-gray-300">{tag.name}</span>
-            </div>
-            <span className="text-sm text-gray-500">{tag.count} grup</span>
+          <div key={tag.name} className="flex items-center justify-between">
+            <span className="text-gray-300">#{tag.name}</span>
+            <span className="text-js">{tag.count}</span>
           </div>
         ))}
       </div>

@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { FaUserCircle, FaHeart } from "react-icons/fa";
 import { formatDistanceToNow } from "date-fns";
 import { pl } from "date-fns/locale";
-import { useComments } from "../../../../hooks/useComments";
+import { useComments } from "../../../../Hooks/useComments";
 import { Comment } from "../../../../types/post.types";
 
 type CommentsProps = {

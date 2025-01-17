@@ -24,13 +24,13 @@ export const GroupsFilter = memo(() => {
           value={searchQuery}
           onChange={handleSearchChange}
           placeholder="Szukaj grup..."
-          className="pl-10 pr-4 py-2 bg-gray-800/50 rounded-lg border border-gray-700/50 text-gray-200 placeholder-gray-500 focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 transition-colors w-64"
+          className="w-full bg-dark/50 pl-10 rounded-lg border border-js/10 p-4 text-gray-300 placeholder-gray-500 focus:border-js focus:ring-1 focus:ring-js"
         />
       </div>
       <select
+        className="bg-dark p-3 border border-js/10 text-gray-300 rounded-lg focus:border-js focus:ring-1 focus:ring-js"
         value={filterType}
         onChange={handleFilterChange}
-        className="bg-gray-800/50 rounded-lg border border-gray-700/50 text-gray-200 px-4 py-2 focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 transition-colors"
       >
         <option value="all">Wszystkie grupy</option>
         <option value="joined">Moje grupy</option>

@@ -11,11 +11,9 @@ const CommunityFeed = memo(() => {
         <CreatePost />
         <PostsList />
       </div>
-      <div className="hidden lg:block">
-        <div className="sticky top-28 space-y-6">
-          <TrendingTopics />
-          <OnlineUsers />
-        </div>
+      <div className="space-y-6">
+        <OnlineUsers />
+        <TrendingTopics />
       </div>
     </div>
   );

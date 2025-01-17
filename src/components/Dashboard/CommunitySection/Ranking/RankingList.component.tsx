@@ -1,7 +1,7 @@
 import { memo, useCallback, useState } from "react";
 import { motion } from "framer-motion";
 import { FaUserCircle, FaTrophy, FaCode, FaBullseye, FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { useRanking } from "../../../../hooks/useRanking";
+import { useRanking } from "../../../../Hooks/useRanking";
 import { RankingPeriod, RankingUser } from "../../../../types/ranking.types";
 import { MemoizedVirtualList } from "../../../Common/VirtualList.component";
 
@@ -100,7 +100,7 @@ const RankingCard = memo(({ user }: { user: RankingUser }) => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-gray-700/30 rounded-lg p-4 hover:bg-gray-700/40 transition-colors"
+      className="bg-dark/30 backdrop-blur-sm rounded-lg p-4 hover:bg-dark/40 transition-colors border border-js/10"
     >
       <div className="flex items-center gap-4">
         <div className="w-12 h-12 relative">
@@ -113,7 +113,7 @@ const RankingCard = memo(({ user }: { user: RankingUser }) => {
           ) : (
             <FaUserCircle className="w-full h-full text-gray-600" />
           )}
-          <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-indigo-500 flex items-center justify-center text-sm font-bold text-white">
+          <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-js flex items-center justify-center text-sm font-bold text-dark">
             {user.rank}
           </div>
         </div>
@@ -126,7 +126,7 @@ const RankingCard = memo(({ user }: { user: RankingUser }) => {
           </div>
           
           <div className="flex items-center gap-6 text-sm">
-            <div className="flex items-center gap-1 text-indigo-400">
+            <div className="flex items-center gap-1 text-js">
               <FaTrophy className="text-xs" />
               <span>{user.points} pkt</span>
             </div>
