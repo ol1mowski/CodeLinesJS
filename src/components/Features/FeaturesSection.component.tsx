@@ -1,21 +1,23 @@
 import { Container } from "../UI/Container/Container.component";
-import { SectionTitle } from "../UI/SectionTitle/SectionTitle.component";
-import { CodeAnimation } from "./CodeAnimation/CodeAnimation.component";
-import { FeaturesList } from "./FeaturesList/FeaturesList.component";
+import { BackgroundGlow } from "./components/BackgroundGlow.component";
+import { BackgroundPattern } from "./components/BackgroundPattern.component";
+import { FeaturesContent } from "./components/FeaturesContent.component";
+import { FeaturesHeader } from "./components/FeaturesHeader.component";
 
 export const FeaturesSection = () => (
-  <section id="gra" className="min-h-screen w-full bg-gradient-to-b from-violet-900 via-indigo-900 to-gray-900 py-16 md:py-24 relative">
+  <section 
+    id="gra" 
+    className="min-h-screen w-full bg-gradient-to-b from-[#1a1a1a] via-[#242424] to-[#1a1a1a] py-16 md:py-24 relative overflow-hidden"
+  >
+    <div className="absolute inset-0">
+      <BackgroundGlow />
+      <BackgroundPattern />
+    </div>
+    
     <Container className="relative z-10">
-      <div className="flex flex-col items-center gap-8 md:gap-16">
-        <SectionTitle
-          title="Odkryj Moc JavaScript"
-          subtitle="Poznaj kluczowe funkcje naszej platformy"
-          className="text-center px-4"
-        />
-        <div className="flex flex-col xl:flex-row items-center justify-between gap-8 md:gap-16 w-full">
-          <FeaturesList />
-          <CodeAnimation />
-        </div>
+      <div className="flex flex-col items-center gap-12 md:gap-20">
+        <FeaturesHeader />
+        <FeaturesContent />
       </div>
     </Container>
   </section>

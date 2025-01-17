@@ -1,22 +1,17 @@
-import { motion } from "framer-motion";
-import { progressStats } from "../../../data/progressStats.data";
-import { StatCard } from "./StatCard.component";
+import { memo } from 'react';
+import { StatsHeader } from './components/StatsHeader.component';
+import { StatCard } from './components/StatCard.component';
+import { stats } from './constants/stats.data';
 
+export const ProgressStats = memo(() => (
+  <div className="w-full xl:w-1/2 space-y-6">
+    <StatsHeader />
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {stats.map((stat, index) => (
+        <StatCard key={stat.label} {...stat} index={index} />
+      ))}
+    </div>
+  </div>
+));
 
-export const ProgressStats = () => (
-  <motion.div
-    initial={{ opacity: 0 }}
-    whileInView={{ opacity: 1 }}
-    viewport={{ once: true }}
-    transition={{ duration: 0.6 }}
-    className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-8 w-full xl:w-1/2 px-4 md:px-0"
-  >
-    {progressStats.map((stat, index) => (
-      <StatCard
-        key={stat.title}
-        {...stat}
-        index={index}
-      />
-    ))}
-  </motion.div>
-); 
+ProgressStats.displayName = 'ProgressStats'; 

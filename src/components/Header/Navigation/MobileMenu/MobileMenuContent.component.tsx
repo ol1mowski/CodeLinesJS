@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Button } from "../../../UI/Button/Button.component";
 import { navigationLinks } from "../navigationData";
 import { MobileMenuItem } from "./MobileMenuItem.component";
+import { Link } from "react-router-dom";
 
 type MobileMenuContentProps = {
   onClose: () => void;
@@ -31,9 +32,11 @@ export const MobileMenuContent = ({ onClose }: MobileMenuContentProps) => (
       }}
       exit={{ opacity: 0, y: 20 }}
     >
-      <Button onClick={onClose} className="mt-4 text-xl px-12">
-        Zaloguj się
-      </Button>
+      <Link to="/logowanie">
+        <Button onClick={onClose} className="mt-4 text-xl px-12">
+          Zaloguj się
+        </Button>
+      </Link>
     </motion.div>
   </motion.div>
-); 
+);

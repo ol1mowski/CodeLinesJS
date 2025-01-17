@@ -4,7 +4,7 @@ import { TopNavigation } from "./TopNavigation/TopNavigation.component";
 
 const Dashboard = () => {
   return (
-    <main className="bg-gradient-to-b from-gray-900 via-blue-900 to-indigo-900 backdrop-blur-lg flex min-h-screen">
+    <main className="bg-gradient-to-b from-dark via-dark-medium to-dark backdrop-blur-lg flex min-h-screen">
       <DashboardNavigation />
       <div className="flex-1 ml-[100px]">
         <TopNavigation />

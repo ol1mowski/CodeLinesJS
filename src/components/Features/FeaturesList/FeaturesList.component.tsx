@@ -1,17 +1,8 @@
-import { motion } from "framer-motion";
-import { features } from "../../../data/featuresData.data";
-
-import { FeatureCard } from "./FeatureCard.component";
-
+import { FeatureCard } from "../components/FeatureCard.component";
+import { features } from "../constants/features.data";
 
 export const FeaturesList = () => (
-  <motion.div 
-    initial={{ opacity: 0 }}
-    whileInView={{ opacity: 1 }}
-    viewport={{ once: true }}
-    transition={{ duration: 0.6 }}
-    className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-8 w-full xl:w-1/2 px-4 md:px-0"
-  >
+  <div className="w-full xl:w-1/2 grid grid-cols-1 md:grid-cols-2 gap-6 px-4 xl:px-0">
     {features.map((feature, index) => (
       <FeatureCard
         key={feature.title}
@@ -19,5 +10,5 @@ export const FeaturesList = () => (
         index={index}
       />
     ))}
-  </motion.div>
+  </div>
 ); 

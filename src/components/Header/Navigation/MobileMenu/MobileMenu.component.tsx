@@ -13,7 +13,6 @@ export const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => (
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-gray-900/98 backdrop-blur-lg z-40"
       >
         <MobileMenuContent onClose={onClose} />
       </motion.div>

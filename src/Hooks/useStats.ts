@@ -1,23 +1,46 @@
 import { useQuery } from '@tanstack/react-query';
 import { UserStats } from '../types/stats.types';
-import { mockStatsData } from '../mocks/statsData.mock';
+import { useAuth } from './useAuth';
 
 export const useStats = () => {
-  const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ['userStats'],
+  const { token, isAuthenticated } = useAuth();
+
+  const { data: stats, isLoading, error } = useQuery<UserStats>({
+    queryKey: ['stats'],
     queryFn: async () => {
-      // Symulacja opóźnienia sieciowego
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      return mockStatsData as UserStats;
+      const response = await fetch('http://localhost:5001/api/stats', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error('Brak autoryzacji');
+        }
+        throw new Error('Błąd podczas pobierania statystyk');
+      }
+
+      const data = await response.json();
+      console.log('Received stats:', data);
+      
+      return {
+        ...data,
+        chartData: {
+          daily: data.chartData?.daily || [],
+          categories: data.chartData?.categories || []
+        }
+      };
     },
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    refetchOnWindowFocus: false,
+    enabled: isAuthenticated && !!token,
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 30,
+    retry: (failureCount, error) => {
+      if (error.message === 'Brak autoryzacji') return false;
+      return failureCount < 3;
+    }
   });
 
-  return {
-    stats: data,
-    isLoading,
-    error: error ? (error as Error).message : null,
-    refetch
-  };
+  return { stats, isLoading, error };
 }; 

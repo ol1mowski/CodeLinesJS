@@ -1,22 +1,22 @@
+import { memo } from 'react';
 import { Container } from "../UI/Container/Container.component";
-import { SectionTitle } from "../UI/SectionTitle/SectionTitle.component";
-import { ChallengesList } from "./ChallengesList/ChallengesList.component";
-import { ChallengesAnimation } from "./ChallengesAnimation/ChallengesAnimation.component";
+import { Background } from "./components/Background.component";
+import { Header } from "./components/Header.component";
+import { Content } from "./components/Content.component";
 
-export const ChallengesSection = () => (
-  <section id="wyzwania" className="min-h-screen w-full relative py-16 md:py-24 bg-gradient-to-b from-gray-900 via-purple-900 to-indigo-900">
+export const ChallengesSection = memo(() => (
+  <section 
+    id="wyzwania" 
+    className="min-h-screen w-full bg-gradient-to-b from-[#1a1a1a] via-[#242424] to-[#1a1a1a] py-16 md:py-24 relative overflow-hidden"
+  >
+    <Background />
     <Container className="relative z-10">
-      <div className="flex flex-col items-center gap-8 md:gap-16">
-        <SectionTitle
-          title="Wyzwania JavaScript"
-          subtitle="Od podstaw do zaawansowanych konceptów"
-          className="text-center px-4"
-        />
-        <div className="flex flex-col-reverse xl:flex-row items-center justify-between gap-8 md:gap-16 w-full">
-          <ChallengesList />
-          <ChallengesAnimation />
-        </div>
+      <div className="flex flex-col items-center gap-12 md:gap-20">
+        <Header />
+        <Content />
       </div>
     </Container>
   </section>
-); 
+));
+
+ChallengesSection.displayName = 'ChallengesSection'; 

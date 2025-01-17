@@ -2,7 +2,22 @@ import { useAuthState } from './auth/useAuthState';
 import { useAuthActions } from './auth/useAuthActions';
 import { useAuthCheck } from './auth/useAuthCheck';
 
-export const useAuth = () => {
+type User = {
+  id: string;
+  email: string;
+  username: string;
+};
+
+type AuthState = {
+  isAuthenticated: boolean;
+  user: User | null;
+  token: string | null;
+  loading: boolean;
+  error: string | null;
+  login: (email: string, password: string, rememberMe?: boolean) => Promise<void>;
+}
+
+export const useAuth = (): AuthState => {
   const state = useAuthState();
   const actions = useAuthActions(state);
   useAuthCheck(state);
@@ -10,6 +25,7 @@ export const useAuth = () => {
   return {
     ...actions,
     ...state,
+    token: localStorage.getItem('token') || sessionStorage.getItem('token'),
   };
 }; 
 

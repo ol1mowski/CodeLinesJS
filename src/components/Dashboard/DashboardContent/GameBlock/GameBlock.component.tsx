@@ -1,84 +1,55 @@
-import { motion } from "framer-motion";
 import { memo } from "react";
-import { FaPlay, FaCode, FaRedo } from "react-icons/fa";
-import { dashboardContentStyles as styles } from "../DashboardContent.styles";
-
-const buttonVariants = {
-  hover: { 
-    scale: 1.02,
-    transition: { duration: 0.2 }
-  },
-  tap: { 
-    scale: 0.98,
-    transition: { duration: 0.1 }
-  }
-};
-
-const GameButton = memo(({ icon: Icon, title, subtitle, gradient, onClick }: {
-  icon: typeof FaPlay;
-  title: string;
-  subtitle: string;
-  gradient: string;
-  onClick: () => void;
-}) => (
-  <motion.button
-    variants={buttonVariants}
-    whileHover="hover"
-    whileTap="tap"
-    onClick={onClick}
-    className={`
-      w-full flex items-center gap-4 p-4
-      ${gradient}
-      rounded-lg
-      group transition-all
-      hover:shadow-lg hover:shadow-indigo-500/10
-    `}
-  >
-    <div className="w-12 h-12 rounded-lg bg-white/10 flex items-center justify-center">
-      <Icon className="text-2xl text-white" />
-    </div>
-    <div className="text-left">
-      <h3 className="text-white font-medium">{title}</h3>
-      <p className="text-white/70 text-sm">{subtitle}</p>
-    </div>
-  </motion.button>
-));
-
-GameButton.displayName = "GameButton";
+import { motion } from "framer-motion";
+import { FaGamepad } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { gameBlockStyles as styles } from "./style/GameBlock.styles";
+import { useGameBlockAnimation } from "./hooks/useGameBlockAnimation";
 
 export const GameBlock = memo(() => {
+  const navigate = useNavigate();
+  const animations = useGameBlockAnimation();
+
+  const handleStartGame = () => {
+    navigate('/game');
+  };
+
   return (
-    <div className="space-y-6">
-      <div className={styles.card.header}>
-        <h2 className={styles.card.title}>Graj</h2>
+    <motion.div
+      variants={animations.container}
+      initial="hidden"
+      animate="show"
+      className={styles.container}
+    >
+      <div className={styles.header.wrapper}>
+        <h2 className={styles.header.title}>
+          <FaGamepad className={styles.header.icon} />
+          Tryb Gry
+        </h2>
       </div>
 
-      <div className="grid gap-4">
-        <GameButton
-          icon={FaPlay}
-          title="Nowa gra"
-          subtitle="Rozpocznij nową przygodę"
-          gradient="bg-gradient-to-r from-blue-500 to-indigo-500"
-          onClick={() => console.log('Nowa gra')}
-        />
+      <div className={styles.content.wrapper}>
+        <p className={styles.content.description}>
+          Rozpocznij nową sesję gry, rozwiązuj wyzwania i zdobywaj punkty.
+          Sprawdź swoje umiejętności w praktyce!
+        </p>
 
-        <GameButton
-          icon={FaCode}
-          title="Wyzwania"
-          subtitle="Sprawdź swoje umiejętności"
-          gradient="bg-gradient-to-r from-indigo-500 to-purple-500"
-          onClick={() => console.log('Wyzwania')}
-        />
-
-        <GameButton
-          icon={FaRedo}
-          title="Kontynuuj"
-          subtitle="Wróć do ostatniej gry"
-          gradient="bg-gradient-to-r from-emerald-500 to-green-500"
-          onClick={() => console.log('Kontynuuj')}
-        />
+        <div className={styles.content.button.wrapper}>
+          <motion.button
+            onClick={handleStartGame}
+            whileHover="hover"
+            whileTap="tap"
+            variants={animations.button}
+            className={`
+              ${styles.content.button.base}
+              ${styles.content.button.hover}
+              ${styles.content.button.active}
+            `}
+          >
+            Rozpocznij Grę
+          </motion.button>
+        </div>
       </div>
-    </div>
+    </motion.div>
   );
 });
 
