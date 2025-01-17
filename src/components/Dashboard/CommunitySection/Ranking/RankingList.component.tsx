@@ -1,7 +1,7 @@
 import { memo } from "react";
 import { motion } from "framer-motion";
 import { FaUserCircle, FaTrophy, FaCode, FaBullseye } from "react-icons/fa";
-import { useRanking } from "../../../../hooks/useRanking";
+import { useRanking } from "./hooks/useRanking";
 import { RankingPeriod, RankingUser } from "../../../../types/ranking.types";
 
 type RankingListProps = {

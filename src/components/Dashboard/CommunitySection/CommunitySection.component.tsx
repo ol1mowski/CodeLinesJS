@@ -10,7 +10,7 @@ import { CommunityNavigation } from "./Navigation/CommunityNavigation.component"
 import { ErrorBoundary } from "../../Common/ErrorBoundary.component";
 import { AsyncComponent } from "../../Common/AsyncComponent";
 import { prefetchPosts } from '../../../Hooks/usePosts';
-import { prefetchRanking } from '../../../Hooks/useRanking';
+import { prefetchRanking } from './Ranking/hooks/useRanking';
 
 const CommunityContent = memo(() => {
   const { state: { activeView }, setActiveView } = useCommunity();
