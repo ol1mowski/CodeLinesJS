@@ -1,6 +1,7 @@
 import { memo, useCallback } from "react";
 import { motion } from "framer-motion";
 import { FaUsers, FaComments, FaClock } from "react-icons/fa";
+import { HiOutlineUserGroup } from "react-icons/hi2";
 
 import { formatDistanceToNow } from "date-fns";
 import { pl } from "date-fns/locale";
@@ -16,7 +17,33 @@ export const GroupsList = memo(() => {
   }, []);
 
   if (isLoading) {
-    return <GroupsListSkeleton />;
+    return (
+      <div className="space-y-4">
+        {[1, 2, 3].map(i => (
+          <motion.div
+            key={i}
+            className="bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10 p-6 shadow-lg animate-pulse"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 rounded-lg bg-js/10" />
+              <div className="flex-1">
+                <div className="h-5 w-32 bg-js/10 rounded mb-2" />
+                <div className="h-4 w-48 bg-js/10 rounded" />
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    );
+  }
+
+  if (!groups?.length) {
+    return (
+      <div className="text-center text-gray-400 py-8">
+        <HiOutlineUserGroup className="w-12 h-12 mx-auto mb-3 opacity-50" />
+        <div>Nie znaleziono żadnych grup</div>
+      </div>
+    );
   }
 
   return (
@@ -117,24 +144,3 @@ const GroupCard = memo(({
 });
 
 GroupCard.displayName = "GroupCard";
-
-const GroupsListSkeleton = () => (
-  <div className="space-y-4">
-    {[1, 2, 3].map((i) => (
-      <div key={i} className="bg-gray-800/50 backdrop-blur-lg rounded-xl p-6 border border-gray-700/50 animate-pulse">
-        <div className="flex gap-6">
-          <div className="w-24 h-24 rounded-lg bg-gray-700/50" />
-          <div className="flex-1 space-y-4">
-            <div className="h-6 w-48 bg-gray-700/50 rounded" />
-            <div className="h-4 w-3/4 bg-gray-700/50 rounded" />
-            <div className="flex gap-4">
-              <div className="h-4 w-24 bg-gray-700/50 rounded" />
-              <div className="h-4 w-24 bg-gray-700/50 rounded" />
-              <div className="h-4 w-32 bg-gray-700/50 rounded" />
-            </div>
-          </div>
-        </div>
-      </div>
-    ))}
-  </div>
-); 
