@@ -4,7 +4,7 @@ import { RankingPeriod } from '../../../../../types/ranking.types';
 const RANKING_QUERY_KEY = 'ranking';
 
 const fetchRanking = async (period: RankingPeriod) => {
-  const response = await fetch(`http://localhost:3000/ranking?period=${period}`);
+  const response = await fetch(`http://localhost:5001/api/ranking?period=${period}`);
   if (!response.ok) {
     throw new Error('Failed to fetch ranking');
   }

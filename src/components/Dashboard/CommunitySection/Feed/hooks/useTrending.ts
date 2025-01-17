@@ -4,7 +4,7 @@ import { Topic, Tag } from '../../../../../types/trending.types';
 const TRENDING_QUERY_KEY = 'trending';
 
 const fetchTopics = async (): Promise<Topic[]> => {
-  const response = await fetch('http://localhost:3000/trending/topics');
+  const response = await fetch('http://localhost:5001/api/trending/topics');
   if (!response.ok) {
     throw new Error('Failed to fetch topics');
   }
@@ -12,7 +12,7 @@ const fetchTopics = async (): Promise<Topic[]> => {
 };
 
 const fetchTags = async (): Promise<Tag[]> => {
-  const response = await fetch('http://localhost:3000/trending/tags');
+  const response = await fetch('http://localhost:5001/api/trending/tags');
   if (!response.ok) {
     throw new Error('Failed to fetch tags');
   }

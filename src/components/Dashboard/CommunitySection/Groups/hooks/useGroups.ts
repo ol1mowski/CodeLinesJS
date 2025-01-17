@@ -4,7 +4,7 @@ import { Group } from '../../../../../types/groups.types';
 const GROUPS_QUERY_KEY = 'groups';
 
 const fetchGroups = async (): Promise<Group[]> => {
-  const response = await fetch('http://localhost:3000/groups');
+  const response = await fetch('http://localhost:5001/api/groups');
   if (!response.ok) {
     throw new Error('Failed to fetch groups');
   }
@@ -12,7 +12,7 @@ const fetchGroups = async (): Promise<Group[]> => {
 };
 
 const joinGroup = async (groupId: string): Promise<void> => {
-  const response = await fetch(`http://localhost:3000/groups/${groupId}/join`, {
+  const response = await fetch(`http://localhost:5001/api/groups/${groupId}/join`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'

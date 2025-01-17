@@ -18,7 +18,7 @@ const CommunityContent = memo(() => {
 
   useEffect(() => {
     if (activeView === 'feed') {
-      prefetchRanking(queryClient, 'weekly', 0);
+      prefetchRanking(queryClient, 'weekly');
     } else if (activeView === 'ranking') {
       prefetchPosts(queryClient);
     }

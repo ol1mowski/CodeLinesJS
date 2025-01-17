@@ -17,7 +17,7 @@ export const RankingList = memo(({ period }: RankingListProps) => {
 
   return (
     <div className="space-y-4">
-      {users?.map((user) => (
+      {users?.map((user: RankingUser) => (
         <RankingCard key={user.id} user={user} />
       ))}
     </div>
