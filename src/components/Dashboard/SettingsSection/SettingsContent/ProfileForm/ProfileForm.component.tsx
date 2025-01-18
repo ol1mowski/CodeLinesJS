@@ -9,7 +9,7 @@ import { FormButtons } from "../../components/Profile/FormButtons/FormButtons.co
 import { styles } from "./ProfileForm.styles";
 
 export const ProfileForm = memo(() => {
-  const { profile, isLoading, updateProfile, updateAvatar } = useProfile();
+  const { profile, isLoading, updateProfile, updateAvatar, avatarUrl } = useProfile();
   const { form, onSubmit } = useProfileForm({
     onSubmit: async (data) => {
       await updateProfile.mutateAsync(data);
@@ -18,7 +18,6 @@ export const ProfileForm = memo(() => {
       username: '',
       email: '',
       bio: '',
-      avatarUrl: ''
     },
   });
   
@@ -61,7 +60,7 @@ export const ProfileForm = memo(() => {
     >
       <div className={styles.header}>
         <Avatar
-          src={profile?.avatarUrl}
+          src={avatarUrl || ''}
           alt="Avatar"
           onChangeAvatar={handleChangeAvatar}
           isUploading={updateAvatar.isPending}

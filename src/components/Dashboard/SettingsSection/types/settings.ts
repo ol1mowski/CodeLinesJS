@@ -4,7 +4,7 @@ export type UserProfile = {
   username: string;
   email: string;
   bio?: string;
-  avatarUrl?: string;
+  avatar?: string;
 }
 
 export type SecurityFormData = {
