@@ -3,15 +3,15 @@ import { Button } from "../../../../../UI/Button/Button.component";
 import { styles } from "./FormButtons.styles";
 
 type FormButtonsProps = {
-  onCancel: () => void;
+  saveDataHandler: () => void;
   isSubmitting: boolean;
 };
 
-export const FormButtons = memo(({ onCancel, isSubmitting }: FormButtonsProps) => (
+export const FormButtons = memo(({ saveDataHandler, isSubmitting }: FormButtonsProps) => (
   <div className={styles.container}>
     <Button
       type="button"
-      onClick={onCancel}
+      onClick={saveDataHandler}
       className={styles.cancelButton}
     >
       Anuluj

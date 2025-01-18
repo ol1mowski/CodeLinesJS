@@ -1,7 +1,7 @@
 import { ValidationError } from '../utils/errors.js';
 
 export const validateProfileUpdate = (req, res, next) => {
-  const { username, email, bio } = req.body;
+  const { username, email, bio, socialLinks } = req.body;
   
   const errors = [];
   
@@ -15,6 +15,16 @@ export const validateProfileUpdate = (req, res, next) => {
   
   if (bio && bio.length > 500) {
     errors.push('Bio nie może przekraczać 500 znaków');
+  }
+  
+  if (socialLinks) {
+    const allowedPlatforms = ['github', 'linkedin', 'twitter'];
+    const invalidPlatforms = Object.keys(socialLinks)
+      .filter(platform => !allowedPlatforms.includes(platform));
+    
+    if (invalidPlatforms.length > 0) {
+      errors.push(`Nieprawidłowe platformy społecznościowe: ${invalidPlatforms.join(', ')}`);
+    }
   }
   
   if (errors.length > 0) {

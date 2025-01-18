@@ -13,17 +13,30 @@ export const fetchUserProfile = async (): Promise<UserProfile> => {
   });
   
   if (!response.ok) {
-    throw new Error('Failed to fetch profile');
+    const error = await response.json().catch(() => ({ message: 'Failed to fetch profile' }));
+    throw new Error(error.message);
   }
   
-  return response.json();
+  const data = await response.json();
+  
+  return {
+    username: data.username,
+    email: data.email,
+    profile: {
+      bio: data.profile?.bio || '',
+      avatar: data.profile?.avatar || ''
+    }
+  };
 };
 
-export const updateUserProfile = async (profile: UserProfile): Promise<UserProfile> => {
+export const updateUserProfile = async (data: UserProfile) => {
   const response = await fetch(`${API_URL}/api/settings/profile`, {
     method: 'PUT',
-    headers: getAuthHeaders(),
-    body: JSON.stringify(profile),
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('token') || sessionStorage.getItem('token')}`
+    },
+    body: JSON.stringify(data)
   });
 
   if (!response.ok) {
@@ -33,14 +46,16 @@ export const updateUserProfile = async (profile: UserProfile): Promise<UserProfi
   return response.json();
 };
 
-export const updateUserAvatar = async (file: File): Promise<{ avatarUrl: string }> => {
+export const updateUserAvatar = async (file: File) => {
   const formData = new FormData();
   formData.append('avatar', file);
-  
-  const response = await fetch(`${API_URL}/api/settings/profile/avatar`, {
+
+  const response = await fetch(`${API_URL}/api/settings/avatar`, {
     method: 'PUT',
-    headers: getAuthHeaders(),
-    body: formData,
+    headers: {
+      'Authorization': `Bearer ${localStorage.getItem('token') || sessionStorage.getItem('token')}`
+    },
+    body: formData
   });
 
   if (!response.ok) {
@@ -48,4 +63,4 @@ export const updateUserAvatar = async (file: File): Promise<{ avatarUrl: string 
   }
 
   return response.json();
-}; 
+};

@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useProfileForm } from "../../hooks/useProfileForm";
 import { useProfile } from "../../hooks/useProfile";
@@ -7,18 +7,32 @@ import { UserInfoFields } from "../../components/Profile/UserInfoFields/UserInfo
 import { BioField } from "../../components/Profile/BioField/BioField.component";
 import { FormButtons } from "../../components/Profile/FormButtons/FormButtons.component";
 import { styles } from "./ProfileForm.styles";
+import { Toast } from "../../UI/Toast/Toast.component";
 
 export const ProfileForm = memo(() => {
-  const { profile, isLoading, updateProfile, updateAvatar } = useProfile();
+  const { profile, isLoading, updateProfile, updateAvatar, avatarUrl } = useProfile();
+  const [showToast, setShowToast] = useState(false);
+  
   const { form, onSubmit } = useProfileForm({
     onSubmit: async (data) => {
-      await updateProfile.mutateAsync(data);
+      await updateProfile.mutateAsync({
+        username: data.username,
+        email: data.email,
+        profile: {
+          bio: data.profile?.bio || '',
+          avatar: avatarUrl || ''
+        }
+      });
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
     },
     defaultValues: profile || {
       username: '',
       email: '',
-      bio: '',
-      avatarUrl: ''
+      profile: {
+        bio: '',
+        avatar: ''
+      }
     },
   });
   
@@ -26,7 +40,14 @@ export const ProfileForm = memo(() => {
 
   useEffect(() => {
     if (profile) {
-      reset(profile);
+      reset({
+        username: profile.username,
+        email: profile.email,
+        profile: {
+          bio: profile.profile?.bio || '',
+          avatar: profile.profile?.avatar || ''
+        }
+      });
     }
   }, [profile, reset]);
 
@@ -38,12 +59,6 @@ export const ProfileForm = memo(() => {
     }
   }, [updateAvatar]);
 
-  const handleCancel = useCallback(() => {
-    if (profile) {
-      reset(profile);
-    }
-  }, [profile, reset]);
-
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -53,35 +68,45 @@ export const ProfileForm = memo(() => {
   }
 
   return (
-    <motion.form
-      onSubmit={onSubmit}
-      className={styles.form}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-    >
-      <div className={styles.header}>
-        <Avatar
-          src={profile?.avatarUrl}
-          alt="Avatar"
-          onChangeAvatar={handleChangeAvatar}
-          isUploading={updateAvatar.isPending}
-        />
-        <UserInfoFields
+    <>
+      <motion.form
+        onSubmit={onSubmit}
+        className={styles.form}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+      >
+        <div className={styles.header}>
+          <Avatar
+            src={avatarUrl || ''}
+            alt="Avatar"
+            onChangeAvatar={handleChangeAvatar}
+            isUploading={updateAvatar.isPending}
+          />
+          <UserInfoFields
+            register={register}
+            errors={errors}
+          />
+        </div>
+
+        <BioField
           register={register}
           errors={errors}
         />
-      </div>
 
-      <BioField
-        register={register}
-        errors={errors}
-      />
+        <FormButtons
+          saveDataHandler={onSubmit}
+          isSubmitting={isSubmitting || updateProfile.isPending}
+        />
+      </motion.form>
 
-      <FormButtons
-        onCancel={handleCancel}
-        isSubmitting={isSubmitting || updateProfile.isPending}
-      />
-    </motion.form>
+      {showToast && (
+        <Toast
+          message="Dane zostały zaktualizowane"
+          type="success"
+          onClose={() => setShowToast(false)}
+        />
+      )}
+    </>
   );
 });
 
