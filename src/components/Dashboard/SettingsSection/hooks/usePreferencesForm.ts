@@ -1,25 +1,36 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { preferencesSchema } from "../utils/validationSchemas";
-import type { PreferencesData } from "../types/settings";
+import { z } from "zod";
 
-export const usePreferencesForm = (defaultValues: PreferencesData) => {
-  const form = useForm<PreferencesData>({
+const preferencesSchema = z.object({
+  emailNotifications: z.boolean(),
+  pushNotifications: z.boolean(),
+  language: z.literal("pl"),
+});
+
+type PreferencesFormData = z.infer<typeof preferencesSchema>;
+
+interface UsePreferencesFormProps {
+  onSubmit: (data: PreferencesFormData) => Promise<void>;
+  defaultValues?: Partial<PreferencesFormData>;
+}
+
+export const usePreferencesForm = ({ onSubmit, defaultValues }: UsePreferencesFormProps) => {
+  const form = useForm<PreferencesFormData>({
     resolver: zodResolver(preferencesSchema),
-    defaultValues
+    defaultValues,
   });
 
-  const onSubmit = async (data: PreferencesData) => {
+  const handleSubmit = form.handleSubmit(async (data) => {
     try {
-      // TODO: Implement API call
-      console.log(data);
+      await onSubmit(data);
     } catch (error) {
-      console.error(error);
+      console.error('Failed to update preferences:', error);
     }
-  };
+  });
 
   return {
     form,
-    onSubmit: form.handleSubmit(onSubmit)
+    onSubmit: handleSubmit,
   };
 }; 
