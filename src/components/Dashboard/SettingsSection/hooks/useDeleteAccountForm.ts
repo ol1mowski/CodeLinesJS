@@ -10,7 +10,6 @@ export const useDeleteAccountForm = () => {
 
   const onSubmit = async (data: DeleteAccountFormData) => {
     try {
-      // TODO: Implement API call
       console.log(data);
     } catch (error) {
       console.error(error);

@@ -5,9 +5,8 @@ import { FormInput } from "../../../../UI/Form/FormInput/FormInput.component";
 import { useSecurityForm } from "../../hooks/useSecurityForm";
 import { styles } from "./SecurityForm.styles";
 
-
 export const SecurityForm = memo(() => {
-  const { form, onSubmit } = useSecurityForm();
+  const { form, onSubmit, isUpdating } = useSecurityForm();
   const { register, formState: { errors } } = form;
 
   return (
@@ -45,23 +44,20 @@ export const SecurityForm = memo(() => {
       />
 
       <div className={styles.buttonContainer}>
-        <motion.button
+        <button
           type="button"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
           className={styles.cancelButton}
         >
           Anuluj
-        </motion.button>
+        </button>
 
-        <motion.button
+        <button
           type="submit"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
+          disabled={isUpdating}
           className={styles.submitButton}
         >
-          Zmień hasło
-        </motion.button>
+          {isUpdating ? "Zapisywanie..." : "Zmień hasło"}
+        </button>
       </div>
     </motion.form>
   );
