@@ -4,41 +4,36 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { FaLock } from "react-icons/fa";
-import { SecuritySettings } from "../../../../../types/settings.types";
 import { FormInput } from "../../../../UI/Form/FormInput/FormInput.component";
-import { Button } from "../../../../UI/Button/Button.component";
 
 const securitySchema = z.object({
   currentPassword: z.string().min(1, "Aktualne hasło jest wymagane"),
-  newPassword: z
-    .string()
-    .min(8, "Hasło musi mieć minimum 8 znaków")
-    .regex(/[A-Z]/, "Hasło musi zawierać wielką literę")
-    .regex(/[0-9]/, "Hasło musi zawierać cyfrę")
-    .regex(/[^A-Za-z0-9]/, "Hasło musi zawierać znak specjalny"),
-  confirmPassword: z.string().min(1, "Potwierdzenie hasła jest wymagane"),
+  newPassword: z.string().min(8, "Nowe hasło musi mieć min. 8 znaków"),
+  confirmPassword: z.string()
 }).refine((data) => data.newPassword === data.confirmPassword, {
-  message: "Hasła muszą być takie same",
-  path: ["confirmPassword"],
+  message: "Hasła nie są identyczne",
+  path: ["confirmPassword"]
 });
+
+type SecurityFormData = z.infer<typeof securitySchema>;
 
 export const SecurityForm = memo(() => {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting }
-  } = useForm<SecuritySettings>({
+    formState: { errors }
+  } = useForm<SecurityFormData>({
     resolver: zodResolver(securitySchema)
   });
 
-  const onSubmit = async (data: SecuritySettings) => {
+  const onSubmit = async (data: SecurityFormData) => {
     console.log(data);
   };
 
   return (
     <motion.form
       onSubmit={handleSubmit(onSubmit)}
-      className="space-y-6 max-w-md"
+      className="space-y-6"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
     >
@@ -69,14 +64,31 @@ export const SecurityForm = memo(() => {
         {...register("confirmPassword")}
       />
 
-      <div className="flex justify-end">
-        <Button
-          type="submit"
-          disabled={isSubmitting}
-          className="bg-gradient-to-r from-indigo-500 to-purple-500"
+      <div className="flex justify-end gap-4">
+        <motion.button
+          type="button"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="px-6 py-2 rounded-lg
+            bg-dark/50 text-gray-400
+            border border-js/10
+            hover:text-js hover:border-js/30
+            transition-colors duration-200"
         >
-          {isSubmitting ? "Zapisywanie..." : "Zmień hasło"}
-        </Button>
+          Anuluj
+        </motion.button>
+
+        <motion.button
+          type="submit"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="px-6 py-2 rounded-lg
+            bg-js text-dark font-medium
+            hover:bg-js/90
+            transition-colors duration-200"
+        >
+          Zmień hasło
+        </motion.button>
       </div>
     </motion.form>
   );

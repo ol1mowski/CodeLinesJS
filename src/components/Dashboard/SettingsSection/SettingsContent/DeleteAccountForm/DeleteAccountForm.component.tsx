@@ -62,7 +62,7 @@ export const DeleteAccountForm = memo(() => {
         <Button
           type="button"
           onClick={() => setShowConfirmation(true)}
-          className="bg-red-500 hover:bg-red-600 w-full"
+          className="bg-red-500 hover:bg-red-600 w-full shadow-none"
         >
           Chcę usunąć konto
         </Button>
@@ -109,7 +109,7 @@ export const DeleteAccountForm = memo(() => {
         <Button
           type="submit"
           disabled={isSubmitting}
-          className="bg-red-500 hover:bg-red-600 w-full"
+          className="bg-red-500 hover:bg-red-600 w-full shadow-none"
         >
           {isSubmitting ? "Usuwanie..." : "Usuń konto permanentnie"}
         </Button>

@@ -17,7 +17,7 @@ const menuItems = [
 ];
 
 export const SettingsSidebar = memo(({ activeView, onViewChange }: SettingsSidebarProps) => (
-  <div className="bg-gray-800/50 backdrop-blur-lg rounded-xl p-4 h-fit">
+  <div className="bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10 p-4 h-fit shadow-lg">
     <nav className="flex flex-col gap-2">
       {menuItems.map((item) => (
         <motion.button
@@ -29,8 +29,8 @@ export const SettingsSidebar = memo(({ activeView, onViewChange }: SettingsSideb
             flex items-center gap-3 p-3 rounded-lg text-left
             transition-colors duration-200
             ${activeView === item.id
-              ? "bg-indigo-500/20 text-indigo-400"
-              : "text-gray-400 hover:text-indigo-400"
+              ? "bg-js/20 text-js"
+              : "text-gray-400 hover:text-js hover:bg-js/10"
             }
           `}
         >

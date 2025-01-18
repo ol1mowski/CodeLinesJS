@@ -26,34 +26,34 @@ export const PreferencesForm = memo(() => {
   return (
     <motion.form
       onSubmit={handleSubmit(onSubmit)}
-      className="space-y-8"
+      className="space-y-6"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
     >
       <div className="space-y-6">
         <h3 className="text-lg font-medium text-gray-200 flex items-center gap-2">
-          <FaBell className="text-indigo-400" />
+          <FaBell className="text-js" />
           Powiadomienia
         </h3>
         <div className="space-y-4 ml-8">
-          <label className="flex items-center gap-3">
+          <label className="flex items-center gap-3 hover:cursor-pointer group">
             <input
               type="checkbox"
               {...register("emailNotifications")}
-              className="w-4 h-4 rounded border-gray-600 bg-gray-700 text-indigo-500 focus:ring-indigo-500"
+              className="w-4 h-4 rounded border-gray-600 bg-gray-700 text-js focus:ring-js/50"
             />
-            <div>
+            <div className="group-hover:text-js transition-colors duration-200">
               <span className="block text-gray-200">Powiadomienia email</span>
               <span className="block text-sm text-gray-400">Otrzymuj powiadomienia na email</span>
             </div>
           </label>
-          <label className="flex items-center gap-3">
+          <label className="flex items-center gap-3 hover:cursor-pointer group">
             <input
               type="checkbox"
               {...register("pushNotifications")}
-              className="w-4 h-4 rounded border-gray-600 bg-gray-700 text-indigo-500 focus:ring-indigo-500"
+              className="w-4 h-4 rounded border-gray-600 bg-gray-700 text-js focus:ring-js/50"
             />
-            <div>
+            <div className="group-hover:text-js transition-colors duration-200">
               <span className="block text-gray-200">Powiadomienia push</span>
               <span className="block text-sm text-gray-400">Otrzymuj powiadomienia w przeglądarce</span>
             </div>
@@ -63,17 +63,17 @@ export const PreferencesForm = memo(() => {
 
       <div className="space-y-6">
         <h3 className="text-lg font-medium text-gray-200 flex items-center gap-2">
-          <FaMoon className="text-indigo-400" />
+          <FaMoon className="text-js" />
           Wygląd
         </h3>
         <div className="space-y-4 ml-8">
-          <label className="flex items-center gap-3">
+          <label className="flex items-center gap-3 hover:cursor-pointer group">
             <input
               type="checkbox"
               {...register("darkMode")}
-              className="w-4 h-4 rounded border-gray-600 bg-gray-700 text-indigo-500 focus:ring-indigo-500"
+              className="w-4 h-4 rounded border-gray-600 bg-gray-700 text-js focus:ring-js/50"
             />
-            <div>
+            <div className="group-hover:text-js transition-colors duration-200">
               <span className="block text-gray-200">Tryb ciemny</span>
               <span className="block text-sm text-gray-400">Używaj ciemnego motywu</span>
             </div>
@@ -83,13 +83,17 @@ export const PreferencesForm = memo(() => {
 
       <div className="space-y-6">
         <h3 className="text-lg font-medium text-gray-200 flex items-center gap-2">
-          <FaGlobe className="text-indigo-400" />
+          <FaGlobe className="text-js" />
           Język
         </h3>
         <div className="ml-8">
           <select
             {...register("language")}
-            className="w-full max-w-xs px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors"
+            className="w-full max-w-xs px-4 py-2 
+              bg-dark/50 border border-js/10 rounded-lg 
+              text-gray-300 
+              focus:ring-2 focus:ring-js/50 focus:border-transparent 
+              transition-colors"
           >
             <option value="pl">Polski</option>
             <option value="en">English</option>
@@ -97,13 +101,31 @@ export const PreferencesForm = memo(() => {
         </div>
       </div>
 
-      <div className="flex justify-end pt-4">
+      <div className="flex justify-end gap-4 pt-4">
+        <Button
+          type="button"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="px-6 py-2 rounded-lg
+            bg-dark/50 text-gray-400
+            border border-js/10
+            hover:text-js hover:border-js/30
+            transition-colors duration-200"
+        >
+          Anuluj
+        </Button>
+
         <Button
           type="submit"
           disabled={isSubmitting}
-          className="bg-gradient-to-r from-indigo-500 to-purple-500"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="px-6 py-2 rounded-lg
+            bg-js text-dark font-medium
+            hover:bg-js/90
+            transition-colors duration-200"
         >
-          {isSubmitting ? "Zapisywanie..." : "Zapisz preferencje"}
+          Zapisz preferencje
         </Button>
       </div>
     </motion.form>

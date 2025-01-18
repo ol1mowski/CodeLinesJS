@@ -18,7 +18,7 @@ export const ProfileForm = memo(() => {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting }
+    formState: { errors }
   } = useForm<UserProfile>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
@@ -75,25 +75,47 @@ export const ProfileForm = memo(() => {
         {...register("email")}
       />
 
-      <div>
-        <label className="block text-sm font-medium text-gray-300 mb-2">
-          Bio
-        </label>
+      <div className="space-y-2">
+        <label className="block text-gray-400 text-sm">Bio</label>
         <textarea
           {...register("bio")}
+          className="w-full h-32 px-4 py-3 rounded-lg 
+            bg-dark/50 border border-js/10
+            text-gray-300 placeholder-gray-500
+            focus:outline-none focus:ring-2 focus:ring-js/50
+            resize-none"
           placeholder="Napisz coś o sobie..."
-          className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors resize-none h-32"
         />
+        {errors.bio && (
+          <span className="text-red-500 text-sm">{errors.bio.message}</span>
+        )}
       </div>
 
-      <div className="flex justify-end">
-        <Button
-          type="submit"
-          disabled={isSubmitting}
-          className="bg-gradient-to-r from-indigo-500 to-purple-500"
+      <div className="flex justify-end gap-4">
+        <motion.button
+          type="button"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="px-6 py-2 rounded-lg
+            bg-dark/50 text-gray-400
+            border border-js/10
+            hover:text-js hover:border-js/30
+            transition-colors duration-200"
         >
-          {isSubmitting ? "Zapisywanie..." : "Zapisz zmiany"}
-        </Button>
+          Anuluj
+        </motion.button>
+
+        <motion.button
+          type="submit"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="px-6 py-2 rounded-lg
+            bg-js text-dark font-medium
+            hover:bg-js/90
+            transition-colors duration-200"
+        >
+          Zapisz zmiany
+        </motion.button>
       </div>
     </motion.form>
   );
