@@ -1,7 +1,14 @@
 const API_URL = 'http://localhost:5001';
 
+const getAuthHeaders = () => ({
+  'Authorization': `Bearer ${localStorage.getItem('token')}`,
+  'Content-Type': 'application/json',
+});
+
 export const fetchPreferences = async () => {
-  const response = await fetch(`${API_URL}/preferences`);
+  const response = await fetch(`${API_URL}/api/preferences`, {
+    headers: getAuthHeaders(),
+  });
   
   if (!response.ok) {
     throw new Error('Failed to fetch preferences');
@@ -15,11 +22,9 @@ export const updatePreferences = async (preferences: {
   pushNotifications: boolean;
   language: "pl";
 }) => {
-  const response = await fetch(`${API_URL}/preferences`, {
+  const response = await fetch(`${API_URL}/api/preferences`, {
     method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: getAuthHeaders(),
     body: JSON.stringify(preferences),
   });
 

@@ -1,4 +1,4 @@
-import { memo, useCallback } from "react";
+import { memo, useCallback, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useProfileForm } from "../../hooks/useProfileForm";
 import { useProfile } from "../../hooks/useProfile";
@@ -14,10 +14,21 @@ export const ProfileForm = memo(() => {
     onSubmit: async (data) => {
       await updateProfile.mutateAsync(data);
     },
-    defaultValues: profile,
+    defaultValues: profile || {
+      username: '',
+      email: '',
+      bio: '',
+      avatarUrl: ''
+    },
   });
   
   const { register, formState: { errors, isSubmitting }, reset } = form;
+
+  useEffect(() => {
+    if (profile) {
+      reset(profile);
+    }
+  }, [profile, reset]);
 
   const handleChangeAvatar = useCallback(async (file: File) => {
     try {
@@ -28,7 +39,9 @@ export const ProfileForm = memo(() => {
   }, [updateAvatar]);
 
   const handleCancel = useCallback(() => {
-    reset(profile);
+    if (profile) {
+      reset(profile);
+    }
   }, [profile, reset]);
 
   if (isLoading) {

@@ -1,14 +1,17 @@
 const API_URL = 'http://localhost:5001';
 
+const getAuthHeaders = () => ({
+  'Authorization': `Bearer ${localStorage.getItem('token')}`,
+  'Content-Type': 'application/json',
+});
+
 export const deleteAccount = async (data: {
   password: string;
   confirmation: string;
 }): Promise<void> => {
-  const response = await fetch(`${API_URL}/account`, {
+  const response = await fetch(`${API_URL}/api/account`, {
     method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: getAuthHeaders(),
     body: JSON.stringify(data),
   });
 

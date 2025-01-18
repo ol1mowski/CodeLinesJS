@@ -11,6 +11,7 @@ const profileSchema = z.object({
   bio: z.string()
     .max(160, "Bio może mieć maksymalnie 160 znaków")
     .optional(),
+  avatarUrl: z.string().optional()
 });
 
 type ProfileFormData = z.infer<typeof profileSchema>;
