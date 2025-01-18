@@ -1,16 +1,28 @@
 import { memo } from "react";
-import { FormInput } from "../../../UI/Form/FormInput/FormInput.component";
-import { Button } from "../../../UI/Button/Button.component";
 import { FaLock } from "react-icons/fa";
-import type { ConfirmationFormProps } from "./ConfirmationForm.types";
+import { motion } from "framer-motion";
+import { FormInput } from "../../../../../UI/Form/FormInput/FormInput.component";
+import { UseFormRegister } from "react-hook-form";
+import { Button } from "../../../../../UI/Button/Button.component";
 import { styles } from "./ConfirmationForm.styles";
 
-export const ConfirmationForm = memo(({ 
-  register, 
-  errors, 
-  isSubmitting, 
+interface ConfirmationFormProps {
+  register: UseFormRegister<any>;
+  errors: {
+    password?: { message?: string };
+    confirmation?: { message?: string };
+  };
+  isSubmitting: boolean;
+  onCancel: () => void;
+  onSubmit: (e: React.FormEvent) => void;
+}
+
+export const ConfirmationForm = memo(({
+  register,
+  errors,
+  isSubmitting,
   onCancel,
-  onSubmit 
+  onSubmit
 }: ConfirmationFormProps) => (
   <motion.form
     initial={{ opacity: 0 }}

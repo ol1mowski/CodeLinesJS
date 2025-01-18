@@ -4,8 +4,6 @@ import { Button } from "../../../../UI/Button/Button.component";
 import { useDeleteAccountForm } from "../../hooks/useDeleteAccountForm";
 import { WarningBox } from "../../components/DeleteAccount/WarningBox/WarningBox.component";
 import { ConfirmationForm } from "../../components/DeleteAccount/ConfirmationForm/ConfirmationForm.component";
-import { styles } from "../../components/DeleteAccount/WarningBox/WarningBox.styles";
-
 
 export const DeleteAccountForm = memo(() => {
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -24,14 +22,14 @@ export const DeleteAccountForm = memo(() => {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className={styles.container}
+        className="w-1/4"
       >
         <WarningBox />
         <Button
           type="button"
           onClick={handleShowConfirmation}
           className="w-full px-6 py-2 rounded-lg bg-red-500/20 text-red-400 
-            hover:bg-red-500/30 transition-colors duration-200"
+            hover:bg-red-500/30 transition-colors duration-200 shadow-none"
         >
           Chcę usunąć konto
         </Button>
