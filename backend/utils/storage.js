@@ -1,5 +1,9 @@
 import path from 'path';
 import fs from 'fs/promises';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const UPLOAD_DIR = 'uploads/avatars';
 
@@ -26,9 +30,19 @@ export const deleteFromStorage = async (fileUrl) => {
   try {
     if (!fileUrl) return;
     
-    const filePath = path.join(process.cwd(), fileUrl);
-    await fs.unlink(filePath);
+    // Usuń początkowy slash z URL
+    const relativePath = fileUrl.startsWith('/') ? fileUrl.slice(1) : fileUrl;
+    
+    // Utwórz pełną ścieżkę do pliku
+    const filePath = path.join(process.cwd(), relativePath);
+    
+    // Sprawdź czy plik istnieje przed próbą usunięcia
+    const exists = await fs.access(filePath).then(() => true).catch(() => false);
+    if (exists) {
+      await fs.unlink(filePath);
+    }
   } catch (error) {
     console.error('Error deleting file:', error);
+    throw new Error('Nie udało się usunąć pliku');
   }
 }; 

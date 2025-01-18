@@ -19,15 +19,45 @@ export const register = async (req, res, next) => {
       email,
       password,
       username,
+      accountType: 'local',
+      profile: {
+        bio: '',
+        socialLinks: {}
+      },
+      preferences: {
+        emailNotifications: true,
+        theme: 'dark',
+        language: 'pl'
+      },
+      stats: {
+        completedChallenges: 0,
+        totalPoints: 0,
+        streak: 0,
+        lastActive: new Date()
+      }
     });
 
     const token = jwt.sign(
-      { userId: user._id },
+      { 
+        userId: user._id,
+        email: user.email,
+        username: user.username
+      },
       process.env.JWT_SECRET,
       { expiresIn: '24h' }
     );
 
-    res.status(201).json({ token });
+    res.status(201).json({ 
+      token,
+      user: {
+        id: user._id,
+        email: user.email,
+        username: user.username,
+        avatar: user.avatar,
+        isNewUser: true,
+        stats: user.stats
+      }
+    });
   } catch (error) {
     next(error);
   }

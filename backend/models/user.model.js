@@ -2,13 +2,6 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
 const userSchema = new mongoose.Schema({
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true,
-    lowercase: true
-  },
   username: {
     type: String,
     required: true,
@@ -17,39 +10,48 @@ const userSchema = new mongoose.Schema({
     minlength: 3,
     maxlength: 30
   },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
+    lowercase: true
+  },
   password: {
     type: String,
     required: function() {
       return this.accountType === 'local';
-    }
+    },
+    minlength: 6
+  },
+  avatar: {
+    type: String,
+    default: '/uploads/avatars/default-avatar.png'
   },
   accountType: {
     type: String,
-    enum: ['local', 'google'],
+    enum: ['local', 'google', 'github'],
     default: 'local'
   },
-  avatar: String,
   isEmailVerified: {
     type: Boolean,
     default: false
   },
-  lastLogin: Date,
+  lastLogin: {
+    type: Date
+  },
+  resetPasswordToken: String,
+  resetPasswordExpires: Date,
   profile: {
-    displayName: String,
     bio: {
       type: String,
-      maxLength: 500
+      maxlength: 500,
+      default: ''
     },
     socialLinks: {
       github: String,
       linkedin: String,
       twitter: String
-    },
-    avatar: String,
-    language: {
-      type: String,
-      enum: ['pl', 'en'],
-      default: 'pl'
     }
   },
   preferences: {
@@ -57,14 +59,15 @@ const userSchema = new mongoose.Schema({
       type: Boolean,
       default: true
     },
-    pushNotifications: {
-      type: Boolean,
-      default: true
-    },
     theme: {
       type: String,
       enum: ['light', 'dark'],
-      default: 'light'
+      default: 'dark'
+    },
+    language: {
+      type: String,
+      enum: ['pl', 'en'],
+      default: 'pl'
     }
   },
   stats: {
@@ -80,7 +83,10 @@ const userSchema = new mongoose.Schema({
       type: Number,
       default: 0
     },
-    lastActive: Date
+    lastActive: {
+      type: Date,
+      default: Date.now
+    }
   }
 }, {
   timestamps: true

@@ -1,17 +1,29 @@
 import { User } from '../models/user.model.js';
-import { uploadToStorage } from '../utils/storage.js';
-import { AuthError } from '../utils/errors.js';
+import { uploadToStorage, deleteFromStorage } from '../utils/storage.js';
+import { AuthError, ValidationError } from '../utils/errors.js';
 
 export const getProfile = async (req, res, next) => {
   try {
     const user = await User.findById(req.user.userId)
-      .select('username email profile');
+      .select('username email avatar profile preferences stats')
+      .lean();
     
     if (!user) {
       throw new AuthError('Użytkownik nie znaleziony');
     }
     
-    res.json(user);
+    res.json({
+      username: user.username,
+      email: user.email,
+      avatar: user.avatar,
+      profile: user.profile,
+      preferences: user.preferences,
+      stats: {
+        completedChallenges: user.stats.completedChallenges,
+        totalPoints: user.stats.totalPoints,
+        streak: user.stats.streak
+      }
+    });
   } catch (error) {
     next(error);
   }
@@ -19,23 +31,44 @@ export const getProfile = async (req, res, next) => {
 
 export const updateProfile = async (req, res, next) => {
   try {
-    const { username, email, bio } = req.body;
+    const { username, email, bio, socialLinks } = req.body;
     
     const user = await User.findById(req.user.userId);
     if (!user) {
       throw new AuthError('Użytkownik nie znaleziony');
     }
     
-    if (username) user.username = username;
-    if (email) user.email = email;
+    if (username && username !== user.username) {
+      const existingUser = await User.findOne({ username });
+      if (existingUser) {
+        throw new ValidationError('Nazwa użytkownika jest już zajęta');
+      }
+      user.username = username;
+    }
+    
+    if (email && email !== user.email) {
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+        throw new ValidationError('Email jest już zajęty');
+      }
+      user.email = email;
+    }
+    
     if (bio !== undefined) user.profile.bio = bio;
+    if (socialLinks) {
+      user.profile.socialLinks = {
+        ...user.profile.socialLinks,
+        ...socialLinks
+      };
+    }
     
     await user.save();
     
     res.json({
       username: user.username,
       email: user.email,
-      profile: user.profile
+      profile: user.profile,
+      avatar: user.avatar
     });
   } catch (error) {
     next(error);
@@ -48,16 +81,36 @@ export const updateAvatar = async (req, res, next) => {
       throw new ValidationError('Brak pliku');
     }
     
-    const avatarUrl = await uploadToStorage(req.file);
+    const avatarUrl = `/uploads/avatars/${req.file.filename}`;
     
-    const user = await User.findByIdAndUpdate(
-      req.user.userId,
-      { 'profile.avatar': avatarUrl },
-      { new: true }
-    ).select('profile.avatar');
+    const user = await User.findById(req.user.userId);
+    if (!user) {
+      throw new AuthError('Użytkownik nie znaleziony');
+    }
+
+    if (user.avatar && !user.avatar.includes('default-avatar.png')) {
+      try {
+        await deleteFromStorage(user.avatar);
+      } catch (error) {
+        console.error('Błąd podczas usuwania starego avatara:', error);
+      }
+    }
     
-    res.json({ avatar: user.profile.avatar });
+    user.avatar = avatarUrl;
+    await user.save();
+    
+    res.json({ 
+      avatar: user.avatar,
+      username: user.username 
+    });
   } catch (error) {
+    if (req.file) {
+      try {
+        await deleteFromStorage(`/uploads/avatars/${req.file.filename}`);
+      } catch (deleteError) {
+        console.error('Błąd podczas usuwania pliku po błędzie:', deleteError);
+      }
+    }
     next(error);
   }
 };
@@ -133,6 +186,70 @@ export const deleteAccount = async (req, res, next) => {
     await User.findByIdAndDelete(req.user.userId);
     
     res.json({ message: 'Konto zostało usunięte' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getUserData = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user.userId)
+      .select('email username avatar stats preferences')
+      .lean();
+    
+    if (!user) {
+      throw new AuthError('Użytkownik nie znaleziony');
+    }
+    
+    res.json({
+      email: user.email,
+      username: user.username,
+      avatar: user.avatar,
+      stats: {
+        completedChallenges: user.stats.completedChallenges,
+        totalPoints: user.stats.totalPoints,
+        streak: user.stats.streak
+      },
+      preferences: {
+        theme: user.preferences.theme,
+        language: user.preferences.language
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getUserByIdentifier = async (req, res, next) => {
+  try {
+    const { identifier } = req.params; 
+    
+    let query = {};
+    if (identifier.match(/^[0-9a-fA-F]{24}$/)) {
+      query = { _id: identifier };
+    } else {
+      query = { username: identifier };
+    }
+    
+    const user = await User.findOne(query)
+      .select('username avatar stats profile.bio')
+      .lean();
+    
+    if (!user) {
+      throw new ValidationError('Użytkownik nie znaleziony');
+    }
+    
+    res.json({
+      id: user._id,
+      username: user.username,
+      avatar: user.avatar,
+      bio: user.profile.bio,
+      stats: {
+        completedChallenges: user.stats.completedChallenges,
+        totalPoints: user.stats.totalPoints,
+        streak: user.stats.streak
+      }
+    });
   } catch (error) {
     next(error);
   }
