@@ -28,6 +28,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: '/uploads/avatars/default-avatar.png'
   },
+  bio: {
+    type: String,
+    maxlength: 500,
+    default: ''
+  },
   accountType: {
     type: String,
     enum: ['local', 'google', 'github'],
@@ -39,20 +44,6 @@ const userSchema = new mongoose.Schema({
   },
   lastLogin: {
     type: Date
-  },
-  resetPasswordToken: String,
-  resetPasswordExpires: Date,
-  profile: {
-    bio: {
-      type: String,
-      maxlength: 500,
-      default: ''
-    },
-    socialLinks: {
-      github: String,
-      linkedin: String,
-      twitter: String
-    }
   },
   preferences: {
     emailNotifications: {

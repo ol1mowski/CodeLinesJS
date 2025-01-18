@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { memo } from "react";
-import { ProfileForm } from "./ProfileForm/ProfileForm.component";
+import {ProfileForm} from "./ProfileForm/ProfileForm.component";
 import { SecurityForm } from "./SecurityForm/SecurityForm.component";
 import { PreferencesForm } from "./PreferencesForm/PreferencesForm.component";
 import { DeleteAccountForm } from "./DeleteAccountForm/DeleteAccountForm.component";

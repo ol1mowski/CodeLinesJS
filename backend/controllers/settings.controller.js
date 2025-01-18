@@ -1,5 +1,5 @@
 import { User } from '../models/user.model.js';
-import { uploadToStorage, deleteFromStorage } from '../utils/storage.js';
+import {  deleteFromStorage } from '../utils/storage.js';
 import { AuthError, ValidationError } from '../utils/errors.js';
 
 export const getProfile = async (req, res, next) => {
@@ -31,34 +31,19 @@ export const getProfile = async (req, res, next) => {
 
 export const updateProfile = async (req, res, next) => {
   try {
-    const { username, email, bio, socialLinks } = req.body;
+    const { username, email, profile } = req.body;
     
     const user = await User.findById(req.user.userId);
     if (!user) {
       throw new AuthError('Użytkownik nie znaleziony');
     }
     
-    if (username && username !== user.username) {
-      const existingUser = await User.findOne({ username });
-      if (existingUser) {
-        throw new ValidationError('Nazwa użytkownika jest już zajęta');
-      }
-      user.username = username;
-    }
-    
-    if (email && email !== user.email) {
-      const existingUser = await User.findOne({ email });
-      if (existingUser) {
-        throw new ValidationError('Email jest już zajęty');
-      }
-      user.email = email;
-    }
-    
-    if (bio !== undefined) user.profile.bio = bio;
-    if (socialLinks) {
-      user.profile.socialLinks = {
-        ...user.profile.socialLinks,
-        ...socialLinks
+    if (username) user.username = username;
+    if (email) user.email = email;
+    if (profile) {
+      user.profile = {
+        ...user.profile,
+        ...profile
       };
     }
     
@@ -67,8 +52,7 @@ export const updateProfile = async (req, res, next) => {
     res.json({
       username: user.username,
       email: user.email,
-      profile: user.profile,
-      avatar: user.avatar
+      profile: user.profile
     });
   } catch (error) {
     next(error);
@@ -194,7 +178,7 @@ export const deleteAccount = async (req, res, next) => {
 export const getUserData = async (req, res, next) => {
   try {
     const user = await User.findById(req.user.userId)
-      .select('email username avatar stats preferences')
+      .select('email username avatar bio stats preferences')
       .lean();
     
     if (!user) {
@@ -205,6 +189,7 @@ export const getUserData = async (req, res, next) => {
       email: user.email,
       username: user.username,
       avatar: user.avatar,
+      bio: user.bio,
       stats: {
         completedChallenges: user.stats.completedChallenges,
         totalPoints: user.stats.totalPoints,
@@ -222,7 +207,7 @@ export const getUserData = async (req, res, next) => {
 
 export const getUserByIdentifier = async (req, res, next) => {
   try {
-    const { identifier } = req.params; 
+    const { identifier } = req.params;
     
     let query = {};
     if (identifier.match(/^[0-9a-fA-F]{24}$/)) {
@@ -232,7 +217,7 @@ export const getUserByIdentifier = async (req, res, next) => {
     }
     
     const user = await User.findOne(query)
-      .select('username avatar stats profile.bio')
+      .select('username avatar bio stats')
       .lean();
     
     if (!user) {
@@ -243,7 +228,7 @@ export const getUserByIdentifier = async (req, res, next) => {
       id: user._id,
       username: user.username,
       avatar: user.avatar,
-      bio: user.profile.bio,
+      bio: user.bio,
       stats: {
         completedChallenges: user.stats.completedChallenges,
         totalPoints: user.stats.totalPoints,

@@ -1,6 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchUserProfile, updateUserProfile, updateUserAvatar } from '../utils/api/profile';
-import type { UserProfile } from '../types/settings';
 
 export const PROFILE_QUERY_KEY = ['profile'];
 export const AVATAR_QUERY_KEY = ['avatar'];
@@ -16,48 +15,46 @@ export const useProfile = () => {
     refetchOnWindowFocus: false,
   });
 
-  const avatarUrl = profile?.avatar;
-
   const updateProfile = useMutation({
     mutationFn: updateUserProfile,
-    onSuccess: (newProfile) => {
-      queryClient.setQueryData(PROFILE_QUERY_KEY, newProfile);
-    },
-  });
-
-  const updateAvatar = useMutation({
-    mutationFn: updateUserAvatar,
-    onMutate: async (file) => {
-      const tempUrl = URL.createObjectURL(file);
+    onMutate: async (newProfile) => {
+      await queryClient.cancelQueries({ queryKey: PROFILE_QUERY_KEY });
       const previousProfile = queryClient.getQueryData(PROFILE_QUERY_KEY);
       
-      queryClient.setQueryData(PROFILE_QUERY_KEY, (old: UserProfile | undefined) => 
-        old ? { ...old, avatarUrl: tempUrl } : old
-      );
+      queryClient.setQueryData(PROFILE_QUERY_KEY, (old: any) => ({
+        ...old,
+        ...newProfile,
+      }));
       
-      return { previousProfile, tempUrl };
-    },
-    onSuccess: (data, _, context) => {
-      if (context?.tempUrl) {
-        URL.revokeObjectURL(context.tempUrl);
-      }
-      queryClient.setQueryData(PROFILE_QUERY_KEY, (old: UserProfile | undefined) => 
-        old ? { ...old, avatarUrl: data.avatarUrl } : old
-      );
+      return { previousProfile };
     },
     onError: (_, __, context) => {
       if (context?.previousProfile) {
         queryClient.setQueryData(PROFILE_QUERY_KEY, context.previousProfile);
       }
-      if (context?.tempUrl) {
-        URL.revokeObjectURL(context.tempUrl);
-      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: PROFILE_QUERY_KEY });
+    }
+  });
+
+  const updateAvatar = useMutation({
+    mutationFn: updateUserAvatar,
+    onSuccess: (data) => {
+      queryClient.setQueryData(PROFILE_QUERY_KEY, (old: any) => ({
+        ...old,
+        profile: {
+          ...old.profile,
+          avatar: data.avatarUrl
+        }
+      }));
     }
   });
 
   return {
     profile,
-    avatarUrl,
+    avatarUrl: profile?.profile?.avatar || '',
+    bio: profile?.profile?.bio || '',
     isLoading,
     error,
     updateProfile,

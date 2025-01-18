@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import type { UserProfile } from "../types/settings";
 
 const profileSchema = z.object({
   username: z.string()
@@ -8,23 +9,30 @@ const profileSchema = z.object({
     .max(20, "Nazwa użytkownika może mieć maksymalnie 20 znaków"),
   email: z.string()
     .email("Nieprawidłowy adres email"),
-  bio: z.string()
-    .max(160, "Bio może mieć maksymalnie 160 znaków")
-    .optional(),
-  avatarUrl: z.string().optional()
+  profile: z.object({
+    bio: z.string()
+      .max(160, "Bio może mieć maksymalnie 160 znaków")
+      .optional(),
+    avatar: z.string().optional()
+  })
 });
 
-type ProfileFormData = z.infer<typeof profileSchema>;
-
 interface UseProfileFormProps {
-  onSubmit: (data: ProfileFormData) => Promise<void>;
-  defaultValues?: Partial<ProfileFormData>;
+  onSubmit: (data: UserProfile) => Promise<void>;
+  defaultValues?: Partial<UserProfile>;
 }
 
 export const useProfileForm = ({ onSubmit, defaultValues }: UseProfileFormProps) => {
-  const form = useForm<ProfileFormData>({
+  const form = useForm<UserProfile>({
     resolver: zodResolver(profileSchema),
-    defaultValues,
+    defaultValues: {
+      username: defaultValues?.username || '',
+      email: defaultValues?.email || '',
+      profile: {
+        bio: defaultValues?.profile?.bio || '',
+        avatar: defaultValues?.profile?.avatar || ''
+      }
+    },
   });
 
   const handleSubmit = form.handleSubmit(async (data) => {

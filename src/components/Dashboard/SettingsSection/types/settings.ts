@@ -3,8 +3,10 @@ export type SettingsView = "profile" | "security" | "preferences" | "delete";
 export type UserProfile = {
   username: string;
   email: string;
-  bio?: string;
-  avatar?: string;
+  profile: {
+    bio?: string;
+    avatar?: string;
+  }
 }
 
 export type SecurityFormData = {
