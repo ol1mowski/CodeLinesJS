@@ -36,22 +36,35 @@ const userSchema = new mongoose.Schema({
   lastLogin: Date,
   profile: {
     displayName: String,
-    bio: String,
+    bio: {
+      type: String,
+      maxLength: 500
+    },
     socialLinks: {
       github: String,
       linkedin: String,
       twitter: String
     },
-    preferences: {
-      emailNotifications: {
-        type: Boolean,
-        default: true
-      },
-      theme: {
-        type: String,
-        enum: ['light', 'dark'],
-        default: 'dark'
-      }
+    avatar: String,
+    language: {
+      type: String,
+      enum: ['pl', 'en'],
+      default: 'pl'
+    }
+  },
+  preferences: {
+    emailNotifications: {
+      type: Boolean,
+      default: true
+    },
+    pushNotifications: {
+      type: Boolean,
+      default: true
+    },
+    theme: {
+      type: String,
+      enum: ['light', 'dark'],
+      default: 'light'
     }
   },
   stats: {

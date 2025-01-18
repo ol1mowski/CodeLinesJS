@@ -20,7 +20,6 @@ export const LanguageSection = memo(({ register }: LanguageSectionProps) => (
         className={styles.select}
       >
         <option value="pl">Polski</option>
-        <option value="en">English</option>
       </select>
     </div>
   </div>

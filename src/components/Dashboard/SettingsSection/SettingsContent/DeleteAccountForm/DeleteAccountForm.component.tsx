@@ -7,11 +7,12 @@ import { ConfirmationForm } from "../../components/DeleteAccount/ConfirmationFor
 
 export const DeleteAccountForm = memo(() => {
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const { form, onSubmit } = useDeleteAccountForm();
+  const { form, onSubmit, isDeleting } = useDeleteAccountForm();
   
   const handleCancel = useCallback(() => {
     setShowConfirmation(false);
-  }, []);
+    form.reset();
+  }, [form]);
 
   const handleShowConfirmation = useCallback(() => {
     setShowConfirmation(true);
@@ -41,7 +42,7 @@ export const DeleteAccountForm = memo(() => {
     <ConfirmationForm
       register={form.register}
       errors={form.formState.errors}
-      isSubmitting={form.formState.isSubmitting}
+      isSubmitting={isDeleting}
       onCancel={handleCancel}
       onSubmit={onSubmit}
     />

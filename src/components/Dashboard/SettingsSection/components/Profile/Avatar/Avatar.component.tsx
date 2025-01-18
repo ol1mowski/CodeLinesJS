@@ -3,9 +3,10 @@ import { Button } from "../../../../../UI/Button/Button.component";
 import { styles } from "./Avatar.styles";
 
 type AvatarProps = {
-  src: string;
+  src?: string;
   alt: string;
-  onChangeAvatar: () => void;
+  onChangeAvatar: (file: File) => void;
+  isUploading?: boolean;
 };
 
 export const Avatar = memo(({ src, alt, onChangeAvatar }: AvatarProps) => (

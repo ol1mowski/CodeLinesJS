@@ -33,6 +33,17 @@ export const register = async (req, res, next) => {
   }
 };
 
+const generateToken = (user) => {
+  return jwt.sign(
+    { 
+      userId: user._id,
+      email: user.email 
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: '24h' }
+  );
+};
+
 export const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -47,15 +58,7 @@ export const login = async (req, res, next) => {
       throw new AuthError('Nieprawidłowe dane logowania');
     }
 
-    const token = jwt.sign(
-      { 
-        userId: user._id,
-        email: user.email 
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: '24h' }
-    );
-
+    const token = generateToken(user);
     res.json({ 
       token,
       user: {
