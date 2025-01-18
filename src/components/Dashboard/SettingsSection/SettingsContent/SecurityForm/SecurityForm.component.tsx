@@ -1,44 +1,19 @@
-import { motion } from "framer-motion";
 import { memo } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { motion } from "framer-motion";
 import { FaLock } from "react-icons/fa";
-import { SecuritySettings } from "../../../../../types/settings.types";
 import { FormInput } from "../../../../UI/Form/FormInput/FormInput.component";
-import { Button } from "../../../../UI/Button/Button.component";
+import { useSecurityForm } from "../../hooks/useSecurityForm";
+import { styles } from "./SecurityForm.styles";
 
-const securitySchema = z.object({
-  currentPassword: z.string().min(1, "Aktualne hasło jest wymagane"),
-  newPassword: z
-    .string()
-    .min(8, "Hasło musi mieć minimum 8 znaków")
-    .regex(/[A-Z]/, "Hasło musi zawierać wielką literę")
-    .regex(/[0-9]/, "Hasło musi zawierać cyfrę")
-    .regex(/[^A-Za-z0-9]/, "Hasło musi zawierać znak specjalny"),
-  confirmPassword: z.string().min(1, "Potwierdzenie hasła jest wymagane"),
-}).refine((data) => data.newPassword === data.confirmPassword, {
-  message: "Hasła muszą być takie same",
-  path: ["confirmPassword"],
-});
 
 export const SecurityForm = memo(() => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting }
-  } = useForm<SecuritySettings>({
-    resolver: zodResolver(securitySchema)
-  });
-
-  const onSubmit = async (data: SecuritySettings) => {
-    console.log(data);
-  };
+  const { form, onSubmit } = useSecurityForm();
+  const { register, formState: { errors } } = form;
 
   return (
     <motion.form
-      onSubmit={handleSubmit(onSubmit)}
-      className="space-y-6 max-w-md"
+      onSubmit={onSubmit}
+      className={styles.form}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
     >
@@ -69,14 +44,24 @@ export const SecurityForm = memo(() => {
         {...register("confirmPassword")}
       />
 
-      <div className="flex justify-end">
-        <Button
-          type="submit"
-          disabled={isSubmitting}
-          className="bg-gradient-to-r from-indigo-500 to-purple-500"
+      <div className={styles.buttonContainer}>
+        <motion.button
+          type="button"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className={styles.cancelButton}
         >
-          {isSubmitting ? "Zapisywanie..." : "Zmień hasło"}
-        </Button>
+          Anuluj
+        </motion.button>
+
+        <motion.button
+          type="submit"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className={styles.submitButton}
+        >
+          Zmień hasło
+        </motion.button>
       </div>
     </motion.form>
   );

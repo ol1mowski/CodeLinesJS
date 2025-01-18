@@ -19,9 +19,9 @@ export const SettingsContent = memo(({ activeView }: SettingsContentProps) => (
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
       transition={{ duration: 0.2 }}
-      className="bg-gray-800/50 backdrop-blur-lg rounded-xl p-6 border border-gray-700/50"
+      className="bg-dark/30 backdrop-blur-sm rounded-xl p-6 border border-js/10 shadow-lg"
     >
-      <h2 className="text-2xl font-bold font-space text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400 mb-6">
+      <h2 className="text-2xl font-bold font-space text-js mb-6">
         {activeView === "profile" && "Edytuj Profil"}
         {activeView === "security" && "Bezpieczeństwo"}
         {activeView === "preferences" && "Preferencje"}
