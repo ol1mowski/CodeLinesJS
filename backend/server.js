@@ -10,11 +10,17 @@ import rankingRoutes from "./routes/ranking.routes.js";
 import trendingRoutes from "./routes/trending.routes.js";
 import { errorHandler } from "./middleware/error.middleware.js";
 import postsRoutes from './routes/posts.routes.js';
+import settingsRoutes from './routes/settings.routes.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 5001;
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 app.use(cors({
   origin: 'http://localhost:5173',
@@ -32,6 +38,8 @@ app.use("/api/groups", groupsRoutes);
 app.use("/api/ranking", rankingRoutes);
 app.use("/api/trending", trendingRoutes);
 app.use("/api/posts", postsRoutes);
+app.use("/api/settings", settingsRoutes);
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(errorHandler);
 
 mongoose
