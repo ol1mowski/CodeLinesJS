@@ -17,6 +17,13 @@ export const fetchPreferences = async () => {
   return response.json();
 };
 
+export class PreferencesError extends Error {
+  constructor(public code: 'VALIDATION_ERROR' | 'SAVE_ERROR' | 'UNKNOWN_ERROR', message: string) {
+    super(message);
+    this.name = 'PreferencesError';
+  }
+}
+
 export const updatePreferences = async (preferences: {
   emailNotifications: boolean;
   pushNotifications: boolean;
@@ -29,7 +36,14 @@ export const updatePreferences = async (preferences: {
   });
 
   if (!response.ok) {
-    throw new Error('Failed to update preferences');
+    const error = await response.json();
+    if (error.code === 'VALIDATION_ERROR') {
+      throw new PreferencesError('VALIDATION_ERROR', 'Nieprawidłowe dane preferencji');
+    }
+    if (error.code === 'SAVE_ERROR') {
+      throw new PreferencesError('SAVE_ERROR', 'Nie udało się zapisać preferencji');
+    }
+    throw new PreferencesError('UNKNOWN_ERROR', 'Wystąpił błąd podczas aktualizacji preferencji');
   }
 
   return response.json();
