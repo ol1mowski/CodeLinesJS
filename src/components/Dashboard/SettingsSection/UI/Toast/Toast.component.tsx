@@ -8,11 +8,19 @@ type ToastProps = {
 };
 
 export const Toast = memo(({ message, type, onClose }: ToastProps) => (
-  <div className={`fixed bottom-4 right-4 p-4 rounded-lg shadow-lg flex items-center gap-2 
-    ${type === 'success' ? 'bg-green-500' : 'bg-red-500'} text-white`}>
+  <div className={`fixed bottom-4 right-4 p-4 rounded-lg shadow-lg flex items-center gap-2 z-50
+    ${type === 'success' ? 'bg-green-500' : 'bg-red-500'} text-white
+    animate-slide-up`}
+  >
     {type === 'success' ? <FaCheckCircle /> : <FaTimesCircle />}
     <span>{message}</span>
-    <button onClick={onClose} className="ml-2 hover:opacity-80">×</button>
+    <button 
+      onClick={onClose} 
+      className="ml-2 hover:opacity-80 transition-opacity"
+      aria-label="Zamknij"
+    >
+      ×
+    </button>
   </div>
 ));
 

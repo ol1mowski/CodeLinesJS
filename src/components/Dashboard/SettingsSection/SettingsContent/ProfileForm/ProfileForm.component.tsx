@@ -7,11 +7,11 @@ import { UserInfoFields } from "../../components/Profile/UserInfoFields/UserInfo
 import { BioField } from "../../components/Profile/BioField/BioField.component";
 import { FormButtons } from "../../components/Profile/FormButtons/FormButtons.component";
 import { styles } from "./ProfileForm.styles";
-import { Toast } from "../../UI/Toast/Toast.component";
+import { UserProfile } from "../../types/settings";
 
 export const ProfileForm = memo(() => {
   const { profile, isLoading, updateProfile, updateAvatar, avatarUrl } = useProfile();
-  const [showToast, setShowToast] = useState(false);
+  const [previewAvatar, setPreviewAvatar] = useState<string | null>(null);
   
   const handleSubmit = async (data: UserProfile) => {
     try {
@@ -23,9 +23,15 @@ export const ProfileForm = memo(() => {
           avatar: avatarUrl || ''
         }
       });
+      setToastMessage('Zmiany zostały zapisane');
+      setToastType('success');
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
     } catch (error) {
+      setToastMessage('Nie udało się zapisać zmian');
+      setToastType('error');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
       console.error('Failed to update profile:', error);
     }
   };
@@ -44,6 +50,16 @@ export const ProfileForm = memo(() => {
   
   const { register, formState: { errors, isSubmitting }, reset } = form;
 
+  const handleCancel = useCallback(() => {
+    if (profile) {
+      reset(profile);
+      if (previewAvatar) {
+        URL.revokeObjectURL(previewAvatar);
+        setPreviewAvatar(null);
+      }
+    }
+  }, [profile, reset, previewAvatar]);
+
   useEffect(() => {
     if (profile) {
       reset(profile);
@@ -52,11 +68,28 @@ export const ProfileForm = memo(() => {
 
   const handleChangeAvatar = useCallback(async (file: File) => {
     try {
+      if (previewAvatar) {
+        URL.revokeObjectURL(previewAvatar);
+      }
+      const preview = URL.createObjectURL(file);
+      setPreviewAvatar(preview);
       await updateAvatar.mutateAsync(file);
     } catch (error) {
+      if (previewAvatar) {
+        URL.revokeObjectURL(previewAvatar);
+        setPreviewAvatar(null);
+      }
       console.error('Failed to update avatar:', error);
     }
-  }, [updateAvatar]);
+  }, [updateAvatar, previewAvatar]);
+
+  useEffect(() => {
+    return () => {
+      if (previewAvatar) {
+        URL.revokeObjectURL(previewAvatar);
+      }
+    };
+  }, [previewAvatar]);
 
   if (isLoading) {
     return (
@@ -80,6 +113,8 @@ export const ProfileForm = memo(() => {
             alt="Avatar"
             onChangeAvatar={handleChangeAvatar}
             isUploading={updateAvatar.isPending}
+            preview={previewAvatar}
+            onReset={handleCancel}
           />
           <UserInfoFields
             register={register}
@@ -94,10 +129,12 @@ export const ProfileForm = memo(() => {
         />
 
         <FormButtons
-          saveDataHandler={form.handleSubmit(onSubmit)}
+          onCancel={handleCancel}
+          onSubmit={form.handleSubmit(onSubmit)}
           isSubmitting={isSubmitting || updateProfile.isPending}
         />
       </motion.form>
+
     </>
   );
 });

@@ -1,4 +1,4 @@
-import { memo, useRef, useState } from "react";
+import { memo, useRef, useState, useEffect } from "react";
 import { Button } from "../../../../../UI/Button/Button.component";
 import { styles } from "./Avatar.styles";
 
@@ -7,26 +7,32 @@ type AvatarProps = {
   isUploading?: boolean;
   src: string;
   alt: string;
+  onReset?: () => void;
+  preview: string | null;
 };
 
-export const Avatar = memo(({ onChangeAvatar, isUploading, src, alt }: AvatarProps) => {
+export const Avatar = memo(({ 
+  onChangeAvatar, 
+  isUploading, 
+  src, 
+  alt, 
+  onReset,
+  preview 
+}: AvatarProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [preview, setPreview] = useState<string | null>(null);
 
   const handleClick = () => {
     fileInputRef.current?.click();
   };
 
-  const avatar = preview || src || `data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNTAiIGZpbGw9IiMyMDIwMjAiLz4KICA8cGF0aCBkPSJNNTAgNjBjMTEuMDQ2IDAgMjAtOC45NTQgMjAtMjBzLTguOTU0LTIwLTIwLTIwLTIwIDguOTU0LTIwIDIwIDguOTU0IDIwIDIwIDIweiIgZmlsbD0iIzQwNDA0MCIvPgo8L3N2Zz4=`;
-
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      const objectUrl = URL.createObjectURL(file);
-      setPreview(objectUrl);
       onChangeAvatar(file);
     }
   };
+
+  const avatar = preview || src || `data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNTAiIGZpbGw9IiMyMDIwMjAiLz4KICA8cGF0aCBkPSJNNTAgNjBjMTEuMDQ2IDAgMjAtOC45NTQgMjAtMjBzLTguOTU0LTIwLTIwLTIwLTIwIDguOTU0LTIwIDIwIDguOTU0IDIwIDIwIDIweiIgZmlsbD0iIzQwNDA0MCIvPgo8L3N2Zz4=`;
 
   return (
     <div className={styles.container}>
