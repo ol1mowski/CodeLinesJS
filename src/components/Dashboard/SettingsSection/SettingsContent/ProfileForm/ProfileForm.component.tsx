@@ -7,14 +7,16 @@ import { UserInfoFields } from "../../components/Profile/UserInfoFields/UserInfo
 import { BioField } from "../../components/Profile/BioField/BioField.component";
 import { FormButtons } from "../../components/Profile/FormButtons/FormButtons.component";
 import { styles } from "./ProfileForm.styles";
-import { Toast } from "../../UI/Toast/Toast.component";
+import { UserProfile } from "../../types/settings";
+import { useToast } from "../../contexts/ToastContext";
 
 export const ProfileForm = memo(() => {
+  const { showToast } = useToast();
   const { profile, isLoading, updateProfile, updateAvatar, avatarUrl } = useProfile();
-  const [showToast, setShowToast] = useState(false);
+  const [previewAvatar, setPreviewAvatar] = useState<string | null>(null);
   
-  const { form, onSubmit } = useProfileForm({
-    onSubmit: async (data) => {
+  const handleSubmit = async (data: UserProfile) => {
+    try {
       await updateProfile.mutateAsync({
         username: data.username,
         email: data.email,
@@ -23,9 +25,14 @@ export const ProfileForm = memo(() => {
           avatar: avatarUrl || ''
         }
       });
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 3000);
-    },
+      showToast('Profil został zaktualizowany', 'success');
+    } catch (error) {
+      showToast('Nie udało się zaktualizować profilu', 'error');
+    }
+  };
+
+  const { form, onSubmit } = useProfileForm({
+    onSubmit: handleSubmit,
     defaultValues: profile || {
       username: '',
       email: '',
@@ -38,26 +45,51 @@ export const ProfileForm = memo(() => {
   
   const { register, formState: { errors, isSubmitting }, reset } = form;
 
+  const handleChangeAvatar = useCallback(async (file: File) => {
+    try {
+      if (previewAvatar) {
+        URL.revokeObjectURL(previewAvatar);
+      }
+      const preview = URL.createObjectURL(file);
+      setPreviewAvatar(preview);
+      await updateAvatar.mutateAsync(file);
+    } catch (error) {
+      if (previewAvatar) {
+        URL.revokeObjectURL(previewAvatar);
+        setPreviewAvatar(null);
+      }
+      showToast('Nie udało się zaktualizować avatara', 'error');
+    }
+  }, [updateAvatar, previewAvatar, showToast]);
+
+  const handleCancel = useCallback(() => {
+    try {
+      if (profile) {
+        reset(profile);
+        if (previewAvatar) {
+          URL.revokeObjectURL(previewAvatar);
+          setPreviewAvatar(null);
+        }
+        showToast('Zmiany zostały anulowane', 'success');
+      }
+    } catch (error) {
+      showToast('Nie udało się anulować zmian', 'error');
+    }
+  }, [profile, reset, previewAvatar, showToast]);
+
   useEffect(() => {
     if (profile) {
-      reset({
-        username: profile.username,
-        email: profile.email,
-        profile: {
-          bio: profile.profile?.bio || '',
-          avatar: profile.profile?.avatar || ''
-        }
-      });
+      reset(profile);
     }
   }, [profile, reset]);
 
-  const handleChangeAvatar = useCallback(async (file: File) => {
-    try {
-      await updateAvatar.mutateAsync(file);
-    } catch (error) {
-      console.error('Failed to update avatar:', error);
-    }
-  }, [updateAvatar]);
+  useEffect(() => {
+    return () => {
+      if (previewAvatar) {
+        URL.revokeObjectURL(previewAvatar);
+      }
+    };
+  }, [previewAvatar]);
 
   if (isLoading) {
     return (
@@ -81,6 +113,8 @@ export const ProfileForm = memo(() => {
             alt="Avatar"
             onChangeAvatar={handleChangeAvatar}
             isUploading={updateAvatar.isPending}
+            preview={previewAvatar}
+            onReset={handleCancel}
           />
           <UserInfoFields
             register={register}
@@ -91,21 +125,14 @@ export const ProfileForm = memo(() => {
         <BioField
           register={register}
           errors={errors}
+          defaultValue={profile?.profile?.bio}
         />
 
         <FormButtons
-          saveDataHandler={onSubmit}
+          onCancel={handleCancel}
           isSubmitting={isSubmitting || updateProfile.isPending}
         />
       </motion.form>
-
-      {showToast && (
-        <Toast
-          message="Dane zostały zaktualizowane"
-          type="success"
-          onClose={() => setShowToast(false)}
-        />
-      )}
     </>
   );
 });

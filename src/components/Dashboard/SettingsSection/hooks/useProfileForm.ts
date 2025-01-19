@@ -35,16 +35,16 @@ export const useProfileForm = ({ onSubmit, defaultValues }: UseProfileFormProps)
     },
   });
 
-  const handleSubmit = form.handleSubmit(async (data) => {
+  const handleSubmit = async (data: UserProfile) => {
     try {
       await onSubmit(data);
     } catch (error) {
       console.error('Failed to update profile:', error);
     }
-  });
+  };
 
   return {
     form,
-    onSubmit: handleSubmit,
+    onSubmit: form.handleSubmit(handleSubmit),
   };
 }; 

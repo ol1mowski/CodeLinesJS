@@ -18,25 +18,29 @@ const securitySchema = z.object({
 
 type SecurityFormData = z.infer<typeof securitySchema>;
 
-export const useSecurityForm = () => {
+interface UseSecurityFormProps {
+  onSuccess?: () => void;
+  onError?: (error: unknown) => void;
+}
+
+export const useSecurityForm = ({ onSuccess, onError }: UseSecurityFormProps = {}) => {
   const form = useForm<SecurityFormData>({
     resolver: zodResolver(securitySchema),
   });
 
   const updatePasswordMutation = useMutation({
-    mutationFn: (data: SecurityFormData) => updatePassword({
-      currentPassword: data.currentPassword,
-      newPassword: data.newPassword,
-    }),
+    mutationFn: updatePassword,
+    onSuccess: () => {
+      form.reset();
+      onSuccess?.();
+    },
+    onError: (error) => {
+      onError?.(error);
+    }
   });
 
   const handleSubmit = form.handleSubmit(async (data) => {
-    try {
-      await updatePasswordMutation.mutateAsync(data);
-      form.reset();
-    } catch (error) {
-      console.error('Failed to update password:', error);
-    }
+    await updatePasswordMutation.mutateAsync(data);
   });
 
   return {

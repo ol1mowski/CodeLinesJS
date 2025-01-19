@@ -3,18 +3,19 @@ import { Button } from "../../../../../UI/Button/Button.component";
 import { styles } from "./FormButtons.styles";
 
 type FormButtonsProps = {
-  saveDataHandler: () => void;
+  onCancel: () => void;
   isSubmitting: boolean;
 };
 
-export const FormButtons = memo(({ saveDataHandler, isSubmitting }: FormButtonsProps) => (
+export const FormButtons = memo(({ onCancel, isSubmitting }: FormButtonsProps) => (
   <div className={styles.container}>
     <Button
       type="button"
-      onClick={saveDataHandler}
+      onClick={onCancel}
       className={styles.cancelButton}
+      disabled={isSubmitting}
     >
-      Anuluj
+      Anuluj zmiany
     </Button>
 
     <Button
@@ -22,7 +23,14 @@ export const FormButtons = memo(({ saveDataHandler, isSubmitting }: FormButtonsP
       disabled={isSubmitting}
       className={styles.submitButton}
     >
-      {isSubmitting ? "Zapisywanie..." : "Zapisz zmiany"}
+      {isSubmitting ? (
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 border-2 border-dark border-t-transparent rounded-full animate-spin" />
+          <span>Zapisywanie</span>
+        </div>
+      ) : (
+        "Zapisz zmiany"
+      )}
     </Button>
   </div>
 ));

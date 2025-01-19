@@ -30,6 +30,8 @@ export const fetchUserProfile = async (): Promise<UserProfile> => {
 };
 
 export const updateUserProfile = async (data: UserProfile) => {
+  console.log(data);
+  
   const response = await fetch(`${API_URL}/api/settings/profile`, {
     method: 'PUT',
     headers: {
