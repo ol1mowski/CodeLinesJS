@@ -1,4 +1,4 @@
-  import { useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import type { UserProfile } from "../types/settings";
@@ -35,16 +35,16 @@ export const useProfileForm = ({ onSubmit, defaultValues }: UseProfileFormProps)
     },
   });
 
-  const handleSubmit = form.handleSubmit(async (data) => {
+  const handleSubmit = async (data: UserProfile) => {
     try {
       await onSubmit(data);
     } catch (error) {
       console.error('Failed to update profile:', error);
     }
-  });
+  };
 
   return {
     form,
-    onSubmit: handleSubmit,
+    onSubmit: form.handleSubmit(handleSubmit),
   };
 }; 

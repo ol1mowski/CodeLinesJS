@@ -8,8 +8,10 @@ import { BioField } from "../../components/Profile/BioField/BioField.component";
 import { FormButtons } from "../../components/Profile/FormButtons/FormButtons.component";
 import { styles } from "./ProfileForm.styles";
 import { UserProfile } from "../../types/settings";
+import { useToast } from "../../contexts/ToastContext";
 
 export const ProfileForm = memo(() => {
+  const { showToast } = useToast();
   const { profile, isLoading, updateProfile, updateAvatar, avatarUrl } = useProfile();
   const [previewAvatar, setPreviewAvatar] = useState<string | null>(null);
   
@@ -23,16 +25,9 @@ export const ProfileForm = memo(() => {
           avatar: avatarUrl || ''
         }
       });
-      setToastMessage('Zmiany zostały zapisane');
-      setToastType('success');
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 3000);
+      showToast('Profil został zaktualizowany', 'success');
     } catch (error) {
-      setToastMessage('Nie udało się zapisać zmian');
-      setToastType('error');
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 3000);
-      console.error('Failed to update profile:', error);
+      showToast('Nie udało się zaktualizować profilu', 'error');
     }
   };
 
@@ -50,22 +45,6 @@ export const ProfileForm = memo(() => {
   
   const { register, formState: { errors, isSubmitting }, reset } = form;
 
-  const handleCancel = useCallback(() => {
-    if (profile) {
-      reset(profile);
-      if (previewAvatar) {
-        URL.revokeObjectURL(previewAvatar);
-        setPreviewAvatar(null);
-      }
-    }
-  }, [profile, reset, previewAvatar]);
-
-  useEffect(() => {
-    if (profile) {
-      reset(profile);
-    }
-  }, [profile, reset]);
-
   const handleChangeAvatar = useCallback(async (file: File) => {
     try {
       if (previewAvatar) {
@@ -79,9 +58,30 @@ export const ProfileForm = memo(() => {
         URL.revokeObjectURL(previewAvatar);
         setPreviewAvatar(null);
       }
-      console.error('Failed to update avatar:', error);
+      showToast('Nie udało się zaktualizować avatara', 'error');
     }
-  }, [updateAvatar, previewAvatar]);
+  }, [updateAvatar, previewAvatar, showToast]);
+
+  const handleCancel = useCallback(() => {
+    try {
+      if (profile) {
+        reset(profile);
+        if (previewAvatar) {
+          URL.revokeObjectURL(previewAvatar);
+          setPreviewAvatar(null);
+        }
+        showToast('Zmiany zostały anulowane', 'success');
+      }
+    } catch (error) {
+      showToast('Nie udało się anulować zmian', 'error');
+    }
+  }, [profile, reset, previewAvatar, showToast]);
+
+  useEffect(() => {
+    if (profile) {
+      reset(profile);
+    }
+  }, [profile, reset]);
 
   useEffect(() => {
     return () => {
@@ -102,7 +102,7 @@ export const ProfileForm = memo(() => {
   return (
     <>
       <motion.form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={onSubmit}
         className={styles.form}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -130,11 +130,9 @@ export const ProfileForm = memo(() => {
 
         <FormButtons
           onCancel={handleCancel}
-          onSubmit={form.handleSubmit(onSubmit)}
           isSubmitting={isSubmitting || updateProfile.isPending}
         />
       </motion.form>
-
     </>
   );
 });

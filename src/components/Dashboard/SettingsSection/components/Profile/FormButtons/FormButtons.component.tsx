@@ -4,11 +4,10 @@ import { styles } from "./FormButtons.styles";
 
 type FormButtonsProps = {
   onCancel: () => void;
-  onSubmit: () => void;
   isSubmitting: boolean;
 };
 
-export const FormButtons = memo(({ onCancel, onSubmit, isSubmitting }: FormButtonsProps) => (
+export const FormButtons = memo(({ onCancel, isSubmitting }: FormButtonsProps) => (
   <div className={styles.container}>
     <Button
       type="button"
@@ -21,7 +20,6 @@ export const FormButtons = memo(({ onCancel, onSubmit, isSubmitting }: FormButto
 
     <Button
       type="submit"
-      onClick={onSubmit}
       disabled={isSubmitting}
       className={styles.submitButton}
     >
