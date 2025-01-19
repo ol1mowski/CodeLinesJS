@@ -59,16 +59,24 @@ export const ConfirmationForm = memo(({
     </div>
 
     <div className={styles.buttons}>
-      <Button
+      <button
         type="submit"
         disabled={isSubmitting}
         className={styles.submitButton}
       >
-        {isSubmitting ? "Usuwanie..." : "Usuń konto permanentnie"}
-      </Button>
+        {isSubmitting ? (
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 border-2 border-dark border-t-transparent rounded-full animate-spin" />
+            <span>Usuwanie</span>
+          </div>
+        ) : (
+          "Usuń konto permanentnie"
+        )}
+      </button>
       <button
         type="button"
         onClick={onCancel}
+        disabled={isSubmitting}
         className={styles.cancelButton}
       >
         Anuluj

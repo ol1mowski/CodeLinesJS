@@ -13,22 +13,30 @@ const deleteAccountSchema = z.object({
 
 type DeleteAccountFormData = z.infer<typeof deleteAccountSchema>;
 
-export const useDeleteAccountForm = () => {
+interface UseDeleteAccountFormProps {
+  onSuccess?: () => void;
+  onError?: (error: unknown) => void;
+}
+
+export const useDeleteAccountForm = ({ onSuccess, onError }: UseDeleteAccountFormProps = {}) => {
   const form = useForm<DeleteAccountFormData>({
     resolver: zodResolver(deleteAccountSchema)
   });
 
   const deleteAccountMutation = useMutation({
     mutationFn: deleteAccount,
+    onSuccess: () => {
+      form.reset();
+      onSuccess?.();
+      window.location.href = '/logowanie';
+    },
+    onError: (error) => {
+      onError?.(error);
+    }
   });
 
   const handleSubmit = form.handleSubmit(async (data) => {
-    try {
-      await deleteAccountMutation.mutateAsync(data);
-      window.location.href = '/login';
-    } catch (error) {
-      console.error('Failed to delete account:', error);
-    }
+    await deleteAccountMutation.mutateAsync(data);
   });
 
   return {

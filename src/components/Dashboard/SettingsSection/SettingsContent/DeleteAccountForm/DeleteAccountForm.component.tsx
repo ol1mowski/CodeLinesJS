@@ -4,15 +4,39 @@ import { Button } from "../../../../UI/Button/Button.component";
 import { useDeleteAccountForm } from "../../hooks/useDeleteAccountForm";
 import { WarningBox } from "../../components/DeleteAccount/WarningBox/WarningBox.component";
 import { ConfirmationForm } from "../../components/DeleteAccount/ConfirmationForm/ConfirmationForm.component";
+import { useToast } from "../../contexts/ToastContext";
+import { AccountError } from "../../utils/api/account";
 
 export const DeleteAccountForm = memo(() => {
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const { form, onSubmit, isDeleting } = useDeleteAccountForm();
+  const { showToast } = useToast();
+  
+  const { form, onSubmit, isDeleting } = useDeleteAccountForm({
+    onSuccess: () => showToast('Konto zostało usunięte', 'success'),
+    onError: (error) => {
+      if (error instanceof AccountError) {
+        switch (error.code) {
+          case 'INVALID_PASSWORD':
+            showToast('Podane hasło jest nieprawidłowe', 'error');
+            return;
+          case 'INVALID_CONFIRMATION':
+            showToast('Nieprawidłowe potwierdzenie', 'error');
+            return;
+        }
+      }
+      showToast('Nie udało się usunąć konta', 'error');
+    }
+  });
   
   const handleCancel = useCallback(() => {
-    setShowConfirmation(false);
-    form.reset();
-  }, [form]);
+    try {
+      setShowConfirmation(false);
+      form.reset();
+      showToast('Operacja została anulowana', 'success');
+    } catch (error) {
+      showToast('Nie udało się anulować operacji', 'error');
+    }
+  }, [form, showToast]);
 
   const handleShowConfirmation = useCallback(() => {
     setShowConfirmation(true);

@@ -6,7 +6,7 @@ const getAuthHeaders = () => ({
 });
 
 export const fetchPreferences = async () => {
-  const response = await fetch(`${API_URL}/api/preferences`, {
+  const response = await fetch(`${API_URL}/api/settings/preferences`, {
     headers: getAuthHeaders(),
   });
   
@@ -22,7 +22,7 @@ export const updatePreferences = async (preferences: {
   pushNotifications: boolean;
   language: "pl";
 }) => {
-  const response = await fetch(`${API_URL}/api/preferences`, {
+  const response = await fetch(`${API_URL}/api/settings/preferences`, {
     method: 'PUT',
     headers: getAuthHeaders(),
     body: JSON.stringify(preferences),
