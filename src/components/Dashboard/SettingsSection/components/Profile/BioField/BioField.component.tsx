@@ -2,28 +2,24 @@ import { memo } from "react";
 import type { UseFormRegister, FieldErrors } from "react-hook-form";
 import type { UserProfile } from "../../../types/settings";
 import { styles } from "./BioField.styles";
-import { useProfile } from "../../../hooks/useProfile";
 
 type BioFieldProps = {
   register: UseFormRegister<UserProfile>;
   errors: FieldErrors<UserProfile>;
+  defaultValue?: string;
 };
 
-
-export const BioField = memo(({ register, errors }: BioFieldProps) => {
-
-  const { bio } = useProfile();
-  
+export const BioField = memo(({ register, errors, defaultValue }: BioFieldProps) => {
   return (
     <div className={styles.container}>
       <label className={styles.label}>Bio</label>
       <textarea
-        {...register("bio")}
+        {...register("profile.bio")}
         className={styles.textarea}
-        placeholder={bio || "Napisz coś o sobie..."}
+        placeholder={defaultValue || "Napisz coś o sobie..."}
       />
-      {errors.bio && (
-        <span className={styles.error}>{errors.bio.message}</span>
+      {errors.profile?.bio && (
+        <span className={styles.error}>{errors.profile.bio.message}</span>
       )}
     </div>
   );

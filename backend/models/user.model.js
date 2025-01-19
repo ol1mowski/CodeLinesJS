@@ -24,14 +24,21 @@ const userSchema = new mongoose.Schema({
     },
     minlength: 6
   },
-  avatar: {
-    type: String,
-    default: '/uploads/avatars/default-avatar.png'
-  },
-  bio: {
-    type: String,
-    maxlength: 500,
-    default: ''
+  profile: {
+    bio: {
+      type: String,
+      maxlength: 500,
+      default: ''
+    },
+    avatar: {
+      type: String,
+      default: '/uploads/avatars/default-avatar.png'
+    },
+    language: {
+      type: String,
+      enum: ['pl', 'en'],
+      default: 'pl'
+    }
   },
   accountType: {
     type: String,

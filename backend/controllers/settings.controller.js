@@ -33,26 +33,50 @@ export const updateProfile = async (req, res, next) => {
   try {
     const { username, email, profile } = req.body;
     
-    const user = await User.findById(req.user.userId);
-    if (!user) {
+    if (username) {
+      const existingUser = await User.findOne({ 
+        username, 
+        _id: { $ne: req.user.userId } 
+      });
+      if (existingUser) {
+        throw new ValidationError('Nazwa użytkownika jest już zajęta');
+      }
+    }
+    
+    if (email) {
+      const existingUser = await User.findOne({ 
+        email, 
+        _id: { $ne: req.user.userId } 
+      });
+      if (existingUser) {
+        throw new ValidationError('Email jest już zajęty');
+      }
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user.userId,
+      {
+        $set: {
+          username: username || undefined,
+          email: email || undefined,
+          'profile.bio': profile?.bio
+        }
+      },
+      { 
+        new: true,
+        runValidators: true 
+      }
+    );
+
+    if (!updatedUser) {
       throw new AuthError('Użytkownik nie znaleziony');
     }
     
-    if (username) user.username = username;
-    if (email) user.email = email;
-    if (profile) {
-      user.profile = {
-        ...user.profile,
-        ...profile
-      };
-    }
-    
-    await user.save();
-    
     res.json({
-      username: user.username,
-      email: user.email,
-      profile: user.profile
+      username: updatedUser.username,
+      email: updatedUser.email,
+      profile: updatedUser.profile,
+      avatar: updatedUser.avatar
     });
   } catch (error) {
     next(error);

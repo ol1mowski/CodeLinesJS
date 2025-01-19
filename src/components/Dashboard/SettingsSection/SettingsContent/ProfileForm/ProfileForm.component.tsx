@@ -13,8 +13,8 @@ export const ProfileForm = memo(() => {
   const { profile, isLoading, updateProfile, updateAvatar, avatarUrl } = useProfile();
   const [showToast, setShowToast] = useState(false);
   
-  const { form, onSubmit } = useProfileForm({
-    onSubmit: async (data) => {
+  const handleSubmit = async (data: UserProfile) => {
+    try {
       await updateProfile.mutateAsync({
         username: data.username,
         email: data.email,
@@ -25,7 +25,13 @@ export const ProfileForm = memo(() => {
       });
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
-    },
+    } catch (error) {
+      console.error('Failed to update profile:', error);
+    }
+  };
+
+  const { form, onSubmit } = useProfileForm({
+    onSubmit: handleSubmit,
     defaultValues: profile || {
       username: '',
       email: '',
@@ -40,14 +46,7 @@ export const ProfileForm = memo(() => {
 
   useEffect(() => {
     if (profile) {
-      reset({
-        username: profile.username,
-        email: profile.email,
-        profile: {
-          bio: profile.profile?.bio || '',
-          avatar: profile.profile?.avatar || ''
-        }
-      });
+      reset(profile);
     }
   }, [profile, reset]);
 
@@ -70,7 +69,7 @@ export const ProfileForm = memo(() => {
   return (
     <>
       <motion.form
-        onSubmit={onSubmit}
+        onSubmit={form.handleSubmit(onSubmit)}
         className={styles.form}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -91,21 +90,14 @@ export const ProfileForm = memo(() => {
         <BioField
           register={register}
           errors={errors}
+          defaultValue={profile?.profile?.bio}
         />
 
         <FormButtons
-          saveDataHandler={onSubmit}
+          saveDataHandler={form.handleSubmit(onSubmit)}
           isSubmitting={isSubmitting || updateProfile.isPending}
         />
       </motion.form>
-
-      {showToast && (
-        <Toast
-          message="Dane zostały zaktualizowane"
-          type="success"
-          onClose={() => setShowToast(false)}
-        />
-      )}
     </>
   );
 });

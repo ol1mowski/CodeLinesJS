@@ -11,31 +11,14 @@ export const useProfile = () => {
     queryKey: PROFILE_QUERY_KEY,
     queryFn: fetchUserProfile,
     staleTime: 1000 * 60 * 5,
-    retry: 1,
-    refetchOnWindowFocus: false,
   });
 
   const updateProfile = useMutation({
     mutationFn: updateUserProfile,
-    onMutate: async (newProfile) => {
-      await queryClient.cancelQueries({ queryKey: PROFILE_QUERY_KEY });
-      const previousProfile = queryClient.getQueryData(PROFILE_QUERY_KEY);
-      
-      queryClient.setQueryData(PROFILE_QUERY_KEY, (old: any) => ({
-        ...old,
-        ...newProfile,
-      }));
-      
-      return { previousProfile };
-    },
-    onError: (_, __, context) => {
-      if (context?.previousProfile) {
-        queryClient.setQueryData(PROFILE_QUERY_KEY, context.previousProfile);
-      }
-    },
-    onSettled: () => {
+    onSuccess: (newProfile) => {
+      queryClient.setQueryData(PROFILE_QUERY_KEY, newProfile);
       queryClient.invalidateQueries({ queryKey: PROFILE_QUERY_KEY });
-    }
+    },
   });
 
   const updateAvatar = useMutation({
@@ -48,6 +31,7 @@ export const useProfile = () => {
           avatar: data.avatarUrl
         }
       }));
+      queryClient.invalidateQueries({ queryKey: PROFILE_QUERY_KEY });
     }
   });
 
