@@ -100,40 +100,51 @@ export const ProfileForm = memo(() => {
   }
 
   return (
-    <>
-      <motion.form
-        onSubmit={onSubmit}
-        className={styles.form}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-      >
+    <motion.form
+      onSubmit={onSubmit}
+      className={styles.form}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+    >
+      <div className={styles.container}>
         <div className={styles.header}>
-          <Avatar
-            src={avatarUrl || ''}
-            alt="Avatar"
-            onChangeAvatar={handleChangeAvatar}
-            isUploading={updateAvatar.isPending}
-            preview={previewAvatar}
-            onReset={handleCancel}
-          />
-          <UserInfoFields
-            register={register}
-            errors={errors}
-          />
+          <div className={styles.avatarSection}>
+            <Avatar
+              src={avatarUrl || ''}
+              alt="Avatar"
+              onChangeAvatar={handleChangeAvatar}
+              isUploading={updateAvatar.isPending}
+              preview={previewAvatar}
+              onReset={handleCancel}
+              className="w-32 h-32 sm:w-40 sm:h-40 md:w-full md:h-auto 
+                aspect-square rounded-full object-cover
+                border-2 border-js/10 hover:border-js/30
+                transition-colors duration-200"
+            />
+          </div>
+
+          <div className={styles.infoSection}>
+            <UserInfoFields
+              register={register}
+              errors={errors}
+            />
+
+           <BioField
+              register={register}
+              errors={errors}
+              defaultValue={profile?.profile?.bio}
+            />
+          </div>
         </div>
+      </div>
 
-        <BioField
-          register={register}
-          errors={errors}
-          defaultValue={profile?.profile?.bio}
-        />
-
-        <FormButtons
-          onCancel={handleCancel}
-          isSubmitting={isSubmitting || updateProfile.isPending}
-        />
-      </motion.form>
-    </>
+      <FormButtons 
+        onCancel={handleCancel}
+        isSubmitting={isSubmitting || updateProfile.isPending}
+        submitText="Zapisz profil"
+        loadingText="Zapisywanie"
+      />
+    </motion.form>
   );
 });
 

@@ -9,6 +9,7 @@ type AvatarProps = {
   alt: string;
   onReset?: () => void;
   preview: string | null;
+  className?: string;
 };
 
 export const Avatar = memo(({ 

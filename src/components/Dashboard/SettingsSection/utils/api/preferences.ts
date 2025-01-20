@@ -5,7 +5,7 @@ const getAuthHeaders = () => ({
   'Content-Type': 'application/json',
 });
 
-export const fetchPreferences = async () => {
+export const fetchPreferences = async (): Promise<PreferencesData> => {
   const response = await fetch(`${API_URL}/api/settings/preferences`, {
     headers: getAuthHeaders(),
   });
@@ -14,7 +14,13 @@ export const fetchPreferences = async () => {
     throw new Error('Failed to fetch preferences');
   }
   
-  return response.json();
+  const data = await response.json();
+  
+  return {
+    emailNotifications: data.emailNotifications ?? false,
+    pushNotifications: data.pushNotifications ?? false,
+    language: "pl"
+  };
 };
 
 export class PreferencesError extends Error {
@@ -24,11 +30,7 @@ export class PreferencesError extends Error {
   }
 }
 
-export const updatePreferences = async (preferences: {
-  emailNotifications: boolean;
-  pushNotifications: boolean;
-  language: "pl";
-}) => {
+export const updatePreferences = async (preferences: PreferencesData): Promise<PreferencesData> => {
   const response = await fetch(`${API_URL}/api/settings/preferences`, {
     method: 'PUT',
     headers: getAuthHeaders(),
@@ -46,5 +48,10 @@ export const updatePreferences = async (preferences: {
     throw new PreferencesError('UNKNOWN_ERROR', 'Wystąpił błąd podczas aktualizacji preferencji');
   }
 
-  return response.json();
+  const data = await response.json();
+  return {
+    emailNotifications: data.emailNotifications,
+    pushNotifications: data.pushNotifications,
+    language: "pl"
+  };
 }; 

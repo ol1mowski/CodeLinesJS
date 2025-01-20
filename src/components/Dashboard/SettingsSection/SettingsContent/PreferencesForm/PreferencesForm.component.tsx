@@ -1,9 +1,10 @@
-import { memo } from "react";
+import { memo, useEffect } from "react";
 import { motion } from "framer-motion";
 import { usePreferencesForm } from "../../hooks/usePreferencesForm";
 import { usePreferences } from "../../hooks/usePreferences";
 import { NotificationsSection } from "../../components/Preferences/NotificationsSection/NotificationsSection.component";
 import { LanguageSection } from "../../components/Preferences/LanguageSection/LanguageSection.component";
+import { FormButtons } from "../../components/Profile/FormButtons/FormButtons.component";
 import { styles } from "./PreferencesForm.styles";
 import { useToast } from "../../contexts/ToastContext";
 import { PreferencesError } from "../../utils/api/preferences";
@@ -11,11 +12,15 @@ import { PreferencesError } from "../../utils/api/preferences";
 export const PreferencesForm = memo(() => {
   const { preferences, isLoading, updatePreferences } = usePreferences();
   const { showToast } = useToast();
-  
+
   const { form, onSubmit } = usePreferencesForm({
     onSubmit: async (data) => {
       try {
-        await updatePreferences.mutateAsync(data);
+        await updatePreferences.mutateAsync({
+          emailNotifications: data.emailNotifications,
+          pushNotifications: data.pushNotifications,
+          language: "pl"
+        });
         showToast('Preferencje zostały zaktualizowane', 'success');
       } catch (error) {
         if (error instanceof PreferencesError) {
@@ -30,20 +35,27 @@ export const PreferencesForm = memo(() => {
         }
         showToast('Wystąpił błąd podczas aktualizacji preferencji', 'error');
       }
-    },
-    defaultValues: preferences,
+    }
   });
   
-  const { register, formState: { isSubmitting }, reset } = form;
+  const { register, formState: { isSubmitting }, reset, setValue, watch } = form;
+
+  const formValues = watch();
+
+  useEffect(() => {
+    if (preferences) {
+      setValue('emailNotifications', preferences.emailNotifications);
+      setValue('pushNotifications', preferences.pushNotifications);
+      setValue('language', "pl");
+    }
+  }, [preferences, setValue]);
 
   const handleCancel = () => {
     try {
       if (preferences) {
-        reset({
-          emailNotifications: preferences.emailNotifications,
-          pushNotifications: preferences.pushNotifications,
-          language: preferences.language
-        });
+        setValue('emailNotifications', preferences.emailNotifications);
+        setValue('pushNotifications', preferences.pushNotifications);
+        setValue('language', "pl");
         showToast('Zmiany zostały anulowane', 'success');
       }
     } catch (error) {
@@ -62,38 +74,28 @@ export const PreferencesForm = memo(() => {
   return (
     <motion.form
       onSubmit={onSubmit}
-      className={styles.form}
+      className="w-full max-w-2xl sm:ml-0 sm:mr-auto space-y-8 px-4 sm:px-0"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
     >
-      <NotificationsSection register={register} />
-      <LanguageSection register={register} />
-
-      <div className={styles.buttonContainer}>
-        <button
-          type="button"
-          onClick={handleCancel}
-          className={styles.cancelButton}
-          disabled={isSubmitting || updatePreferences.isPending}
-        >
-          Anuluj zmiany
-        </button>
-
-        <button
-          type="submit"
-          disabled={isSubmitting || updatePreferences.isPending}
-          className={styles.submitButton}
-        >
-          {updatePreferences.isPending ? (
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 border-2 border-dark border-t-transparent rounded-full animate-spin" />
-              <span>Zapisywanie</span>
-            </div>
-          ) : (
-            "Zapisz preferencje"
-          )}
-        </button>
+      <div className="bg-dark/30 backdrop-blur-sm rounded-xl p-4 sm:p-6 md:p-8 border border-js/10 space-y-6">
+        <NotificationsSection 
+          register={register} 
+          values={formValues}
+          onChange={(field, value) => setValue(field, value)}
+        />
+        
+        <div className="w-full h-px bg-js/10" />
+        
+        <LanguageSection register={register} />
       </div>
+
+      <FormButtons 
+        onCancel={handleCancel}
+        isSubmitting={isSubmitting || updatePreferences.isPending}
+        submitText="Zapisz preferencje"
+        loadingText="Zapisywanie"
+      />
     </motion.form>
   );
 });

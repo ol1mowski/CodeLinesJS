@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import type { PreferencesData } from "../types/settings";
 
 const preferencesSchema = z.object({
   emailNotifications: z.boolean(),
@@ -8,17 +9,19 @@ const preferencesSchema = z.object({
   language: z.literal("pl"),
 });
 
-type PreferencesFormData = z.infer<typeof preferencesSchema>;
-
 interface UsePreferencesFormProps {
-  onSubmit: (data: PreferencesFormData) => Promise<void>;
-  defaultValues?: Partial<PreferencesFormData>;
+  onSubmit: (data: PreferencesData) => Promise<void>;
+  defaultValues?: PreferencesData;
 }
 
 export const usePreferencesForm = ({ onSubmit, defaultValues }: UsePreferencesFormProps) => {
-  const form = useForm<PreferencesFormData>({
+  const form = useForm<PreferencesData>({
     resolver: zodResolver(preferencesSchema),
-    defaultValues,
+    defaultValues: defaultValues || {
+      emailNotifications: false,
+      pushNotifications: false,
+      language: "pl"
+    },
   });
 
   const handleSubmit = form.handleSubmit(async (data) => {
