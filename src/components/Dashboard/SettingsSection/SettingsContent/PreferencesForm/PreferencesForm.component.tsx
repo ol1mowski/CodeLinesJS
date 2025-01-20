@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useEffect } from "react";
 import { motion } from "framer-motion";
 import { usePreferencesForm } from "../../hooks/usePreferencesForm";
 import { usePreferences } from "../../hooks/usePreferences";
@@ -11,11 +11,15 @@ import { PreferencesError } from "../../utils/api/preferences";
 export const PreferencesForm = memo(() => {
   const { preferences, isLoading, updatePreferences } = usePreferences();
   const { showToast } = useToast();
-  
+
   const { form, onSubmit } = usePreferencesForm({
     onSubmit: async (data) => {
       try {
-        await updatePreferences.mutateAsync(data);
+        await updatePreferences.mutateAsync({
+          emailNotifications: data.emailNotifications,
+          pushNotifications: data.pushNotifications,
+          language: "pl"
+        });
         showToast('Preferencje zostały zaktualizowane', 'success');
       } catch (error) {
         if (error instanceof PreferencesError) {
@@ -30,20 +34,29 @@ export const PreferencesForm = memo(() => {
         }
         showToast('Wystąpił błąd podczas aktualizacji preferencji', 'error');
       }
-    },
-    defaultValues: preferences,
+    }
   });
   
-  const { register, formState: { isSubmitting }, reset } = form;
+  const { register, formState: { isSubmitting }, reset, setValue, watch } = form;
+
+  // Obserwuj zmiany w formularzu
+  const formValues = watch();
+
+  // Aktualizuj formularz gdy dane zostaną pobrane
+  useEffect(() => {
+    if (preferences) {
+      setValue('emailNotifications', preferences.emailNotifications);
+      setValue('pushNotifications', preferences.pushNotifications);
+      setValue('language', "pl");
+    }
+  }, [preferences, setValue]);
 
   const handleCancel = () => {
     try {
       if (preferences) {
-        reset({
-          emailNotifications: preferences.emailNotifications,
-          pushNotifications: preferences.pushNotifications,
-          language: preferences.language
-        });
+        setValue('emailNotifications', preferences.emailNotifications);
+        setValue('pushNotifications', preferences.pushNotifications);
+        setValue('language', "pl");
         showToast('Zmiany zostały anulowane', 'success');
       }
     } catch (error) {
@@ -66,7 +79,11 @@ export const PreferencesForm = memo(() => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
     >
-      <NotificationsSection register={register} />
+      <NotificationsSection 
+        register={register} 
+        values={formValues}
+        onChange={(field, value) => setValue(field, value)}
+      />
       <LanguageSection register={register} />
 
       <div className={styles.buttonContainer}>

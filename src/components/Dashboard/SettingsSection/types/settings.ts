@@ -15,9 +15,8 @@ export type SecurityFormData = {
   confirmPassword: string;
 }
 
-export type PreferencesData = {
+export interface PreferencesData {
   emailNotifications: boolean;
   pushNotifications: boolean;
-  darkMode: boolean;
-  language: "pl" | "en";
+  language: "pl";
 } 

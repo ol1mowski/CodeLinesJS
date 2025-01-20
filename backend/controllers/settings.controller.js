@@ -164,7 +164,6 @@ export const getPreferences = async (req, res, next) => {
 export const updatePreferences = async (req, res, next) => {
   try {
     const updates = req.body;
-    
     const user = await User.findByIdAndUpdate(
       req.user.userId,
       { $set: { preferences: { ...updates } } },
