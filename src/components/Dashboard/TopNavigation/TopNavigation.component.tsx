@@ -11,12 +11,10 @@ export const TopNavigation = memo(() => {
   const { data } = useDashboardData();
 
   const username = useMemo(() => {
-    const userData = localStorage.getItem('user') || sessionStorage.getItem('user');
-    if (userData) {
-      const { username } = JSON.parse(userData);
-      return username;
+    if (!data?.profile?.username) {
+      return 'Użytkowniku';
     }
-    return data?.profile?.username ?? 'Użytkowniku';
+    return data.profile.username;
   }, [data?.profile?.username]);
 
   return (
