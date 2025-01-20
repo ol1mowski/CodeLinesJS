@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../../../UI/Button/Button.component";
 import { FormInput } from "../../../UI/Form/FormInput/FormInput.component";
 import { LoginFormData, loginSchema } from "../../../../schemas/auth.schema";
-import { useAuth } from "../../../../hooks/useAuth";
+import { useAuth } from "../../../../Hooks/useAuth";
 import { GoogleLoginButton } from "./GoogleLoginButton.component";
 import { RememberMeCheckbox } from "./RememberMeCheckbox.component";
 import { ErrorMessage } from "../../../UI/ErrorMessage/ErrorMessage.component";

@@ -3,14 +3,14 @@ import { memo } from "react";
 
 export const LoadingScreen = memo(() => (
   <div 
-    className="min-h-screen w-full flex items-center justify-center bg-gradient-to-b from-gray-900 via-blue-900 to-indigo-900"
+    className="min-h-screen w-full flex items-center justify-center bg-gradient-to-b from-dark via-dark-medium to-dark"
     role="status"
     aria-label="Ładowanie strony"
   >
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="text-2xl font-space text-indigo-400"
+      className="text-2xl font-space text-js"
     >
       <span className="sr-only">Ładowanie...</span>
       <div className="flex items-center gap-2">

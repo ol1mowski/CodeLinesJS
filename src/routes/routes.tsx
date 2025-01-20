@@ -6,6 +6,10 @@ import { ErrorPage } from "../components/ErrorPage/ErrorPage.component";
 import { StatsSection } from "../components/Dashboard/StatsSection/StatsSection.component";
 import { DashboardContent } from "../components/Dashboard/DashboardContent/DashboardContent.component";
 import { LearnSection } from "../components/Dashboard/LearnSection/LearnSection.component";
+import { CommunitySection } from "../components/Dashboard/CommunitySection/CommunitySection.component";
+import { SettingsSection } from "../components/Dashboard/SettingsSection/SettingsSection.component";
+import { GamesSection } from "../components/Dashboard/GamesSection/GamesSection.component";
+import { CodeEditor } from "../components/Dashboard/CodeEditor/CodeEditor.component";
 
 
 const Home = lazy(() => import("../pages/Home"));
@@ -15,6 +19,7 @@ export const router = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
+    errorElement: <ErrorPage />
   },
   {
     path: "/logowanie",
@@ -39,6 +44,22 @@ export const router = createBrowserRouter([
       {
         path: "learn",
         element: <LearnSection />
+      },
+      {
+        path: "community",
+        element: <CommunitySection />
+      },
+      {
+        path: "settings",
+        element: <SettingsSection />
+      },
+      {
+        path: "play",
+        element: <GamesSection />
+      },
+      {
+        path: "code",
+        element: <CodeEditor />
       }
     ]
   },

@@ -8,16 +8,16 @@ export const useAuthBackground = (containerRef: RefObject<HTMLDivElement>) => {
 
   const particleCount = useMemo(() => 100, []);
   const lights = useMemo(() => [
-    new THREE.PointLight("#4f46e5", 2),
-    new THREE.PointLight("#6366f1", 2),
-    new THREE.PointLight("#818cf8", 2),
+    new THREE.PointLight("#f7df1e", 2),
+    new THREE.PointLight("#f7df1e", 2),
+    new THREE.PointLight("#f7df1e", 2),
   ], []);
 
   const createParticle = useCallback(() => {
     const geometry = new THREE.TetrahedronGeometry(0.5, 0);
     const material = new THREE.MeshPhongMaterial({
-      color: new THREE.Color().setHSL(Math.random() * 0.2 + 0.5, 0.7, 0.5),
-      emissive: new THREE.Color().setHSL(Math.random() * 0.2 + 0.5, 0.7, 0.3),
+      color: new THREE.Color("#f7df1e").multiplyScalar(0.5),
+      emissive: new THREE.Color("#f7df1e").multiplyScalar(0.3),
       emissiveIntensity: 0.5,
       transparent: true,
       opacity: 0.8,
