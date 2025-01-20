@@ -12,12 +12,12 @@ export const GamesHeader = memo(() => {
       <div className="flex items-center gap-4">
         <motion.div
           whileHover={{ scale: 1.1, rotate: 15 }}
-          className="p-3 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20"
+          className="p-3 rounded-xl bg-gradient-to-br from-js/20 to-js/20"
         >
-          <FaGamepad className="w-8 h-8 text-indigo-400" />
+          <FaGamepad className="w-8 h-8 text-js" />
         </motion.div>
         <div>
-          <h1 className="text-3xl font-bold font-space text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">
+          <h1 className="text-3xl font-bold font-space text-transparent bg-clip-text bg-gradient-to-r from-js to-js">
             Gry JavaScript
           </h1>
           <p className="text-gray-400 mt-1">
