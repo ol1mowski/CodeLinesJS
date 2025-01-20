@@ -3,16 +3,15 @@ import { memo } from "react";
 import { FaSearch, FaSadTear } from "react-icons/fa";
 
 type NoGamesFoundProps = {
-  searchQuery?: string;
-  activeCategory?: string;
+  query: string;
 };
 
-export const NoGamesFound = memo(({ searchQuery }: NoGamesFoundProps) => {
+export const NoGamesFound = memo(({ query }: NoGamesFoundProps) => {
   const getMessage = () => {
-    if (searchQuery) {
+    if (query) {
       return {
         title: "Brak wyników wyszukiwania",
-        description: `Nie znaleziono gier dla zapytania "${searchQuery}"`,
+        description: `Nie znaleziono gier dla zapytania "${query}"`,
         icon: FaSearch
       };
     }
@@ -29,30 +28,32 @@ export const NoGamesFound = memo(({ searchQuery }: NoGamesFoundProps) => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="flex flex-col items-center justify-center p-12 text-center"
+      transition={{ duration: 0.3 }}
+      className="flex flex-col items-center justify-center py-16"
     >
       <motion.div
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
-        transition={{ delay: 0.2, type: "spring" }}
-        className="w-16 h-16 mb-6 rounded-full bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center"
+        transition={{ delay: 0.2, type: "spring", bounce: 0.4 }}
+        className="w-20 h-20 mb-6 rounded-full bg-js/10 flex items-center justify-center"
       >
-        <message.icon className="w-8 h-8 text-indigo-400" />
+        <message.icon className="w-10 h-10 text-js" />
       </motion.div>
+
       <motion.h3
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.3 }}
-        className="text-2xl font-bold font-space text-gray-200 mb-2"
+        className="text-2xl font-bold text-js mb-2 text-center"
       >
         {message.title}
       </motion.h3>
+
       <motion.p
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.4 }}
-        className="text-gray-400 max-w-md"
+        className="text-gray-400 text-center max-w-md"
       >
         {message.description}
       </motion.p>
