@@ -47,14 +47,15 @@ export const DeleteAccountForm = memo(() => {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="w-1/4"
+        className="w-full max-w-md mx-auto px-4 sm:px-0"
       >
         <WarningBox />
         <Button
           type="button"
           onClick={handleShowConfirmation}
-          className="w-full px-6 py-2 rounded-lg bg-red-500/20 text-red-400 
-            hover:bg-red-500/30 transition-colors duration-200 shadow-none"
+          className="w-full px-6 py-3 rounded-lg bg-red-500/20 text-red-400 
+            hover:bg-red-500/30 transition-colors duration-200 shadow-none
+            text-base sm:text-lg font-medium"
         >
           Chcę usunąć konto
         </Button>
@@ -63,13 +64,19 @@ export const DeleteAccountForm = memo(() => {
   }
 
   return (
-    <ConfirmationForm
-      register={form.register}
-      errors={form.formState.errors}
-      isSubmitting={isDeleting}
-      onCancel={handleCancel}
-      onSubmit={onSubmit}
-    />
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="w-full max-w-md mx-auto px-4 sm:px-0"
+    >
+      <ConfirmationForm
+        register={form.register}
+        errors={form.formState.errors}
+        isSubmitting={isDeleting}
+        onCancel={handleCancel}
+        onSubmit={onSubmit}
+      />
+    </motion.div>
   );
 });
 

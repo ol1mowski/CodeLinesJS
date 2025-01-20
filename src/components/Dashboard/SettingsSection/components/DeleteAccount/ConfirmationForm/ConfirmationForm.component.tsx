@@ -70,7 +70,7 @@ export const ConfirmationForm = memo(({
             <span>Usuwanie</span>
           </div>
         ) : (
-          "Usuń konto permanentnie"
+          "Definitywnie usuń konto"
         )}
       </button>
       <button
