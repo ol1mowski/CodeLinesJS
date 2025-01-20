@@ -5,62 +5,75 @@ import { Resource } from "../../../../types/learning.types";
 
 type ResourceCardProps = {
   resource: Resource;
+  isRecommended?: boolean;
 };
 
-const typeColors = {
-  documentation: "from-blue-500/20 to-indigo-500/20 text-indigo-400",
-  tutorial: "from-green-500/20 to-emerald-500/20 text-emerald-400",
-  article: "from-purple-500/20 to-fuchsia-500/20 text-fuchsia-400"
+const cardVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: {
+      type: "spring",
+      stiffness: 200,
+      damping: 20
+    }
+  }
 };
 
-const typeLabels = {
-  documentation: "Dokumentacja",
-  tutorial: "Tutorial",
-  article: "Artykuł"
-};
-
-export const ResourceCard = memo(({ resource }: ResourceCardProps) => {
+export const ResourceCard = memo(({ resource, isRecommended }: ResourceCardProps) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="bg-gray-800/50 backdrop-blur-lg rounded-xl border border-gray-700/50 p-6 hover:border-indigo-500/50 transition-all group"
+      variants={cardVariants}
+      whileHover={{ scale: 1.02 }}
+      className="group relative bg-dark-800/50 border border-js/10 rounded-xl p-5 hover:border-js/20 transition-colors"
     >
-      <div className="flex justify-between items-start mb-4">
-        <div className="flex-1">
-          <h3 className="text-lg font-bold font-space text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-indigo-400 transition-all">
-            {resource.title}
-          </h3>
-          <span className="text-sm text-gray-400">{resource.category}</span>
+      {isRecommended && (
+        <div className="absolute -top-2 -right-2 bg-js text-dark px-2 py-1 rounded-lg text-xs font-bold flex items-center gap-1">
+          <FaStar className="w-3 h-3" />
+          Polecane
         </div>
-        {resource.isRecommended && (
-          <FaStar className="text-yellow-400 ml-2" />
-        )}
+      )}
+
+      <div className="mb-4">
+        <h3 className="text-lg font-bold text-js mb-1 line-clamp-1">
+          {resource.title}
+        </h3>
+        <p className="text-gray-400 text-sm line-clamp-2">
+          {resource.description}
+        </p>
       </div>
 
-      <p className="text-gray-400 text-sm mb-4">
-        {resource.description}
-      </p>
+      <div className="space-y-4">
+        <div className="flex items-center gap-3 text-sm">
+          <span className={`px-2 py-0.5 rounded-md text-xs font-medium
+            ${resource.type === 'documentation' ? 'bg-blue-500/10 text-blue-400' :
+              resource.type === 'tutorial' ? 'bg-green-500/10 text-green-400' :
+              'bg-purple-500/10 text-purple-400'}`}
+          >
+            {resource.type === 'documentation' ? 'Dokumentacja' :
+             resource.type === 'tutorial' ? 'Tutorial' : 'Artykuł'}
+          </span>
 
-      <div className="flex items-center justify-between">
-        <span className={`
-          px-3 py-1 rounded-full text-sm font-medium
-          bg-gradient-to-r ${typeColors[resource.type]}
-        `}>
-          {typeLabels[resource.type]}
-        </span>
+          <span className={`px-2 py-0.5 rounded-md text-xs font-medium
+            ${resource.difficulty === 'beginner' ? 'bg-green-500/10 text-green-400' :
+              resource.difficulty === 'intermediate' ? 'bg-yellow-500/10 text-yellow-400' :
+              'bg-red-500/10 text-red-400'}`}
+          >
+            {resource.difficulty === 'beginner' ? 'Podstawowy' :
+             resource.difficulty === 'intermediate' ? 'Średni' : 'Zaawansowany'}
+          </span>
+        </div>
 
-        <motion.a
+        <a 
           href={resource.url}
           target="_blank"
           rel="noopener noreferrer"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-gradient-to-r from-indigo-500 to-purple-500 text-white hover:from-indigo-600 hover:to-purple-600 transition-all"
+          className="inline-flex items-center gap-2 text-js hover:text-js/80 transition-colors text-sm"
         >
-          Otwórz
+          Otwórz materiał
           <FaExternalLinkAlt className="w-3 h-3" />
-        </motion.a>
+        </a>
       </div>
     </motion.div>
   );

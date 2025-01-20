@@ -11,6 +11,7 @@ import { SettingsSection } from "../components/Dashboard/SettingsSection/Setting
 import { GamesSection } from "../components/Dashboard/GamesSection/GamesSection.component";
 import { CodeEditor } from "../components/Dashboard/CodeEditor/CodeEditor.component";
 
+
 const Home = lazy(() => import("../pages/Home"));
 const Auth = lazy(() => import("../pages/Auth"));
 
