@@ -31,12 +31,12 @@ export const FormButtons = memo(({
       className={styles.submitButton}
     >
       {isSubmitting ? (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-center gap-2 min-w-[100px]">
           <div className="w-4 h-4 border-2 border-dark border-t-transparent rounded-full animate-spin" />
-          <span>{loadingText}</span>
+          <span className="text-sm sm:text-base whitespace-nowrap">{loadingText}</span>
         </div>
       ) : (
-        submitText
+        <span className="text-sm sm:text-base whitespace-nowrap">{submitText}</span>
       )}
     </Button>
   </div>

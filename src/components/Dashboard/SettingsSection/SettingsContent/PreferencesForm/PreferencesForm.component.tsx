@@ -40,10 +40,8 @@ export const PreferencesForm = memo(() => {
   
   const { register, formState: { isSubmitting }, reset, setValue, watch } = form;
 
-  // Obserwuj zmiany w formularzu
   const formValues = watch();
 
-  // Aktualizuj formularz gdy dane zostaną pobrane
   useEffect(() => {
     if (preferences) {
       setValue('emailNotifications', preferences.emailNotifications);
@@ -76,16 +74,21 @@ export const PreferencesForm = memo(() => {
   return (
     <motion.form
       onSubmit={onSubmit}
-      className={styles.form}
+      className="w-full max-w-2xl mx-auto space-y-8 px-4 sm:px-6 md:px-8"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
     >
-      <NotificationsSection 
-        register={register} 
-        values={formValues}
-        onChange={(field, value) => setValue(field, value)}
-      />
-      <LanguageSection register={register} />
+      <div className="bg-dark/30 backdrop-blur-sm rounded-xl p-4 sm:p-6 md:p-8 border border-js/10 space-y-6">
+        <NotificationsSection 
+          register={register} 
+          values={formValues}
+          onChange={(field, value) => setValue(field, value)}
+        />
+        
+        <div className="w-full h-px bg-js/10" />
+        
+        <LanguageSection register={register} />
+      </div>
 
       <FormButtons 
         onCancel={handleCancel}
