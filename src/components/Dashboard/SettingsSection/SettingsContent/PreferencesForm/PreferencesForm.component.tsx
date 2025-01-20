@@ -74,7 +74,7 @@ export const PreferencesForm = memo(() => {
   return (
     <motion.form
       onSubmit={onSubmit}
-      className="w-full max-w-2xl mx-auto space-y-8 px-4 sm:px-6 md:px-8"
+      className="w-full max-w-2xl sm:ml-0 sm:mr-auto space-y-8 px-4 sm:px-0"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
     >

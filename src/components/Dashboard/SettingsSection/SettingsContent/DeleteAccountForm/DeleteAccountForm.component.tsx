@@ -47,7 +47,7 @@ export const DeleteAccountForm = memo(() => {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="w-full max-w-md mx-auto px-4 sm:px-0"
+        className="w-full max-w-md sm:ml-0 sm:mr-auto px-4 sm:px-0"
       >
         <WarningBox />
         <Button
@@ -67,7 +67,7 @@ export const DeleteAccountForm = memo(() => {
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="w-full max-w-md mx-auto px-4 sm:px-0"
+      className="w-full max-w-md sm:ml-0 sm:mr-auto px-4 sm:px-0"
     >
       <ConfirmationForm
         register={form.register}
