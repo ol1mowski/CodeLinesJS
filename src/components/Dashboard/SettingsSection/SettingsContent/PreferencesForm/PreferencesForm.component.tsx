@@ -4,6 +4,7 @@ import { usePreferencesForm } from "../../hooks/usePreferencesForm";
 import { usePreferences } from "../../hooks/usePreferences";
 import { NotificationsSection } from "../../components/Preferences/NotificationsSection/NotificationsSection.component";
 import { LanguageSection } from "../../components/Preferences/LanguageSection/LanguageSection.component";
+import { FormButtons } from "../../components/Profile/FormButtons/FormButtons.component";
 import { styles } from "./PreferencesForm.styles";
 import { useToast } from "../../contexts/ToastContext";
 import { PreferencesError } from "../../utils/api/preferences";
@@ -86,31 +87,12 @@ export const PreferencesForm = memo(() => {
       />
       <LanguageSection register={register} />
 
-      <div className={styles.buttonContainer}>
-        <button
-          type="button"
-          onClick={handleCancel}
-          className={styles.cancelButton}
-          disabled={isSubmitting || updatePreferences.isPending}
-        >
-          Anuluj zmiany
-        </button>
-
-        <button
-          type="submit"
-          disabled={isSubmitting || updatePreferences.isPending}
-          className={styles.submitButton}
-        >
-          {updatePreferences.isPending ? (
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 border-2 border-dark border-t-transparent rounded-full animate-spin" />
-              <span>Zapisywanie</span>
-            </div>
-          ) : (
-            "Zapisz preferencje"
-          )}
-        </button>
-      </div>
+      <FormButtons 
+        onCancel={handleCancel}
+        isSubmitting={isSubmitting || updatePreferences.isPending}
+        submitText="Zapisz preferencje"
+        loadingText="Zapisywanie"
+      />
     </motion.form>
   );
 });
