@@ -4,9 +4,10 @@ import { NotificationsSection } from '../NotificationsSection/NotificationsSecti
 import { LanguageSection } from '../LanguageSection/LanguageSection.component';
 import { FormButtons } from '../../../../components/Profile/FormButtons/FormButtons.component';
 import { UseFormSetValue } from 'react-hook-form';
+import { PreferencesData } from '../../../../types/settings';
 
 
-interface PreferencesFormContentProps {
+type PreferencesFormContentProps = {
   register: any;
   formValues: any;
   setValue: UseFormSetValue<PreferencesData>;
