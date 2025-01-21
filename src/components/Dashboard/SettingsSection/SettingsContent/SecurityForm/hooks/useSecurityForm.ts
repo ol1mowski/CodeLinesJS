@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
-import { updatePassword } from "../utils/api/security";
+import { updatePassword } from "../../../utils/api/security";
 
 const securitySchema = z.object({
   currentPassword: z.string().min(1, "Aktualne hasło jest wymagane"),

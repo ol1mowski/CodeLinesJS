@@ -6,7 +6,7 @@ import { Avatar } from "../../components/Profile/Avatar/Avatar.component";
 import { UserInfoFields } from "../../components/Profile/UserInfoFields/UserInfoFields.component";
 import { BioField } from "../../components/Profile/BioField/BioField.component";
 import { FormButtons } from "../../components/Profile/FormButtons/FormButtons.component";
-import { styles } from "./ProfileForm.styles";
+import { styles } from "./style/ProfileForm.styles";
 import { UserProfile } from "../../types/settings";
 import { useToast } from "../../contexts/ToastContext";
 
