@@ -3,7 +3,6 @@ import { render, screen } from '@testing-library/react';
 import { PreferencesForm } from '../PreferencesForm.component';
 import { usePreferences } from '../../../hooks/usePreferences';
 import { ToastProvider } from '../../../contexts/ToastContext';
-import { usePreferencesForm } from '../../../hooks/usePreferencesForm';
 
 vi.mock('../../../hooks/usePreferences');
 vi.mock('../../../hooks/usePreferencesForm', () => ({

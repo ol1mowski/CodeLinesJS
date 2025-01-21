@@ -1,6 +1,6 @@
-import { memo, useRef, useState, useEffect } from "react";
-import { Button } from "../../../../../UI/Button/Button.component";
+import { memo, useRef } from "react";
 import { styles } from "./Avatar.styles";
+import { Button } from "../../../../../../UI/Button/Button.component";
 
 type AvatarProps = {
   onChangeAvatar: (file: File) => void;
@@ -17,7 +17,6 @@ export const Avatar = memo(({
   isUploading, 
   src, 
   alt, 
-  onReset,
   preview 
 }: AvatarProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);

@@ -2,10 +2,9 @@ import { memo } from 'react';
 import { motion } from 'framer-motion';
 import { NotificationsSection } from '../NotificationsSection/NotificationsSection.component';
 import { LanguageSection } from '../LanguageSection/LanguageSection.component';
-import { FormButtons } from '../../../../components/Profile/FormButtons/FormButtons.component';
 import { UseFormSetValue } from 'react-hook-form';
 import { PreferencesData } from '../../../../types/settings';
-
+import { FormButtons } from '../../../ProfileForm/components/FormButtons/FormButtons.component';
 
 type PreferencesFormContentProps = {
   register: any;

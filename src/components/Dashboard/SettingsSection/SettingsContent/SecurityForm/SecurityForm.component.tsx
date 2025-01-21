@@ -2,7 +2,7 @@ import { memo, useCallback } from "react";
 import { motion } from "framer-motion";
 import { PasswordFields } from "./components/PasswordFields/PasswordFields.component";
 import { useSecurityForm } from "./hooks/useSecurityForm";
-import { FormButtons } from "../../components/Profile/FormButtons/FormButtons.component";
+import { FormButtons } from "../ProfileForm/components/FormButtons/FormButtons.component";
 import { useSecurityToasts } from "./hooks/useSecurityToasts";
 import { FORM_ANIMATION } from "./constans/constants";
 

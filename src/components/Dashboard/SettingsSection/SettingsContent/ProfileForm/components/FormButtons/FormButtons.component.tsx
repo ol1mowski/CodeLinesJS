@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { Button } from "../../../../../UI/Button/Button.component";
+import { Button } from "../../../../../../UI/Button/Button.component";
 import { styles } from "./FormButtons.styles";
 
 type FormButtonsProps = {

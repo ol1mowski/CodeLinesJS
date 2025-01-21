@@ -2,6 +2,8 @@ export const styles = {
   form: `w-full max-w-2xl sm:ml-0 sm:mr-auto 
     space-y-8 px-4 sm:px-0`,
 
+  usernameContainer: `flex flex-col gap-4`,
+
   container: `bg-dark/30 backdrop-blur-sm rounded-xl 
     p-4 sm:p-6 md:p-8 border border-js/10 
     space-y-6 md:space-y-8`,
