@@ -2,6 +2,7 @@ export type GameDifficulty = "easy" | "medium" | "hard";
 
 export type Game = {
   id: string;
+  rating: number;
   title: string;
   description: string;
   category: string;
