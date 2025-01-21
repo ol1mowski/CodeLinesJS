@@ -1,7 +1,7 @@
 import { memo } from "react";
 import { FaBell } from "react-icons/fa";
-import type { PreferencesData } from "../../../types/settings";
-import { styles } from "./NotificationsSection.styles";
+import type { PreferencesData } from "../../../../types/settings";
+import { styles } from "./style/NotificationsSection.styles";
 import { UseFormRegister } from "react-hook-form";
 
 type NotificationsSectionProps = {

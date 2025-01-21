@@ -1,8 +1,8 @@
 import { memo } from "react";
 import { FaGlobe } from "react-icons/fa";
 import type { UseFormRegister } from "react-hook-form";
-import type { PreferencesData } from "../../../types/settings";
-import { styles } from "./LanguageSection.styles";
+import type { PreferencesData } from "../../../../types/settings";
+import { styles } from "./style/LanguageSection.styles";
 
 type LanguageSectionProps = {
   register: UseFormRegister<PreferencesData>;
