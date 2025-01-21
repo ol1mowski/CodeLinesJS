@@ -25,6 +25,7 @@ export const styles = {
     bg-dark/50 text-gray-400
     border border-js/10
     hover:text-js hover:border-js/30
+    hover:bg-dark/60
     transition-colors duration-200 shadow-none
     text-sm sm:text-base
     disabled:opacity-50 disabled:cursor-not-allowed

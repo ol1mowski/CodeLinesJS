@@ -1,10 +1,10 @@
 import { memo } from "react";
 import { FaLock } from "react-icons/fa";
 import { motion } from "framer-motion";
-import { FormInput } from "../../../../../UI/Form/FormInput/FormInput.component";
+import { FormInput } from "../../../../../../UI/Form/FormInput/FormInput.component";
 import { UseFormRegister } from "react-hook-form";
-import { Button } from "../../../../../UI/Button/Button.component";
-import { styles } from "./ConfirmationForm.styles";
+import { Button } from "../../../../../../UI/Button/Button.component";
+import { styles } from "./style/ConfirmationForm.styles";
 
 interface ConfirmationFormProps {
   register: UseFormRegister<any>;
@@ -59,7 +59,7 @@ export const ConfirmationForm = memo(({
     </div>
 
     <div className={styles.buttons}>
-      <button
+      <Button
         type="submit"
         disabled={isSubmitting}
         className={styles.submitButton}
@@ -72,15 +72,15 @@ export const ConfirmationForm = memo(({
         ) : (
           "Definitywnie usuń konto"
         )}
-      </button>
-      <button
+      </Button>
+      <Button
         type="button"
         onClick={onCancel}
         disabled={isSubmitting}
         className={styles.cancelButton}
       >
         Anuluj
-      </button>
+      </Button>
     </div>
   </motion.form>
 ));

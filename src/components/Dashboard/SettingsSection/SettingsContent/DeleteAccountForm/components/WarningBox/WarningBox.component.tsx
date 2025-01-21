@@ -1,7 +1,7 @@
 import { memo } from "react";
 import { FaExclamationTriangle } from "react-icons/fa";
-import { warningItems } from "./WarningBox.data";
-import { styles } from "./WarningBox.styles";
+import { warningItems } from "./data/WarningBox.data";
+import { styles } from "./style/WarningBox.styles";
 
 export const WarningBox = memo(() => (
   <div className={styles.container}>
