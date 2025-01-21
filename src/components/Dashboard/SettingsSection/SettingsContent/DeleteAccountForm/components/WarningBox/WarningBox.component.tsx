@@ -6,7 +6,7 @@ import { styles } from "./style/WarningBox.styles";
 export const WarningBox = memo(() => (
   <div className={styles.container}>
     <div className={styles.content}>
-      <FaExclamationTriangle className={styles.icon} />
+      <FaExclamationTriangle className={styles.icon} data-testid="warning-icon" />
       <div>
         <h3 className={styles.title}>
           Usuwanie konta jest nieodwracalne

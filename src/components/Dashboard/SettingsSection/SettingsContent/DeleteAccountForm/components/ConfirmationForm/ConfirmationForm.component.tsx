@@ -31,6 +31,7 @@ export const ConfirmationForm = memo(({
     onSubmit={onSubmit}
   >
     <FormInput
+      id="password"
       type="password"
       label="Hasło"
       placeholder="Wprowadź hasło aby potwierdzić"
@@ -40,13 +41,14 @@ export const ConfirmationForm = memo(({
     />
 
     <div className={styles.confirmationField}>
-      <label className={styles.label}>
+      <label htmlFor="confirmation" className={styles.label}>
         Potwierdzenie
       </label>
       <p className={styles.hint}>
         Wpisz "USUŃ KONTO" aby potwierdzić
       </p>
       <input
+        id="confirmation"
         type="text"
         {...register("confirmation")}
         className={styles.input}
