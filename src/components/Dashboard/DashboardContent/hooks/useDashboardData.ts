@@ -4,8 +4,7 @@ import { useAuth } from '../../../../Hooks/useAuth';
 
 const API_URL = 'http://localhost:5001';
 
-const fetchDashboardData = async (): Promise<DashboardData> => {
-  const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+const fetchDashboardData = async (token: string): Promise<DashboardData> => {
   if (!token) throw new Error('Brak autoryzacji');
 
   const response = await fetch(`${API_URL}/api/dashboard`, {
@@ -33,7 +32,7 @@ export const useDashboardData = () => {
 
   return useQuery<DashboardData, Error>({
     queryKey: ['dashboard'],
-    queryFn: fetchDashboardData,
+    queryFn: () => fetchDashboardData(token || ''),
     enabled: isAuthenticated && !!token,
     staleTime: 1000 * 60 * 5,
     retry: (failureCount, error) => {
