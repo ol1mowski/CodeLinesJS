@@ -22,7 +22,7 @@ const StatItem = memo(({ icon, label, value }: StatItemProps) => (
 
 StatItem.displayName = "StatItem";
 
-interface StatsBlockProps {
+type StatsBlockProps = {
   stats: DashboardStats;
 }
 
