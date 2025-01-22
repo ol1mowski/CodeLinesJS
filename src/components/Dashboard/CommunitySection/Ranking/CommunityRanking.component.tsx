@@ -10,20 +10,16 @@ const CommunityRanking = memo(() => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <div className="lg:col-span-2 space-y-6">
-        <div className="bg-gray-800/50 backdrop-blur-lg rounded-xl p-6 border border-gray-700/50">
+        <div className="bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10 p-6 shadow-lg">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold font-space text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">
-              Ranking
-            </h2>
+            <h2 className="text-xl font-bold text-js">Ranking</h2>
             <RankingPeriodSelect value={period} onChange={setPeriod} />
           </div>
           <RankingList period={period} />
         </div>
       </div>
-      <div className="hidden lg:block">
-        <div className="sticky top-28">
-          <RankingStats />
-        </div>
+      <div className="space-y-6">
+        <RankingStats />
       </div>
     </div>
   );

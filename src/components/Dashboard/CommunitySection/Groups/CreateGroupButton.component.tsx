@@ -7,7 +7,7 @@ export const CreateGroupButton = memo(() => {
     <motion.button
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
-      className="px-4 py-2 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-medium hover:from-indigo-600 hover:to-purple-600 transition-colors flex items-center gap-2"
+      className="px-6 py-3 bg-js text-dark font-medium rounded-lg hover:bg-js/90 transition-colors flex items-center gap-2"
     >
       <FaPlus className="text-sm" />
       Utwórz grupę

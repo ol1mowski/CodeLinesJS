@@ -2,7 +2,6 @@ import { memo } from "react";
 import { GroupsList } from "./GroupsList.component";
 
 import { YourGroups } from "./YourGroups.component";
-import { PopularTags } from "./PopularTags.component";
 import { GroupsFilter } from "./GroupsFilter.component";
 import { CreateGroupButton } from "./CreateGroupButton.component";
 
@@ -19,7 +18,6 @@ const CommunityGroups = memo(() => {
       <div className="hidden lg:block">
         <div className="sticky top-28 space-y-6">
           <YourGroups />
-          <PopularTags />
         </div>
       </div>
     </div>

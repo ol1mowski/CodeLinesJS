@@ -1,35 +1,44 @@
 import { motion } from "framer-motion";
 import { memo } from "react";
-import { FaFire } from "react-icons/fa";
-
-const trendingTopics = [
-  { id: 1, name: "React", count: 234 },
-  { id: 2, name: "TypeScript", count: 156 },
-  { id: 3, name: "JavaScript", count: 142 },
-  { id: 4, name: "NextJS", count: 98 },
-];
+import { HiOutlineChatBubbleBottomCenterText } from "react-icons/hi2";
+import { useTrending } from "../../../../Hooks/useTrending";
 
 export const TrendingTopics = memo(() => {
+  const { topics, isLoading } = useTrending();
+
+  if (isLoading) {
+    return (
+      <motion.div className="bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10 p-6 shadow-lg animate-pulse">
+        <div className="h-6 w-32 bg-js/10 rounded mb-4" />
+        <div className="space-y-4">
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} className="flex justify-between">
+              <div className="h-4 w-24 bg-js/10 rounded" />
+              <div className="h-4 w-12 bg-js/10 rounded" />
+            </div>
+          ))}
+        </div>
+      </motion.div>
+    );
+  }
+
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="bg-gray-800/50 backdrop-blur-lg rounded-xl p-6 border border-gray-700/50"
-    >
-      <h3 className="text-lg font-bold font-space text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-400 flex items-center gap-2 mb-4">
-        <FaFire className="text-orange-400" />
-        Popularne tematy
-      </h3>
-      <div className="space-y-3">
-        {trendingTopics.map((topic) => (
-          <div
-            key={topic.id}
-            className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-700/30 transition-colors cursor-pointer"
-          >
+    <motion.div className="bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10 p-6 shadow-lg">
+      <h2 className="text-xl font-bold text-js mb-4">Popularne tematy</h2>
+      <div className="space-y-4">
+        {topics?.map(topic => (
+          <div key={topic.id} className="flex items-center justify-between">
             <span className="text-gray-300">#{topic.name}</span>
-            <span className="text-sm text-gray-500">{topic.count} postów</span>
+            <span className="text-js">{topic.count}</span>
           </div>
         ))}
+        { !topics?.length && (
+          <div className="text-center text-gray-400 py-8">
+            <HiOutlineChatBubbleBottomCenterText className="w-12 h-12 mx-auto mb-3 opacity-50" />
+            <div>Brak popularnych tematów do wyświetlenia</div>
+          </div>
+        )}
       </div>
     </motion.div>
   );

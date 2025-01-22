@@ -7,66 +7,66 @@ type LessonCardProps = {
   lesson: Lesson;
 };
 
-const difficultyColors = {
-  beginner: "from-green-500 to-emerald-500",
-  intermediate: "from-blue-500 to-indigo-500",
-  advanced: "from-purple-500 to-fuchsia-500"
+const cardVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: {
+      type: "spring",
+      stiffness: 200,
+      damping: 20
+    }
+  }
 };
 
 export const LessonCard = memo(({ lesson }: LessonCardProps) => {
+  const progressBarWidth = `${lesson.progress}%`;
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="bg-gray-800/50 backdrop-blur-lg rounded-xl border border-gray-700/50 overflow-hidden group hover:border-indigo-500/50 transition-all"
+      variants={cardVariants}
+      whileHover={{ scale: 1.02 }}
+      className="bg-dark-800/50 border border-js/10 rounded-xl p-5 hover:border-js/20 transition-colors"
     >
-      <div className="relative h-2">
-        <motion.div
-          initial={{ width: 0 }}
-          animate={{ width: `${lesson.progress}%` }}
-          transition={{ duration: 1, ease: "easeOut" }}
-          className={`absolute top-0 left-0 h-full bg-gradient-to-r ${difficultyColors[lesson.difficulty]}`}
-        />
+      <div className="flex justify-between items-start mb-4">
+        <div>
+          <h3 className="text-lg font-bold text-js mb-1">
+            {lesson.title}
+          </h3>
+          <p className="text-gray-400 text-sm line-clamp-2">
+            {lesson.description}
+          </p>
+        </div>
+        <span className="flex items-center gap-1 text-js bg-js/10 px-2.5 py-1 rounded-lg text-sm">
+          <FaStar className="w-4 h-4" />
+          {lesson.xp} XP
+        </span>
       </div>
 
-      <div className="p-6">
-        <div className="flex justify-between items-start mb-4">
-          <div>
-            <h3 className="text-lg font-bold font-space text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-indigo-400 transition-all">
-              {lesson.title}
-            </h3>
-            <span className="text-sm text-gray-400">{lesson.category}</span>
-          </div>
-          <div className="flex items-center gap-1 text-yellow-400">
-            <FaStar />
-            <span className="text-sm font-medium">{lesson.xp} XP</span>
-          </div>
+      <div className="space-y-4">
+        <div className="flex items-center gap-4 text-sm text-gray-400">
+          <span className="flex items-center gap-1">
+            <FaClock className="w-4 h-4" />
+            {lesson.duration}
+          </span>
+          <span className={`px-2 py-0.5 rounded-md text-xs font-medium
+            ${lesson.difficulty === 'beginner' ? 'bg-green-500/10 text-green-400' :
+              lesson.difficulty === 'intermediate' ? 'bg-yellow-500/10 text-yellow-400' :
+              'bg-red-500/10 text-red-400'}`}
+          >
+            {lesson.difficulty === 'beginner' ? 'Podstawowy' :
+             lesson.difficulty === 'intermediate' ? 'Średni' : 'Zaawansowany'}
+          </span>
         </div>
 
-        <p className="text-gray-400 text-sm mb-4">
-          {lesson.description}
-        </p>
-
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 text-gray-400 text-sm">
-            <FaClock />
-            <span>{lesson.duration}</span>
-          </div>
-
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className={`
-              px-4 py-2 rounded-lg text-sm font-medium
-              ${lesson.isCompleted
-                ? "bg-green-500/20 text-green-400"
-                : "bg-gradient-to-r from-indigo-500 to-purple-500 text-white hover:from-indigo-600 hover:to-purple-600"
-              }
-              transition-all
-            `}
-          >
-            {lesson.isCompleted ? "Ukończono" : "Rozpocznij"}
-          </motion.button>
+        <div className="relative h-2 bg-dark rounded-full overflow-hidden">
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: progressBarWidth }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="absolute inset-y-0 left-0 bg-js rounded-full"
+          />
         </div>
       </div>
     </motion.div>
