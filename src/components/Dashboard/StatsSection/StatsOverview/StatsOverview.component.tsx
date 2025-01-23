@@ -3,9 +3,10 @@ import { motion } from "framer-motion";
 import { LoadingScreen } from "../../../UI/LoadingScreen/LoadingScreen.component";
 import { LevelProgress } from "./LevelProgress.component";
 import { StatCard } from "./StatCard.component";
-import { BadgesGrid } from "./BadgesGrid.component";
 import { FaTrophy, FaFire, FaClock, FaStar } from "react-icons/fa";
 import { useUserStats } from "../hooks/useUserStats";
+import { UserStats } from "../../../../types/stats.types";
+import { BadgesGrid } from "./BadgesGrid/BadgesGrid.component";
 
 type StatsOverviewProps = {
   stats: UserStats;
