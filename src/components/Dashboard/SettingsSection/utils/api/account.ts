@@ -1,7 +1,7 @@
 const API_URL = 'http://localhost:5001';
 
 const getAuthHeaders = () => ({
-  'Authorization': `Bearer ${localStorage.getItem('token')}`,
+  'Authorization': `Bearer ${localStorage.getItem('token') || sessionStorage.getItem('token')}`,
   'Content-Type': 'application/json',
 });
 
