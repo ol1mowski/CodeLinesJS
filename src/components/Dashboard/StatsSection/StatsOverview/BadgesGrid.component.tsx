@@ -22,8 +22,24 @@ const item = {
   show: { opacity: 1, y: 0 }
 };
 
+const formatDate = (dateString: string) => {
+  try {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+      return 'Data nieznana';
+    }
+    return date.toLocaleDateString('pl-PL', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  } catch {
+    return 'Data nieznana';
+  }
+};
+
 export const BadgesGrid = memo(({ badges }: BadgesGridProps) => {
-  if (!badges.length) {
+  if (!badges?.length) {
     return (
       <div className={styles.card.base}>
         <h3 className={styles.card.title}>Odznaki</h3>
@@ -49,13 +65,18 @@ export const BadgesGrid = memo(({ badges }: BadgesGridProps) => {
             variants={item}
             className="flex flex-col items-center p-4 bg-dark/30 rounded-lg border border-js/10 hover:border-js/30 transition-colors"
           >
-            <span className="text-3xl mb-2">{badge.icon}</span>
+            <span className="text-3xl mb-2">{badge.icon || '🏆'}</span>
             <h4 className="text-js font-medium text-sm text-center">
               {badge.name}
             </h4>
             <p className="text-gray-400 text-xs mt-1">
-              {new Date(badge.earnedAt).toLocaleDateString()}
+              {formatDate(badge.earnedAt)}
             </p>
+            {badge.description && (
+              <p className="text-gray-400 text-xs mt-1 text-center">
+                {badge.description}
+              </p>
+            )}
           </motion.div>
         ))}
       </motion.div>

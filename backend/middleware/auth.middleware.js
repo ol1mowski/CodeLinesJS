@@ -1,7 +1,8 @@
 import jwt from 'jsonwebtoken';
 import { AuthError } from '../utils/errors.js';
+import { User } from '../models/user.model.js';
 
-export const authMiddleware = (req, res, next) => {
+export const authMiddleware = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
     
@@ -25,6 +26,12 @@ export const authMiddleware = (req, res, next) => {
         userId: decoded.userId,
         email: decoded.email
       };
+
+      // Aktualizacja lastActive przy każdym żądaniu
+      await User.findByIdAndUpdate(decoded.userId, {
+        $set: { 'stats.lastActive': new Date() }
+      });
+
       next();
     } catch (error) {
       if (error.name === 'JsonWebTokenError') {

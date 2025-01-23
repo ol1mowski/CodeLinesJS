@@ -1,11 +1,11 @@
 import { memo, useMemo } from "react";
 import { motion } from "framer-motion";
-import { UserStats } from "../../../../types/stats.types";
 import { LoadingScreen } from "../../../UI/LoadingScreen/LoadingScreen.component";
 import { LevelProgress } from "./LevelProgress.component";
 import { StatCard } from "./StatCard.component";
 import { BadgesGrid } from "./BadgesGrid.component";
 import { FaTrophy, FaFire, FaClock, FaStar } from "react-icons/fa";
+import { useUserStats } from "../hooks/useUserStats";
 
 type StatsOverviewProps = {
   stats: UserStats;
@@ -23,42 +23,66 @@ const container = {
 };
 
 export const StatsOverview = memo(({ stats, isLoading }: StatsOverviewProps) => {
+  const { data: statsData, error } = useUserStats();
+
   const formatTime = useMemo(() => (minutes: number): string => {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
     return `${hours}h ${mins}m`;
   }, []);
 
-  const statsCards = useMemo(() => [
-    {
-      icon: FaTrophy,
-      label: "Ukończone Wyzwania",
-      value: stats.completedChallenges.toString(),
-      gradient: "from-amber-500 to-orange-500"
-    },
-    {
-      icon: FaFire,
-      label: "Aktualny Streak",
-      value: `${stats.currentStreak} dni`,
-      subValue: `Najlepszy: ${stats.bestStreak} dni`,
-      gradient: "from-red-500 to-pink-500"
-    },
-    {
-      icon: FaStar,
-      label: "Średni Wynik",
-      value: `${stats.averageScore}%`,
-      gradient: "from-indigo-500 to-purple-500"
-    },
-    {
-      icon: FaClock,
-      label: "Czas Nauki",
-      value: formatTime(stats.totalTimeSpent),
-      gradient: "from-emerald-500 to-teal-500"
-    }
-  ], [stats, formatTime]);
+  const statsCards = useMemo(() => {
+    if (!statsData) return [];
+    
+    return [
+      {
+        icon: FaTrophy,
+        label: "Ukończone Wyzwania",
+        value: statsData.completedChallenges.toString(),
+        gradient: "from-amber-500 to-orange-500"
+      },
+      {
+        icon: FaFire,
+        label: "Aktualny Streak",
+        value: `${statsData.currentStreak} dni`,
+        subValue: `Najlepszy: ${statsData.bestStreak} dni`,
+        gradient: "from-red-500 to-pink-500"
+      },
+      {
+        icon: FaStar,
+        label: "Średni Wynik",
+        value: `${statsData.averageScore}%`,
+        gradient: "from-indigo-500 to-purple-500"
+      },
+      {
+        icon: FaClock,
+        label: "Czas Nauki",
+        value: formatTime(statsData.totalTimeSpent),
+        gradient: "from-emerald-500 to-teal-500"
+      }
+    ];
+  }, [statsData, formatTime]);
 
   if (isLoading) {
     return <LoadingScreen />;
+  }
+
+  if (error) {
+    return (
+      <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
+        <p className="text-red-500">
+          Wystąpił błąd podczas ładowania statystyk: {error.message}
+        </p>
+      </div>
+    );
+  }
+
+  if (!statsData) {
+    return (
+      <div className="p-4 bg-dark/50 rounded-lg">
+        <p className="text-gray-400">Brak dostępnych statystyk</p>
+      </div>
+    );
   }
 
   return (
@@ -69,9 +93,9 @@ export const StatsOverview = memo(({ stats, isLoading }: StatsOverviewProps) => 
       className="space-y-6"
     >
       <LevelProgress
-        level={stats.level}
-        experience={stats.experiencePoints}
-        nextLevel={stats.nextLevelThreshold}
+        level={statsData.level}
+        experience={statsData.experiencePoints}
+        nextLevel={statsData.nextLevelThreshold}
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -80,7 +104,7 @@ export const StatsOverview = memo(({ stats, isLoading }: StatsOverviewProps) => 
         ))}
       </div>
 
-      <BadgesGrid badges={stats.badges} />
+      <BadgesGrid badges={statsData.badges} />
     </motion.div>
   );
 });
