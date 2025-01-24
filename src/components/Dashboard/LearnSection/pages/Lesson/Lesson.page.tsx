@@ -15,7 +15,6 @@ export const LessonPage = memo(() => {
   const [activeSection, setActiveSection] = useState(0);
   
   const {
-    progress,
     markSectionComplete,
     saveQuizResult,
     calculateProgress
@@ -26,7 +25,24 @@ export const LessonPage = memo(() => {
   }, [id]);
 
   if (!lesson) {
-    return <div>Lekcja nie została znaleziona</div>;
+    return (
+      <div className="min-h-screen bg-dark/50 backdrop-blur-sm py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-js mb-4">
+              Lekcja nie została znaleziona
+            </h2>
+            <Link 
+              to="/dashboard/learn"
+              className="inline-flex items-center gap-2 text-js hover:text-js/80 transition-colors"
+            >
+              <FaChevronLeft className="w-4 h-4" />
+              Wróć do listy lekcji
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   const handleSectionChange = (index: number) => {
@@ -40,8 +56,7 @@ export const LessonPage = memo(() => {
   const handleComplete = () => {
     const totalProgress = calculateProgress(lesson);
     if (totalProgress === 100) {
-      // Tutaj można dodać logikę nagradzania użytkownika
-      navigate('/learn');
+      navigate('/dashboard/learn');
     }
   };
 
@@ -63,7 +78,7 @@ export const LessonPage = memo(() => {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Link 
-            to="/learn" 
+            to="/dashboard/learn" 
             className="inline-flex items-center gap-2 text-js hover:text-js/80 transition-colors mb-6"
           >
             <FaChevronLeft className="w-4 h-4" />

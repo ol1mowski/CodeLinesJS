@@ -2,132 +2,147 @@ import type { Lesson } from "../types/lesson.types";
 
 export const lessons: Lesson[] = [
   {
-    id: "1",
-    title: "Wprowadzenie do async/await w JavaScript",
-    description: "Poznaj podstawy asynchronicznego programowania w JavaScript z wykorzystaniem async/await.",
-    duration: "20 min",
+    id: "js-variables",
+    title: "Zmienne w JavaScript",
+    description: "Poznaj podstawy deklarowania i używania zmiennych w JavaScript. Dowiedz się o różnicach między var, let i const.",
+    duration: "15 min",
     difficulty: "beginner",
-    xp: 100,
-    progress: 0,
+    xp: 50,
+    progress: {
+      completedSections: [],
+      quizResults: {}
+    },
     sections: [
       {
-        title: "Czym jest programowanie asynchroniczne?",
-        content: `Programowanie asynchroniczne pozwala na wykonywanie operacji bez blokowania głównego wątku aplikacji. 
-        Jest to szczególnie ważne w JavaScript, gdzie większość operacji I/O (np. zapytania sieciowe, operacje na plikach) 
-        jest asynchroniczna.`,
+        title: "Wprowadzenie do zmiennych",
+        content: `Zmienne są podstawowym elementem każdego języka programowania. W JavaScript służą do przechowywania danych, 
+        które możemy później wykorzystać w naszym programie. Możemy je porównać do pudełek, w których przechowujemy różne wartości.`,
         examples: [
           {
-            code: `// Przykład operacji synchronicznej
-const result = database.query('SELECT * FROM users');
-console.log(result);
+            code: `// Deklaracja zmiennej
+let name = "John";
+console.log(name); // "John"
 
-// Przykład operacji asynchronicznej
-database.query('SELECT * FROM users', (error, result) => {
-  console.log(result);
-});`,
+// Zmiana wartości
+name = "Jane";
+console.log(name); // "Jane"`,
             language: "javascript",
-            explanation: "W pierwszym przykładzie kod czeka na wynik zapytania, blokując wykonywanie. W drugim przykładzie kod kontynuuje działanie, a wynik jest obsługiwany w callback'u."
+            explanation: "Zmienna może przechowywać różne wartości i możemy je zmieniać w trakcie działania programu."
           }
         ]
       },
       {
-        title: "Promises - fundament async/await",
-        content: `Promise to obiekt reprezentujący ostateczne zakończenie (lub niepowodzenie) 
-        operacji asynchronicznej. Promise może znajdować się w jednym z trzech stanów: pending, 
-        fulfilled lub rejected.`,
+        title: "var vs let vs const",
+        content: `JavaScript oferuje trzy sposoby deklarowania zmiennych: var, let i const. Każdy z nich ma swoje 
+        specyficzne zastosowania i ograniczenia. Współcześnie najczęściej używamy let i const.`,
         examples: [
           {
-            code: `const promise = new Promise((resolve, reject) => {
-  // Symulacja operacji asynchronicznej
-  setTimeout(() => {
-    const success = true;
-    if (success) {
-      resolve('Operacja zakończona sukcesem!');
-    } else {
-      reject('Wystąpił błąd!');
-    }
-  }, 1000);
-});
+            code: `// var - stary sposób (nie zalecany)
+var x = 1;
+x = 2; // można zmienić
+var x = 3; // można redeklarować
 
-promise
-  .then(result => console.log(result))
-  .catch(error => console.error(error));`,
+// let - nowoczesny sposób
+let y = 1;
+y = 2; // można zmienić
+// let y = 3; // błąd! nie można redeklarować
+
+// const - dla stałych wartości
+const z = 1;
+// z = 2; // błąd! nie można zmienić
+// const z = 3; // błąd! nie można redeklarować`,
             language: "javascript",
-            explanation: "Promise przyjmuje funkcję executor z dwoma callbackami: resolve i reject. Możemy obsłużyć wynik używając .then() i .catch()."
+            explanation: "const używamy dla wartości, które nie powinny się zmieniać, let dla zmiennych wartości."
           }
         ]
       },
       {
-        title: "Async/Await w praktyce",
-        content: `Async/await to składnia, która pozwala na pisanie kodu asynchronicznego w sposób, 
-        który wygląda jak synchroniczny. Słowo kluczowe async oznacza, że funkcja zawsze zwraca Promise, 
-        a await pozwala na "czekanie" na wynik Promise.`,
+        title: "Zasięg zmiennych",
+        content: `Zasięg (scope) określa, gdzie w kodzie zmienna jest dostępna. JavaScript ma zasięg blokowy dla let i const, 
+        oraz zasięg funkcyjny dla var.`,
         examples: [
           {
-            code: `async function getUser(id) {
-  try {
-    const response = await fetch(\`/api/users/\${id}\`);
-    const user = await response.json();
-    return user;
-  } catch (error) {
-    console.error('Błąd podczas pobierania użytkownika:', error);
-    throw error;
+            code: `function example() {
+  let x = 1;
+  
+  if (true) {
+    let y = 2;
+    const z = 3;
+    console.log(x); // 1 - dostępne
+    console.log(y); // 2 - dostępne
+    console.log(z); // 3 - dostępne
   }
-}
-
-// Użycie
-async function main() {
-  const user = await getUser(1);
-  console.log(user);
+  
+  console.log(x); // 1 - dostępne
+  // console.log(y); // błąd! - niedostępne
+  // console.log(z); // błąd! - niedostępne
 }`,
             language: "javascript",
-            explanation: "Funkcja getUser używa async/await do obsługi zapytania HTTP. Kod jest czytelniejszy niż przy użyciu .then() i lepiej obsługuje błędy dzięki try/catch."
+            explanation: "Zmienne zadeklarowane przez let i const są dostępne tylko wewnątrz bloku, w którym zostały zadeklarowane."
           }
         ]
       },
       {
         title: "Sprawdź swoją wiedzę",
-        content: "Sprawdź swoją wiedzę z async/await odpowiadając na poniższe pytania.",
+        content: "Sprawdź swoją wiedzę o zmiennych w JavaScript odpowiadając na poniższe pytania.",
         quiz: [
           {
             id: "q1",
-            question: "Co oznacza słowo kluczowe 'async' przed funkcją?",
+            question: "Która deklaracja zmiennej jest zalecana dla wartości, które nie powinny się zmieniać?",
             options: [
-              "Funkcja będzie wykonywana synchronicznie",
-              "Funkcja zawsze zwraca Promise",
-              "Funkcja nie może używać await",
-              "Funkcja musi przyjmować callback"
+              "var",
+              "let",
+              "const",
+              "static"
             ],
-            correctAnswer: 1,
-            explanation: "Słowo kluczowe 'async' oznacza, że funkcja zawsze zwraca Promise, nawet jeśli jawnie nie używamy return Promise."
+            correctAnswer: 2,
+            explanation: "const jest używane do deklarowania stałych wartości, które nie powinny być zmieniane."
           },
           {
             id: "q2",
-            question: "Gdzie możemy używać słowa kluczowego 'await'?",
+            question: "Jaki jest zasięg zmiennych zadeklarowanych przez let?",
             options: [
-              "W dowolnym miejscu w kodzie",
-              "Tylko wewnątrz pętli",
-              "Tylko wewnątrz funkcji async",
-              "Tylko w callback'ach"
+              "Globalny",
+              "Funkcyjny",
+              "Blokowy",
+              "Modułowy"
             ],
             correctAnswer: 2,
-            explanation: "Słowa kluczowego 'await' możemy używać tylko wewnątrz funkcji oznaczonych jako async."
-          },
-          {
-            id: "q3",
-            question: "Co się stanie, jeśli Promise zostanie odrzucony (rejected) przy użyciu await?",
-            options: [
-              "Kod będzie kontynuował wykonywanie",
-              "Zostanie rzucony wyjątek",
-              "Promise automatycznie się zresetuje",
-              "Aplikacja się zawiesi"
-            ],
-            correctAnswer: 1,
-            explanation: "Gdy Promise zostanie odrzucony podczas używania await, zostanie rzucony wyjątek, który możemy obsłużyć używając try/catch."
+            explanation: "let ma zasięg blokowy, co oznacza, że zmienna jest dostępna tylko wewnątrz bloku, w którym została zadeklarowana."
           }
         ]
       }
     ]
+  },
+  // Dodaj więcej lekcji...
+  {
+    id: "js-functions",
+    title: "Funkcje w JavaScript",
+    description: "Naucz się tworzyć i używać funkcji w JavaScript. Poznaj różne sposoby ich deklarowania i zastosowania.",
+    duration: "25 min",
+    difficulty: "intermediate",
+    xp: 75,
+    progress: {
+      completedSections: [],
+      quizResults: {}
+    },
+    sections: [
+      // ... sekcje dla funkcji
+    ]
+  },
+  {
+    id: "js-async",
+    title: "Programowanie asynchroniczne",
+    description: "Zaawansowane techniki programowania asynchronicznego z wykorzystaniem Promise, async/await i callbacks.",
+    duration: "35 min",
+    difficulty: "advanced",
+    xp: 100,
+    progress: {
+      completedSections: [],
+      quizResults: {}
+    },
+    sections: [
+      // ... sekcje dla async
+    ]
   }
-  // Więcej lekcji...
 ]; 
