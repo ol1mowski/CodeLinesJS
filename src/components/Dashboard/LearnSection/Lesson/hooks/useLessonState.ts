@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLesson } from '../../hooks/useLesson';
-import { Lesson } from '../../../../../types/learning.types';
+import { type Lesson } from '../../types/lesson.types';
 
 
 export const useLessonState = (lessonId: string, userId: string) => {
