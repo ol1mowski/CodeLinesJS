@@ -1,6 +1,7 @@
 import { memo } from "react";
 import { motion } from "framer-motion";
 import { CodeBlock } from "../../UI/CodeBlock/CodeBlock.component";
+import { LessonQuiz } from "./LessonQuiz.component";
 import type { LessonSection } from "../../types/lesson.types";
 
 interface LessonContentProps {
@@ -8,6 +9,11 @@ interface LessonContentProps {
 }
 
 export const LessonContent = memo(({ sections }: LessonContentProps) => {
+  const handleQuizComplete = () => {
+    // Tu można dodać logikę zapisywania postępu
+    console.log('Quiz completed');
+  };
+
   return (
     <div className="space-y-12">
       {sections.map((section, index) => (
@@ -17,6 +23,7 @@ export const LessonContent = memo(({ sections }: LessonContentProps) => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: index * 0.1 }}
           className="space-y-6"
+          id={`section-${index}`}
         >
           <h2 className="text-2xl font-bold text-js">
             {section.title}
@@ -44,6 +51,15 @@ export const LessonContent = memo(({ sections }: LessonContentProps) => {
               )}
             </div>
           ))}
+
+          {section.quiz && (
+            <div className="mt-8">
+              <LessonQuiz
+                questions={section.quiz}
+                onComplete={handleQuizComplete}
+              />
+            </div>
+          )}
         </motion.div>
       ))}
     </div>

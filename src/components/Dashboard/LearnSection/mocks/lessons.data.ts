@@ -84,6 +84,48 @@ async function main() {
             explanation: "Funkcja getUser używa async/await do obsługi zapytania HTTP. Kod jest czytelniejszy niż przy użyciu .then() i lepiej obsługuje błędy dzięki try/catch."
           }
         ]
+      },
+      {
+        title: "Sprawdź swoją wiedzę",
+        content: "Sprawdź swoją wiedzę z async/await odpowiadając na poniższe pytania.",
+        quiz: [
+          {
+            id: "q1",
+            question: "Co oznacza słowo kluczowe 'async' przed funkcją?",
+            options: [
+              "Funkcja będzie wykonywana synchronicznie",
+              "Funkcja zawsze zwraca Promise",
+              "Funkcja nie może używać await",
+              "Funkcja musi przyjmować callback"
+            ],
+            correctAnswer: 1,
+            explanation: "Słowo kluczowe 'async' oznacza, że funkcja zawsze zwraca Promise, nawet jeśli jawnie nie używamy return Promise."
+          },
+          {
+            id: "q2",
+            question: "Gdzie możemy używać słowa kluczowego 'await'?",
+            options: [
+              "W dowolnym miejscu w kodzie",
+              "Tylko wewnątrz pętli",
+              "Tylko wewnątrz funkcji async",
+              "Tylko w callback'ach"
+            ],
+            correctAnswer: 2,
+            explanation: "Słowa kluczowego 'await' możemy używać tylko wewnątrz funkcji oznaczonych jako async."
+          },
+          {
+            id: "q3",
+            question: "Co się stanie, jeśli Promise zostanie odrzucony (rejected) przy użyciu await?",
+            options: [
+              "Kod będzie kontynuował wykonywanie",
+              "Zostanie rzucony wyjątek",
+              "Promise automatycznie się zresetuje",
+              "Aplikacja się zawiesi"
+            ],
+            correctAnswer: 1,
+            explanation: "Gdy Promise zostanie odrzucony podczas używania await, zostanie rzucony wyjątek, który możemy obsłużyć używając try/catch."
+          }
+        ]
       }
     ]
   }
