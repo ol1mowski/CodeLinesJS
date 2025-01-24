@@ -1,3 +1,4 @@
+import React from 'react';
 import { memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaStar } from "react-icons/fa";
@@ -17,7 +18,7 @@ export const LessonReward = memo(({ xp, isVisible, onClose }: LessonRewardProps)
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 50 }}
           className="fixed bottom-24 right-4 max-w-sm bg-dark-800/95 border border-js/20 
-            rounded-lg p-4 shadow-lg backdrop-blur-sm"
+            rounded-lg p-4 shadow-lg backdrop-blur-sm z-50"
         >
           <div className="flex items-start gap-3">
             <div className="p-2 bg-js/10 rounded-lg">
