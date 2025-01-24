@@ -1,29 +1,50 @@
 import { useState, useEffect } from 'react';
 import type { Lesson, LessonProgress, Reward } from '../types/lesson.types';
 
+const PROGRESS_KEY = 'user-lessons-progress';
+
 export const useLesson = (lessonId: string) => {
   const [progress, setProgress] = useState<LessonProgress>(() => {
-    const saved = localStorage.getItem(`lesson-progress-${lessonId}`);
-    return saved ? JSON.parse(saved) : {
+    const savedProgress = localStorage.getItem(PROGRESS_KEY);
+    const allProgress = savedProgress ? JSON.parse(savedProgress) : {};
+    
+    return allProgress[lessonId] || {
       completedSections: [],
-      quizResults: {}
+      quizResults: {},
+      xpEarned: 0,
+      isCompleted: false,
+      lastAccessedAt: new Date().toISOString()
     };
   });
 
   const [currentReward, setCurrentReward] = useState<Reward | null>(null);
 
   useEffect(() => {
-    localStorage.setItem(`lesson-progress-${lessonId}`, JSON.stringify(progress));
+    const savedProgress = localStorage.getItem(PROGRESS_KEY);
+    const allProgress = savedProgress ? JSON.parse(savedProgress) : {};
+    
+    localStorage.setItem(PROGRESS_KEY, JSON.stringify({
+      ...allProgress,
+      [lessonId]: {
+        ...progress,
+        lastAccessedAt: new Date().toISOString()
+      }
+    }));
   }, [progress, lessonId]);
 
   const markSectionComplete = (sectionIndex: number) => {
-    setProgress(prev => ({
-      ...prev,
-      completedSections: [...new Set([...prev.completedSections, sectionIndex])]
-    }));
+    if (!progress.completedSections.includes(sectionIndex)) {
+      setProgress(prev => ({
+        ...prev,
+        completedSections: [...prev.completedSections, sectionIndex],
+        xpEarned: prev.xpEarned + 5
+      }));
+    }
   };
 
   const saveQuizResult = (quizId: string, correct: number, total: number) => {
+    const quizXP = Math.round(20 * (correct / total));
+    
     setProgress(prev => ({
       ...prev,
       quizResults: {
@@ -31,21 +52,22 @@ export const useLesson = (lessonId: string) => {
         [quizId]: {
           completed: true,
           correctAnswers: correct,
-          totalQuestions: total
+          totalQuestions: total,
+          completedAt: new Date().toISOString()
         }
-      }
+      },
+      xpEarned: prev.xpEarned + quizXP
     }));
   };
 
   const calculateProgress = (lesson: Lesson) => {
     const totalSections = lesson.sections.length;
     const completedSections = progress.completedSections.length;
-    const quizzes = Object.values(progress.quizResults);
-    const completedQuizzes = quizzes.filter(q => q.completed).length;
-    const totalQuizzes = lesson.sections.filter(s => s.quiz).length;
+    const quizzes = lesson.sections.filter(s => s.quiz).length;
+    const completedQuizzes = Object.keys(progress.quizResults).length;
 
     return Math.round(
-      ((completedSections + completedQuizzes) / (totalSections + totalQuizzes)) * 100
+      ((completedSections + completedQuizzes) / (totalSections + quizzes)) * 100
     );
   };
 

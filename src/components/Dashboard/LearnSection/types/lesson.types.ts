@@ -1,3 +1,5 @@
+import { LessonReward } from "./reward.types";
+
 export type CodeExample = {
     code: string;
     language?: string;
@@ -38,6 +40,6 @@ export type Lesson = {
     duration: string;
     difficulty: 'beginner' | 'intermediate' | 'advanced';
     xp: number;
-    progress: LessonProgress;
+    rewards?: LessonReward;
     sections: LessonSection[];
-} 
+}
