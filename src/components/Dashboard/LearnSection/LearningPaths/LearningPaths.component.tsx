@@ -4,6 +4,7 @@ import { PathCard } from "./PathCard.component";
 import { useQuery } from "@tanstack/react-query";
 import { fetchLearningPaths } from "../lib/api/paths";
 import { ErrorMessage } from "../components/ErrorMessage.component";
+import { LearningPath } from "../../../../types/learning.types";
 
 export const LearningPaths = memo(() => {
   const userId = "current-user";

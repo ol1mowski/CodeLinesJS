@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchResources } from "../lib/api/resources";
-import type { Resource } from "../types/resource.types";
+import { type Resource } from "../types/resource.types";
 
 export const useResources = () => {
   const { 
@@ -12,7 +12,7 @@ export const useResources = () => {
     queryKey: ['resources'],
     queryFn: fetchResources,
     retry: 2,
-    staleTime: 1000 * 60 * 5, // 5 minut
+    staleTime: 1000 * 60 * 5, 
   });
 
   const recommendedResources = resources?.data.filter(resource => resource.isRecommended) || [];
