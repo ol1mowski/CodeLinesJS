@@ -22,15 +22,19 @@ export type LessonSection = {
 }
 
 export type LessonProgress = {
+    lessonId: string;
     completedSections: number[];
     quizResults: {
         [quizId: string]: {
             completed: boolean;
             correctAnswers: number;
             totalQuestions: number;
+            completedAt: string;
         };
     };
     xpEarned: number;
+    isCompleted: boolean;
+    lastAccessedAt: string;
 }
 
 export type Lesson = {

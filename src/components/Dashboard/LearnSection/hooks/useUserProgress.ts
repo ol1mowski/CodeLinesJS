@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fetchUserProgress, updateLessonProgress } from '../lib/api/progress';
 import type { UserProgressResponse } from '../types/api.types';
+import { LessonProgress } from '../types/lesson.types';
 
 export const PROGRESS_QUERY_KEY = ['userProgress'];
 
@@ -10,7 +11,7 @@ export const useUserProgress = (userId: string) => {
   const { data, isLoading, error } = useQuery<UserProgressResponse>({
     queryKey: [...PROGRESS_QUERY_KEY, userId],
     queryFn: () => fetchUserProgress(userId),
-    staleTime: 1000 * 60 * 5, // 5 minut
+    staleTime: 1000 * 60 * 5, 
   });
 
   const { mutate: updateProgress } = useMutation({
