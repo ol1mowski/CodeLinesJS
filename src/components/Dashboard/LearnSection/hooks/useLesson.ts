@@ -1,12 +1,22 @@
-import { useUserProgress } from './useUserProgress';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { fetchLessonProgress, updateLessonProgress } from '../lib/api/progress';
 import { useState } from 'react';
-import type { Lesson, Reward } from '../types/lesson.types';
+import type { Lesson, LessonProgress, Reward } from '../types/lesson.types';
 
 export const useLesson = (lessonId: string, userId: string) => {
-  const { progress: userProgress, updateProgress } = useUserProgress(userId);
+  const { data: progress, isLoading } = useQuery({
+    queryKey: ['lessonProgress', userId, lessonId],
+    queryFn: () => fetchLessonProgress(userId, lessonId)
+  });
+
+  const { mutate: updateProgress } = useMutation({
+    mutationFn: (newProgress: LessonProgress) => 
+      updateLessonProgress(userId, lessonId, newProgress)
+  });
+
   const [currentReward, setCurrentReward] = useState<Reward | null>(null);
 
-  const lessonProgress = userProgress[lessonId] || {
+  const lessonProgress = progress?.data || {
     lessonId,
     completedSections: [],
     quizResults: {},

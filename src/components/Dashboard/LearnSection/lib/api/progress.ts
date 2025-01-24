@@ -10,15 +10,21 @@ export const fetchUserProgress = async (userId: string) => {
   return response.json();
 };
 
+export const fetchLessonProgress = async (userId: string, lessonId: string) => {
+  const response = await fetch(`${API_URL}/users/${userId}/lessons/${lessonId}/progress`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch progress');
+  }
+  return response.json();
+};
+
 export const updateLessonProgress = async (userId: string, lessonId: string, progress: LessonProgress) => {
   const response = await fetch(
-    `${API_URL}/users/${userId}/progress/${lessonId}`,
+    `${API_URL}/users/${userId}/lessons/${lessonId}/progress`,
     {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(progress),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(progress)
     }
   );
   if (!response.ok) {
