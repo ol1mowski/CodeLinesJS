@@ -28,6 +28,7 @@ export type LessonProgress = {
             totalQuestions: number;
         };
     };
+    xpEarned: number;
 }
 
 export type Lesson = {
