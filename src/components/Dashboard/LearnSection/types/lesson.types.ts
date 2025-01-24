@@ -19,6 +19,17 @@ export type LessonSection = {
     quiz?: QuizQuestion[];
 }
 
+export type LessonProgress = {
+    completedSections: number[];
+    quizResults: {
+        [quizId: string]: {
+            completed: boolean;
+            correctAnswers: number;
+            totalQuestions: number;
+        };
+    };
+}
+
 export type Lesson = {
     id: string;
     title: string;
@@ -26,6 +37,6 @@ export type Lesson = {
     duration: string;
     difficulty: 'beginner' | 'intermediate' | 'advanced';
     xp: number;
-    progress: number;
+    progress: LessonProgress;
     sections: LessonSection[];
 } 

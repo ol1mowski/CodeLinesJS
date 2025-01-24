@@ -2,7 +2,7 @@ import { memo } from "react";
 import { motion } from "framer-motion";
 import type { LessonSection } from "../../types/lesson.types";
 
-interface LessonNavigationProps {
+type LessonNavigationProps = {
   sections: LessonSection[];
   activeSection: number;
   onSectionChange: (index: number) => void;
