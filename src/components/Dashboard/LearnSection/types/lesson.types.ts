@@ -4,10 +4,19 @@ export type CodeExample = {
     explanation?: string;
 }
 
+export type QuizQuestion = {
+    id: string;
+    question: string;
+    options: string[];
+    correctAnswer: number;
+    explanation: string;
+}
+
 export type LessonSection = {
     title: string;
     content: string;
     examples?: CodeExample[];
+    quiz?: QuizQuestion[];
 }
 
 export type Lesson = {
