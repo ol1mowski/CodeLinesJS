@@ -5,7 +5,7 @@ import type { QuizQuestion } from "../../types/lesson.types";
 
 type LessonQuizProps = {
   questions: QuizQuestion[];
-  onComplete: () => void;
+  onComplete: (correct: number) => void;
 }
 
 export const LessonQuiz = memo(({ questions, onComplete }: LessonQuizProps) => {
@@ -29,7 +29,7 @@ export const LessonQuiz = memo(({ questions, onComplete }: LessonQuizProps) => {
       setSelectedAnswer(null);
       setShowExplanation(false);
     } else {
-      onComplete();
+      onComplete(correctAnswers);
     }
   };
 

@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import { DIFFICULTY_STYLES } from '../constants/lesson.constants';
 
+
 type DifficultyBadgeProps = {
   difficulty: string;
 };

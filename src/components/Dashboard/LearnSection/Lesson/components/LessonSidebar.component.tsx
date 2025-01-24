@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { type LessonSection } from '../../../../types/learning.types';
+import { type LessonSection } from '../../types/lesson.types';
 import { LessonNavigation } from './LessonNavigation.component';
 
 type LessonSidebarProps = {

@@ -1,12 +1,12 @@
 import { memo } from "react";
 import { motion } from "framer-motion";
 import { FaCheck } from "react-icons/fa";
-import { type LessonProgress } from "../../types/lesson.types";
+import { type LessonProgress as LessonProgressType } from "../../types/lesson.types";
 
 type LessonProgressProps = {
   currentSection: number;
   totalSections: number;
-  progress: LessonProgress;
+  progress: LessonProgressType;
   onComplete: () => void;
 }
 

@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import { motion } from 'framer-motion';
-import { type Lesson } from '../../../../types/lesson.types';
+import { type Lesson } from '../../types/lesson.types';
+
 import { LessonHeader } from './LessonHeader.component';
 import { LessonContent } from './LessonContent.component';
 
