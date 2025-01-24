@@ -1,12 +1,12 @@
 import { motion } from "framer-motion";
 import { memo, useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { lessons } from "../../mocks/lessons.data";
+import { lessons } from "../mocks/lessons.data";
 import { FaClock, FaStar, FaChevronLeft } from "react-icons/fa";
 import { LessonContent } from "./LessonContent.component";
 import { LessonNavigation } from "./LessonNavigation.component";
 import { LessonProgress } from "./LessonProgress.component";
-import { useLesson } from "../../hooks/useLesson";
+import { useLesson } from "../hooks/useLesson";
 
 export const LessonPage = memo(() => {
   const { id } = useParams();

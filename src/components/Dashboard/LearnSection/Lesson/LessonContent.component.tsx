@@ -1,8 +1,8 @@
 import { memo } from "react";
 import { motion } from "framer-motion";
-import { CodeBlock } from "../../UI/CodeBlock/CodeBlock.component";
+import { CodeBlock } from "../UI/CodeBlock/CodeBlock.component";
 import { LessonQuiz } from "./LessonQuiz.component";
-import type { LessonSection } from "../../types/lesson.types";
+import type { LessonSection } from "../types/lesson.types";
 import { useInView } from 'react-intersection-observer';
 import { useEffect } from 'react';
 
