@@ -391,5 +391,122 @@ async function loadDashboard() {
         ]
       }
     ]
+  },
+  {
+    id: "js-dom",
+    title: "Manipulacja DOM",
+    description: "Naucz się manipulować strukturą strony poprzez DOM (Document Object Model). Poznaj metody dostępu i modyfikacji elementów.",
+    duration: "30 min",
+    difficulty: "intermediate",
+    xp: 80,
+    progress: {
+      completedSections: [],
+      quizResults: {}
+    },
+    sections: [
+      {
+        title: "Wprowadzenie do DOM",
+        content: `DOM (Document Object Model) to programowy interfejs do dokumentów HTML. 
+        Reprezentuje stronę jako drzewo obiektów, które możemy modyfikować za pomocą JavaScript.`,
+        examples: [
+          {
+            code: `// Pobieranie elementów
+const element = document.getElementById('myId');
+const elements = document.getElementsByClassName('myClass');
+const elementsByTag = document.getElementsByTagName('div');
+
+// Nowoczesne selektory
+const oneElement = document.querySelector('.myClass');
+const allElements = document.querySelectorAll('.myClass');`,
+            language: "javascript",
+            explanation: "DOM udostępnia różne metody do wyszukiwania elementów. querySelector i querySelectorAll używają selektorów CSS."
+          }
+        ]
+      },
+      {
+        title: "Modyfikacja elementów",
+        content: `JavaScript pozwala na dynamiczną modyfikację zawartości, atrybutów i stylów elementów DOM.`,
+        examples: [
+          {
+            code: `// Modyfikacja zawartości
+element.textContent = 'Nowy tekst';
+element.innerHTML = '<span>HTML</span>';
+
+// Praca z klasami CSS
+element.classList.add('active');
+element.classList.remove('hidden');
+element.classList.toggle('visible');
+
+// Modyfikacja stylów
+element.style.backgroundColor = 'red';
+element.style.fontSize = '16px';
+
+// Atrybuty
+element.setAttribute('data-id', '123');
+element.getAttribute('data-id');`,
+            language: "javascript",
+            explanation: "Możemy modyfikować tekst, HTML, klasy CSS, style inline i atrybuty elementów."
+          }
+        ]
+      },
+      {
+        title: "Zdarzenia DOM",
+        content: `Zdarzenia pozwalają reagować na interakcje użytkownika i inne zmiany w DOM.`,
+        examples: [
+          {
+            code: `// Dodawanie nasłuchiwania zdarzeń
+element.addEventListener('click', function(event) {
+  console.log('Kliknięto!', event);
+});
+
+// Usuwanie nasłuchiwania
+const handleClick = (event) => {
+  console.log('Kliknięto!');
+};
+element.addEventListener('click', handleClick);
+element.removeEventListener('click', handleClick);
+
+// Delegacja zdarzeń
+document.body.addEventListener('click', function(event) {
+  if (event.target.matches('.button')) {
+    console.log('Kliknięto przycisk!');
+  }
+});`,
+            language: "javascript",
+            explanation: "Zdarzenia pozwalają na interaktywność. Delegacja zdarzeń to wzorzec pozwalający obsługiwać wiele elementów jednym nasłuchiwaczem."
+          }
+        ]
+      },
+      {
+        title: "Sprawdź swoją wiedzę",
+        content: "Sprawdź swoją wiedzę o manipulacji DOM odpowiadając na poniższe pytania.",
+        quiz: [
+          {
+            id: "q1",
+            question: "Jaka jest różnica między textContent a innerHTML?",
+            options: [
+              "Nie ma różnicy",
+              "textContent jest szybszy ale nie interpretuje HTML",
+              "innerHTML jest bezpieczniejszy",
+              "textContent działa tylko dla tekstu"
+            ],
+            correctAnswer: 1,
+            explanation: "textContent traktuje wszystko jako tekst i jest bezpieczniejszy, podczas gdy innerHTML interpretuje zawartość jako HTML."
+          },
+          {
+            id: "q2",
+            question: "Która metoda jest zalecana do dodawania klas CSS?",
+            options: [
+              "element.className += 'newClass'",
+              "element.classList.add('newClass')",
+              "element.style.class = 'newClass'",
+              "element.addClass('newClass')"
+            ],
+            correctAnswer: 1,
+            explanation: "classList.add() jest nowoczesną i bezpieczną metodą dodawania klas, która nie nadpisuje istniejących klas."
+          }
+        ]
+      }
+    ]
   }
 ]; 
