@@ -1,15 +1,23 @@
 import { motion } from "framer-motion";
 import { memo, useState } from "react";
-import { lessons } from "../../../../mocks/lessons.data";
-import { LessonsFilter } from "./LessonsFilter.component";
+import { useQuery } from "@tanstack/react-query";
 import { LessonCard } from "./LessonCard.component";
+import { LessonsFilter } from "./LessonsFilter.component";
+import { fetchLessons } from "../lib/api/lessons";
+import type { Lesson } from "../types/lesson.types";
 
 export const Lessons = memo(() => {
   const [filter, setFilter] = useState("all");
+  const userId = "current-user";
 
-  const filteredLessons = lessons.filter(lesson => 
+  const { data: lessons, isLoading } = useQuery<{ data: Lesson[] }>({
+    queryKey: ['lessons'],
+    queryFn: fetchLessons
+  });
+
+  const filteredLessons = lessons?.data.filter(lesson => 
     filter === "all" ? true : lesson.difficulty === filter
-  );
+  ) || [];
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -20,6 +28,14 @@ export const Lessons = memo(() => {
       }
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center py-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-js"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -42,7 +58,11 @@ export const Lessons = memo(() => {
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
       >
         {filteredLessons.map((lesson) => (
-          <LessonCard key={lesson.id} lesson={lesson} />
+          <LessonCard 
+            key={lesson.id} 
+            lesson={lesson}
+            userId={userId}
+          />
         ))}
       </motion.div>
     </div>
