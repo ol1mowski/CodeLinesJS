@@ -6,6 +6,7 @@ import { type Lesson } from "../../../../types/learning.types";
 
 type LessonCardProps = {
   lesson: Lesson;
+  userId: string;
 }
 
 const cardVariants = {

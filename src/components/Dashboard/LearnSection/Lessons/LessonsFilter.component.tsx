@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import { memo } from "react";
-
-type FilterType = "all" | "beginner" | "intermediate" | "advanced";
+import { type FilterType } from "../types/filter.types";
 
 type LessonsFilterProps = {
   activeFilter: string;

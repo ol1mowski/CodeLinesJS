@@ -1,5 +1,6 @@
 import { memo } from "react";
 import { LessonsFilter } from "./LessonsFilter.component";
+import { type FilterType } from "../types/filter.types";
 
 
 type LessonsHeaderProps = {
