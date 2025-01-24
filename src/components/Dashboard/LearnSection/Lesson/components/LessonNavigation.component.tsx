@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { motion } from "framer-motion";
-import type { LessonSection } from "../types/lesson.types";
+import type { LessonSection } from "../../types/lesson.types";
 
 type LessonNavigationProps = {
   sections: LessonSection[];

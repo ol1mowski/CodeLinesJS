@@ -1,7 +1,7 @@
 import { memo, useState } from "react";
 import { motion } from "framer-motion";
 import { FaCheck, FaTimes } from "react-icons/fa";
-import type { QuizQuestion } from "../types/lesson.types";
+import type { QuizQuestion } from "../../types/lesson.types";
 
 type LessonQuizProps = {
   questions: QuizQuestion[];

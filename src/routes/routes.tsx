@@ -10,7 +10,8 @@ import { CommunitySection } from "../components/Dashboard/CommunitySection/Commu
 import { SettingsSection } from "../components/Dashboard/SettingsSection/SettingsSection.component";
 import { GamesSection } from "../components/Dashboard/GamesSection/GamesSection.component";
 import { CodeEditor } from "../components/Dashboard/CodeEditor/CodeEditor.component";
-import { LessonPage } from "../components/Dashboard/LearnSection/pages/Lesson/Lesson.page";
+import { LessonPage } from "../components/Dashboard/LearnSection/Lesson/Lesson.page";
+
 
 
 const Home = lazy(() => import("../pages/Home"));
