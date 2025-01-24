@@ -3,12 +3,19 @@ import { memo } from "react";
 import { PathCard } from "./PathCard.component";
 import { useQuery } from "@tanstack/react-query";
 import { fetchLearningPaths } from "../lib/api/paths";
+import { ErrorMessage } from "../components/ErrorMessage.component";
 
 export const LearningPaths = memo(() => {
   const userId = "current-user";
-  const { data: paths, isLoading } = useQuery({
+  const { 
+    data: paths, 
+    isLoading, 
+    error,
+    refetch 
+  } = useQuery<{ data: LearningPath[] }, Error>({
     queryKey: ['learningPaths'],
-    queryFn: fetchLearningPaths
+    queryFn: fetchLearningPaths,
+    retry: 2
   });
 
   const containerVariants = {
@@ -18,6 +25,15 @@ export const LearningPaths = memo(() => {
       transition: { staggerChildren: 0.1 }
     }
   };
+
+  if (error) {
+    return (
+      <ErrorMessage 
+        message="Nie udało się pobrać ścieżek nauki. Spróbuj ponownie później."
+        onRetry={() => refetch()}
+      />
+    );
+  }
 
   if (isLoading) {
     return (

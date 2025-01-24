@@ -5,14 +5,21 @@ import { LessonCard } from "./LessonCard.component";
 import { LessonsFilter } from "./LessonsFilter.component";
 import { fetchLessons } from "../lib/api/lessons";
 import type { Lesson } from "../types/lesson.types";
+import { ErrorMessage } from "../components/ErrorMessage.component";
 
 export const Lessons = memo(() => {
   const [filter, setFilter] = useState("all");
   const userId = "current-user";
 
-  const { data: lessons, isLoading } = useQuery<{ data: Lesson[] }>({
+  const { 
+    data: lessons, 
+    isLoading, 
+    error, 
+    refetch 
+  } = useQuery<{ data: Lesson[] }, Error>({
     queryKey: ['lessons'],
-    queryFn: fetchLessons
+    queryFn: fetchLessons,
+    retry: 2
   });
 
   const filteredLessons = lessons?.data.filter(lesson => 
@@ -28,6 +35,15 @@ export const Lessons = memo(() => {
       }
     }
   };
+
+  if (error) {
+    return (
+      <ErrorMessage 
+        message="Nie udało się pobrać listy lekcji. Spróbuj ponownie później."
+        onRetry={() => refetch()}
+      />
+    );
+  }
 
   if (isLoading) {
     return (
