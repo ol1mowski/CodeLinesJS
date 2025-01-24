@@ -11,5 +11,12 @@ export type LessonSection = {
 }
 
 export type Lesson = {
+    id: string;
+    title: string;
+    description: string;
+    duration: string;
+    difficulty: 'beginner' | 'intermediate' | 'advanced';
+    xp: number;
+    progress: number;
     sections: LessonSection[];
 } 

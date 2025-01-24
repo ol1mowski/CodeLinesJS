@@ -44,7 +44,6 @@ export const LessonPage = memo(() => {
         </Link>
 
         <div className="grid grid-cols-12 gap-8">
-          {/* Sidebar z nawigacją */}
           <div className="hidden lg:block col-span-3">
             <div className="sticky top-8">
               <LessonNavigation
@@ -55,7 +54,6 @@ export const LessonPage = memo(() => {
             </div>
           </div>
 
-          {/* Główna treść */}
           <div className="col-span-12 lg:col-span-9">
             <motion.div
               initial={{ y: 20, opacity: 0 }}
@@ -64,7 +62,6 @@ export const LessonPage = memo(() => {
               className="bg-dark-800/50 border border-js/10 rounded-xl p-6 md:p-8"
             >
               <div className="space-y-8">
-                {/* Nagłówek lekcji */}
                 <div>
                   <div className="flex items-center justify-between mb-4">
                     <span className={`px-2 py-0.5 rounded-md text-xs font-medium
@@ -93,7 +90,6 @@ export const LessonPage = memo(() => {
                   </div>
                 </div>
 
-                {/* Treść lekcji */}
                 <LessonContent sections={lesson.sections} />
               </div>
             </motion.div>
