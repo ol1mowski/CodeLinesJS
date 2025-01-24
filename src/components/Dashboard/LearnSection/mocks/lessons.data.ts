@@ -249,7 +249,147 @@ console.log(sum(10, 20)); // 30`,
       quizResults: {}
     },
     sections: [
-      // ... sekcje dla async
+      {
+        title: "Callbacks i asynchroniczność",
+        content: `JavaScript jest jednowątkowy, ale może wykonywać operacje asynchronicznie. 
+        Tradycyjnie używaliśmy callbacków do obsługi operacji asynchronicznych, ale prowadziło 
+        to często do tzw. "callback hell".`,
+        examples: [
+          {
+            code: `// Przykład callback hell
+getData(function(a) {
+  getMoreData(a, function(b) {
+    getMoreData(b, function(c) {
+      getMoreData(c, function(d) {
+        console.log(d);
+      });
+    });
+  });
+});
+
+// Ten sam kod z lepszą organizacją
+function handleData(data) {
+  console.log(data);
+}
+
+function handleError(error) {
+  console.error('Wystąpił błąd:', error);
+}
+
+getData()
+  .then(handleData)
+  .catch(handleError);`,
+            language: "javascript",
+            explanation: "Zagnieżdżone callbacks są trudne w utrzymaniu. Promise i async/await oferują lepsze rozwiązanie."
+          }
+        ]
+      },
+      {
+        title: "Promise",
+        content: `Promise to obiekt reprezentujący ostateczne zakończenie (lub niepowodzenie) 
+        operacji asynchronicznej. Promise może być w jednym z trzech stanów: pending, fulfilled lub rejected.`,
+        examples: [
+          {
+            code: `// Tworzenie Promise
+const myPromise = new Promise((resolve, reject) => {
+  // Symulacja operacji asynchronicznej
+  setTimeout(() => {
+    const success = Math.random() > 0.5;
+    if (success) {
+      resolve('Operacja zakończona sukcesem!');
+    } else {
+      reject(new Error('Coś poszło nie tak...'));
+    }
+  }, 1000);
+});
+
+// Użycie Promise
+myPromise
+  .then(result => console.log(result))
+  .catch(error => console.error(error))
+  .finally(() => console.log('Zakończono'));
+
+// Łączenie Promise
+Promise.all([
+  fetch('/api/users'),
+  fetch('/api/posts')
+])
+  .then(([users, posts]) => {
+    console.log('Użytkownicy:', users);
+    console.log('Posty:', posts);
+  });`,
+            language: "javascript",
+            explanation: "Promise pozwalają na lepszą obsługę operacji asynchronicznych i łatwiejsze łączenie wielu operacji."
+          }
+        ]
+      },
+      {
+        title: "Async/Await",
+        content: `Async/await to składnia, która pozwala na pisanie kodu asynchronicznego w sposób, 
+        który wygląda jak synchroniczny. Jest to najnowszy i najbardziej czytelny sposób obsługi asynchroniczności.`,
+        examples: [
+          {
+            code: `// Funkcja asynchroniczna
+async function fetchUserData(userId) {
+  try {
+    const response = await fetch(\`/api/users/\${userId}\`);
+    const userData = await response.json();
+    return userData;
+  } catch (error) {
+    console.error('Błąd podczas pobierania danych:', error);
+    throw error;
+  }
+}
+
+// Użycie async/await z wieloma operacjami
+async function loadDashboard() {
+  try {
+    const [user, posts, comments] = await Promise.all([
+      fetchUserData(1),
+      fetchUserPosts(1),
+      fetchUserComments(1)
+    ]);
+    
+    console.log('Dane załadowane:', { user, posts, comments });
+  } catch (error) {
+    console.error('Błąd ładowania dashboardu:', error);
+  }
+}`,
+            language: "javascript",
+            explanation: "Async/await upraszcza kod asynchroniczny, czyniąc go bardziej czytelnym i łatwiejszym w debugowaniu."
+          }
+        ]
+      },
+      {
+        title: "Sprawdź swoją wiedzę",
+        content: "Sprawdź swoją wiedzę z programowania asynchronicznego odpowiadając na poniższe pytania.",
+        quiz: [
+          {
+            id: "q1",
+            question: "Który z poniższych zapisów NIE jest poprawnym użyciem async/await?",
+            options: [
+              "async function foo() { await promise; }",
+              "const foo = async () => await promise;",
+              "await promise;",
+              "async () => { await promise; }"
+            ],
+            correctAnswer: 2,
+            explanation: "await może być używane tylko wewnątrz funkcji async. Nie można używać await bezpośrednio w globalnym zakresie."
+          },
+          {
+            id: "q2",
+            question: "Co zwraca funkcja oznaczona jako async?",
+            options: [
+              "Zawsze undefined",
+              "Promise",
+              "Wartość synchroniczną",
+              "Callback"
+            ],
+            correctAnswer: 1,
+            explanation: "Funkcja async zawsze zwraca Promise, nawet jeśli jawnie zwracamy wartość synchroniczną."
+          }
+        ]
+      }
     ]
   }
 ]; 
