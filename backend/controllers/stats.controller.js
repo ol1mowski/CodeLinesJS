@@ -53,7 +53,6 @@ export const getStats = async (req, res, next) => {
       stats = await Stats.create(initialData);
     }
 
-    // Upewnij się, że dane są zawsze dostępne
     if (!stats.chartData) {
       stats.chartData = {
         daily: generateInitialDailyStats(),
@@ -62,7 +61,6 @@ export const getStats = async (req, res, next) => {
       await stats.save();
     }
 
-    console.log('Sending stats:', stats); // Dodaj log do debugowania
     res.json(stats);
   } catch (error) {
     next(error);

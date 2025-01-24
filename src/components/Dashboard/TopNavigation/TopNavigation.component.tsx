@@ -4,18 +4,21 @@ import { WelcomeSection } from "./WelcomeSection/WelcomeSection.component";
 import { NotificationsButton } from "./NotificationsSection/NotificationsButton.component";
 import { topNavigationStyles as styles } from "./style/TopNavigation.styles";
 import { useTopNavAnimation } from "./hooks/useTopNavAnimation";
-import { useDashboardData } from "../DashboardContent/hooks/useDashboardData";
+import { useUserProfile } from "./hooks/useUserProfile";
 
 export const TopNavigation = memo(() => {
   const animations = useTopNavAnimation();
-  const { data } = useDashboardData();
+  const { data: userProfile, isLoading } = useUserProfile();
 
   const username = useMemo(() => {
-    if (!data?.profile?.username) {
+    if (isLoading) {
+      return 'Ładowanie...';
+    }
+    if (!userProfile?.username) {
       return 'Użytkowniku';
     }
-    return data.profile.username;
-  }, [data?.profile?.username]);
+    return userProfile?.username;
+  }, [userProfile?.username, isLoading]);
 
   return (
     <motion.nav
