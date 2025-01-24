@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import type { Lesson, LessonProgress } from '../types/lesson.types';
+import type { Lesson, LessonProgress, Reward } from '../types/lesson.types';
 
 export const useLesson = (lessonId: string) => {
   const [progress, setProgress] = useState<LessonProgress>(() => {
@@ -9,6 +9,8 @@ export const useLesson = (lessonId: string) => {
       quizResults: {}
     };
   });
+
+  const [currentReward, setCurrentReward] = useState<Reward | null>(null);
 
   useEffect(() => {
     localStorage.setItem(`lesson-progress-${lessonId}`, JSON.stringify(progress));
@@ -47,10 +49,31 @@ export const useLesson = (lessonId: string) => {
     );
   };
 
+  const handleReward = (reward: Reward) => {
+    setCurrentReward(reward);
+    setTimeout(() => setCurrentReward(null), 3000);
+  };
+
+  const completeLesson = (lesson: Lesson) => {
+    const rewards = lesson.rewards?.completion || [];
+    rewards.forEach(handleReward);
+    
+    const quizResults = Object.values(progress.quizResults);
+    if (quizResults.length > 0) {
+      const averageScore = quizResults.reduce((acc, curr) => 
+        acc + (curr.correctAnswers / curr.totalQuestions), 0) / quizResults.length;
+      
+      const quizRewards = lesson.rewards?.quiz[Math.floor(averageScore * 100)] || [];
+      quizRewards.forEach(handleReward);
+    }
+  };
+
   return {
     progress,
     markSectionComplete,
     saveQuizResult,
-    calculateProgress
+    calculateProgress,
+    currentReward,
+    completeLesson
   };
 }; 
