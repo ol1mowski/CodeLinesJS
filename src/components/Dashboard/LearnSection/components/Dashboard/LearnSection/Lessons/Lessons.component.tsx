@@ -38,7 +38,6 @@ export const Lessons = memo(() => {
       </div>
 
       <motion.div 
-        variants={containerVariants}
         initial="hidden"
         animate="visible"
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
