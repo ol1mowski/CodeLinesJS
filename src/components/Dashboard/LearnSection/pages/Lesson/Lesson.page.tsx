@@ -6,12 +6,20 @@ import { FaClock, FaStar, FaChevronLeft } from "react-icons/fa";
 import { LessonContent } from "./LessonContent.component";
 import { LessonNavigation } from "./LessonNavigation.component";
 import { LessonProgress } from "./LessonProgress.component";
+import { useLesson } from "../../hooks/useLesson";
 
 export const LessonPage = memo(() => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const lesson = lessons.find(l => l.id === id);
   const [activeSection, setActiveSection] = useState(0);
-  const navigate = useNavigate();
+  
+  const {
+    progress,
+    markSectionComplete,
+    saveQuizResult,
+    calculateProgress
+  } = useLesson(id!);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -30,7 +38,19 @@ export const LessonPage = memo(() => {
   };
 
   const handleComplete = () => {
-    navigate('/learn');
+    const totalProgress = calculateProgress(lesson);
+    if (totalProgress === 100) {
+      // Tutaj można dodać logikę nagradzania użytkownika
+      navigate('/learn');
+    }
+  };
+
+  const handleSectionComplete = (index: number) => {
+    markSectionComplete(index);
+  };
+
+  const handleQuizComplete = (quizId: string, correct: number, total: number) => {
+    saveQuizResult(quizId, correct, total);
   };
 
   return (
@@ -97,7 +117,11 @@ export const LessonPage = memo(() => {
                     </div>
                   </div>
 
-                  <LessonContent sections={lesson.sections} />
+                  <LessonContent 
+                    sections={lesson.sections}
+                    onSectionComplete={handleSectionComplete}
+                    onQuizComplete={handleQuizComplete}
+                  />
                 </div>
               </motion.div>
             </div>
