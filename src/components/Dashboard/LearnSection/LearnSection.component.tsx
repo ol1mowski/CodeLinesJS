@@ -6,7 +6,7 @@ import { Resources } from "./Resources/Resources.component";
 import { LearningPaths } from "./LearningPaths/LearningPaths.component";
 import { LearnTabs } from "./LearnTabs/LearnTabs.component";
 
-type TabType = "paths" | "lessons" | "resources";
+type TabType = "paths" | "lessons" | "resources" | "articles";
 
 export const LearnSection = memo(() => {
   const [activeTab, setActiveTab] = useState<TabType>("paths");
