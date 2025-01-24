@@ -4,9 +4,10 @@ import { SectionTitle } from "../../UI/SectionTitle/SectionTitle.component";
 import { Lessons } from "./Lessons/Lessons.component";
 import { Resources } from "./Resources/Resources.component";
 import { LearningPaths } from "./LearningPaths/LearningPaths.component";
+import { Articles } from "./Articles/Articles.component";
 import { LearnTabs } from "./LearnTabs/LearnTabs.component";
 
-type TabType = "paths" | "lessons" | "resources";
+type TabType = "paths" | "lessons" | "resources" | "articles";
 
 export const LearnSection = memo(() => {
   const [activeTab, setActiveTab] = useState<TabType>("paths");
@@ -31,6 +32,8 @@ export const LearnSection = memo(() => {
         return <Lessons />;
       case "resources":
         return <Resources />;
+      case "articles":
+        return <Articles />;
       default:
         return null;
     }
