@@ -38,6 +38,7 @@ export const useProgress = (lessonId: string) => {
         ...prev.quizResults,
         [quizId]: {
           completed: true,
+          completedAt: new Date().toISOString(),
           correctAnswers,
           totalQuestions
         }

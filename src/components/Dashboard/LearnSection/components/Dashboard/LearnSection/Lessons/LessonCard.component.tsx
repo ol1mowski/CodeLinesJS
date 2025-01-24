@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { memo } from "react";
+import { type Lesson } from "../../../../types/lesson.types";
+import { type LessonProgress } from "../../../../types/lesson.types";
 
 type LessonCardProps = {
   lesson: Lesson;
@@ -17,7 +19,6 @@ export const LessonCard = memo(({ lesson, progress }: LessonCardProps) => {
         whileHover={{ scale: 1.02 }}
         className="group bg-dark-800/50 border border-js/10 rounded-xl p-5 hover:border-js/20 transition-colors"
       >
-        {/* ... reszta komponentu ... */}
         <div className="relative h-2 bg-dark rounded-full overflow-hidden">
           <motion.div
             initial={{ width: 0 }}

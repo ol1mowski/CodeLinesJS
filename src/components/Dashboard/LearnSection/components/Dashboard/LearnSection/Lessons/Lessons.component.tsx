@@ -2,13 +2,13 @@ import { motion } from "framer-motion";
 import { memo } from "react";
 import { useState } from "react";
 import { lessons } from "../../../../mocks/lessons.data";
-import { LessonsFilter } from "./LessonsFilter.component";
 import { LessonCard } from "./LessonCard.component";
 import { useUserProgress } from "../../../../hooks/useUserProgress";
+import { LessonsFilter } from "../../../../Lessons/LessonsFilter.component";
 
 export const Lessons = memo(() => {
   const [filter, setFilter] = useState("all");
-  const userId = "current-user"; // TODO: Pobierać z kontekstu auth
+  const userId = "current-user";
   const { progress, isLoading } = useUserProgress(userId);
 
   const filteredLessons = lessons.filter(lesson => 

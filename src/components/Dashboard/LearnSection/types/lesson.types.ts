@@ -21,16 +21,18 @@ export type LessonSection = {
     quiz?: QuizQuestion[];
 }
 
+type QuizResult = {
+    completed: boolean;
+    correctAnswers: number;
+    totalQuestions: number;
+    completedAt: string;
+};
+
 export type LessonProgress = {
     lessonId: string;
     completedSections: number[];
     quizResults: {
-        [quizId: string]: {
-            completed: boolean;
-            correctAnswers: number;
-            totalQuestions: number;
-            completedAt: string;
-        };
+        [quizId: string]: QuizResult;
     };
     xpEarned: number;
     isCompleted: boolean;

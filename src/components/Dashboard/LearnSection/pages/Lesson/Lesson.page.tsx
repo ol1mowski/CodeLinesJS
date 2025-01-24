@@ -7,12 +7,11 @@ import { LessonContent } from "./LessonContent.component";
 import { LessonNavigation } from "./LessonNavigation.component";
 import { LessonProgress } from "./LessonProgress.component";
 import { useLesson } from "../../hooks/useLesson";
-import { LessonReward } from "./LessonReward.component";
 
 export const LessonPage = memo(() => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const userId = "current-user"; // TODO: Pobierać z kontekstu auth
+  const userId = "current-user"; 
   const lesson = lessons.find(l => l.id === id);
   const [activeSection, setActiveSection] = useState(0);
   
@@ -21,7 +20,6 @@ export const LessonPage = memo(() => {
     markSectionComplete,
     saveQuizResult,
     calculateProgress,
-    currentReward,
     completeLesson
   } = useLesson(id!, userId);
 
@@ -157,13 +155,6 @@ export const LessonPage = memo(() => {
         onComplete={handleComplete}
       />
 
-      {currentReward && (
-        <LessonReward
-          xp={currentReward.value}
-          isVisible={true}
-          onClose={() => null}
-        />
-      )}
     </>
   );
 });

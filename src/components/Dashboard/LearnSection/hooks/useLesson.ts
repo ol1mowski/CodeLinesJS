@@ -1,6 +1,6 @@
 import { useUserProgress } from './useUserProgress';
 import { useState } from 'react';
-import type { Lesson, LessonProgress, Reward } from '../types/lesson.types';
+import type { Lesson, Reward } from '../types/lesson.types';
 
 export const useLesson = (lessonId: string, userId: string) => {
   const { progress: userProgress, updateProgress } = useUserProgress(userId);
@@ -17,21 +17,22 @@ export const useLesson = (lessonId: string, userId: string) => {
 
   const markSectionComplete = (sectionIndex: number) => {
     if (!lessonProgress.completedSections.includes(sectionIndex)) {
-      const updatedProgress: LessonProgress = {
+      updateProgress({
         ...lessonProgress,
+        lessonId,
         completedSections: [...lessonProgress.completedSections, sectionIndex],
         xpEarned: lessonProgress.xpEarned + 5,
         lastAccessedAt: new Date().toISOString()
-      };
-      updateProgress(updatedProgress);
+      });
     }
   };
 
   const saveQuizResult = (quizId: string, correct: number, total: number) => {
     const quizXP = Math.round(20 * (correct / total));
     
-    const updatedProgress: LessonProgress = {
+    updateProgress({
       ...lessonProgress,
+      lessonId,
       quizResults: {
         ...lessonProgress.quizResults,
         [quizId]: {
@@ -41,9 +42,9 @@ export const useLesson = (lessonId: string, userId: string) => {
           completedAt: new Date().toISOString()
         }
       },
-      xpEarned: lessonProgress.xpEarned + quizXP
-    };
-    updateProgress(updatedProgress);
+      xpEarned: lessonProgress.xpEarned + quizXP,
+      lastAccessedAt: new Date().toISOString()
+    });
   };
 
   const calculateProgress = (lesson: Lesson) => {
