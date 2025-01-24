@@ -17,7 +17,8 @@ export const LessonPage = memo(() => {
   const {
     markSectionComplete,
     saveQuizResult,
-    calculateProgress
+    calculateProgress,
+    completeLesson
   } = useLesson(id!);
 
   useEffect(() => {
@@ -54,8 +55,9 @@ export const LessonPage = memo(() => {
   };
 
   const handleComplete = () => {
-    const totalProgress = calculateProgress(lesson);
+    const totalProgress = calculateProgress(lesson!);
     if (totalProgress === 100) {
+      completeLesson(lesson!);
       navigate('/dashboard/learn');
     }
   };
@@ -82,7 +84,7 @@ export const LessonPage = memo(() => {
             className="inline-flex items-center gap-2 text-js hover:text-js/80 transition-colors mb-6"
           >
             <FaChevronLeft className="w-4 h-4" />
-            Wróć do lekcji
+            Wróć do listy lekcji
           </Link>
 
           <div className="grid grid-cols-12 gap-8">
