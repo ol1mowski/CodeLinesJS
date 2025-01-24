@@ -114,7 +114,6 @@ const z = 1;
       }
     ]
   },
-  // Dodaj więcej lekcji...
   {
     id: "js-functions",
     title: "Funkcje w JavaScript",
@@ -127,7 +126,115 @@ const z = 1;
       quizResults: {}
     },
     sections: [
-      // ... sekcje dla funkcji
+      {
+        title: "Podstawy funkcji",
+        content: `Funkcje są podstawowymi "cegiełkami" w JavaScript. Pozwalają nam grupować kod, który możemy 
+        wielokrotnie wykorzystywać. Funkcja może przyjmować parametry i zwracać wartość.`,
+        examples: [
+          {
+            code: `// Podstawowa deklaracja funkcji
+function sayHello(name) {
+  return "Cześć, " + name + "!";
+}
+
+// Wywołanie funkcji
+const greeting = sayHello("Jan");
+console.log(greeting); // "Cześć, Jan!"
+
+// Funkcja z wieloma parametrami
+function add(a, b) {
+  return a + b;
+}
+
+console.log(add(5, 3)); // 8`,
+            language: "javascript",
+            explanation: "Funkcje mogą przyjmować parametry i zwracać wartości. Używamy słowa kluczowego return do zwrócenia wyniku."
+          }
+        ]
+      },
+      {
+        title: "Funkcje strzałkowe",
+        content: `Funkcje strzałkowe (arrow functions) to nowoczesny sposób zapisu funkcji w JavaScript. 
+        Są bardziej zwięzłe i mają inne zachowanie this niż tradycyjne funkcje.`,
+        examples: [
+          {
+            code: `// Tradycyjna funkcja
+function multiply(a, b) {
+  return a * b;
+}
+
+// To samo jako funkcja strzałkowa
+const multiply = (a, b) => a * b;
+
+// Funkcja strzałkowa z blokiem kodu
+const greet = (name) => {
+  const message = "Witaj, " + name;
+  return message + "!";
+};
+
+// Funkcja z jednym parametrem
+const square = x => x * x;`,
+            language: "javascript",
+            explanation: "Funkcje strzałkowe są krótsze w zapisie. Jeśli mamy jeden parametr, możemy pominąć nawiasy. Jeśli funkcja wykonuje tylko return, możemy pominąć klamry i słowo return."
+          }
+        ]
+      },
+      {
+        title: "Parametry domyślne i rest",
+        content: `JavaScript pozwala na ustawienie wartości domyślnych dla parametrów oraz zbieranie 
+        wielu argumentów w jeden parametr za pomocą operatora rest.`,
+        examples: [
+          {
+            code: `// Parametry domyślne
+function greet(name = "Gość") {
+  return "Witaj, " + name;
+}
+
+console.log(greet()); // "Witaj, Gość"
+console.log(greet("Jan")); // "Witaj, Jan"
+
+// Operator rest
+function sum(...numbers) {
+  return numbers.reduce((total, num) => total + num, 0);
+}
+
+console.log(sum(1, 2, 3, 4)); // 10
+console.log(sum(10, 20)); // 30`,
+            language: "javascript",
+            explanation: "Parametry domyślne są używane, gdy argument nie zostanie przekazany. Operator rest (...) zbiera wszystkie argumenty w tablicę."
+          }
+        ]
+      },
+      {
+        title: "Sprawdź swoją wiedzę",
+        content: "Sprawdź swoją wiedzę o funkcjach w JavaScript odpowiadając na poniższe pytania.",
+        quiz: [
+          {
+            id: "q1",
+            question: "Jaka jest główna różnica między tradycyjną funkcją a funkcją strzałkową?",
+            options: [
+              "Funkcje strzałkowe są wolniejsze",
+              "Funkcje strzałkowe mają inne wiązanie this",
+              "Funkcje strzałkowe nie mogą zwracać wartości",
+              "Nie ma żadnej różnicy"
+            ],
+            correctAnswer: 1,
+            explanation: "Główną różnicą jest inne wiązanie this w funkcjach strzałkowych - dziedziczą one this z otaczającego kontekstu."
+          },
+          {
+            id: "q2",
+            question: "Co oznacza operator rest (...) w parametrach funkcji?",
+            options: [
+              "Funkcja musi mieć co najmniej jeden argument",
+              "Funkcja nie może mieć więcej argumentów",
+              "Zbiera wszystkie argumenty w tablicę",
+              "Rozbija tablicę na pojedyncze argumenty"
+            ],
+            correctAnswer: 2,
+            explanation: "Operator rest (...) w parametrach funkcji zbiera wszystkie przekazane argumenty w jedną tablicę."
+          }
+        ]
+      }
     ]
   },
   {
