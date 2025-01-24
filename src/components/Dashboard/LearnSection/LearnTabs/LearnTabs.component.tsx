@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { memo } from "react";
-import { FaGraduationCap, FaBook, FaLightbulb, FaNewspaper } from "react-icons/fa";
+import { FaGraduationCap, FaBook, FaLightbulb } from "react-icons/fa";
 
 type TabType = "paths" | "lessons" | "resources" | "articles";
 
@@ -13,7 +13,6 @@ const tabs = [
   { id: "paths" as const, label: "Ścieżki nauki", icon: FaGraduationCap },
   { id: "lessons" as const, label: "Lekcje", icon: FaBook },
   { id: "resources" as const, label: "Materiały", icon: FaLightbulb },
-  { id: "articles" as const, label: "Artykuły", icon: FaNewspaper },
 ];
 
 export const LearnTabs = memo(({ activeTab, onTabChange }: LearnTabsProps) => {
