@@ -7,19 +7,23 @@ import { LessonContent } from "./LessonContent.component";
 import { LessonNavigation } from "./LessonNavigation.component";
 import { LessonProgress } from "./LessonProgress.component";
 import { useLesson } from "../../hooks/useLesson";
+import { LessonReward } from "./LessonReward.component";
 
 export const LessonPage = memo(() => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const userId = "current-user"; // TODO: Pobierać z kontekstu auth
   const lesson = lessons.find(l => l.id === id);
   const [activeSection, setActiveSection] = useState(0);
   
   const {
+    progress,
     markSectionComplete,
     saveQuizResult,
     calculateProgress,
+    currentReward,
     completeLesson
-  } = useLesson(id!);
+  } = useLesson(id!, userId);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -55,9 +59,9 @@ export const LessonPage = memo(() => {
   };
 
   const handleComplete = () => {
-    const totalProgress = calculateProgress(lesson!);
+    const totalProgress = calculateProgress(lesson);
     if (totalProgress === 100) {
-      completeLesson(lesson!);
+      completeLesson(lesson);
       navigate('/dashboard/learn');
     }
   };
@@ -149,8 +153,17 @@ export const LessonPage = memo(() => {
       <LessonProgress
         currentSection={activeSection}
         totalSections={lesson.sections.length}
+        progress={progress}
         onComplete={handleComplete}
       />
+
+      {currentReward && (
+        <LessonReward
+          xp={currentReward.value}
+          isVisible={true}
+          onClose={() => null}
+        />
+      )}
     </>
   );
 });
