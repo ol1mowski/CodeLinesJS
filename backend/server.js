@@ -12,6 +12,7 @@ import { errorHandler } from "./middleware/error.middleware.js";
 import postsRoutes from './routes/posts.routes.js';
 import settingsRoutes from './routes/settings.routes.js';
 import learningPathsRoutes from './routes/learningPaths.routes.js';
+import lessonsRoutes from './routes/lessons.routes.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { initializeModels } from './models/index.js';
@@ -43,6 +44,7 @@ app.use("/api/trending", trendingRoutes);
 app.use("/api/posts", postsRoutes);
 app.use("/api/settings", settingsRoutes);
 app.use("/api/learning-paths", learningPathsRoutes);
+app.use("/api/lessons", lessonsRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(errorHandler);
 
