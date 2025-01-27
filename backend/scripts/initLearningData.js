@@ -14,7 +14,9 @@ const lessons = [
     order: 1,
     duration: 30,
     points: 10,
-    isPublished: true
+    isPublished: true,
+    isAvailable: true,
+    requiredLevel: 1
   },
   {
     title: "Funkcje w JavaScript",
@@ -25,7 +27,9 @@ const lessons = [
     order: 2,
     duration: 45,
     points: 15,
-    isPublished: true
+    isPublished: true,
+    isAvailable: true,
+    requiredLevel: 1
   },
   {
     title: "Tablice i Obiekty",
@@ -36,7 +40,9 @@ const lessons = [
     order: 3,
     duration: 60,
     points: 20,
-    isPublished: true
+    isPublished: true,
+    isAvailable: true,
+    requiredLevel: 2
   },
   {
     title: "Podstawy React",
@@ -47,7 +53,9 @@ const lessons = [
     order: 1,
     duration: 60,
     points: 25,
-    isPublished: true
+    isPublished: true,
+    isAvailable: true,
+    requiredLevel: 3
   },
   {
     title: "Komponenty React",
@@ -58,7 +66,9 @@ const lessons = [
     order: 2,
     duration: 75,
     points: 30,
-    isPublished: true
+    isPublished: true,
+    isAvailable: true,
+    requiredLevel: 3
   }
 ];
 
@@ -67,6 +77,7 @@ const learningPaths = [
     title: "Ścieżka JavaScript od podstaw",
     description: "Kompletny kurs JavaScript dla początkujących",
     difficulty: "beginner",
+    category: "javascript",
     estimatedTime: 135,
     requirements: ["Podstawowa znajomość HTML i CSS"],
     outcomes: [
@@ -74,12 +85,15 @@ const learningPaths = [
       "Umiejętność pracy z funkcjami",
       "Znajomość struktur danych"
     ],
-    isActive: true
+    isActive: true,
+    isAvailable: true,
+    requiredLevel: 1
   },
   {
     title: "React Developer",
     description: "Zostań programistą React",
     difficulty: "intermediate",
+    category: "react",
     estimatedTime: 135,
     requirements: ["Podstawowa znajomość JavaScript"],
     outcomes: [
@@ -87,7 +101,9 @@ const learningPaths = [
       "Zarządzanie stanem aplikacji",
       "Praca z komponentami"
     ],
-    isActive: true
+    isActive: true,
+    isAvailable: true,
+    requiredLevel: 3
   }
 ];
 

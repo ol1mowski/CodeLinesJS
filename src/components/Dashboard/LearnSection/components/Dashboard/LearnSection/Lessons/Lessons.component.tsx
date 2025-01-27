@@ -1,39 +1,62 @@
 import { motion } from "framer-motion";
 import { memo } from "react";
-import { useState } from "react";
-import { lessons } from "../../../../mocks/lessons.data";
 import { LessonCard } from "./LessonCard.component";
 import { useUserProgress } from "../../../../hooks/useUserProgress";
 import { LessonsFilter } from "../../../../Lessons/LessonsFilter.component";
+import { useLessons } from "../hooks/useLessons";
+import { LoadingSpinner } from "../../../../components/UI/LoadingSpinner.component";
+import { ErrorMessage } from "../../../../components/ErrorMessage.component";
 
 export const Lessons = memo(() => {
-  const [filter, setFilter] = useState("all");
   const userId = "current-user";
-  const { progress, isLoading } = useUserProgress(userId);
+  const { progress, isLoading: isProgressLoading } = useUserProgress(userId);
+  const { 
+    filteredLessons, 
+    filter, 
+    setFilter, 
+    isLoading: isLessonsLoading,
+    error,
+    refetch,
+    isEmpty
+  } = useLessons();
 
-  const filteredLessons = lessons.filter(lesson => 
-    filter === "all" ? true : lesson.difficulty === filter
-  );
+  const isLoading = isProgressLoading || isLessonsLoading;
 
-  if (filteredLessons.length === 0) {
+  if (error) {
+    return (
+      <ErrorMessage 
+        message="Nie udało się pobrać listy lekcji. Spróbuj ponownie później."
+        onRetry={refetch}
+      />
+    );
+  }
+
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
+
+  if (isEmpty) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center">
         <h3 className="text-xl font-bold text-js mb-2">
           Brak dostępnych lekcji
         </h3>
         <p className="text-gray-400 text-sm">
-          {filter === "all" 
-            ? "Aktualnie nie ma żadnych dostępnych lekcji. Sprawdź ponownie później."
-            : "Brak lekcji o wybranym poziomie trudności. Wybierz inny filtr."}
+          Aktualnie nie ma żadnych dostępnych lekcji. Sprawdź ponownie później.
         </p>
       </div>
     );
   }
 
-  if (isLoading) {
+  if (filteredLessons.length === 0) {
     return (
-      <div className="flex justify-center items-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-js"></div>
+      <div className="flex flex-col items-center justify-center py-12 text-center">
+        <h3 className="text-xl font-bold text-js mb-2">
+          Brak lekcji dla wybranego filtru
+        </h3>
+        <p className="text-gray-400 text-sm">
+          Nie znaleziono lekcji o wybranym poziomie trudności. Wybierz inny filtr.
+        </p>
       </div>
     );
   }
@@ -67,4 +90,6 @@ export const Lessons = memo(() => {
       </motion.div>
     </div>
   );
-}); 
+});
+
+Lessons.displayName = "Lessons"; 

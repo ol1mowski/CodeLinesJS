@@ -4,10 +4,11 @@ import { ValidationError } from '../utils/errors.js';
 
 export const getLearningPaths = async (req, res, next) => {
   try {
-    const { difficulty, search } = req.query;
+    const { difficulty, search, category } = req.query;
     const query = { isActive: true };
     
     if (difficulty) query.difficulty = difficulty;
+    if (category) query.category = category;
     if (search) {
       query.$or = [
         { title: { $regex: search, $options: 'i' } },
@@ -23,11 +24,12 @@ export const getLearningPaths = async (req, res, next) => {
         })
         .lean(),
       User.findById(req.user.userId)
-        .select('stats.completedChallenges')
+        .select('stats.completedChallenges stats.progress.currentLevel')
         .lean()
     ]);
 
     const completedLessons = user.stats?.completedChallenges || [];
+    const userLevel = user.stats?.progress?.currentLevel || 1;
     
     const pathsWithProgress = learningPaths.map(path => {
       const pathCompletedLessons = path.lessons.filter(lesson => 
@@ -39,16 +41,22 @@ export const getLearningPaths = async (req, res, next) => {
         total: path.lessons.length,
         percentage: Math.round((pathCompletedLessons.length / path.lessons.length) * 100)
       };
+
+      const isAvailableForUser = path.isAvailable && userLevel >= path.requiredLevel;
       
       return {
         id: path._id,
         title: path.title,
         description: path.description,
         difficulty: path.difficulty,
+        category: path.category,
         estimatedTime: path.estimatedTime,
         requirements: path.requirements,
         outcomes: path.outcomes,
         progress,
+        isAvailable: isAvailableForUser,
+        requiredLevel: path.requiredLevel,
+        isLocked: userLevel < path.requiredLevel,
         lessons: path.lessons.map(lesson => ({
           id: lesson._id,
           title: lesson.title,
@@ -72,21 +80,28 @@ export const getLearningPathById = async (req, res, next) => {
   try {
     const { id } = req.params;
     
-    const learningPath = await LearningPath.findOne({ 
-      _id: id,
-      isActive: true 
-    }).populate({
-      path: 'lessons',
-      select: 'title description category difficulty duration points requirements'
-    });
+    const [learningPath, user] = await Promise.all([
+      LearningPath.findOne({ 
+        _id: id,
+        isActive: true 
+      }).populate({
+        path: 'lessons',
+        select: 'title description category difficulty duration points requirements'
+      }),
+      User.findById(req.user.userId)
+        .select('stats.completedChallenges stats.progress.currentLevel')
+        .lean()
+    ]);
     
     if (!learningPath) {
       throw new ValidationError('Ścieżka nauki nie została znaleziona');
     }
+
+    const userLevel = user.stats?.progress?.currentLevel || 1;
     
-    const user = await User.findById(req.user.userId)
-      .select('stats.completedChallenges')
-      .lean();
+    if (!learningPath.isAvailable || userLevel < learningPath.requiredLevel) {
+      throw new ValidationError('Nie masz dostępu do tej ścieżki nauki');
+    }
     
     const completedLessons = learningPath.lessons.filter(lesson => 
       user.stats.completedChallenges.includes(lesson._id)
@@ -97,9 +112,12 @@ export const getLearningPathById = async (req, res, next) => {
       title: learningPath.title,
       description: learningPath.description,
       difficulty: learningPath.difficulty,
+      category: learningPath.category,
       estimatedTime: learningPath.estimatedTime,
       requirements: learningPath.requirements,
       outcomes: learningPath.outcomes,
+      isAvailable: learningPath.isAvailable,
+      requiredLevel: learningPath.requiredLevel,
       progress: {
         completed: completedLessons.length,
         total: learningPath.lessons.length,

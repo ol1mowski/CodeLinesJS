@@ -5,7 +5,10 @@ import { ValidationError } from '../utils/errors.js';
 export const getLessons = async (req, res, next) => {
   try {
     const { category, difficulty, search } = req.query;
-    const query = { isPublished: true };
+    const query = { 
+      isPublished: true,
+      isAvailable: true
+    };
     
     if (category) query.category = category;
     if (difficulty) query.difficulty = difficulty;
@@ -16,19 +19,40 @@ export const getLessons = async (req, res, next) => {
       ];
     }
     
+    const user = await User.findById(req.user.userId)
+      .select('stats.completedChallenges stats.progress.currentLevel')
+      .lean();
+    
+    const userLevel = user.stats?.progress?.currentLevel || 1;
+    
+    // Pobierz tylko lekcje dostępne dla poziomu użytkownika
+    query.requiredLevel = { $lte: userLevel };
+    
     const lessons = await Lesson.find(query)
       .sort({ order: 1 })
-      .select('title description category difficulty duration points')
+      .select('title description category difficulty duration points isAvailable requiredLevel')
       .lean();
     
-    const user = await User.findById(req.user.userId)
-      .select('stats.completedChallenges')
-      .lean();
+    const completedLessons = user.stats?.completedChallenges || [];
+    
+    const availableLessons = lessons.map(lesson => ({
+      id: lesson._id,
+      title: lesson.title,
+      description: lesson.description,
+      category: lesson.category,
+      difficulty: lesson.difficulty,
+      duration: lesson.duration,
+      points: lesson.points,
+      requiredLevel: lesson.requiredLevel,
+      isCompleted: completedLessons.some(id => id.toString() === lesson._id.toString()),
+      isLocked: userLevel < lesson.requiredLevel
+    }));
     
     res.json({
-      lessons,
+      lessons: availableLessons,
       userProgress: {
-        completedLessons: user.stats.completedChallenges
+        completedLessons: completedLessons.length,
+        userLevel
       }
     });
   } catch (error) {
@@ -40,19 +64,30 @@ export const getLessonById = async (req, res, next) => {
   try {
     const { id } = req.params;
     
-    const lesson = await Lesson.findOne({ 
-      _id: id,
-      isPublished: true 
-    }).populate('requirements', 'title');
+    const [lesson, user] = await Promise.all([
+      Lesson.findOne({ 
+        _id: id,
+        isPublished: true,
+        isAvailable: true
+      }).populate('requirements', 'title'),
+      User.findById(req.user.userId)
+        .select('stats.completedChallenges stats.progress.currentLevel')
+        .lean()
+    ]);
     
     if (!lesson) {
       throw new ValidationError('Lekcja nie została znaleziona');
     }
     
+    const userLevel = user.stats?.progress?.currentLevel || 1;
+    
+    // Sprawdź czy użytkownik ma wymagany poziom
+    if (userLevel < lesson.requiredLevel) {
+      throw new ValidationError(`Wymagany poziom ${lesson.requiredLevel} do odblokowania tej lekcji`);
+    }
+    
+    // Sprawdź wymagania wstępne (poprzednie lekcje)
     if (lesson.requirements?.length > 0) {
-      const user = await User.findById(req.user.userId)
-        .select('stats.completedChallenges');
-      
       const hasCompletedRequirements = lesson.requirements.every(req => 
         user.stats.completedChallenges.includes(req._id)
       );
@@ -62,7 +97,25 @@ export const getLessonById = async (req, res, next) => {
       }
     }
     
-    res.json(lesson);
+    const response = {
+      id: lesson._id,
+      title: lesson.title,
+      description: lesson.description,
+      content: lesson.content,
+      category: lesson.category,
+      difficulty: lesson.difficulty,
+      duration: lesson.duration,
+      points: lesson.points,
+      requiredLevel: lesson.requiredLevel,
+      requirements: lesson.requirements.map(req => ({
+        id: req._id,
+        title: req.title,
+        isCompleted: user.stats.completedChallenges.includes(req._id)
+      })),
+      isCompleted: user.stats.completedChallenges.includes(lesson._id)
+    };
+    
+    res.json(response);
   } catch (error) {
     next(error);
   }

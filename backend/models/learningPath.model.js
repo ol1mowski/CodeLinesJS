@@ -32,6 +32,20 @@ export const learningPathSchema = new mongoose.Schema({
   isActive: {
     type: Boolean,
     default: true
+  },
+  isAvailable: {
+    type: Boolean,
+    default: true
+  },
+  requiredLevel: {
+    type: Number,
+    default: 1,
+    min: 1
+  },
+  category: {
+    type: String,
+    required: true,
+    enum: ['javascript', 'react', 'node', 'database', 'testing']
   }
 }, {
   timestamps: true

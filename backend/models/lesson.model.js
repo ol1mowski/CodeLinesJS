@@ -32,6 +32,15 @@ export const lessonSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
+  isAvailable: {
+    type: Boolean,
+    default: true
+  },
+  requiredLevel: {
+    type: Number,
+    default: 1,
+    min: 1
+  },
   points: {
     type: Number,
     default: 10

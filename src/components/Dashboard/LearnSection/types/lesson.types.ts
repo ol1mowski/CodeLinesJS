@@ -45,10 +45,7 @@ export type Lesson = {
     description: string;
     duration: string;
     difficulty: 'beginner' | 'intermediate' | 'advanced';
-    category: string;
-    isCompleted: boolean;
-    progress: number;
     xp: number;
-    rewards?: LessonReward;
+    progress: number;
     sections: LessonSection[];
 }

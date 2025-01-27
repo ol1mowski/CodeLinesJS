@@ -1,1 +1,1 @@
-export type FilterType = "all" | "beginner" | "intermediate" | "advanced";
+export type FilterType = 'all' | 'beginner' | 'intermediate' | 'advanced';
