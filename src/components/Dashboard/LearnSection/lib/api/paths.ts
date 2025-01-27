@@ -13,7 +13,6 @@ export const fetchLearningPaths = async () => {
     throw new Error('Failed to fetch learning paths');
   }
   const data = await response.json();
-  console.log(data);
   return data;
 };
 

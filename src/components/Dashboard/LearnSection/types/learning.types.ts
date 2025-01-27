@@ -3,6 +3,7 @@ export type LearningPath = {
   title: string;
   description: string;
   difficulty: 'beginner' | 'intermediate' | 'advanced';
+  requiredLevel: number;
   estimatedTime: number;
   lessons: Array<{
     id: string;
@@ -15,4 +16,5 @@ export type LearningPath = {
     total: number;
     percentage: number;
   };
+  isLocked: boolean;
 }; 

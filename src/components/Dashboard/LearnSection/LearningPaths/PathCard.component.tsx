@@ -1,8 +1,9 @@
 import { memo } from "react";
 import { motion } from "framer-motion";
-import { FaClock, FaChevronRight } from "react-icons/fa";
+import { FaClock, FaChevronRight, FaLock } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import type { LearningPath } from "../types/learning.types";
+import { ProgressBar } from "../components/common/ProgressBar.component";
 
 type PathCardProps = {
   path: LearningPath;
@@ -29,38 +30,55 @@ export const PathCard = memo(({ path }: PathCardProps) => {
     estimatedTime, 
     lessons, 
     outcomes, 
+    requiredLevel,
     requirements,
-    progress 
+    progress,
+    isLocked 
   } = path;
 
   return (
-    <Link to={`/dashboard/path/${id}`}>
+    <div className={`group ${isLocked ? 'cursor-not-allowed' : ''}`}>
       <motion.div
         variants={cardVariants}
-        whileHover={{ scale: 1.02 }}
-        className="group bg-dark-800/50 border border-js/10 rounded-xl p-6 hover:border-js/20 transition-colors"
+        whileHover={!isLocked ? { scale: 1.02 } : {}}
+        className={`bg-dark-800/50 border rounded-xl p-6 transition-colors
+          ${isLocked 
+            ? 'border-gray-700/50 opacity-75' 
+            : 'border-js/10 hover:border-js/20'}`}
       >
         <div className="space-y-4">
           <div>
             <div className="flex justify-between items-start mb-2">
-              <h3 className="text-xl font-bold text-js group-hover:text-js/80 transition-colors">
-                {title}
-              </h3>
-              <span className={`px-2 py-0.5 rounded-md text-xs font-medium
-                ${difficulty === 'beginner' ? 'bg-green-500/10 text-green-400' :
-                  difficulty === 'intermediate' ? 'bg-yellow-500/10 text-yellow-400' :
-                    'bg-red-500/10 text-red-400'}`}
-              >
-                {difficulty === 'beginner' ? 'Podstawowy' :
-                  difficulty === 'intermediate' ? 'Średni' : 'Zaawansowany'}
-              </span>
+              <div className="flex items-center gap-2">
+                <h3 className={`text-xl font-bold ${isLocked ? 'text-gray-400' : 'text-js group-hover:text-js/80'} transition-colors`}>
+                  {title}
+                </h3>
+                {isLocked && (
+                  <FaLock className="w-4 h-4 text-gray-500" />
+                )}
+              </div>
+              <div className="flex flex-col items-end gap-1">
+                <span className={`px-2 py-0.5 rounded-md text-xs font-medium
+                  ${difficulty === 'beginner' ? 'bg-green-500/10 text-green-400' :
+                    difficulty === 'intermediate' ? 'bg-yellow-500/10 text-yellow-400' :
+                      'bg-red-500/10 text-red-400'}`}
+                >
+                  {difficulty === 'beginner' ? 'Podstawowy' :
+                    difficulty === 'intermediate' ? 'Średni' : 'Zaawansowany'}
+                </span>
+                {isLocked && (
+                  <span className="text-xs text-gray-500">
+                    Dostępne od poziomu {requiredLevel}
+                  </span>
+                )}
+              </div>
             </div>
-            <p className="text-gray-400 text-sm line-clamp-2">
+            <p className={`text-sm line-clamp-2 ${isLocked ? 'text-gray-500' : 'text-gray-400'}`}>
               {description}
             </p>
           </div>
 
-          <div className="flex items-center justify-between text-sm text-gray-400">
+          <div className={`flex items-center justify-between text-sm ${isLocked ? 'text-gray-500' : 'text-gray-400'}`}>
             <span className="flex items-center gap-1">
               <FaClock className="w-4 h-4" />
               {estimatedTime} min
@@ -71,7 +89,7 @@ export const PathCard = memo(({ path }: PathCardProps) => {
           </div>
 
           {outcomes && outcomes.length > 0 && (
-            <div>
+            <div className={isLocked ? 'opacity-50' : ''}>
               <h4 className="text-sm font-medium text-gray-200 mb-2">
                 Czego się nauczysz:
               </h4>
@@ -86,7 +104,7 @@ export const PathCard = memo(({ path }: PathCardProps) => {
           )}
 
           {requirements && requirements.length > 0 && (
-            <div>
+            <div className={isLocked ? 'opacity-50' : ''}>
               <h4 className="text-sm font-medium text-gray-200 mb-2">
                 Wymagania wstępne:
               </h4>
@@ -100,26 +118,22 @@ export const PathCard = memo(({ path }: PathCardProps) => {
             </div>
           )}
 
-          <div className="flex items-center justify-between">
-            <div className="flex-1 mr-4">
-              <div className="relative h-2 bg-dark rounded-full overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${progress.percentage}%` }}
-                  className="absolute inset-y-0 left-0 bg-js rounded-full"
-                  transition={{ duration: 0.8, ease: "easeOut" }}
-                />
+          {!isLocked ? (
+            <Link to={`/dashboard/path/${id}`} className="block">
+              <div className="flex items-center justify-between">
+                <ProgressBar progress={progress} />
+                <FaChevronRight className="w-4 h-4 text-js group-hover:translate-x-1 transition-transform" />
               </div>
-              <div className="flex justify-between text-sm text-gray-400 mt-1">
-                <span>{progress.completed} / {progress.total} ukończone</span>
-                <span>{progress.percentage}%</span>
-              </div>
+            </Link>
+          ) : (
+            <div className="flex items-center justify-between opacity-50">
+              <ProgressBar progress={0} />
+              <FaLock className="w-4 h-4 text-gray-500" />
             </div>
-            <FaChevronRight className="w-4 h-4 text-js group-hover:translate-x-1 transition-transform" />
-          </div>
+          )}
         </div>
       </motion.div>
-    </Link>
+    </div>
   );
 });
 
