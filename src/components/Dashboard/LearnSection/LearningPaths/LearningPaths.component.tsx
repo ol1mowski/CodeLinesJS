@@ -4,7 +4,8 @@ import { PathCard } from "./PathCard.component";
 import { useQuery } from "@tanstack/react-query";
 import { fetchLearningPaths } from "../lib/api/paths";
 import { ErrorMessage } from "../components/ErrorMessage.component";
-import { LearningPath } from "../../../../types/learning.types";
+import { LoadingSpinner } from "../components/UI/LoadingSpinner.component";
+import { type LearningPath } from "../types/learning.types";
 
 export const LearningPaths = memo(() => {
   const userId = "current-user";
@@ -13,7 +14,7 @@ export const LearningPaths = memo(() => {
     isLoading, 
     error,
     refetch 
-  } = useQuery<{ data: LearningPath[] }, Error>({
+  } = useQuery<LearningPath[], Error>({
     queryKey: ['learningPaths'],
     queryFn: fetchLearningPaths,
     retry: 2
@@ -37,14 +38,10 @@ export const LearningPaths = memo(() => {
   }
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center items-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-js"></div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
-  if (!paths?.data || paths.data.length === 0) {
+  if (!paths || paths.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center">
         <h3 className="text-xl font-bold text-js mb-2">
@@ -74,7 +71,7 @@ export const LearningPaths = memo(() => {
         animate="visible"
         className="grid grid-cols-1 lg:grid-cols-2 gap-6"
       >
-        {paths?.data.map((path) => (
+        {paths.map((path) => (
           <PathCard 
             key={path.id} 
             path={path}
