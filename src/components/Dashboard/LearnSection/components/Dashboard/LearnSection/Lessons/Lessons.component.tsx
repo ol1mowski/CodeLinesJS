@@ -15,6 +15,21 @@ export const Lessons = memo(() => {
     filter === "all" ? true : lesson.difficulty === filter
   );
 
+  if (filteredLessons.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 text-center">
+        <h3 className="text-xl font-bold text-js mb-2">
+          Brak dostępnych lekcji
+        </h3>
+        <p className="text-gray-400 text-sm">
+          {filter === "all" 
+            ? "Aktualnie nie ma żadnych dostępnych lekcji. Sprawdź ponownie później."
+            : "Brak lekcji o wybranym poziomie trudności. Wybierz inny filtr."}
+        </p>
+      </div>
+    );
+  }
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center py-12">

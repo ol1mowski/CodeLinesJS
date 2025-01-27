@@ -1,26 +1,33 @@
 import mongoose from 'mongoose';
 
-const learningPathSchema = new mongoose.Schema({
+export const learningPathSchema = new mongoose.Schema({
   title: {
     type: String,
+    required: true,
+    trim: true
+  },
+  description: {
+    type: String,
     required: true
   },
-  description: String,
   difficulty: {
     type: String,
-    enum: ['beginner', 'intermediate', 'advanced'],
+    required: true,
+    enum: ['beginner', 'intermediate', 'advanced']
+  },
+  estimatedTime: {
+    type: Number,
     required: true
   },
-  estimatedTime: Number,
-  lessons: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Lesson'
-  }],
   requirements: [{
     type: String
   }],
   outcomes: [{
     type: String
+  }],
+  lessons: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Lesson'
   }],
   isActive: {
     type: Boolean,
@@ -28,6 +35,4 @@ const learningPathSchema = new mongoose.Schema({
   }
 }, {
   timestamps: true
-});
-
-export const LearningPath = mongoose.model('LearningPath', learningPathSchema); 
+}); 

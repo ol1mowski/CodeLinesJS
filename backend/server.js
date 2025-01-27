@@ -14,6 +14,7 @@ import settingsRoutes from './routes/settings.routes.js';
 import learningPathsRoutes from './routes/learningPaths.routes.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { initializeModels } from './models/index.js';
 
 dotenv.config();
 
@@ -47,7 +48,10 @@ app.use(errorHandler);
 
 mongoose
   .connect(process.env.MONGODB_URI)
-  .then(() => console.log("Connected to MongoDB"))
+  .then(() => {
+    console.log("Connected to MongoDB");
+    initializeModels();
+  })
   .catch((err) => console.error("MongoDB connection error:", err));
 
 app.listen(port, () => {

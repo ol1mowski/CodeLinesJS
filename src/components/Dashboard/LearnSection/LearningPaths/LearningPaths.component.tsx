@@ -44,6 +44,19 @@ export const LearningPaths = memo(() => {
     );
   }
 
+  if (!paths?.data || paths.data.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 text-center">
+        <h3 className="text-xl font-bold text-js mb-2">
+          Brak dostępnych ścieżek nauki
+        </h3>
+        <p className="text-gray-400 text-sm">
+          Aktualnie nie ma żadnych dostępnych ścieżek nauki. Sprawdź ponownie później.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div>

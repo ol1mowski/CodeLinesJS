@@ -1,4 +1,4 @@
-import { LearningPath } from '../models/learningPath.model.js';
+import { LearningPath } from '../models/index.js';
 import { User } from '../models/user.model.js';
 import { ValidationError } from '../utils/errors.js';
 
@@ -15,26 +15,29 @@ export const getLearningPaths = async (req, res, next) => {
       ];
     }
     
-    const learningPaths = await LearningPath.find(query)
-      .populate({
-        path: 'lessons',
-        select: 'title description category difficulty duration points'
-      })
-      .lean();
-    
-    const user = await User.findById(req.user.userId)
-      .select('stats.completedChallenges')
-      .lean();
+    const [learningPaths, user] = await Promise.all([
+      LearningPath.find(query)
+        .populate({
+          path: 'lessons',
+          select: 'title description category difficulty duration points'
+        })
+        .lean(),
+      User.findById(req.user.userId)
+        .select('stats.completedChallenges')
+        .lean()
+    ]);
+
+    const completedLessons = user.stats?.completedChallenges || [];
     
     const pathsWithProgress = learningPaths.map(path => {
-      const completedLessons = path.lessons.filter(lesson => 
-        user.stats.completedChallenges.includes(lesson._id)
+      const pathCompletedLessons = path.lessons.filter(lesson => 
+        completedLessons.some(id => id.toString() === lesson._id.toString())
       );
       
       const progress = {
-        completed: completedLessons.length,
+        completed: pathCompletedLessons.length,
         total: path.lessons.length,
-        percentage: Math.round((completedLessons.length / path.lessons.length) * 100)
+        percentage: Math.round((pathCompletedLessons.length / path.lessons.length) * 100)
       };
       
       return {
@@ -54,7 +57,7 @@ export const getLearningPaths = async (req, res, next) => {
           difficulty: lesson.difficulty,
           duration: lesson.duration,
           points: lesson.points,
-          isCompleted: user.stats.completedChallenges.includes(lesson._id)
+          isCompleted: completedLessons.some(id => id.toString() === lesson._id.toString())
         }))
       };
     });

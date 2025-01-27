@@ -1,4 +1,4 @@
-import { Lesson } from '../models/lesson.model.js';
+import { Lesson } from '../models/index.js';
 import { User } from '../models/user.model.js';
 import { ValidationError } from '../utils/errors.js';
 
@@ -73,25 +73,29 @@ export const completeLesson = async (req, res, next) => {
     const { id } = req.params;
     const userId = req.user.userId;
     
-    const lesson = await Lesson.findById(id);
+    const [lesson, user] = await Promise.all([
+      Lesson.findById(id),
+      User.findById(userId)
+    ]);
+
     if (!lesson) {
       throw new ValidationError('Lekcja nie została znaleziona');
     }
     
-    const user = await User.findById(userId);
-    
-    if (user.stats.completedChallenges.includes(id)) {
+    const completedLessons = user.stats?.completedChallenges || [];
+    if (completedLessons.some(lessonId => lessonId.toString() === id)) {
       throw new ValidationError('Lekcja została już ukończona');
     }
     
-    user.stats.completedChallenges.push(id);
-    user.stats.totalPoints += lesson.points;
+    user.stats = user.stats || {};
+    user.stats.completedChallenges = [...completedLessons, lesson._id];
+    user.stats.totalPoints = (user.stats.totalPoints || 0) + lesson.points;
     
     const today = new Date().toDateString();
-    const lastActive = new Date(user.stats.lastActive).toDateString();
+    const lastActive = user.stats.lastActive ? new Date(user.stats.lastActive).toDateString() : null;
     
     if (today !== lastActive) {
-      user.stats.streak += 1;
+      user.stats.streak = (user.stats.streak || 0) + 1;
     }
     
     user.stats.lastActive = new Date();

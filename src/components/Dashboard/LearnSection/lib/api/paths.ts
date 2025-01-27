@@ -12,7 +12,9 @@ export const fetchLearningPaths = async () => {
   if (!response.ok) {
     throw new Error('Failed to fetch learning paths');
   }
-  return response.json();
+  const data = await response.json();
+  console.log(data);
+  return data;
 };
 
 export const fetchLearningPathProgress = async (userId: string, pathId: string) => {
