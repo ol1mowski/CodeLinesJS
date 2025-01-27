@@ -2,8 +2,15 @@ import { LessonProgress } from "../../types/lesson.types";
 
 const API_URL = 'http://localhost:5001/api';
 
+const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+
 export const fetchUserProgress = async (userId: string) => {
-  const response = await fetch(`${API_URL}/users/${userId}/progress`);
+  const response = await fetch(`${API_URL}/users/${userId}/progress`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+  });
   if (!response.ok) {
     throw new Error('Failed to fetch progress');
   }
@@ -11,7 +18,12 @@ export const fetchUserProgress = async (userId: string) => {
 };
 
 export const fetchLessonProgress = async (userId: string, lessonId: string) => {
-  const response = await fetch(`${API_URL}/users/${userId}/lessons/${lessonId}/progress`);
+  const response = await fetch(`${API_URL}/users/${userId}/lessons/${lessonId}/progress`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+  });
   if (!response.ok) {
     throw new Error('Failed to fetch progress');
   }
@@ -23,7 +35,10 @@ export const updateLessonProgress = async (userId: string, lessonId: string, pro
     `${API_URL}/users/${userId}/lessons/${lessonId}/progress`,
     {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
       body: JSON.stringify(progress)
     }
   );
