@@ -1,16 +1,17 @@
 import mongoose from 'mongoose';
 
 export const lessonSchema = new mongoose.Schema({
+  id: {
+    type: String,
+    required: true,
+    unique: true
+  },
   title: {
     type: String,
     required: true,
     trim: true
   },
   description: {
-    type: String,
-    required: true
-  },
-  content: {
     type: String,
     required: true
   },

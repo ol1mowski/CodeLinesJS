@@ -1,14 +1,15 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import { Lesson, LearningPath, initializeModels, Resource } from '../models/index.js';
+import { LessonContent } from '../models/lessonContent.model.js';
 
 dotenv.config();
 
-const lessons = [
+const lessonsData = [
   {
+    id: "js-variables",
     title: "Wprowadzenie do JavaScript",
     description: "Podstawy języka JavaScript, zmienne, typy danych",
-    content: "JavaScript jest językiem programowania wysokiego poziomu...",
     category: "javascript",
     difficulty: "beginner",
     order: 1,
@@ -19,9 +20,9 @@ const lessons = [
     requiredLevel: 1
   },
   {
+    id: "js-functions",
     title: "Funkcje w JavaScript",
     description: "Tworzenie i używanie funkcji",
-    content: "Funkcje są podstawowym blokiem budulcowym w JavaScript...",
     category: "javascript",
     difficulty: "beginner",
     order: 2,
@@ -32,9 +33,9 @@ const lessons = [
     requiredLevel: 1
   },
   {
+    id: "js-arrays",
     title: "Tablice i Obiekty",
     description: "Praca z tablicami i obiektami w JavaScript",
-    content: "Tablice i obiekty są podstawowymi strukturami danych...",
     category: "javascript",
     difficulty: "beginner",
     order: 3,
@@ -45,9 +46,9 @@ const lessons = [
     requiredLevel: 2
   },
   {
+    id: "react-intro",
     title: "Podstawy React",
     description: "Wprowadzenie do biblioteki React",
-    content: "React jest biblioteką JavaScript do budowania interfejsów...",
     category: "react",
     difficulty: "intermediate",
     order: 1,
@@ -58,9 +59,9 @@ const lessons = [
     requiredLevel: 3
   },
   {
+    id: "react-components",
     title: "Komponenty React",
     description: "Tworzenie i zarządzanie komponentami",
-    content: "Komponenty są podstawową jednostką budulcową w React...",
     category: "react",
     difficulty: "intermediate",
     order: 2,
@@ -70,6 +71,61 @@ const lessons = [
     isAvailable: true,
     requiredLevel: 3
   }
+];
+
+const lessonsContent = [
+  {
+    lessonId: "js-variables",
+    xp: 50,
+    rewards: {
+      completion: [
+        {
+          type: 'xp',
+          value: 50,
+          title: 'Podstawy opanowane!',
+          description: 'Ukończyłeś podstawy JavaScript'
+        }
+      ],
+      quiz: {
+        100: [
+          {
+            type: 'badge',
+            value: 1,
+            title: 'Perfekcyjny wynik!',
+            description: 'Odpowiedziałeś poprawnie na wszystkie pytania'
+          }
+        ]
+      }
+    },
+    sections: [
+      {
+        title: "Wprowadzenie do zmiennych",
+        content: "JavaScript jest językiem programowania wysokiego poziomu...",
+        examples: [
+          {
+            code: "let name = 'John';\nconsole.log(name);",
+            language: "javascript",
+            explanation: "Podstawowy przykład deklaracji zmiennej"
+          }
+        ],
+        quiz: [
+          {
+            id: "q1",
+            question: "Co to jest zmienna w JavaScript?",
+            options: [
+              "Kontener na dane",
+              "Funkcja",
+              "Pętla",
+              "Warunek"
+            ],
+            correctAnswer: 0,
+            explanation: "Zmienna to kontener do przechowywania danych"
+          }
+        ]
+      }
+    ]
+  }
+  // ... pozostałe treści lekcji
 ];
 
 const learningPaths = [
@@ -159,17 +215,24 @@ const initializeData = async () => {
     
     initializeModels();
 
+    // Usuń stare dane
     await Promise.all([
       Lesson.deleteMany({}),
+      LessonContent.deleteMany({}),
       LearningPath.deleteMany({}),
       Resource.deleteMany({})
     ]);
     console.log('Usunięto stare dane');
 
-    const createdLessons = await Lesson.insertMany(lessons);
-    console.log('Dodano lekcje');
+    // Dodaj nowe lekcje i ich treści
+    await Promise.all([
+      Lesson.insertMany(lessonsData),
+      LessonContent.insertMany(lessonsContent)
+    ]);
+    console.log('Dodano lekcje i ich treści');
 
-
+    // Dodaj ścieżki nauki
+    const createdLessons = await Lesson.find({});
     const jsLessons = createdLessons.filter(lesson => lesson.category === 'javascript');
     const reactLessons = createdLessons.filter(lesson => lesson.category === 'react');
 
@@ -187,6 +250,7 @@ const initializeData = async () => {
     await LearningPath.insertMany(pathsWithLessons);
     console.log('Dodano ścieżki nauki');
 
+    // Dodaj zasoby
     await Resource.insertMany(resources);
     console.log('Dodano zasoby');
 
