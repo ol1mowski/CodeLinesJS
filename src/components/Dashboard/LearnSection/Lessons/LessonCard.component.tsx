@@ -50,7 +50,7 @@ export const LessonCard = memo(({ lesson }: LessonCardProps) => {
             <div className="flex items-center gap-4 text-sm text-gray-400">
               <span className="flex items-center gap-1">
                 <FaClock className="w-4 h-4" />
-                {lesson.duration}
+                {lesson.duration} min
               </span>
               <span className={`px-2 py-0.5 rounded-md text-xs font-medium
                 ${lesson.difficulty === 'beginner' ? 'bg-green-500/10 text-green-400' :

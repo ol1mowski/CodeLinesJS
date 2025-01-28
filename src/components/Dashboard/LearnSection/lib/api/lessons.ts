@@ -13,6 +13,5 @@ export const fetchLessons = async () => {
     throw new Error('Failed to fetch lessons');
   }
   const data = await response.json();
-  console.log(data);
   return data;
 }; 

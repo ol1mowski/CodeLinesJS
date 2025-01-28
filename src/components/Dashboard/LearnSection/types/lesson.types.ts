@@ -43,9 +43,11 @@ export type Lesson = {
     id: string;
     title: string;
     description: string;
-    duration: string;
+    duration: number;
     difficulty: 'beginner' | 'intermediate' | 'advanced';
-    xp: number;
-    progress: number;
-    sections: LessonSection[];
+    category: string;
+    points: number;
+    requiredLevel: number;
+    isLocked: boolean;
+    isCompleted: boolean;
 }

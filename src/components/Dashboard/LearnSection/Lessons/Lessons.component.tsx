@@ -37,6 +37,7 @@ export const Lessons = memo(() => {
       />
       <LessonsList 
         lessons={filteredLessons}
+        filter={filter}
         userId={userId}
       />
     </div>
