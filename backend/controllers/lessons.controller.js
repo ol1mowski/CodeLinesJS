@@ -24,19 +24,19 @@ export const getLessons = async (req, res, next) => {
       .lean();
     
     const userLevel = user.stats?.progress?.currentLevel || 1;
-    
-    // Pobierz tylko lekcje dostępne dla poziomu użytkownika
+
     query.requiredLevel = { $lte: userLevel };
     
     const lessons = await Lesson.find(query)
       .sort({ order: 1 })
-      .select('title description category difficulty duration points isAvailable requiredLevel')
+      .select('title description category difficulty duration points isAvailable requiredLevel id')
       .lean();
     
-    const completedLessons = user.stats?.completedChallenges || [];
+    const completedLessons = user.stats?.completedChallenges || [];    
     
     const availableLessons = lessons.map(lesson => ({
-      id: lesson._id,
+      _id: lesson._id,
+      id: lesson.id,
       title: lesson.title,
       description: lesson.description,
       category: lesson.category,

@@ -40,6 +40,7 @@ export type LessonProgress = {
 }
 
 export type Lesson = {
+    _id: string;
     id: string;
     title: string;
     description: string;

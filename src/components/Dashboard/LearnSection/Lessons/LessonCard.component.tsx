@@ -23,6 +23,7 @@ const cardVariants = {
 export const LessonCard = memo(({ lesson }: LessonCardProps) => {
   const progressBarWidth = `${lesson.progress}%`;
 
+
   return (
     <Link to={`/dashboard/lesson/${lesson.id}`}>
       <motion.div

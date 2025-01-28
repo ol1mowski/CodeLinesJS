@@ -125,7 +125,7 @@ const lessonsContent = [
       }
     ]
   }
-  // ... pozostałe treści lekcji
+
 ];
 
 const learningPaths = [
@@ -215,7 +215,6 @@ const initializeData = async () => {
     
     initializeModels();
 
-    // Usuń stare dane
     await Promise.all([
       Lesson.deleteMany({}),
       LessonContent.deleteMany({}),
@@ -224,14 +223,12 @@ const initializeData = async () => {
     ]);
     console.log('Usunięto stare dane');
 
-    // Dodaj nowe lekcje i ich treści
     await Promise.all([
       Lesson.insertMany(lessonsData),
       LessonContent.insertMany(lessonsContent)
     ]);
     console.log('Dodano lekcje i ich treści');
 
-    // Dodaj ścieżki nauki
     const createdLessons = await Lesson.find({});
     const jsLessons = createdLessons.filter(lesson => lesson.category === 'javascript');
     const reactLessons = createdLessons.filter(lesson => lesson.category === 'react');
@@ -250,7 +247,6 @@ const initializeData = async () => {
     await LearningPath.insertMany(pathsWithLessons);
     console.log('Dodano ścieżki nauki');
 
-    // Dodaj zasoby
     await Resource.insertMany(resources);
     console.log('Dodano zasoby');
 
