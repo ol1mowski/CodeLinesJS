@@ -5,11 +5,15 @@ import { Lessons } from "./Lessons/Lessons.component";
 import { Resources } from "./Resources/Resources.component";
 import { LearningPaths } from "./LearningPaths/LearningPaths.component";
 import { LearnTabs } from "./LearnTabs/LearnTabs.component";
+import { useAuth } from "./hooks/useAuth";
+import { LoadingSpinner } from "./components/UI/LoadingSpinner.component";
+
 
 type TabType = "paths" | "lessons" | "resources" | "articles";
 
 export const LearnSection = memo(() => {
   const [activeTab, setActiveTab] = useState<TabType>("paths");
+  const { token, isAuthenticated } = useAuth();
 
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -24,6 +28,14 @@ export const LearnSection = memo(() => {
   };
 
   const renderContent = () => {
+    if (!isAuthenticated) {
+      return (
+        <div className="flex justify-center py-12">
+          <LoadingSpinner />
+        </div>
+      );
+    }
+
     switch (activeTab) {
       case "paths":
         return <LearningPaths />;
