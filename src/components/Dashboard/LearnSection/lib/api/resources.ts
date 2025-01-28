@@ -12,5 +12,7 @@ export const fetchResources = async () => {
   if (!response.ok) {
     throw new Error('Failed to fetch resources');
   }
-  return response.json();
+  const data = await response.json();
+  console.log(data);
+  return data;
 }; 

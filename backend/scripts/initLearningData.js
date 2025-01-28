@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import { Lesson, LearningPath, initializeModels } from '../models/index.js';
+import { Lesson, LearningPath, initializeModels, Resource } from '../models/index.js';
 
 dotenv.config();
 
@@ -107,29 +107,66 @@ const learningPaths = [
   }
 ];
 
+const resources = [
+  {
+    title: "JavaScript - przewodnik po ES6+",
+    description: "Kompletny przewodnik po nowych funkcjach JavaScript ES6+",
+    url: "https://example.com/js-es6-guide",
+    type: "article",
+    category: "javascript",
+    difficulty: "intermediate",
+    tags: ["ES6", "JavaScript", "Modern JS"],
+    author: {
+      name: "John Doe",
+      url: "https://example.com/author/john"
+    },
+  },
+  {
+    title: "React Hooks - podstawy",
+    description: "Wprowadzenie do React Hooks i zarządzania stanem",
+    url: "https://example.com/react-hooks",
+    type: "tutorial",
+    category: "react",
+    difficulty: "beginner",
+    tags: ["React", "Hooks", "State Management"],
+    author: {
+      name: "Jane Smith",
+      url: "https://example.com/author/jane"
+    },
+  },
+  {
+    title: "Node.js - najlepsze praktyki",
+    description: "Zbiór najlepszych praktyk w Node.js",
+    url: "https://example.com/nodejs-best-practices",
+    type: "documentation",
+    category: "node",
+    difficulty: "advanced",
+    tags: ["Node.js", "Best Practices", "Backend"],
+    author: {
+      name: "Mike Johnson",
+      url: "https://example.com/author/mike"
+    },
+  }
+];
+
 const initializeData = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI);
     console.log('Połączono z bazą danych');
     
-    // Inicjalizacja modeli
     initializeModels();
 
-    // Sprawdź, czy modele są poprawnie zarejestrowane
-    console.log('Zarejestrowane modele:', mongoose.modelNames());
-
-    // Usuń istniejące dane
     await Promise.all([
       Lesson.deleteMany({}),
-      LearningPath.deleteMany({})
+      LearningPath.deleteMany({}),
+      Resource.deleteMany({})
     ]);
     console.log('Usunięto stare dane');
 
-    // Dodaj lekcje
     const createdLessons = await Lesson.insertMany(lessons);
     console.log('Dodano lekcje');
 
-    // Przypisz lekcje do ścieżek
+
     const jsLessons = createdLessons.filter(lesson => lesson.category === 'javascript');
     const reactLessons = createdLessons.filter(lesson => lesson.category === 'react');
 
@@ -144,9 +181,11 @@ const initializeData = async () => {
       }
     ];
 
-    // Dodaj ścieżki nauki
     await LearningPath.insertMany(pathsWithLessons);
     console.log('Dodano ścieżki nauki');
+
+    await Resource.insertMany(resources);
+    console.log('Dodano zasoby');
 
     console.log('Inicjalizacja zakończona pomyślnie');
   } catch (error) {
