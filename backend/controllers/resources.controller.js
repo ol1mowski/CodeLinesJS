@@ -23,8 +23,6 @@ export const getResources = async (req, res, next) => {
       .select('stats.progress.currentLevel preferences.savedResources')
       .lean();
     
-    const userLevel = user.stats?.progress?.currentLevel || 1;
-    query.requiredLevel = { $lte: userLevel };
     
     const resources = await Resource.find(query)
       .sort({ likes: -1, createdAt: -1 })
@@ -41,10 +39,8 @@ export const getResources = async (req, res, next) => {
       category: resource.category,
       difficulty: resource.difficulty,
       tags: resource.tags,
+      isRecommended: resource.isRecommended,
       author: resource.author,
-      likes: resource.likes,
-      views: resource.views,
-      requiredLevel: resource.requiredLevel,
       isSaved: savedResources.includes(resource._id),
       createdAt: resource.createdAt
     }));
@@ -72,13 +68,7 @@ export const getResourceById = async (req, res, next) => {
     if (!resource || !resource.isPublished) {
       throw new ValidationError('Zasób nie został znaleziony');
     }
-    
-    const userLevel = user.stats?.progress?.currentLevel || 1;
-    if (userLevel < resource.requiredLevel) {
-      throw new ValidationError('Nie masz wystarczającego poziomu, aby zobaczyć ten zasób');
-    }
-    
-    // Inkrementuj licznik wyświetleń
+
     await Resource.findByIdAndUpdate(id, { $inc: { views: 1 } });
     
     const savedResources = user.preferences?.savedResources || [];

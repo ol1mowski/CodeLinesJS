@@ -120,6 +120,7 @@ const resources = [
       name: "John Doe",
       url: "https://example.com/author/john"
     },
+    isRecommended: false
   },
   {
     title: "React Hooks - podstawy",
@@ -133,6 +134,7 @@ const resources = [
       name: "Jane Smith",
       url: "https://example.com/author/jane"
     },
+    isRecommended: false
   },
   {
     title: "Node.js - najlepsze praktyki",
@@ -146,6 +148,7 @@ const resources = [
       name: "Mike Johnson",
       url: "https://example.com/author/mike"
     },
+    isRecommended: false
   }
 ];
 

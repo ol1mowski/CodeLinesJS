@@ -34,6 +34,10 @@ export const resourceSchema = new mongoose.Schema({
     type: String,
     trim: true
   }],
+  isRecommended: {
+    type: Boolean,
+    default: false
+  },
   author: {
     name: String,
     url: String
@@ -42,19 +46,6 @@ export const resourceSchema = new mongoose.Schema({
     type: Boolean,
     default: true
   },
-  requiredLevel: {
-    type: Number,
-    default: 1,
-    min: 1
-  },
-  likes: {
-    type: Number,
-    default: 0
-  },
-  views: {
-    type: Number,
-    default: 0
-  }
 }, {
   timestamps: true
 });

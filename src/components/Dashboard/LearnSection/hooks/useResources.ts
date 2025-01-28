@@ -8,15 +8,15 @@ export const useResources = () => {
     isLoading, 
     error,
     refetch 
-  } = useQuery<{ data: Resource[] }, Error>({
+  } = useQuery<{ resources: Resource[] }, Error>({
     queryKey: ['resources'],
     queryFn: fetchResources,
     retry: 2,
     staleTime: 1000 * 60 * 5, 
   });
 
-  const recommendedResources = resources?.data.filter(resource => resource.isRecommended) || [];
-  const otherResources = resources?.data.filter(resource => !resource.isRecommended) || [];
+  const recommendedResources = resources?.resources.filter(resource => resource.isRecommended) || [];
+  const otherResources = resources?.resources.filter(resource => !resource.isRecommended) || [];
 
   return {
     recommendedResources,
