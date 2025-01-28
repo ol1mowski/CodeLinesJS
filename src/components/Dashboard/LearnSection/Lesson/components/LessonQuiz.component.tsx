@@ -5,10 +5,20 @@ import type { QuizQuestion } from "../../types/lesson.types";
 
 type LessonQuizProps = {
   questions: QuizQuestion[];
-  onComplete: () => void;
+  onComplete: (correct: number) => void;
 }
 
 export const LessonQuiz = memo(({ questions, onComplete }: LessonQuizProps) => {
+  if (!questions || questions.length === 0) {
+    return (
+      <div className="p-4 bg-dark-800/50 rounded-lg border border-js/10">
+        <p className="text-gray-400 text-sm text-center">
+          Ten quiz nie zawiera jeszcze żadnych pytań.
+        </p>
+      </div>
+    );
+  }
+
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showExplanation, setShowExplanation] = useState(false);
@@ -29,7 +39,7 @@ export const LessonQuiz = memo(({ questions, onComplete }: LessonQuizProps) => {
       setSelectedAnswer(null);
       setShowExplanation(false);
     } else {
-      onComplete();
+      onComplete(correctAnswers);
     }
   };
 

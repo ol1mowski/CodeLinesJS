@@ -11,8 +11,12 @@ import trendingRoutes from "./routes/trending.routes.js";
 import { errorHandler } from "./middleware/error.middleware.js";
 import postsRoutes from './routes/posts.routes.js';
 import settingsRoutes from './routes/settings.routes.js';
+import learningPathsRoutes from './routes/learningPaths.routes.js';
+import lessonsRoutes from './routes/lessons.routes.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { initializeModels } from './models/index.js';
+import resourcesRoutes from './routes/resources.routes.js';
 
 dotenv.config();
 
@@ -40,12 +44,18 @@ app.use("/api/ranking", rankingRoutes);
 app.use("/api/trending", trendingRoutes);
 app.use("/api/posts", postsRoutes);
 app.use("/api/settings", settingsRoutes);
+app.use("/api/learning-paths", learningPathsRoutes);
+app.use("/api/lessons", lessonsRoutes);
+app.use("/api/resources", resourcesRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(errorHandler);
 
 mongoose
   .connect(process.env.MONGODB_URI)
-  .then(() => console.log("Connected to MongoDB"))
+  .then(() => {
+    console.log("Connected to MongoDB");
+    initializeModels();
+  })
   .catch((err) => console.error("MongoDB connection error:", err));
 
 app.listen(port, () => {

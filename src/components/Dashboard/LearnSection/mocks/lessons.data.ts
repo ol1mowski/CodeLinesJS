@@ -8,9 +8,33 @@ export const lessons: Lesson[] = [
     duration: "15 min",
     difficulty: "beginner",
     xp: 50,
-    progress: {
-      completedSections: [],
-      quizResults: {}
+    rewards: {
+      completion: [
+        {
+          type: 'xp',
+          value: 50,
+          title: 'Podstawy opanowane!',
+          description: 'Ukończyłeś podstawy JavaScript'
+        }
+      ],
+      quiz: {
+        100: [
+          {
+            type: 'badge',
+            value: 1,
+            title: 'Perfekcyjny wynik!',
+            description: 'Odpowiedziałeś poprawnie na wszystkie pytania'
+          }
+        ],
+        80: [
+          {
+            type: 'xp',
+            value: 10,
+            title: 'Świetny wynik!',
+            description: 'Zdobyłeś dodatkowe punkty za wysoki wynik'
+          }
+        ]
+      }
     },
     sections: [
       {
@@ -121,9 +145,33 @@ const z = 1;
     duration: "25 min",
     difficulty: "intermediate",
     xp: 75,
-    progress: {
-      completedSections: [],
-      quizResults: {}
+    rewards: {
+      completion: [
+        {
+          type: 'xp',
+          value: 75,
+          title: 'Podstawy opanowane!',
+          description: 'Ukończyłeś podstawy JavaScript'
+        }
+      ],
+      quiz: {
+        100: [
+          {
+            type: 'badge',
+            value: 1,
+            title: 'Perfekcyjny wynik!',
+            description: 'Odpowiedziałeś poprawnie na wszystkie pytania'
+          }
+        ],
+        80: [
+          {
+            type: 'xp',
+            value: 15,
+            title: 'Świetny wynik!',
+            description: 'Zdobyłeś dodatkowe punkty za wysoki wynik'
+          }
+        ]
+      }
     },
     sections: [
       {
@@ -244,9 +292,33 @@ console.log(sum(10, 20)); // 30`,
     duration: "35 min",
     difficulty: "advanced",
     xp: 100,
-    progress: {
-      completedSections: [],
-      quizResults: {}
+    rewards: {
+      completion: [
+        {
+          type: 'xp',
+          value: 100,
+          title: 'Podstawy opanowane!',
+          description: 'Ukończyłeś podstawy JavaScript'
+        }
+      ],
+      quiz: {
+        100: [
+          {
+            type: 'badge',
+            value: 1,
+            title: 'Perfekcyjny wynik!',
+            description: 'Odpowiedziałeś poprawnie na wszystkie pytania'
+          }
+        ],
+        80: [
+          {
+            type: 'xp',
+            value: 20,
+            title: 'Świetny wynik!',
+            description: 'Zdobyłeś dodatkowe punkty za wysoki wynik'
+          }
+        ]
+      }
     },
     sections: [
       {
@@ -399,9 +471,33 @@ async function loadDashboard() {
     duration: "30 min",
     difficulty: "intermediate",
     xp: 80,
-    progress: {
-      completedSections: [],
-      quizResults: {}
+    rewards: {
+      completion: [
+        {
+          type: 'xp',
+          value: 80,
+          title: 'Podstawy opanowane!',
+          description: 'Ukończyłeś podstawy JavaScript'
+        }
+      ],
+      quiz: {
+        100: [
+          {
+            type: 'badge',
+            value: 1,
+            title: 'Perfekcyjny wynik!',
+            description: 'Odpowiedziałeś poprawnie na wszystkie pytania'
+          }
+        ],
+        80: [
+          {
+            type: 'xp',
+            value: 15,
+            title: 'Świetny wynik!',
+            description: 'Zdobyłeś dodatkowe punkty za wysoki wynik'
+          }
+        ]
+      }
     },
     sections: [
       {

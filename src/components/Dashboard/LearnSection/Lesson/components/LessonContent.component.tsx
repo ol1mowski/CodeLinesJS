@@ -6,13 +6,26 @@ import type { LessonSection } from "../../types/lesson.types";
 import { useInView } from 'react-intersection-observer';
 import { useEffect } from 'react';
 
-interface LessonContentProps {
+type LessonContentProps = {
   sections: LessonSection[];
   onSectionComplete: (index: number) => void;
   onQuizComplete: (quizId: string, correct: number, total: number) => void;
 }
 
 export const LessonContent = memo(({ sections, onSectionComplete, onQuizComplete }: LessonContentProps) => {
+  if (!sections || sections.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 text-center">
+        <h3 className="text-xl font-bold text-js mb-2">
+          Brak zawartości lekcji
+        </h3>
+        <p className="text-gray-400 text-sm">
+          Ta lekcja nie posiada jeszcze żadnej zawartości.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-12">
       {sections.map((section, index) => {

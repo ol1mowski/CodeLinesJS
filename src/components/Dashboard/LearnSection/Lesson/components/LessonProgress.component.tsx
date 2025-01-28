@@ -1,15 +1,17 @@
 import { memo } from "react";
 import { motion } from "framer-motion";
 import { FaCheck } from "react-icons/fa";
+import { type LessonProgress as LessonProgressType } from "../../types/lesson.types";
 
 type LessonProgressProps = {
   currentSection: number;
   totalSections: number;
+  progress: LessonProgressType;
   onComplete: () => void;
 }
 
-export const LessonProgress = memo(({ currentSection, totalSections, onComplete }: LessonProgressProps) => {
-  const progress = ((currentSection + 1) / totalSections) * 100;
+export const LessonProgress = memo(({ currentSection, totalSections, progress, onComplete }: LessonProgressProps) => {
+  const progressPercent = ((currentSection + 1) / totalSections) * 100;
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-dark-800/95 border-t border-js/10 backdrop-blur-sm">
@@ -19,14 +21,15 @@ export const LessonProgress = memo(({ currentSection, totalSections, onComplete 
             <div className="relative h-2 bg-dark rounded-full overflow-hidden">
               <motion.div
                 initial={{ width: 0 }}
-                animate={{ width: `${progress}%` }}
+                animate={{ width: `${progressPercent}%` }}
                 className="absolute inset-y-0 left-0 bg-js rounded-full"
                 transition={{ duration: 0.3 }}
               />
             </div>
-            <p className="text-sm text-gray-400 mt-2">
-              Sekcja {currentSection + 1} z {totalSections}
-            </p>
+            <div className="flex justify-between text-sm text-gray-400 mt-2">
+              <span>Sekcja {currentSection + 1} z {totalSections}</span>
+              <span>{progress.xpEarned} XP zdobyte</span>
+            </div>
           </div>
 
           <motion.button

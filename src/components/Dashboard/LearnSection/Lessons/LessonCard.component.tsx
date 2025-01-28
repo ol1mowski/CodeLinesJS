@@ -2,16 +2,17 @@ import { motion } from "framer-motion";
 import { memo } from "react";
 import { FaClock, FaStar, FaChevronRight } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import type { Lesson } from "../../types/lesson.types";
+import { type Lesson } from "../../../../types/learning.types";
 
-interface LessonCardProps {
+type LessonCardProps = {
   lesson: Lesson;
+  userId: string;
 }
 
 const cardVariants = {
   hidden: { opacity: 0, y: 20 },
-  visible: { 
-    opacity: 1, 
+  visible: {
+    opacity: 1,
     y: 0,
     transition: {
       duration: 0.3
@@ -49,15 +50,15 @@ export const LessonCard = memo(({ lesson }: LessonCardProps) => {
             <div className="flex items-center gap-4 text-sm text-gray-400">
               <span className="flex items-center gap-1">
                 <FaClock className="w-4 h-4" />
-                {lesson.duration}
+                {lesson.duration} min
               </span>
               <span className={`px-2 py-0.5 rounded-md text-xs font-medium
                 ${lesson.difficulty === 'beginner' ? 'bg-green-500/10 text-green-400' :
                   lesson.difficulty === 'intermediate' ? 'bg-yellow-500/10 text-yellow-400' :
-                  'bg-red-500/10 text-red-400'}`}
+                    'bg-red-500/10 text-red-400'}`}
               >
                 {lesson.difficulty === 'beginner' ? 'Podstawowy' :
-                 lesson.difficulty === 'intermediate' ? 'Średni' : 'Zaawansowany'}
+                  lesson.difficulty === 'intermediate' ? 'Średni' : 'Zaawansowany'}
               </span>
             </div>
             <FaChevronRight className="w-4 h-4 text-js group-hover:translate-x-1 transition-transform" />

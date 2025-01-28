@@ -1,3 +1,5 @@
+import { LessonReward } from "./reward.types";
+
 export type CodeExample = {
     code: string;
     language?: string;
@@ -19,24 +21,33 @@ export type LessonSection = {
     quiz?: QuizQuestion[];
 }
 
+type QuizResult = {
+    completed: boolean;
+    correctAnswers: number;
+    totalQuestions: number;
+    completedAt: string;
+};
+
 export type LessonProgress = {
+    lessonId: string;
     completedSections: number[];
     quizResults: {
-        [quizId: string]: {
-            completed: boolean;
-            correctAnswers: number;
-            totalQuestions: number;
-        };
+        [quizId: string]: QuizResult;
     };
+    xpEarned: number;
+    isCompleted: boolean;
+    lastAccessedAt: string;
 }
 
 export type Lesson = {
     id: string;
     title: string;
     description: string;
-    duration: string;
+    duration: number;
     difficulty: 'beginner' | 'intermediate' | 'advanced';
-    xp: number;
-    progress: LessonProgress;
-    sections: LessonSection[];
-} 
+    category: string;
+    points: number;
+    requiredLevel: number;
+    isLocked: boolean;
+    isCompleted: boolean;
+}
