@@ -23,7 +23,7 @@ export const LessonHeader = memo(({ title, duration, difficulty, xp }: LessonHea
     <div className="flex items-center gap-4 text-sm text-gray-400">
       <span className="flex items-center gap-1">
         <FaClock className="w-4 h-4" />
-        {duration}
+        {duration} min
       </span>
     </div>
   </div>

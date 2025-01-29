@@ -64,9 +64,7 @@ export const LessonPage = memo(() => {
   if (!lesson) {
     return <LessonNotFound />;
   }
-
-  console.log(lesson);
-
+  
   const sections = lesson.content?.sections || [];
   const totalSections = sections.length;
 

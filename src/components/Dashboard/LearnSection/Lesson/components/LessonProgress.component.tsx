@@ -1,17 +1,40 @@
 import { memo } from "react";
 import { motion } from "framer-motion";
 import { FaCheck } from "react-icons/fa";
-import { type LessonProgress as LessonProgressType } from "../../types/lesson.types";
+
+type Progress = {
+  xpEarned: number;
+  completed: number;
+  total: number;
+  percentage: number;
+  isCompleted: boolean;
+  lastCompletedSection: number;
+};
 
 type LessonProgressProps = {
   currentSection: number;
   totalSections: number;
-  progress: LessonProgressType;
+  progress?: Progress;
   onComplete: () => void;
 }
 
-export const LessonProgress = memo(({ currentSection, totalSections, progress, onComplete }: LessonProgressProps) => {
+const defaultProgress: Progress = {
+  xpEarned: 0,
+  completed: 0,
+  total: 0,
+  percentage: 0,
+  isCompleted: false,
+  lastCompletedSection: -1
+};
+
+export const LessonProgress = memo(({ 
+  currentSection, 
+  totalSections, 
+  progress = defaultProgress, 
+  onComplete 
+}: LessonProgressProps) => {
   const progressPercent = ((currentSection + 1) / totalSections) * 100;
+  const isLessonCompleted = progress?.isCompleted || currentSection === totalSections - 1;
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-dark-800/95 border-t border-js/10 backdrop-blur-sm">
@@ -27,8 +50,12 @@ export const LessonProgress = memo(({ currentSection, totalSections, progress, o
               />
             </div>
             <div className="flex justify-between text-sm text-gray-400 mt-2">
-              <span>Sekcja {currentSection + 1} z {totalSections}</span>
-              <span>{progress.xpEarned} XP zdobyte</span>
+              <div className="flex items-center gap-4">
+                <span>Sekcja {currentSection + 1} z {totalSections}</span>
+                <span className="text-js">•</span>
+                <span>{progress.xpEarned} XP zdobyte</span>
+              </div>
+              <span>{Math.round(progressPercent)}% ukończone</span>
             </div>
           </div>
 
@@ -36,11 +63,14 @@ export const LessonProgress = memo(({ currentSection, totalSections, progress, o
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={onComplete}
-            className="flex items-center gap-2 px-4 py-2 bg-js/10 text-js rounded-lg 
-              hover:bg-js/20 transition-colors"
+            disabled={!isLessonCompleted}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors
+              ${isLessonCompleted 
+                ? 'bg-js/10 text-js hover:bg-js/20' 
+                : 'bg-gray-800/50 text-gray-500 cursor-not-allowed'}`}
           >
             <FaCheck className="w-4 h-4" />
-            Zakończ lekcję
+            {isLessonCompleted ? 'Zakończ lekcję' : 'Ukończ wszystkie sekcje'}
           </motion.button>
         </div>
       </div>
