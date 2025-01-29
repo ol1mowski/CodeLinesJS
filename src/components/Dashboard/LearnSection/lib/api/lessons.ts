@@ -2,6 +2,30 @@ import { getAuthToken } from '../utils/auth';
 
 const API_URL = 'http://localhost:5001/api';
 
+export const fetchLesson = async (lessonId: string) => {
+  const token = getAuthToken();
+  
+  if (!token) {
+    throw new Error('No authentication token found');
+  }
+
+  const response = await fetch(`${API_URL}/lessons/${lessonId}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    }
+  });
+
+  if (!response.ok) {
+    if (response.status === 404) {
+      throw new Error('lesson_not_found');
+    }
+    throw new Error('failed_to_fetch');
+  }
+
+  return response.json();
+};
+
 export const fetchLessons = async () => {   
   const token = getAuthToken();
   
