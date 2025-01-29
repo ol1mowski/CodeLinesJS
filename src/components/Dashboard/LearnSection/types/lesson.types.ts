@@ -1,5 +1,3 @@
-import { LessonReward } from "./reward.types";
-
 export type CodeExample = {
     code: string;
     language?: string;
@@ -41,7 +39,7 @@ export type LessonProgress = {
 
 export type Lesson = {
     _id: string;
-    id: string;
+    slug: string;
     title: string;
     description: string;
     duration: number;

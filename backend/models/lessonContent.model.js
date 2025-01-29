@@ -1,21 +1,37 @@
 import mongoose from 'mongoose';
 
 const lessonContentSchema = new mongoose.Schema({
-  lessonId: {
+  lessonSlug: {
     type: String,
     required: true,
-    unique: true,
-    index: true
+    ref: 'Lesson'
   },
-  xp: Number,
+  xp: {
+    type: Number,
+    required: true
+  },
   rewards: {
     completion: [{
-      type: { type: String },
+      type: {
+        type: String,
+        enum: ['xp', 'badge', 'achievement']
+      },
       value: Number,
       title: String,
       description: String
     }],
-    quiz: mongoose.Schema.Types.Mixed
+    quiz: [{
+      score: Number,
+      rewards: [{
+        type: {
+          type: String,
+          enum: ['xp', 'badge', 'achievement']
+        },
+        value: Number,
+        title: String,
+        description: String
+      }]
+    }]
   },
   sections: [{
     title: String,
@@ -33,7 +49,11 @@ const lessonContentSchema = new mongoose.Schema({
       explanation: String
     }]
   }]
+}, {
+  timestamps: true
 });
+
+lessonContentSchema.index({ lessonSlug: 1 });
 
 export const LessonContent = mongoose.model('LessonContent', lessonContentSchema);
 export { lessonContentSchema }; 

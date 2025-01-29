@@ -25,7 +25,7 @@ export const LessonCard = memo(({ lesson }: LessonCardProps) => {
 
 
   return (
-    <Link to={`/dashboard/lesson/${lesson.id}`}>
+    <Link to={`/dashboard/lesson/${lesson.slug}`}>
       <motion.div
         variants={cardVariants}
         whileHover={{ scale: 1.02 }}

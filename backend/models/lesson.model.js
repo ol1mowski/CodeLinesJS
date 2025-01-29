@@ -1,10 +1,11 @@
 import mongoose from 'mongoose';
 
 export const lessonSchema = new mongoose.Schema({
-  id: {
+  slug: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
+    index: true
   },
   title: {
     type: String,
@@ -55,5 +56,6 @@ export const lessonSchema = new mongoose.Schema({
     default: true
   }
 }, {
-  timestamps: true
+  timestamps: true,
+  versionKey: false
 }); 

@@ -69,7 +69,7 @@ export const LessonsList = memo(({ lessons, userId, filter }: LessonsListProps) 
     >
       {lessons.map((lesson) => (
         <LessonCard 
-          key={lesson.id} 
+          key={lesson.slug} 
           lesson={lesson}
           userId={userId}
         />

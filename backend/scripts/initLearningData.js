@@ -7,7 +7,7 @@ dotenv.config();
 
 const lessonsData = [
   {
-    id: "js-variables",
+    slug: "js-variables",
     title: "Wprowadzenie do JavaScript",
     description: "Podstawy języka JavaScript, zmienne, typy danych",
     category: "javascript",
@@ -20,7 +20,7 @@ const lessonsData = [
     requiredLevel: 1
   },
   {
-    id: "js-functions",
+    slug: "js-functions",
     title: "Funkcje w JavaScript",
     description: "Tworzenie i używanie funkcji",
     category: "javascript",
@@ -33,7 +33,7 @@ const lessonsData = [
     requiredLevel: 1
   },
   {
-    id: "js-arrays",
+    slug: "js-arrays",
     title: "Tablice i Obiekty",
     description: "Praca z tablicami i obiektami w JavaScript",
     category: "javascript",
@@ -46,7 +46,7 @@ const lessonsData = [
     requiredLevel: 2
   },
   {
-    id: "react-intro",
+    slug: "react-intro",
     title: "Podstawy React",
     description: "Wprowadzenie do biblioteki React",
     category: "react",
@@ -59,7 +59,7 @@ const lessonsData = [
     requiredLevel: 3
   },
   {
-    id: "react-components",
+    slug: "react-components",
     title: "Komponenty React",
     description: "Tworzenie i zarządzanie komponentami",
     category: "react",
@@ -75,7 +75,7 @@ const lessonsData = [
 
 const lessonsContent = [
   {
-    lessonId: "js-variables",
+    lessonSlug: "js-variables",
     xp: 50,
     rewards: {
       completion: [
@@ -86,16 +86,19 @@ const lessonsContent = [
           description: 'Ukończyłeś podstawy JavaScript'
         }
       ],
-      quiz: {
-        100: [
-          {
-            type: 'badge',
-            value: 1,
-            title: 'Perfekcyjny wynik!',
-            description: 'Odpowiedziałeś poprawnie na wszystkie pytania'
-          }
-        ]
-      }
+      quiz: [
+        {
+          score: 100,
+          rewards: [
+            {
+              type: 'badge',
+              value: 1,
+              title: 'Perfekcyjny wynik!',
+              description: 'Odpowiedziałeś poprawnie na wszystkie pytania'
+            }
+          ]
+        }
+      ]
     },
     sections: [
       {
@@ -124,8 +127,142 @@ const lessonsContent = [
         ]
       }
     ]
+  },
+  {
+    lessonSlug: "js-functions",
+    xp: 60,
+    rewards: {
+      completion: [
+        {
+          type: 'xp',
+          value: 60,
+          title: 'Funkcje opanowane!',
+          description: 'Ukończyłeś rozdział o funkcjach'
+        }
+      ],
+      quiz: [
+        {
+          score: 100,
+          rewards: [
+            {
+              type: 'badge',
+              value: 1,
+              title: 'Mistrz funkcji!',
+              description: 'Perfekcyjnie rozumiesz funkcje w JavaScript'
+            }
+          ]
+        }
+      ]
+    },
+    sections: [
+      {
+        title: "Wprowadzenie do funkcji",
+        content: "Funkcje są podstawowym blokiem budulcowym w JavaScript...",
+        examples: [
+          {
+            code: "function sayHello(name) {\n  return `Hello ${name}`;\n}",
+            language: "javascript",
+            explanation: "Podstawowy przykład deklaracji funkcji"
+          }
+        ],
+        quiz: [
+          {
+            id: "q1",
+            question: "Co to jest funkcja w JavaScript?",
+            options: [
+              "Blok kodu wielokrotnego użytku",
+              "Zmienna",
+              "Pętla",
+              "Warunek"
+            ],
+            correctAnswer: 0,
+            explanation: "Funkcja to blok kodu, który można wywołać wielokrotnie"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    lessonSlug: "js-arrays",
+    xp: 70,
+    rewards: {
+      completion: [
+        {
+          type: 'xp',
+          value: 70,
+          title: 'Struktury danych opanowane!',
+          description: 'Ukończyłeś rozdział o tablicach i obiektach'
+        }
+      ]
+    },
+    sections: [
+      {
+        title: "Tablice w JavaScript",
+        content: "Tablice pozwalają przechowywać wiele wartości w jednej zmiennej...",
+        examples: [
+          {
+            code: "const fruits = ['apple', 'banana', 'orange'];",
+            language: "javascript",
+            explanation: "Przykład tablicy w JavaScript"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    lessonSlug: "react-intro",
+    xp: 80,
+    rewards: {
+      completion: [
+        {
+          type: 'xp',
+          value: 80,
+          title: 'React podstawy!',
+          description: 'Ukończyłeś wprowadzenie do React'
+        }
+      ]
+    },
+    sections: [
+      {
+        title: "Czym jest React?",
+        content: "React to biblioteka JavaScript do budowania interfejsów użytkownika...",
+        examples: [
+          {
+            code: "function App() {\n  return <h1>Hello React!</h1>;\n}",
+            language: "javascript",
+            explanation: "Prosty komponent React"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    lessonSlug: "react-components",
+    xp: 90,
+    rewards: {
+      completion: [
+        {
+          type: 'xp',
+          value: 90,
+          title: 'Komponenty opanowane!',
+          description: 'Ukończyłeś rozdział o komponentach React'
+        }
+      ]
+    },
+    sections: [
+      {
+        title: "Komponenty w React",
+        content: "Komponenty są podstawowymi elementami aplikacji React...",
+        examples: [
+          {
+            code: "function Button({ onClick, children }) {\n  return <button onClick={onClick}>{children}</button>;\n}",
+            language: "javascript",
+            explanation: "Przykład komponentu funkcyjnego"
+          }
+        ]
+      }
+    ]
   }
-
 ];
 
 const learningPaths = [
@@ -215,21 +352,31 @@ const initializeData = async () => {
     
     initializeModels();
 
+    // Usuń wszystkie kolekcje
     await Promise.all([
-      Lesson.deleteMany({}),
-      LessonContent.deleteMany({}),
-      LearningPath.deleteMany({}),
-      Resource.deleteMany({})
+      mongoose.connection.collection('lessons').drop().catch(() => console.log('Kolekcja lessons nie istnieje')),
+      mongoose.connection.collection('lessoncontents').drop().catch(() => console.log('Kolekcja lessoncontents nie istnieje')),
+      mongoose.connection.collection('learningpaths').drop().catch(() => console.log('Kolekcja learningpaths nie istnieje')),
+      mongoose.connection.collection('resources').drop().catch(() => console.log('Kolekcja resources nie istnieje'))
     ]);
-    console.log('Usunięto stare dane');
+    console.log('Usunięto stare kolekcje');
 
+    // Utwórz kolekcje na nowo
     await Promise.all([
-      Lesson.insertMany(lessonsData),
-      LessonContent.insertMany(lessonsContent)
+      mongoose.connection.createCollection('lessons'),
+      mongoose.connection.createCollection('lessoncontents'),
+      mongoose.connection.createCollection('learningpaths'),
+      mongoose.connection.createCollection('resources')
     ]);
-    console.log('Dodano lekcje i ich treści');
+    console.log('Utworzono nowe kolekcje');
 
-    const createdLessons = await Lesson.find({});
+    // Dodaj nowe dane
+    const createdLessons = await Lesson.insertMany(lessonsData);
+    console.log('Dodano lekcje');
+
+    await LessonContent.insertMany(lessonsContent);
+    console.log('Dodano treści lekcji');
+
     const jsLessons = createdLessons.filter(lesson => lesson.category === 'javascript');
     const reactLessons = createdLessons.filter(lesson => lesson.category === 'react');
 
@@ -249,6 +396,14 @@ const initializeData = async () => {
 
     await Resource.insertMany(resources);
     console.log('Dodano zasoby');
+
+    // Utwórz nowe indeksy
+    await Promise.all([
+      Lesson.createIndexes(),
+      LessonContent.createIndexes(),
+      LearningPath.createIndexes()
+    ]);
+    console.log('Utworzono nowe indeksy');
 
     console.log('Inicjalizacja zakończona pomyślnie');
   } catch (error) {

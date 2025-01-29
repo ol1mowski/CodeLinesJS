@@ -29,14 +29,14 @@ export const getLessons = async (req, res, next) => {
     
     const lessons = await Lesson.find(query)
       .sort({ order: 1 })
-      .select('title description category difficulty duration points isAvailable requiredLevel id')
+      .select('title description category difficulty duration points isAvailable requiredLevel slug')
       .lean();
     
     const completedLessons = user.stats?.completedChallenges || [];    
     
     const availableLessons = lessons.map(lesson => ({
       _id: lesson._id,
-      id: lesson.id,
+      slug: lesson.slug,
       title: lesson.title,
       description: lesson.description,
       category: lesson.category,
@@ -66,7 +66,7 @@ export const getLessonById = async (req, res, next) => {
     
     const [lesson, user] = await Promise.all([
       Lesson.findOne({ 
-        _id: id,
+        slug: id,
         isPublished: true,
         isAvailable: true
       }).populate('requirements', 'title'),
@@ -80,13 +80,11 @@ export const getLessonById = async (req, res, next) => {
     }
     
     const userLevel = user.stats?.progress?.currentLevel || 1;
-    
-    // Sprawdź czy użytkownik ma wymagany poziom
+
     if (userLevel < lesson.requiredLevel) {
       throw new ValidationError(`Wymagany poziom ${lesson.requiredLevel} do odblokowania tej lekcji`);
     }
     
-    // Sprawdź wymagania wstępne (poprzednie lekcje)
     if (lesson.requirements?.length > 0) {
       const hasCompletedRequirements = lesson.requirements.every(req => 
         user.stats.completedChallenges.includes(req._id)
