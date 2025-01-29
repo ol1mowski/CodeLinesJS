@@ -23,8 +23,9 @@ const cardVariants = {
 export const LessonCard = memo(({ lesson }: LessonCardProps) => {
   const progressBarWidth = `${lesson.progress}%`;
 
+
   return (
-    <Link to={`/dashboard/lesson/${lesson.id}`}>
+    <Link to={`/dashboard/lesson/${lesson.slug}`}>
       <motion.div
         variants={cardVariants}
         whileHover={{ scale: 1.02 }}

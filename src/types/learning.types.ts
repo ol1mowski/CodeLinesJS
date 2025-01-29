@@ -11,8 +11,8 @@ export type LearningPath = {
 };
 
 export type Lesson = {
-  id: string;
   title: string;
+  slug: string;
   description: string;
   duration: string;
   difficulty: "beginner" | "intermediate" | "advanced";

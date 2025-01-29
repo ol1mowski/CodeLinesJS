@@ -1,16 +1,18 @@
 import mongoose from 'mongoose';
 
 export const lessonSchema = new mongoose.Schema({
+  slug: {
+    type: String,
+    required: true,
+    unique: true,
+    index: true
+  },
   title: {
     type: String,
     required: true,
     trim: true
   },
   description: {
-    type: String,
-    required: true
-  },
-  content: {
     type: String,
     required: true
   },
@@ -54,5 +56,6 @@ export const lessonSchema = new mongoose.Schema({
     default: true
   }
 }, {
-  timestamps: true
+  timestamps: true,
+  versionKey: false
 }); 

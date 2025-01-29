@@ -1,6 +1,5 @@
 import { memo, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { lessons } from "../mocks/lessons.data";
 import { LessonProgress } from "./components/LessonProgress.component";
 import { useLessonState } from "./hooks/useLessonState";
 import { LessonNotFound } from "./components/LessonNotFound.component";
@@ -8,12 +7,21 @@ import { LessonLayout } from "./components/LessonLayout.component";
 import { BackToLessons } from "./components/BackToLessons.component";
 import { LessonSidebar } from "./components/LessonSidebar.component";
 import { LessonMainContent } from "./components/LessonMainContent.component";
-
+import { LoadingSpinner } from "../components/UI/LoadingSpinner.component";
+import { ErrorMessage } from "../components/ErrorMessage.component";
+import { useAuth } from "../hooks/useAuth";
+import { useLesson } from "../hooks/useLesson";
 
 export const LessonPage = memo(() => {
   const { id } = useParams();
-  const userId = "current-user";
-  const lesson = lessons.find(l => l.id === id);
+  const { user } = useAuth();
+  const { 
+    lesson, 
+    isLoading, 
+    error, 
+    refetch,
+    isNotFound 
+  } = useLesson(id!);
 
   const {
     activeSection,
@@ -22,15 +30,43 @@ export const LessonPage = memo(() => {
     handleComplete,
     markSectionComplete,
     saveQuizResult
-  } = useLessonState(id!, userId);
+  } = useLessonState(id!, user?.id!);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
 
+  if (isLoading) {
+    return (
+      <LessonLayout>
+        <div className="flex justify-center items-center min-h-[60vh]">
+          <LoadingSpinner />
+        </div>
+      </LessonLayout>
+    );
+  }
+
+  if (error) {
+    if (isNotFound) {
+      return <LessonNotFound />;
+    }
+
+    return (
+      <LessonLayout>
+        <ErrorMessage 
+          message="Nie udało się pobrać lekcji. Spróbuj ponownie później."
+          onRetry={() => refetch()}
+        />
+      </LessonLayout>
+    );
+  }
+
   if (!lesson) {
     return <LessonNotFound />;
   }
+  
+  const sections = lesson.content?.sections || [];
+  const totalSections = sections.length;
 
   return (
     <>
@@ -39,7 +75,7 @@ export const LessonPage = memo(() => {
         
         <div className="grid grid-cols-12 gap-8">
           <LessonSidebar
-            sections={lesson.sections}
+            sections={sections}
             activeSection={activeSection}
             onSectionChange={handleSectionChange}
           />
@@ -54,7 +90,7 @@ export const LessonPage = memo(() => {
 
       <LessonProgress
         currentSection={activeSection}
-        totalSections={lesson.sections.length}
+        totalSections={totalSections}
         progress={progress}
         onComplete={() => handleComplete(lesson)}
       />
