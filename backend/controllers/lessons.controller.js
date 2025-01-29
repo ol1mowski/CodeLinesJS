@@ -1,6 +1,7 @@
 import { Lesson } from '../models/index.js';
 import { User } from '../models/user.model.js';
 import { ValidationError } from '../utils/errors.js';
+import { LessonContent } from '../models/lessonContent.model.js';
 
 export const getLessons = async (req, res, next) => {
   try {
@@ -24,6 +25,9 @@ export const getLessons = async (req, res, next) => {
       .lean();
     
     const userLevel = user.stats?.progress?.currentLevel || 1;
+    const completedChallenges = Array.isArray(user.stats?.completedChallenges) 
+      ? user.stats.completedChallenges 
+      : [];
 
     query.requiredLevel = { $lte: userLevel };
     
@@ -31,8 +35,6 @@ export const getLessons = async (req, res, next) => {
       .sort({ order: 1 })
       .select('title description category difficulty duration points isAvailable requiredLevel slug')
       .lean();
-    
-    const completedLessons = user.stats?.completedChallenges || [];    
     
     const availableLessons = lessons.map(lesson => ({
       _id: lesson._id,
@@ -44,14 +46,14 @@ export const getLessons = async (req, res, next) => {
       duration: lesson.duration,
       points: lesson.points,
       requiredLevel: lesson.requiredLevel,
-      isCompleted: completedLessons.some(id => id.toString() === lesson._id.toString()),
+      isCompleted: completedChallenges.some(id => id.toString() === lesson._id.toString()),
       isLocked: userLevel < lesson.requiredLevel
     }));
     
     res.json({
       lessons: availableLessons,
       userProgress: {
-        completedLessons: completedLessons.length,
+        completedLessons: completedChallenges.length,
         userLevel
       }
     });
@@ -64,12 +66,13 @@ export const getLessonById = async (req, res, next) => {
   try {
     const { id } = req.params;
     
-    const [lesson, user] = await Promise.all([
+    const [lesson, lessonContent, user] = await Promise.all([
       Lesson.findOne({ 
         slug: id,
         isPublished: true,
         isAvailable: true
       }).populate('requirements', 'title'),
+      LessonContent.findOne({ lessonSlug: id }).lean(),
       User.findById(req.user.userId)
         .select('stats.completedChallenges stats.progress.currentLevel')
         .lean()
@@ -78,8 +81,15 @@ export const getLessonById = async (req, res, next) => {
     if (!lesson) {
       throw new ValidationError('Lekcja nie została znaleziona');
     }
+
+    if (!lessonContent) {
+      throw new ValidationError('Treść lekcji nie została znaleziona');
+    }
     
     const userLevel = user.stats?.progress?.currentLevel || 1;
+    const completedChallenges = Array.isArray(user.stats?.completedChallenges) 
+      ? user.stats.completedChallenges 
+      : [];
 
     if (userLevel < lesson.requiredLevel) {
       throw new ValidationError(`Wymagany poziom ${lesson.requiredLevel} do odblokowania tej lekcji`);
@@ -87,7 +97,7 @@ export const getLessonById = async (req, res, next) => {
     
     if (lesson.requirements?.length > 0) {
       const hasCompletedRequirements = lesson.requirements.every(req => 
-        user.stats.completedChallenges.includes(req._id)
+        completedChallenges.includes(req._id)
       );
       
       if (!hasCompletedRequirements) {
@@ -97,9 +107,9 @@ export const getLessonById = async (req, res, next) => {
     
     const response = {
       id: lesson._id,
+      slug: lesson.slug,
       title: lesson.title,
       description: lesson.description,
-      content: lesson.content,
       category: lesson.category,
       difficulty: lesson.difficulty,
       duration: lesson.duration,
@@ -108,9 +118,14 @@ export const getLessonById = async (req, res, next) => {
       requirements: lesson.requirements.map(req => ({
         id: req._id,
         title: req.title,
-        isCompleted: user.stats.completedChallenges.includes(req._id)
+        isCompleted: completedChallenges.includes(req._id)
       })),
-      isCompleted: user.stats.completedChallenges.includes(lesson._id)
+      isCompleted: completedChallenges.includes(lesson._id),
+      content: {
+        xp: lessonContent.xp,
+        rewards: lessonContent.rewards,
+        sections: lessonContent.sections
+      }
     };
     
     res.json(response);

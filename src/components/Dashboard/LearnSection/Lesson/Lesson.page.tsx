@@ -65,6 +65,11 @@ export const LessonPage = memo(() => {
     return <LessonNotFound />;
   }
 
+  console.log(lesson);
+
+  const sections = lesson.content?.sections || [];
+  const totalSections = sections.length;
+
   return (
     <>
       <LessonLayout>
@@ -72,7 +77,7 @@ export const LessonPage = memo(() => {
         
         <div className="grid grid-cols-12 gap-8">
           <LessonSidebar
-            sections={lesson.sections}
+            sections={sections}
             activeSection={activeSection}
             onSectionChange={handleSectionChange}
           />
@@ -87,7 +92,7 @@ export const LessonPage = memo(() => {
 
       <LessonProgress
         currentSection={activeSection}
-        totalSections={lesson.sections.length}
+        totalSections={totalSections}
         progress={progress}
         onComplete={() => handleComplete(lesson)}
       />
