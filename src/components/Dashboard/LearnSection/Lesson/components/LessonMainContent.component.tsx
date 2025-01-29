@@ -7,14 +7,14 @@ import { LessonContent } from './LessonContent.component';
 
 type LessonMainContentProps = {
   lesson: Lesson;
-  onSectionComplete: (sectionIndex: number) => void;
-  onQuizComplete: (quizId: string, correct: number, total: number) => void;
+  onSectionComplete?: (sectionIndex: number) => void;
+  onQuizComplete?: (quizId: string, correct: number, total: number) => void;
 };
 
 export const LessonMainContent = memo(({ 
   lesson, 
-  onSectionComplete, 
-  onQuizComplete 
+  onSectionComplete = () => {}, 
+  onQuizComplete = () => {} 
 }: LessonMainContentProps) => {
   const sections = lesson.content?.sections || [];
 
