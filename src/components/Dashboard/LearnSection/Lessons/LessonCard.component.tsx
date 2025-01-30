@@ -42,7 +42,7 @@ export const LessonCard = memo(({ lesson }: LessonCardProps) => {
           </div>
           <span className="flex items-center gap-1 text-js bg-js/10 px-2.5 py-1 rounded-lg text-sm">
             <FaStar className="w-4 h-4" />
-            {lesson.xp} XP
+            {lesson.points} XP
           </span>
         </div>
 
