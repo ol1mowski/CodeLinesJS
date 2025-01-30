@@ -5,6 +5,10 @@ export const useAuth = () => {
     localStorage.getItem('token') || sessionStorage.getItem('token')
   );
 
+  const user = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}');
+
+  const userId = user["id"];
+
   useEffect(() => {
     const handleStorageChange = () => {
       setToken(localStorage.getItem('token') || sessionStorage.getItem('token'));
@@ -14,5 +18,5 @@ export const useAuth = () => {
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
-  return { token, isAuthenticated: !!token };
+  return { token, isAuthenticated: !!token, userId };
 }; 

@@ -40,6 +40,7 @@ export type LessonProgress = {
 export type Lesson = {
     _id: string;
     slug: string;
+    sections: LessonSection[];
     title: string;
     description: string;
     duration: number;

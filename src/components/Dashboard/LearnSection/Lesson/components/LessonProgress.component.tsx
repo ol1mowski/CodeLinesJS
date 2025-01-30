@@ -50,12 +50,12 @@ export const LessonProgress = memo(({
     };
 
     window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Initial calculation
+    handleScroll();
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const isLessonCompleted = scrollProgress >= 98; // Prawie na końcu strony
+  const isLessonCompleted = scrollProgress >= 98 || progress.isCompleted;
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-dark-800/95 border-t border-js/10 backdrop-blur-sm">
@@ -64,7 +64,7 @@ export const LessonProgress = memo(({
           <div className="flex-1 mr-8">
             <div className="relative h-2 bg-dark rounded-full overflow-hidden">
               <motion.div
-                style={{ width: smoothProgress + '%' }}
+                style={{ width: `${Math.max(smoothProgress, progress.percentage)}%` }}
                 className="absolute inset-y-0 left-0 bg-js rounded-full"
               />
             </div>
@@ -77,7 +77,7 @@ export const LessonProgress = memo(({
                   {progress.xpEarned} XP zdobyte
                 </span>
               </div>
-              <span>{Math.round(scrollProgress)}% ukończone</span>
+              <span>{Math.round(Math.max(scrollProgress, progress.percentage))}% ukończone</span>
             </div>
           </div>
 

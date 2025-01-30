@@ -1,7 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchLessons } from "../lib/api/lessons";
-import type { Lesson, FilterType } from "../types/lesson.types";
+import type { Lesson } from "../types/lesson.types";
 import { useState, useMemo } from "react";
+import type { FilterType } from "../types/filter.types";
+
+type Category = 'javascript' | 'react';
+
+type LessonsResponse = {
+  lessons: Record<Category, Lesson[]>;
+  stats: {
+    total: number;
+    completed: number;
+    progress: number;
+  };
+};
 
 const getDifficultyLabel = (filter: FilterType) => {
   switch (filter) {
@@ -14,27 +26,31 @@ const getDifficultyLabel = (filter: FilterType) => {
 
 export const useLessons = () => {
   const [filter, setFilter] = useState<FilterType>("all");
-  
-  const { 
-    data: lessons, 
-    isLoading, 
+  const [category] = useState<Category>("javascript");
+
+  const {
+    data,
+    isLoading,
     error,
-    refetch 
-  } = useQuery<{ lessons: Lesson[] }, Error>({
+    refetch
+  } = useQuery<LessonsResponse>({
     queryKey: ['lessons'],
     queryFn: fetchLessons,
     retry: 2,
     staleTime: 1000 * 60 * 5,
   });
 
-  const filteredLessons = useMemo(() => 
-    lessons?.lessons.filter(lesson => 
-      filter === "all" ? true : lesson.difficulty === filter
-    ) || [], 
-    [lessons?.lessons, filter]
+  const allLessons = data?.lessons?.[category] ?? [];
+  const stats = data?.stats ?? { total: 0, completed: 0, progress: 0 };
+
+  const filteredLessons = useMemo(() =>
+    filter === "all" 
+      ? allLessons 
+      : allLessons.filter(lesson => lesson.difficulty === filter),
+    [allLessons, filter]
   );
 
-  const isEmpty = !lessons?.lessons || lessons.lessons.length === 0;
+  const isEmpty = !allLessons || allLessons.length === 0;
   const hasNoLessonsForFilter = !isEmpty && filteredLessons.length === 0;
 
   const filterState = {
@@ -43,7 +59,7 @@ export const useLessons = () => {
     isEmpty,
     hasNoLessonsForFilter,
     messages: {
-      title: hasNoLessonsForFilter 
+      title: hasNoLessonsForFilter
         ? `Brak lekcji o poziomie ${getDifficultyLabel(filter)}`
         : 'Brak dostępnych lekcji',
       description: hasNoLessonsForFilter
@@ -52,18 +68,20 @@ export const useLessons = () => {
     }
   };
 
-  const resetFilter = () => setFilter('all');
-
   return {
     filteredLessons,
     filter,
     setFilter,
-    resetFilter,
+    resetFilter: () => setFilter('all'),
     isLoading,
     error,
     refetch,
     isEmpty,
     hasNoLessonsForFilter,
-    filterState
+    filterState,
+    userProgress: {
+      completedLessons: stats.completed,
+      userLevel: 1
+    }
   };
 }; 

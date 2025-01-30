@@ -6,11 +6,19 @@ import { LessonContent } from '../models/lessonContent.model.js';
 export const getLessons = async (req, res, next) => {
   try {
     const { category, difficulty, search } = req.query;
-    const query = { 
+    const userId = req.user.userId;
+
+    // Pobierz użytkownika i jego ukończone lekcje
+    const user = await User.findById(userId)
+      .select('stats.completedLessons')
+      .lean();
+
+    // Buduj query dla lekcji
+    const query = {
       isPublished: true,
       isAvailable: true
     };
-    
+
     if (category) query.category = category;
     if (difficulty) query.difficulty = difficulty;
     if (search) {
@@ -19,42 +27,47 @@ export const getLessons = async (req, res, next) => {
         { description: { $regex: search, $options: 'i' } }
       ];
     }
-    
-    const user = await User.findById(req.user.userId)
-      .select('stats.completedChallenges stats.progress.currentLevel')
-      .lean();
-    
-    const userLevel = user.stats?.progress?.currentLevel || 1;
-    const completedChallenges = Array.isArray(user.stats?.completedChallenges) 
-      ? user.stats.completedChallenges 
-      : [];
 
-    query.requiredLevel = { $lte: userLevel };
-    
+    // Pobierz lekcje
     const lessons = await Lesson.find(query)
+      .select('title description category difficulty duration points slug requirements')
       .sort({ order: 1 })
-      .select('title description category difficulty duration points isAvailable requiredLevel slug')
       .lean();
-    
-    const availableLessons = lessons.map(lesson => ({
-      _id: lesson._id,
-      slug: lesson.slug,
+
+    // Przygotuj listę ukończonych lekcji
+    const completedLessons = user.stats?.completedLessons || [];
+
+    // Dodaj informację o ukończeniu do każdej lekcji
+    const formattedLessons = lessons.map(lesson => ({
+      id: lesson._id,
       title: lesson.title,
       description: lesson.description,
       category: lesson.category,
       difficulty: lesson.difficulty,
       duration: lesson.duration,
       points: lesson.points,
-      requiredLevel: lesson.requiredLevel,
-      isCompleted: completedChallenges.some(id => id.toString() === lesson._id.toString()),
-      isLocked: userLevel < lesson.requiredLevel
+      slug: lesson.slug,
+      requirements: lesson.requirements,
+      isCompleted: completedLessons.some(
+        completedId => completedId.toString() === lesson._id.toString()
+      )
     }));
-    
+
+    // Grupuj lekcje według kategorii
+    const groupedLessons = formattedLessons.reduce((acc, lesson) => {
+      if (!acc[lesson.category]) {
+        acc[lesson.category] = [];
+      }
+      acc[lesson.category].push(lesson);
+      return acc;
+    }, {});
+
     res.json({
-      lessons: availableLessons,
-      userProgress: {
-        completedLessons: completedChallenges.length,
-        userLevel
+      lessons: groupedLessons,
+      stats: {
+        total: lessons.length,
+        completed: completedLessons.length,
+        progress: Math.round((completedLessons.length / lessons.length) * 100)
       }
     });
   } catch (error) {

@@ -19,7 +19,7 @@ export type Lesson = {
   category: string;
   isCompleted: boolean;
   progress: number;
-  xp: number;
+  points: number;
 };
 
 export type Resource = {

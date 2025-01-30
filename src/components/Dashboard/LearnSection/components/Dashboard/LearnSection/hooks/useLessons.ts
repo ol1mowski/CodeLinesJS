@@ -4,16 +4,20 @@ import { fetchLessons } from '../../../../lib/api/lessons';
 import type { FilterType } from '../../../../types/filter.types';
 import type { Lesson } from '../../../../types/lesson.types';
 
+type Category = 'javascript' | 'react';
+
 export type LessonsResponse = {
-  lessons: Lesson[];
-  userProgress: {
-    completedLessons: number;
-    userLevel: number;
+  lessons: Record<Category, Lesson[]>;
+  stats: {
+    total: number;
+    completed: number;
+    progress: number;
   };
 }
 
 export const useLessons = () => {
   const [filter, setFilter] = useState<FilterType>('all');
+  const [category] = useState<Category>('javascript');
 
   const { 
     data, 
@@ -27,28 +31,25 @@ export const useLessons = () => {
     refetchOnWindowFocus: false
   });
 
-  console.log('Raw data:', data);
-  console.log('Current filter:', filter);
-
-  const lessons = data?.lessons ?? [];
-  const userProgress = data?.userProgress ?? { completedLessons: 0, userLevel: 1 };
+  const allLessons = data?.lessons?.[category] ?? [];
+  const stats = data?.stats ?? { total: 0, completed: 0, progress: 0 };
 
   const filteredLessons = useMemo(() => {
-    if (!lessons || lessons.length === 0) return [];
+    if (!allLessons || allLessons.length === 0) return [];
     
-    console.log('Filtering lessons:', lessons);
-    console.log('Using filter:', filter);
-    
-    const filtered = filter === 'all' 
-      ? lessons 
-      : lessons.filter(lesson => {
-          console.log('Lesson difficulty:', lesson.difficulty, 'Filter:', filter);
-          return lesson.difficulty === filter;
-        });
-    
-    console.log('Filtered result:', filtered);
-    return filtered;
-  }, [lessons, filter]);
+    return filter === 'all' 
+      ? allLessons 
+      : allLessons.filter(lesson => lesson.difficulty === filter);
+  }, [allLessons, filter]);
+
+  const getDifficultyLabel = (filter: FilterType) => {
+    switch (filter) {
+      case 'beginner': return 'podstawowym';
+      case 'intermediate': return 'średnim';
+      case 'advanced': return 'zaawansowanym';
+      default: return '';
+    }
+  };
 
   return {
     filteredLessons,
@@ -57,7 +58,15 @@ export const useLessons = () => {
     isLoading,
     error,
     refetch,
-    isEmpty: !lessons || lessons.length === 0,
-    userProgress
+    isEmpty: !allLessons || allLessons.length === 0,
+    hasNoLessonsForFilter: filteredLessons.length === 0,
+    filterState: {
+      currentFilter: filter,
+      label: getDifficultyLabel(filter)
+    },
+    userProgress: {
+      completedLessons: stats.completed,
+      userLevel: 1
+    }
   };
 }; 

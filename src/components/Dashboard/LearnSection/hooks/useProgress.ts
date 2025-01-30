@@ -1,69 +1,80 @@
-import { useState, useEffect } from 'react';
-import type { LessonProgress, Lesson } from '../types/lesson.types';
+import { useState, useCallback } from 'react';
+import { useUserProgress } from './useUserProgress';
+import { toast } from 'react-hot-toast';
 
-export const useProgress = (lessonId: string) => {
-  const [progress, setProgress] = useState<LessonProgress>(() => {
-    const saved = localStorage.getItem(`lesson-progress-${lessonId}`);
-    return saved ? JSON.parse(saved) : {
-      completedSections: [],
-      quizResults: {},
-      xpEarned: 0
-    };
-  });
+export const useProgress = (lessonId: string, userId: string) => {
+  const [completedSections, setCompletedSections] = useState<number[]>([]);
+  const [totalPoints, setTotalPoints] = useState(0);
 
-  const markSectionComplete = (sectionIndex: number, lesson: Lesson) => {
-    if (!progress.completedSections.includes(sectionIndex)) {
-      const sectionXP = Math.round(lesson.xp / lesson.sections.length);
+  const { updateProgress: updateUserProgress } = useUserProgress(userId);
+
+  const markSectionComplete = useCallback((sectionIndex: number, totalSections: number) => {
+    if (!completedSections.includes(sectionIndex)) {
+      setCompletedSections(prev => [...prev, sectionIndex]);
       
-      setProgress(prev => ({
-        ...prev,
-        completedSections: [...prev.completedSections, sectionIndex],
-        xpEarned: prev.xpEarned + sectionXP
-      }));
+      const pointsPerSection = 50;
+      setTotalPoints(prev => prev + pointsPerSection);
+
+      updateUserProgress({
+        lessonId,
+        points: pointsPerSection
+      });
+
+      if (completedSections.length + 1 === totalSections) {
+        const bonusPoints = 100;
+        setTotalPoints(prev => prev + bonusPoints);
+        
+        updateUserProgress({
+          lessonId,
+          points: bonusPoints
+        });
+
+        toast.success('Gratulacje! Ukończyłeś całą lekcję!', {
+          duration: 4000,
+          position: 'bottom-right',
+        });
+      }
     }
-  };
+  }, [completedSections, lessonId, updateUserProgress]);
 
-  const calculateProgress = (lesson: Lesson) => {
-    const totalSections = lesson.sections.length;
-    const completedSections = progress.completedSections.length;
-    return Math.round((completedSections / totalSections) * 100);
-  };
+  const handleQuizComplete = useCallback(async (
+    correctAnswers: number, 
+    totalQuestions: number
+  ) => {
+    const quizPoints = Math.round((correctAnswers / totalQuestions) * 100);
+    setTotalPoints(prev => prev + quizPoints);
 
-  const handleQuizComplete = (quizId: string, correctAnswers: number, totalQuestions: number, lesson: Lesson) => {
-    const quizXP = Math.round((lesson.xp * 0.2) * (correctAnswers / totalQuestions));
-    
-    setProgress(prev => ({
-      ...prev,
-      quizResults: {
-        ...prev.quizResults,
-        [quizId]: {
-          completed: true,
-          completedAt: new Date().toISOString(),
-          correctAnswers,
-          totalQuestions
-        }
-      },
-      xpEarned: prev.xpEarned + quizXP
-    }));
-  };
+    await updateUserProgress({
+      lessonId,
+      points: quizPoints
+    });
 
-  const isLessonCompleted = (lesson: Lesson) => {
-    const sectionsCompleted = progress.completedSections.length === lesson.sections.length;
-    const quizzes = lesson.sections.filter(s => s.quiz).length;
-    const quizzesCompleted = Object.keys(progress.quizResults).length === quizzes;
-    
-    return sectionsCompleted && quizzesCompleted;
-  };
+    toast.success(`Zdobyłeś ${quizPoints} punktów za quiz!`, {
+      duration: 3000,
+      position: 'bottom-right',
+    });
+  }, [lessonId, updateUserProgress]);
 
-  useEffect(() => {
-    localStorage.setItem(`lesson-progress-${lessonId}`, JSON.stringify(progress));
-  }, [progress, lessonId]);
+  const saveProgress = useCallback(async () => {
+    try {
+      toast.success('Postęp został zapisany!', {
+        duration: 3000,
+        position: 'bottom-right',
+      });
+    } catch (error) {
+      console.error('Błąd podczas zapisywania postępu:', error);
+      toast.error('Nie udało się zapisać postępu. Spróbuj ponownie.', {
+        duration: 4000,
+        position: 'bottom-right',
+      });
+    }
+  }, []);
 
   return {
-    progress,
+    completedSections,
+    totalPoints,
     markSectionComplete,
-    calculateProgress,
     handleQuizComplete,
-    isLessonCompleted
+    saveProgress
   };
 }; 

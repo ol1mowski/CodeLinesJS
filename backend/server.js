@@ -17,6 +17,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { initializeModels } from './models/index.js';
 import resourcesRoutes from './routes/resources.routes.js';
+import usersRoutes from './routes/users.routes.js';
 
 dotenv.config();
 
@@ -48,6 +49,7 @@ app.use("/api/learning-paths", learningPathsRoutes);
 app.use("/api/lessons", lessonsRoutes);
 app.use("/api/resources", resourcesRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/api/users', usersRoutes);
 app.use(errorHandler);
 
 mongoose

@@ -1,38 +1,52 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { fetchUserProgress, updateLessonProgress } from '../lib/api/progress';
-import type { UserProgressResponse } from '../types/api.types';
-import { LessonProgress } from '../types/lesson.types';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'react-hot-toast';
 
-export const PROGRESS_QUERY_KEY = ['userProgress'];
+const API_URL = 'http://localhost:5001/api';
+
+type ProgressUpdate = {
+  lessonId: string;
+  points: number;
+};
 
 export const useUserProgress = (userId: string) => {
   const queryClient = useQueryClient();
 
-  const { data, isLoading, error } = useQuery<UserProgressResponse>({
-    queryKey: [...PROGRESS_QUERY_KEY, userId],
-    queryFn: () => fetchUserProgress(userId),
-    staleTime: 1000 * 60 * 5, 
-  });
-
-  const { mutate: updateProgress } = useMutation({
-    mutationFn: (progress: LessonProgress) => 
-      updateLessonProgress(userId, progress.lessonId, progress),
-    onSuccess: (newProgress) => {
-      queryClient.setQueryData([...PROGRESS_QUERY_KEY, userId], (old: UserProgressResponse) => ({
-        ...old,
-        progress: {
-          ...old.progress,
-          [newProgress.lessonId]: newProgress
+  const { mutateAsync: updateProgress } = useMutation({
+    mutationFn: async (data: ProgressUpdate) => {
+      const response = await fetch(`${API_URL}/users/${userId}/progress`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token') || sessionStorage.getItem('token') }`,
         },
-        lastUpdated: new Date().toISOString()
-      }));
+        body: JSON.stringify({
+          lessonId: data.lessonId,
+          points: data.points
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Nie udało się zaktualizować postępu');
+      }
+
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['userProgress'] });
+      queryClient.invalidateQueries({ queryKey: ['lessons'] });
+      queryClient.invalidateQueries({ queryKey: ['userStats'] });
+    },
+    onError: (error: Error) => {
+      console.error('Błąd aktualizacji:', error);
+      toast.error('Nie udało się zapisać postępu. Spróbuj ponownie.', {
+        duration: 4000,
+        position: 'bottom-right',
+      });
     }
   });
 
   return {
-    progress: data?.progress || {},
-    isLoading,
-    error,
     updateProgress
   };
 }; 
