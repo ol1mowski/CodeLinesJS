@@ -50,12 +50,12 @@ export const LessonProgress = memo(({
     };
 
     window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Initial calculation
+    handleScroll();
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const isLessonCompleted = scrollProgress >= 98; // Prawie na końcu strony
+  const isLessonCompleted = scrollProgress >= 98;
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-dark-800/95 border-t border-js/10 backdrop-blur-sm">
