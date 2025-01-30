@@ -30,9 +30,8 @@ export const register = async (req, res, next) => {
         language: 'pl'
       },
       stats: {
-        completedChallenges: 0,
-        totalPoints: 0,
-        streak: 0,
+        points: 0,
+        completedLessons: [],
         lastActive: new Date()
       }
     });
@@ -202,16 +201,15 @@ export const googleAuth = async (req, res, next) => {
         profile: {
           displayName: name,
           bio: '',
-          socialLinks: {},
-          preferences: {
-            emailNotifications: true,
-            theme: 'dark'
-          }
+          socialLinks: {}
+        },
+        preferences: {
+          emailNotifications: true,
+          theme: 'dark'
         },
         stats: {
-          completedChallenges: 0,
-          totalPoints: 0,
-          streak: 0,
+          points: 0,
+          completedLessons: [],
           lastActive: new Date()
         }
       });
