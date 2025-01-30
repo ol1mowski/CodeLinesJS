@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useProgress } from '../../hooks/useProgress';
 import type { Lesson } from '../../types/lesson.types';
 
-export const useLessonState = (lessonId: string, lesson?: Lesson) => {
+export const useLessonState = (lessonId: string, userId: string, lesson?: Lesson) => {
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState(0);
 
@@ -13,7 +13,7 @@ export const useLessonState = (lessonId: string, lesson?: Lesson) => {
     markSectionComplete,
     handleQuizComplete,
     saveProgress
-  } = useProgress(lessonId);
+  } = useProgress(lessonId, userId);
 
   const handleSectionChange = useCallback((index: number) => {
     setActiveSection(index);

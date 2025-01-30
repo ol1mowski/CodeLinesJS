@@ -14,7 +14,7 @@ import { useLesson } from "../hooks/useLesson";
 
 export const LessonPage = memo(() => {
   const { id } = useParams();
-  const { user } = useAuth();
+  const { userId } = useAuth();
   const { 
     lesson, 
     isLoading, 
@@ -30,7 +30,7 @@ export const LessonPage = memo(() => {
     handleComplete,
     markSectionComplete,
     saveQuizResult
-  } = useLessonState(id!, user?.id!);
+  } = useLessonState(id!, userId);
 
   useEffect(() => {
     window.scrollTo(0, 0);

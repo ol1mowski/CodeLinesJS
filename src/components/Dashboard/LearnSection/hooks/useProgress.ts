@@ -2,11 +2,11 @@ import { useState, useCallback } from 'react';
 import { useUserProgress } from './useUserProgress';
 import { toast } from 'react-hot-toast';
 
-export const useProgress = (lessonId: string) => {
+export const useProgress = (lessonId: string, userId: string) => {
   const [completedSections, setCompletedSections] = useState<number[]>([]);
   const [totalPoints, setTotalPoints] = useState(0);
 
-  const { updateProgress: updateUserProgress } = useUserProgress();
+  const { updateProgress: updateUserProgress } = useUserProgress(userId);
 
   const markSectionComplete = useCallback((sectionIndex: number, totalSections: number) => {
     if (!completedSections.includes(sectionIndex)) {

@@ -8,16 +8,16 @@ type ProgressUpdate = {
   points: number;
 };
 
-export const useUserProgress = () => {
+export const useUserProgress = (userId: string) => {
   const queryClient = useQueryClient();
 
   const { mutateAsync: updateProgress } = useMutation({
     mutationFn: async (data: ProgressUpdate) => {
-      const response = await fetch(`${API_URL}/progress`, {
+      const response = await fetch(`${API_URL}/users/${userId}/progress`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${localStorage.getItem('token') || sessionStorage.getItem('token') }`,
         },
         body: JSON.stringify({
           lessonId: data.lessonId,

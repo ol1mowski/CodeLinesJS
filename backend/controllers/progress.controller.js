@@ -7,15 +7,13 @@ export const updateProgress = async (req, res, next) => {
     const { userId } = req.params;
     const { lessonId, points } = req.body;
 
-    // Sprawdź czy użytkownik ma dostęp
     if (userId !== req.user.userId) {
       throw new ValidationError('Brak dostępu do danych tego użytkownika');
     }
 
-    // Pobierz użytkownika i lekcję równolegle
     const [user, lesson] = await Promise.all([
       User.findById(userId),
-      Lesson.findById(lessonId)
+      Lesson.findOne({ slug: lessonId })
     ]);
 
     if (!user) {
@@ -26,19 +24,16 @@ export const updateProgress = async (req, res, next) => {
       throw new ValidationError('Lekcja nie znaleziona');
     }
 
-    // Sprawdź czy lekcja nie została już ukończona
-    if (user.stats?.completedLessons?.includes(lessonId)) {
+    if (user.stats?.completedLessons?.includes(lesson._id)) {
       throw new ValidationError('Lekcja została już ukończona');
     }
 
-    // Inicjalizuj stats jeśli nie istnieje
     user.stats = user.stats || {};
     user.stats.points = (user.stats.points || 0) + (points || 0);
     user.stats.completedLessons = user.stats.completedLessons || [];
     user.stats.lastActive = new Date();
 
-    // Dodaj lekcję do ukończonych
-    user.stats.completedLessons.push(lessonId);
+    user.stats.completedLessons.push(lesson._id);
 
     await user.save();
 
