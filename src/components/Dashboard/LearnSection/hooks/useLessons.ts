@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchLessons } from "../lib/api/lessons";
-import type { Lesson, FilterType } from "../types/lesson.types";
+import type { Lesson } from "../types/lesson.types";
 import { useState, useMemo } from "react";
+import type { FilterType } from "../types/filter.types";
 
 const getDifficultyLabel = (filter: FilterType) => {
   switch (filter) {
@@ -14,12 +15,12 @@ const getDifficultyLabel = (filter: FilterType) => {
 
 export const useLessons = () => {
   const [filter, setFilter] = useState<FilterType>("all");
-  
-  const { 
-    data: lessons, 
-    isLoading, 
+
+  const {
+    data: lessons,
+    isLoading,
     error,
-    refetch 
+    refetch
   } = useQuery<{ lessons: Lesson[] }, Error>({
     queryKey: ['lessons'],
     queryFn: fetchLessons,
@@ -27,10 +28,10 @@ export const useLessons = () => {
     staleTime: 1000 * 60 * 5,
   });
 
-  const filteredLessons = useMemo(() => 
-    lessons?.lessons.filter(lesson => 
+  const filteredLessons = useMemo(() =>
+    lessons?.lessons.filter(lesson =>
       filter === "all" ? true : lesson.difficulty === filter
-    ) || [], 
+    ) || [],
     [lessons?.lessons, filter]
   );
 
@@ -43,7 +44,7 @@ export const useLessons = () => {
     isEmpty,
     hasNoLessonsForFilter,
     messages: {
-      title: hasNoLessonsForFilter 
+      title: hasNoLessonsForFilter
         ? `Brak lekcji o poziomie ${getDifficultyLabel(filter)}`
         : 'Brak dostępnych lekcji',
       description: hasNoLessonsForFilter

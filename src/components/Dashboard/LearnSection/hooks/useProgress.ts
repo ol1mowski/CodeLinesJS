@@ -1,6 +1,5 @@
 import { useState, useCallback } from 'react';
 import { useUserProgress } from './useUserProgress';
-import { useXPProgress } from './useXPProgress';
 import { toast } from 'react-hot-toast';
 
 export const useProgress = (lessonId: string) => {
@@ -8,24 +7,20 @@ export const useProgress = (lessonId: string) => {
   const [totalPoints, setTotalPoints] = useState(0);
 
   const { updateProgress: updateUserProgress } = useUserProgress();
-  const { addXP, saveProgress: saveXP } = useXPProgress(lessonId);
 
   const markSectionComplete = useCallback((sectionIndex: number, totalSections: number) => {
     if (!completedSections.includes(sectionIndex)) {
       setCompletedSections(prev => [...prev, sectionIndex]);
       
-      // Każda sekcja jest warta 50 punktów
       const pointsPerSection = 50;
       setTotalPoints(prev => prev + pointsPerSection);
 
-      // Zapisz postęp po każdej ukończonej sekcji
       updateUserProgress({
         lessonId,
         points: pointsPerSection
       });
 
       if (completedSections.length + 1 === totalSections) {
-        // Bonus za ukończenie całej lekcji (100 punktów)
         const bonusPoints = 100;
         setTotalPoints(prev => prev + bonusPoints);
         
@@ -46,7 +41,6 @@ export const useProgress = (lessonId: string) => {
     correctAnswers: number, 
     totalQuestions: number
   ) => {
-    // Quiz points based on performance (max 100 points)
     const quizPoints = Math.round((correctAnswers / totalQuestions) * 100);
     setTotalPoints(prev => prev + quizPoints);
 
@@ -63,8 +57,6 @@ export const useProgress = (lessonId: string) => {
 
   const saveProgress = useCallback(async () => {
     try {
-      await saveXP();
-
       toast.success('Postęp został zapisany!', {
         duration: 3000,
         position: 'bottom-right',
@@ -76,7 +68,7 @@ export const useProgress = (lessonId: string) => {
         position: 'bottom-right',
       });
     }
-  }, [saveXP]);
+  }, []);
 
   return {
     completedSections,

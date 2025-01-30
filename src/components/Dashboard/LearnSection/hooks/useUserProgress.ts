@@ -33,10 +33,9 @@ export const useUserProgress = () => {
       return response.json();
     },
     onSuccess: () => {
-      // Odśwież dane po udanej aktualizacji
-      queryClient.invalidateQueries(['userProgress']);
-      queryClient.invalidateQueries(['lessons']);
-      queryClient.invalidateQueries(['userStats']);
+      queryClient.invalidateQueries({ queryKey: ['userProgress'] });
+      queryClient.invalidateQueries({ queryKey: ['lessons'] });
+      queryClient.invalidateQueries({ queryKey: ['userStats'] });
     },
     onError: (error: Error) => {
       console.error('Błąd aktualizacji:', error);
