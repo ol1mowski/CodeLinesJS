@@ -14,7 +14,8 @@ export const fetchUserProgress = async (userId: string) => {
   if (!response.ok) {
     throw new Error('Failed to fetch progress');
   }
-  return response.json();
+  const data = await response.json();
+  return data;
 };
 
 export const fetchLessonProgress = async (userId: string, lessonId: string) => {

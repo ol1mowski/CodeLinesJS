@@ -65,6 +65,24 @@ const userSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Lesson'
     }],
+    learningPaths: [{
+      pathId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'LearningPath',
+        required: true
+      },
+      completedLessonsCount: {
+        type: Number,
+        default: 0
+      },
+      lastCompletedAt: {
+        type: Date
+      },
+      startedAt: {
+        type: Date,
+        default: Date.now
+      }
+    }],
     lastActive: {
       type: Date,
       default: Date.now

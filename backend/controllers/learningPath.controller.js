@@ -4,11 +4,10 @@ import { ValidationError } from '../utils/errors.js';
 
 export const getLearningPaths = async (req, res, next) => {
   try {
-    const { difficulty, search, category } = req.query;
+    const { difficulty, search } = req.query;
     const query = { isActive: true };
     
     if (difficulty) query.difficulty = difficulty;
-    if (category) query.category = category;
     if (search) {
       query.$or = [
         { title: { $regex: search, $options: 'i' } },
@@ -16,61 +15,67 @@ export const getLearningPaths = async (req, res, next) => {
       ];
     }
     
-    const [learningPaths, user] = await Promise.all([
-      LearningPath.find(query)
-        .populate({
-          path: 'lessons',
-          select: 'title description category difficulty duration points'
-        })
-        .lean(),
+    const [paths, user] = await Promise.all([
+      LearningPath.find(query).lean(),
       User.findById(req.user.userId)
-        .select('stats.completedChallenges stats.progress.currentLevel')
+        .select('stats.completedLessons stats.learningPaths stats.points')
         .lean()
     ]);
 
-    const completedLessons = user.stats?.completedChallenges || [];
-    const userLevel = user.stats?.progress?.currentLevel || 1;
-    
-    const pathsWithProgress = learningPaths.map(path => {
-      const pathCompletedLessons = path.lessons.filter(lesson => 
-        completedLessons.some(id => id.toString() === lesson._id.toString())
-      );
-      
-      const progress = {
-        completed: pathCompletedLessons.length,
-        total: path.lessons.length,
-        percentage: Math.round((pathCompletedLessons.length / path.lessons.length) * 100)
+    const formattedPaths = paths.map(path => {
+      const userProgress = user.stats?.learningPaths?.find(
+        p => p.pathId.toString() === path._id.toString()
+      ) || {
+        completedLessonsCount: 0,
+        startedAt: null,
+        lastCompletedAt: null
       };
 
-      const isAvailableForUser = path.isAvailable && userLevel >= path.requiredLevel;
-      
       return {
         id: path._id,
         title: path.title,
         description: path.description,
         difficulty: path.difficulty,
-        category: path.category,
         estimatedTime: path.estimatedTime,
         requirements: path.requirements,
         outcomes: path.outcomes,
-        progress,
-        isAvailable: isAvailableForUser,
-        requiredLevel: path.requiredLevel,
-        isLocked: userLevel < path.requiredLevel,
-        lessons: path.lessons.map(lesson => ({
-          id: lesson._id,
-          title: lesson.title,
-          description: lesson.description,
-          category: lesson.category,
-          difficulty: lesson.difficulty,
-          duration: lesson.duration,
-          points: lesson.points,
-          isCompleted: completedLessons.some(id => id.toString() === lesson._id.toString())
-        }))
+        progress: {
+          completed: userProgress.completedLessonsCount,
+          total: path.totalLessons,
+          percentage: Math.round((userProgress.completedLessonsCount / path.totalLessons) * 100),
+          lastCompletedAt: userProgress.lastCompletedAt,
+          startedAt: userProgress.startedAt,
+          isStarted: !!userProgress.startedAt,
+          isCompleted: userProgress.completedLessonsCount === path.totalLessons
+        }
       };
     });
-    
-    res.json(pathsWithProgress);
+
+    res.json({
+      paths: formattedPaths,
+      userStats: {
+        totalPoints: user.stats?.points || 0,
+        totalPaths: paths.length,
+        completedPaths: user.stats?.learningPaths?.filter(
+          p => p.completedLessonsCount === paths.find(
+            path => path._id.toString() === p.pathId.toString()
+          )?.totalLessons
+        )?.length || 0,
+        pathsInProgress: user.stats?.learningPaths?.filter(
+          p => p.completedLessonsCount > 0 && p.completedLessonsCount < paths.find(
+            path => path._id.toString() === p.pathId.toString()
+          )?.totalLessons
+        )?.length || 0,
+        recentActivity: user.stats?.learningPaths
+          ?.sort((a, b) => b.lastCompletedAt - a.lastCompletedAt)
+          ?.slice(0, 3)
+          ?.map(p => ({
+            pathId: p.pathId,
+            completedLessons: p.completedLessonsCount,
+            lastCompletedAt: p.lastCompletedAt
+          }))
+      }
+    });
   } catch (error) {
     next(error);
   }
