@@ -18,9 +18,11 @@ export const getLearningPaths = async (req, res, next) => {
     const [paths, user] = await Promise.all([
       LearningPath.find(query).lean(),
       User.findById(req.user.userId)
-        .select('stats.completedLessons stats.learningPaths stats.points')
+        .select('stats.completedLessons stats.learningPaths stats.points stats.level')
         .lean()
     ]);
+
+    const userLevel = user.stats?.level || 1;
 
     const formattedPaths = paths.map(path => {
       const userProgress = user.stats?.learningPaths?.find(
@@ -39,6 +41,8 @@ export const getLearningPaths = async (req, res, next) => {
         estimatedTime: path.estimatedTime,
         requirements: path.requirements,
         outcomes: path.outcomes,
+        requiredLevel: path.requiredLevel,
+        isAvailable: userLevel >= path.requiredLevel,
         progress: {
           completed: userProgress.completedLessonsCount,
           total: path.totalLessons,
@@ -54,6 +58,7 @@ export const getLearningPaths = async (req, res, next) => {
     res.json({
       paths: formattedPaths,
       userStats: {
+        level: userLevel,
         totalPoints: user.stats?.points || 0,
         totalPaths: paths.length,
         completedPaths: user.stats?.learningPaths?.filter(

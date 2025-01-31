@@ -21,6 +21,11 @@ export const learningPathSchema = new mongoose.Schema({
   isActive: {
     type: Boolean,
     default: true
+  },
+  requiredLevel: {
+    type: Number,
+    default: 1,
+    min: 1
   }
 }, {
   timestamps: true
