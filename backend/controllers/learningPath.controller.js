@@ -43,6 +43,7 @@ export const getLearningPaths = async (req, res, next) => {
         outcomes: path.outcomes,
         requiredLevel: path.requiredLevel,
         isAvailable: userLevel >= path.requiredLevel,
+        totalLessons: path.totalLessons,
         progress: {
           completed: userProgress.completedLessonsCount,
           total: path.totalLessons,
@@ -50,7 +51,8 @@ export const getLearningPaths = async (req, res, next) => {
           lastCompletedAt: userProgress.lastCompletedAt,
           startedAt: userProgress.startedAt,
           isStarted: !!userProgress.startedAt,
-          isCompleted: userProgress.completedLessonsCount === path.totalLessons
+          isCompleted: userProgress.completedLessonsCount === path.totalLessons,
+          totalLessons: path.totalLessons
         }
       };
     });

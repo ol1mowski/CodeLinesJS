@@ -267,35 +267,60 @@ const lessonsContent = [
 
 const learningPaths = [
   {
-    title: "Ścieżka JavaScript od podstaw",
-    description: "Kompletny kurs JavaScript dla początkujących",
+    title: "JavaScript od podstaw",
+    description: "Kompletny kurs JavaScript dla początkujących. Poznaj podstawy programowania i zostań frontend developerem.",
     difficulty: "beginner",
-    category: "javascript",
-    estimatedTime: 135,
-    requirements: ["Podstawowa znajomość HTML i CSS"],
+    totalLessons: 20,
+    estimatedTime: 1200, // w minutach (20 godzin)
+    requirements: [
+      "Podstawowa znajomość HTML i CSS",
+      "Chęć do nauki"
+    ],
     outcomes: [
       "Zrozumienie podstaw JavaScript",
-      "Umiejętność pracy z funkcjami",
-      "Znajomość struktur danych"
+      "Umiejętność pisania prostych programów",
+      "Znajomość DOM i event handling",
+      "Podstawy asynchroniczności"
     ],
     isActive: true,
-    isAvailable: true,
     requiredLevel: 1
   },
   {
-    title: "React Developer",
-    description: "Zostań programistą React",
+    title: "JavaScript - poziom średniozaawansowany",
+    description: "Rozszerz swoją wiedzę o JavaScript. Poznaj zaawansowane koncepcje i wzorce projektowe.",
     difficulty: "intermediate",
-    category: "react",
-    estimatedTime: 135,
-    requirements: ["Podstawowa znajomość JavaScript"],
+    totalLessons: 15,
+    estimatedTime: 900, // 15 godzin
+    requirements: [
+      "Podstawowa znajomość JavaScript",
+      "Znajomość funkcji i obiektów"
+    ],
     outcomes: [
-      "Tworzenie aplikacji w React",
-      "Zarządzanie stanem aplikacji",
-      "Praca z komponentami"
+      "Zaawansowane koncepcje JS",
+      "Programowanie funkcyjne",
+      "Wzorce projektowe",
+      "Optymalizacja kodu"
     ],
     isActive: true,
-    isAvailable: true,
+    requiredLevel: 2
+  },
+  {
+    title: "JavaScript - poziom zaawansowany",
+    description: "Zostań ekspertem JavaScript. Poznaj zaawansowane techniki i najlepsze praktyki.",
+    difficulty: "advanced",
+    totalLessons: 12,
+    estimatedTime: 720, // 12 godzin
+    requirements: [
+      "Dobra znajomość JavaScript",
+      "Doświadczenie w programowaniu"
+    ],
+    outcomes: [
+      "Architektura aplikacji",
+      "Zaawansowane wzorce",
+      "Wydajność i optymalizacja",
+      "Testowanie i debugging"
+    ],
+    isActive: true,
     requiredLevel: 3
   }
 ];
@@ -391,7 +416,7 @@ const initializeData = async () => {
       }
     ];
 
-    await LearningPath.insertMany(pathsWithLessons);
+    await LearningPath.insertMany(learningPaths);
     console.log('Dodano ścieżki nauki');
 
     await Resource.insertMany(resources);

@@ -22,7 +22,9 @@ const usersData = [
     },
     stats: {
       points: 0,
+      level: 1,
       completedLessons: [],
+      learningPaths: [],
       lastActive: new Date()
     }
   }
