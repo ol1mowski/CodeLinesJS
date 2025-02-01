@@ -33,7 +33,6 @@ export const PathCard = memo(({ path }: PathCardProps) => {
   const navigate = useNavigate();
   
   const { 
-    id, 
     title, 
     description, 
     difficulty, 
@@ -45,7 +44,7 @@ export const PathCard = memo(({ path }: PathCardProps) => {
 
   const handlePathClick = () => {
     if (isAvailable) {
-      navigate('/dashboard/learn?tab=lessons');
+      navigate(`/dashboard/learn?tab=lessons&filter=${difficulty}`);
     }
   };
 

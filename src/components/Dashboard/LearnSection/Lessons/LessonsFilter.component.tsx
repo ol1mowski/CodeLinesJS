@@ -1,10 +1,9 @@
 import { motion } from "framer-motion";
-import { memo } from "react";
+import { memo, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { type FilterType } from "../types/filter.types";
 
 type LessonsFilterProps = {
-  activeFilter: FilterType;
   onFilterChange: (filter: FilterType) => void;
   className?: string;
 };
@@ -16,29 +15,23 @@ const filters: Array<{ id: FilterType; label: string }> = [
   { id: "advanced", label: "Zaawansowane" }
 ];
 
-export const LessonsFilter = memo(({ activeFilter, onFilterChange, className = '' }: LessonsFilterProps) => {
+export const LessonsFilter = memo(({ onFilterChange, className = "" }: LessonsFilterProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const activeFilter = (searchParams.get("filter") as FilterType) || "all";
+
+  useEffect(() => {
+    onFilterChange(activeFilter);
+  }, [activeFilter, onFilterChange]);
 
   const handleFilterChange = (newFilter: FilterType) => {
-    // Aktualizuj URL
-    setSearchParams(prev => {
-      if (newFilter === "all") {
-        prev.delete("filter");
-      } else {
-        prev.set("filter", newFilter);
-      }
-      return prev;
-    });
-    
-    // Wywołaj callback z propsów
-    onFilterChange(newFilter);
+    setSearchParams(newFilter === "all" ? {} : { filter: newFilter });
   };
 
   return (
     <div className={`flex gap-2 ${className}`}>
       {filters.map((filter) => {
         const isActive = activeFilter === filter.id;
-        
+
         return (
           <motion.button
             key={filter.id}
@@ -59,4 +52,4 @@ export const LessonsFilter = memo(({ activeFilter, onFilterChange, className = '
   );
 });
 
-LessonsFilter.displayName = "LessonsFilter"; 
+LessonsFilter.displayName = "LessonsFilter";

@@ -31,7 +31,14 @@ export const Lessons = memo(() => {
     refetch,
     isEmpty,
     userProgress 
-  } = useLessons(currentFilter);
+  } = useLessons();
+
+  // Synchronizacja filtra z URL przy pierwszym renderowaniu i zmianach URL
+  useEffect(() => {
+    if (currentFilter !== filter) {
+      setFilter(currentFilter);
+    }
+  }, [currentFilter, setFilter, filter]);
 
   const handleFilterChange = (newFilter: FilterType) => {
     setSearchParams(prev => {
@@ -43,10 +50,6 @@ export const Lessons = memo(() => {
       return prev;
     });
   };
-
-  useEffect(() => {
-    setFilter(currentFilter);
-  }, [currentFilter, setFilter]);
 
   if (error) {
     return (
@@ -91,7 +94,7 @@ export const Lessons = memo(() => {
           W tej kategorii nie znaleziono żadnych lekcji. 
           Możesz wybrać inny poziom trudności lub
           <button 
-            onClick={() => setFilter('all')}
+            onClick={() => handleFilterChange("all")}
             className="text-js hover:text-js/80 underline mx-1 font-medium"
           >
             wyświetlić wszystkie lekcje
@@ -100,7 +103,7 @@ export const Lessons = memo(() => {
         <div className="mt-8">
           <LessonsFilter 
             activeFilter={filter} 
-            onFilterChange={setFilter}
+            onFilterChange={handleFilterChange}
             className="justify-center"
           />
         </div>
@@ -131,7 +134,7 @@ export const Lessons = memo(() => {
             </p>
           </div>
         </div>
-        <LessonsFilter activeFilter={filter} onFilterChange={setFilter} />
+        <LessonsFilter activeFilter={filter} onFilterChange={handleFilterChange} />
       </div>
 
       <motion.div 
