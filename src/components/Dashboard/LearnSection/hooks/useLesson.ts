@@ -1,12 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchLesson } from "../lib/api/lessons";
 import { useAuth } from "./useAuth";
-import type { Lesson } from "../types/lesson.types";
 
 export const useLesson = (lessonId: string) => {
   const { token } = useAuth();
-
-  console.log('useLesson hook called with lessonId:', lessonId);
 
   const {
     data: lesson,

@@ -40,7 +40,6 @@ export const LessonPage = memo(() => {
       navigate('/dashboard/learn?tab=lessons');
       return;
     }
-    console.log('Loading lesson:', lessonId);
     window.scrollTo(0, 0);
   }, [lessonId, navigate]);
 

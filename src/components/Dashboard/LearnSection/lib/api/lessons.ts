@@ -5,7 +5,6 @@ const API_URL = 'http://localhost:5001/api';
 export const fetchLesson = async (lessonId: string) => {
   if (!lessonId) throw new Error('No lesson ID provided');
 
-  console.log('Fetching lesson:', lessonId); // Debugging
 
   try {
     const response = await fetch(`${API_URL}/lessons/${lessonId}`, {
