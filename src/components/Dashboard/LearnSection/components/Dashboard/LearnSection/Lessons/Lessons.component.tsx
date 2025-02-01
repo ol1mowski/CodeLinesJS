@@ -1,11 +1,13 @@
 import { motion } from "framer-motion";
-import { memo } from "react";
+import { memo, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { LessonCard } from "./LessonCard.component";
 import { LessonsFilter } from "../../../../Lessons/LessonsFilter.component";
 import { useLessons } from "../hooks/useLessons";
 import { LoadingSpinner } from "../../../../components/UI/LoadingSpinner.component";
 import { ErrorMessage } from "../../../../components/ErrorMessage.component";
 import { FaBookOpen, FaFilter, FaSadTear, FaSearch } from "react-icons/fa";
+import type { FilterType } from "../../../../types/filter.types";
 
 const getDifficultyLabel = (filter: string) => {
   switch (filter) {
@@ -17,16 +19,34 @@ const getDifficultyLabel = (filter: string) => {
 };
 
 export const Lessons = memo(() => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentFilter = (searchParams.get("filter") as FilterType) || "all";
+  
   const { 
     filteredLessons, 
-    filter, 
-    setFilter, 
+    filter,
+    setFilter,
     isLoading,
     error,
     refetch,
     isEmpty,
     userProgress 
-  } = useLessons();
+  } = useLessons(currentFilter);
+
+  const handleFilterChange = (newFilter: FilterType) => {
+    setSearchParams(prev => {
+      if (newFilter === "all") {
+        prev.delete("filter");
+      } else {
+        prev.set("filter", newFilter);
+      }
+      return prev;
+    });
+  };
+
+  useEffect(() => {
+    setFilter(currentFilter);
+  }, [currentFilter, setFilter]);
 
   if (error) {
     return (

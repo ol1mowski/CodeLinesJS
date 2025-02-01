@@ -1,7 +1,7 @@
 import { memo } from "react";
 import { motion } from "framer-motion";
 import { FaClock, FaChevronRight, FaLock } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 type PathProgress = {
   completed: number;
@@ -30,6 +30,8 @@ type PathCardProps = {
 };
 
 export const PathCard = memo(({ path }: PathCardProps) => {
+  const navigate = useNavigate();
+  
   const { 
     id, 
     title, 
@@ -40,6 +42,12 @@ export const PathCard = memo(({ path }: PathCardProps) => {
     progress,
     isAvailable
   } = path;
+
+  const handlePathClick = () => {
+    if (isAvailable) {
+      navigate('/dashboard/learn?tab=lessons');
+    }
+  };
 
   return (
     <div className={`group ${!isAvailable ? 'cursor-not-allowed' : ''}`}>
@@ -107,21 +115,22 @@ export const PathCard = memo(({ path }: PathCardProps) => {
           )}
 
           {isAvailable ? (
-            <Link to={`/dashboard/path/${id}`}>
-              <div className="flex items-center justify-between">
-                <div className="flex-1 mr-4">
-                  <div className="h-2 bg-dark rounded-full overflow-hidden">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${progress.percentage}%` }}
-                      className={`h-full ${progress.isCompleted ? 'bg-green-500' : 'bg-js'}`}
-                      transition={{ duration: 0.8 }}
-                    />
-                  </div>
+            <div 
+              onClick={handlePathClick}
+              className="cursor-pointer flex items-center justify-between"
+            >
+              <div className="flex-1 mr-4">
+                <div className="h-2 bg-dark rounded-full overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${progress.percentage}%` }}
+                    className={`h-full ${progress.isCompleted ? 'bg-green-500' : 'bg-js'}`}
+                    transition={{ duration: 0.8 }}
+                  />
                 </div>
-                <FaChevronRight className="w-4 h-4 text-js group-hover:translate-x-1 transition-transform" />
               </div>
-            </Link>
+              <FaChevronRight className="w-4 h-4 text-js group-hover:translate-x-1 transition-transform" />
+            </div>
           ) : (
             <div className="flex items-center justify-between opacity-50">
               <div className="h-2 bg-dark rounded-full w-full" />
