@@ -6,20 +6,25 @@ import type { Lesson } from "../types/lesson.types";
 export const useLesson = (lessonId: string) => {
   const { token } = useAuth();
 
-  const { 
+  console.log('useLesson hook called with lessonId:', lessonId);
+
+  const {
     data: lesson,
     isLoading,
     error,
     refetch
-  } = useQuery<Lesson>({
+  } = useQuery({
     queryKey: ['lesson', lessonId],
-    queryFn: () => fetchLesson(lessonId),
+    queryFn: () => {
+
+      return fetchLesson(lessonId);
+    },
     enabled: !!lessonId && !!token,
     retry: (failureCount, error: any) => {
-      if (error.message === 'lesson_not_found') return false;
+      console.log('Query failed:', { failureCount, error });
+      if (error?.response?.status === 404) return false;
       return failureCount < 3;
     },
-    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
   return {
@@ -27,6 +32,6 @@ export const useLesson = (lessonId: string) => {
     isLoading,
     error,
     refetch,
-    isNotFound: error?.message === 'lesson_not_found'
+    isNotFound: error?.response?.status === 404
   };
 }; 

@@ -107,7 +107,7 @@ export const LessonCard = memo(({ lesson, userLevel }: LessonCardProps) => {
               </span>
             ) : (
               <Link 
-                to={`/dashboard/lesson/${id}`}
+                to={`/dashboard/learn/lesson/${id}`}
                 className={`p-2 rounded-lg transition-colors ${
                   isCompleted 
                     ? 'text-green-400 hover:bg-green-500/10' 

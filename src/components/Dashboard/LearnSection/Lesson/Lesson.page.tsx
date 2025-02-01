@@ -1,5 +1,5 @@
 import { memo, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { LessonProgress } from "./components/LessonProgress.component";
 import { useLessonState } from "./hooks/useLessonState";
 import { LessonNotFound } from "./components/LessonNotFound.component";
@@ -13,15 +13,17 @@ import { useAuth } from "../hooks/useAuth";
 import { useLesson } from "../hooks/useLesson";
 
 export const LessonPage = memo(() => {
-  const { id } = useParams();
-  const { userId } = useAuth();
+  const { lessonId } = useParams<{ lessonId: string }>();
+  const navigate = useNavigate();
+  const { userId } = useAuth();  
+  
   const { 
     lesson, 
     isLoading, 
     error, 
     refetch,
     isNotFound 
-  } = useLesson(id!);
+  } = useLesson(lessonId || '');
 
   const {
     activeSection,
@@ -30,11 +32,18 @@ export const LessonPage = memo(() => {
     handleComplete,
     markSectionComplete,
     saveQuizResult
-  } = useLessonState(id!, userId);
+  } = useLessonState(lessonId || '', userId);
 
   useEffect(() => {
+    if (!lessonId) {
+      console.error('No lesson ID provided');
+      navigate('/dashboard/learn?tab=lessons');
+      return;
+    }
+    console.log('Loading lesson:', lessonId);
     window.scrollTo(0, 0);
-  }, [id]);
+  }, [lessonId, navigate]);
+
 
   if (isLoading) {
     return (
@@ -64,8 +73,8 @@ export const LessonPage = memo(() => {
   if (!lesson) {
     return <LessonNotFound />;
   }
-  
-  const sections = lesson.content?.sections || [];
+
+  const sections = lesson.sections || [];
   const totalSections = sections.length;
 
   return (

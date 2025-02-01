@@ -375,67 +375,30 @@ const initializeData = async () => {
     await mongoose.connect(process.env.MONGODB_URI);
     console.log('Połączono z bazą danych');
     
-    initializeModels();
-
-    // Usuń wszystkie kolekcje
+    // Usuń stare dane
     await Promise.all([
-      mongoose.connection.collection('lessons').drop().catch(() => console.log('Kolekcja lessons nie istnieje')),
-      mongoose.connection.collection('lessoncontents').drop().catch(() => console.log('Kolekcja lessoncontents nie istnieje')),
-      mongoose.connection.collection('learningpaths').drop().catch(() => console.log('Kolekcja learningpaths nie istnieje')),
-      mongoose.connection.collection('resources').drop().catch(() => console.log('Kolekcja resources nie istnieje'))
+      Lesson.collection.drop().catch(() => console.log('Kolekcja lessons nie istnieje')),
+      LessonContent.collection.drop().catch(() => console.log('Kolekcja lessoncontents nie istnieje'))
     ]);
     console.log('Usunięto stare kolekcje');
 
-    // Utwórz kolekcje na nowo
-    await Promise.all([
-      mongoose.connection.createCollection('lessons'),
-      mongoose.connection.createCollection('lessoncontents'),
-      mongoose.connection.createCollection('learningpaths'),
-      mongoose.connection.createCollection('resources')
-    ]);
-    console.log('Utworzono nowe kolekcje');
-
     // Dodaj nowe dane
     const createdLessons = await Lesson.insertMany(lessonsData);
-    console.log('Dodano lekcje');
+    console.log('Dodano lekcje:', createdLessons.map(l => l.slug));
 
     await LessonContent.insertMany(lessonsContent);
     console.log('Dodano treści lekcji');
 
-    const jsLessons = createdLessons.filter(lesson => lesson.category === 'javascript');
-    const reactLessons = createdLessons.filter(lesson => lesson.category === 'react');
-
-    const pathsWithLessons = [
-      {
-        ...learningPaths[0],
-        lessons: jsLessons.map(lesson => lesson._id)
-      },
-      {
-        ...learningPaths[1],
-        lessons: reactLessons.map(lesson => lesson._id)
-      }
-    ];
-
-    await LearningPath.insertMany(learningPaths);
-    console.log('Dodano ścieżki nauki');
-
-    await Resource.insertMany(resources);
-    console.log('Dodano zasoby');
-
-    // Utwórz nowe indeksy
-    await Promise.all([
-      Lesson.createIndexes(),
-      LessonContent.createIndexes(),
-      LearningPath.createIndexes()
-    ]);
-    console.log('Utworzono nowe indeksy');
+    // Sprawdź czy dane zostały dodane
+    const lessonCount = await Lesson.countDocuments();
+    const contentCount = await LessonContent.countDocuments();
+    console.log(`Dodano ${lessonCount} lekcji i ${contentCount} treści`);
 
     console.log('Inicjalizacja zakończona pomyślnie');
   } catch (error) {
     console.error('Błąd podczas inicjalizacji:', error);
   } finally {
     await mongoose.disconnect();
-    console.log('Rozłączono z bazą danych');
   }
 };
 

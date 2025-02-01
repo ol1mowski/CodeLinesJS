@@ -3,27 +3,31 @@ import { getAuthToken } from '../utils/auth';
 const API_URL = 'http://localhost:5001/api';
 
 export const fetchLesson = async (lessonId: string) => {
-  const token = getAuthToken();
-  
-  if (!token) {
-    throw new Error('No authentication token found');
-  }
+  if (!lessonId) throw new Error('No lesson ID provided');
 
-  const response = await fetch(`${API_URL}/lessons/${lessonId}`, {
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
+  console.log('Fetching lesson:', lessonId); // Debugging
+
+  try {
+    const response = await fetch(`${API_URL}/lessons/${lessonId}`, {
+      headers: {
+        'Authorization': `Bearer ${getAuthToken()}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        throw new Error('lesson_not_found');
+      }
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-  });
 
-  if (!response.ok) {
-    if (response.status === 404) {
-      throw new Error('lesson_not_found');
-    }
-    throw new Error('failed_to_fetch');
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching lesson:', error);
+    throw error;
   }
-
-  return response.json();
 };
 
 export const fetchLessons = async () => {   
