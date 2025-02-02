@@ -1,67 +1,53 @@
-import { Stats } from '../models/stats.model.js';
-import { AuthError } from '../utils/errors.js';
-import StatsService from '../services/stats.service.js';
-
-const generateInitialDailyStats = () => {
-  const days = 5;
-  const stats = [];
-  for (let i = 0; i < days; i++) {
-    const date = new Date();
-    date.setDate(date.getDate() - i);
-    stats.unshift({
-      date: date.toISOString().split('T')[0],
-      points: 0,
-      challenges: 0
-    });
-  }
-  return stats;
-};
-
-const generateInitialCategories = () => [
-  { name: 'Podstawy', completed: 0, total: 25 },
-  { name: 'Funkcje', completed: 0, total: 20 },
-  { name: 'Obiekty', completed: 0, total: 15 },
-  { name: 'Async', completed: 0, total: 10 }
-];
+import { User } from '../models/user.model.js';
+import { AuthError, ValidationError } from '../utils/errors.js';
+import { LevelService } from '../services/level.service.js';
 
 export const getStats = async (req, res, next) => {
   try {
     const userId = req.user?.userId;
     if (!userId) throw new AuthError('Brak autoryzacji');
 
-    let stats = await Stats.findOne({ userId });
-    
-    if (!stats) {
-      const initialData = {
-        userId,
-        level: 1,
-        experiencePoints: 0,
-        nextLevelThreshold: 1000,
-        completedChallenges: 0,
-        currentStreak: 0,
-        bestStreak: 0,
-        averageScore: 0,
-        totalTimeSpent: 0,
-        badges: [],
-        unlockedFeatures: [],
-        chartData: {
-          daily: generateInitialDailyStats(),
-          categories: generateInitialCategories()
-        }
-      };
+    const user = await User.findById(userId)
+      .select('stats username')
+      .lean();
 
-      stats = await Stats.create(initialData);
-    }
+    if (!user) throw new ValidationError('Nie znaleziono użytkownika');
 
-    if (!stats.chartData) {
-      stats.chartData = {
-        daily: generateInitialDailyStats(),
-        categories: generateInitialCategories()
-      };
-      await stats.save();
-    }
+    res.json({
+      status: 'success',
+      data: {
+        username: user.username,
+        level: user.stats.level,
+        xp: user.stats.xp,
+        points: user.stats.points,
+        streak: user.stats.streak,
+        bestStreak: user.stats.bestStreak,
+        completedLessons: user.stats.completedLessons.length,
+        lastActive: user.stats.lastActive
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
-    res.json(stats);
+export const getDailyStats = async (req, res, next) => {
+  try {
+    const userId = req.user?.userId;
+    if (!userId) throw new AuthError('Brak autoryzacji');
+
+    const user = await User.findById(userId)
+      .select('stats.daily')
+      .lean();
+
+    if (!user) throw new ValidationError('Nie znaleziono użytkownika');
+
+    const last7Days = user.stats.daily.slice(-7);
+
+    res.json({
+      status: 'success',
+      data: last7Days
+    });
   } catch (error) {
     next(error);
   }
@@ -72,30 +58,56 @@ export const updateStats = async (req, res, next) => {
     const userId = req.user?.userId;
     if (!userId) throw new AuthError('Brak autoryzacji');
 
-    const updatedStats = await StatsService.updateStats(userId, req.body);
-    res.json(updatedStats);
+    const user = await User.findById(userId);
+    if (!user) throw new ValidationError('Nie znaleziono użytkownika');
+
+    const today = new Date();
+    const lastActive = user.stats?.lastActive ? new Date(user.stats.lastActive) : null;
+    const diffDays = lastActive ? Math.floor((today - lastActive) / (1000 * 60 * 60 * 24)) : 1;
+
+    if (diffDays === 1) {
+      user.stats.streak += 1;
+      user.stats.bestStreak = Math.max(user.stats.streak, user.stats.bestStreak);
+    } else if (diffDays > 1) {
+      user.stats.streak = 1;
+    }
+
+    const todayStr = today.toISOString().split('T')[0];
+    const dailyIndex = user.stats.daily.findIndex(d => d.date === todayStr);
+
+    if (dailyIndex >= 0) {
+      user.stats.daily[dailyIndex].points += req.body.points || 0;
+      user.stats.daily[dailyIndex].challenges += req.body.challenges || 0;
+    } else {
+      user.stats.daily.push({
+        date: todayStr,
+        points: req.body.points || 0,
+        challenges: req.body.challenges || 0
+      });
+    }
+
+    if (req.body.points) {
+      user.stats.points += req.body.points;
+      user.stats.xp += req.body.points;
+      await LevelService.updateLevel(user);
+    }
+
+    user.stats.lastActive = today;
+    await user.save();
+
+    res.json({
+      status: 'success',
+      data: {
+        level: user.stats.level,
+        xp: user.stats.xp,
+        points: user.stats.points,
+        streak: user.stats.streak,
+        bestStreak: user.stats.bestStreak,
+        completedLessons: user.stats.completedLessons.length,
+        lastActive: user.stats.lastActive
+      }
+    });
   } catch (error) {
     next(error);
   }
 };
-
-export const updateCategory = async (req, res, next) => {
-  try {
-    const userId = req.user?.userId;
-    const { categoryName } = req.params;
-    if (!userId) throw new AuthError('Brak autoryzacji');
-
-    const stats = await Stats.findOne({ userId });
-    if (!stats) throw new Error('Nie znaleziono statystyk');
-
-    const category = stats.categories.find(c => c.name === categoryName);
-    if (!category) throw new Error('Nie znaleziono kategorii');
-
-    Object.assign(category, req.body);
-    await stats.save();
-
-    res.json(stats);
-  } catch (error) {
-    next(error);
-  }
-}; 

@@ -1,6 +1,8 @@
 import RewardsService from './rewards.service.js';
 
-class LevelService {
+export class LevelService {
+  static XP_PER_LEVEL = 100;
+
   calculateNextLevelThreshold(currentLevel) {
     return Math.floor(1000 * Math.pow(1.2, currentLevel - 1));
   }
@@ -35,7 +37,6 @@ class LevelService {
       stats.experiencePoints = progress.remainingXP;
       stats.nextLevelThreshold = progress.nextLevelThreshold;
 
-      // Przetwarzamy nagrody za nowe poziomy
       const { stats: updatedStats, rewards } = await RewardsService.processLevelUpRewards(
         stats,
         oldLevel,
@@ -54,6 +55,17 @@ class LevelService {
       levelUp: false,
       rewards: null
     };
+  }
+
+  static async updateLevel(user) {
+    const currentLevel = user.stats.level;
+    const newLevel = Math.floor(user.stats.xp / this.XP_PER_LEVEL) + 1;
+
+    if (newLevel > currentLevel) {
+      user.stats.level = newLevel;
+    }
+
+    return user;
   }
 }
 

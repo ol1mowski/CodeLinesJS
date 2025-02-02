@@ -17,9 +17,7 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: function() {
-      return this.accountType === 'local';
-    }
+    required: true
   },
   accountType: {
     type: String,
@@ -57,36 +55,35 @@ const userSchema = new mongoose.Schema({
     }
   },
   stats: {
-    points: {
-      type: Number,
-      default: 0
-    },
+    points: { type: Number, default: 0 },
+    level: { type: Number, default: 1 },
+    xp: { type: Number, default: 0 },
+    streak: { type: Number, default: 0 },
+    bestStreak: { type: Number, default: 0 },
+    lastActive: { type: Date },
     completedLessons: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Lesson'
     }],
-    learningPaths: [{
-      pathId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'LearningPath',
-        required: true
+    categories: [{
+      name: {
+        type: String,
+        enum: ['javascript', 'react', 'node', 'database', 'testing']
       },
-      completedLessonsCount: {
+      progress: {
         type: Number,
         default: 0
       },
-      lastCompletedAt: {
-        type: Date
-      },
-      startedAt: {
-        type: Date,
-        default: Date.now
+      level: {
+        type: Number,
+        default: 1
       }
     }],
-    lastActive: {
-      type: Date,
-      default: Date.now
-    }
+    daily: [{
+      date: String,
+      points: { type: Number, default: 0 },
+      challenges: { type: Number, default: 0 }
+    }]
   },
   resetPasswordToken: String,
   resetPasswordExpires: Date,

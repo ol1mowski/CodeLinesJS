@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import { Lesson, LearningPath, initializeModels, Resource } from '../models/index.js';
+import { Lesson } from '../models/index.js';
 import { LessonContent } from '../models/lessonContent.model.js';
 
 dotenv.config();
@@ -265,131 +265,23 @@ const lessonsContent = [
   }
 ];
 
-const learningPaths = [
-  {
-    title: "JavaScript od podstaw",
-    description: "Kompletny kurs JavaScript dla początkujących. Poznaj podstawy programowania i zostań frontend developerem.",
-    difficulty: "beginner",
-    totalLessons: 20,
-    estimatedTime: 1200, // w minutach (20 godzin)
-    requirements: [
-      "Podstawowa znajomość HTML i CSS",
-      "Chęć do nauki"
-    ],
-    outcomes: [
-      "Zrozumienie podstaw JavaScript",
-      "Umiejętność pisania prostych programów",
-      "Znajomość DOM i event handling",
-      "Podstawy asynchroniczności"
-    ],
-    isActive: true,
-    requiredLevel: 1
-  },
-  {
-    title: "JavaScript - poziom średniozaawansowany",
-    description: "Rozszerz swoją wiedzę o JavaScript. Poznaj zaawansowane koncepcje i wzorce projektowe.",
-    difficulty: "intermediate",
-    totalLessons: 15,
-    estimatedTime: 900, // 15 godzin
-    requirements: [
-      "Podstawowa znajomość JavaScript",
-      "Znajomość funkcji i obiektów"
-    ],
-    outcomes: [
-      "Zaawansowane koncepcje JS",
-      "Programowanie funkcyjne",
-      "Wzorce projektowe",
-      "Optymalizacja kodu"
-    ],
-    isActive: true,
-    requiredLevel: 2
-  },
-  {
-    title: "JavaScript - poziom zaawansowany",
-    description: "Zostań ekspertem JavaScript. Poznaj zaawansowane techniki i najlepsze praktyki.",
-    difficulty: "advanced",
-    totalLessons: 12,
-    estimatedTime: 720, // 12 godzin
-    requirements: [
-      "Dobra znajomość JavaScript",
-      "Doświadczenie w programowaniu"
-    ],
-    outcomes: [
-      "Architektura aplikacji",
-      "Zaawansowane wzorce",
-      "Wydajność i optymalizacja",
-      "Testowanie i debugging"
-    ],
-    isActive: true,
-    requiredLevel: 3
-  }
-];
-
-const resources = [
-  {
-    title: "JavaScript - przewodnik po ES6+",
-    description: "Kompletny przewodnik po nowych funkcjach JavaScript ES6+",
-    url: "https://example.com/js-es6-guide",
-    type: "article",
-    category: "javascript",
-    difficulty: "intermediate",
-    tags: ["ES6", "JavaScript", "Modern JS"],
-    author: {
-      name: "John Doe",
-      url: "https://example.com/author/john"
-    },
-    isRecommended: false
-  },
-  {
-    title: "React Hooks - podstawy",
-    description: "Wprowadzenie do React Hooks i zarządzania stanem",
-    url: "https://example.com/react-hooks",
-    type: "tutorial",
-    category: "react",
-    difficulty: "beginner",
-    tags: ["React", "Hooks", "State Management"],
-    author: {
-      name: "Jane Smith",
-      url: "https://example.com/author/jane"
-    },
-    isRecommended: false
-  },
-  {
-    title: "Node.js - najlepsze praktyki",
-    description: "Zbiór najlepszych praktyk w Node.js",
-    url: "https://example.com/nodejs-best-practices",
-    type: "documentation",
-    category: "node",
-    difficulty: "advanced",
-    tags: ["Node.js", "Best Practices", "Backend"],
-    author: {
-      name: "Mike Johnson",
-      url: "https://example.com/author/mike"
-    },
-    isRecommended: false
-  }
-];
-
 const initializeData = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI);
     console.log('Połączono z bazą danych');
     
-    // Usuń stare dane
     await Promise.all([
       Lesson.collection.drop().catch(() => console.log('Kolekcja lessons nie istnieje')),
       LessonContent.collection.drop().catch(() => console.log('Kolekcja lessoncontents nie istnieje'))
     ]);
     console.log('Usunięto stare kolekcje');
 
-    // Dodaj nowe dane
     const createdLessons = await Lesson.insertMany(lessonsData);
     console.log('Dodano lekcje:', createdLessons.map(l => l.slug));
 
     await LessonContent.insertMany(lessonsContent);
     console.log('Dodano treści lekcji');
 
-    // Sprawdź czy dane zostały dodane
     const lessonCount = await Lesson.countDocuments();
     const contentCount = await LessonContent.countDocuments();
     console.log(`Dodano ${lessonCount} lekcji i ${contentCount} treści`);
