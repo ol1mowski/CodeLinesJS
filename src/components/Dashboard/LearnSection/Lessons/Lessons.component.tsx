@@ -12,6 +12,7 @@ export const Lessons = memo(() => {
     filter,
     setFilter,
     isLoading,
+    requiredLevel,
     error,
     refetch
   } = useLessons();
@@ -39,6 +40,10 @@ export const Lessons = memo(() => {
         lessons={filteredLessons}
         filter={filter}
         userId={userId}
+        userData={{
+          userLevel: 1,
+          requiredLevel: requiredLevel || 1
+        }}
       />
     </div>
   );

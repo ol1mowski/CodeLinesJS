@@ -48,8 +48,8 @@ export const useLessonState = (lessonId: string, userId: string) => {
     }
   }, [completedSections, updateSectionProgress]);
 
-  const saveQuizResult = useCallback((quizId: string, correctAnswers: number, totalQuestions: number) => {
-    updateQuizProgress(quizId, correctAnswers, totalQuestions);
+  const saveQuizResult = useCallback((quizId: number, correctAnswers: number, totalQuestions: number) => {
+    updateQuizProgress(quizId, correctAnswers);
   }, [updateQuizProgress]);
 
   const progress = {

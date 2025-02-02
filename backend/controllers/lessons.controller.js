@@ -28,7 +28,7 @@ export const getLessons = async (req, res, next) => {
 
     const lessons = await Lesson.find(query)
       .select(
-        "title description category difficulty duration points slug requirements"
+        "title description category difficulty duration points slug requirements requiredLevel"
       )
       .sort({ order: 1 })
       .lean();
@@ -45,6 +45,7 @@ export const getLessons = async (req, res, next) => {
       points: lesson.points,
       slug: lesson.slug,
       requirements: lesson.requirements,
+      requiredLevel: lesson.requiredLevel,
       isCompleted: completedLessons.some(
         (completedId) => completedId.toString() === lesson._id.toString()
       ),
@@ -115,7 +116,7 @@ export const getLessonById = async (req, res, next) => {
         );
       }
     }
-
+    
     const response = {
       id: lesson._id,
       slug: lesson.slug,
