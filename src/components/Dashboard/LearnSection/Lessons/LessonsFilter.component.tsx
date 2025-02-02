@@ -24,7 +24,7 @@ export const LessonsFilter = memo(({ onFilterChange, className = "" }: LessonsFi
   }, [activeFilter, onFilterChange]);
 
   const handleFilterChange = (newFilter: FilterType) => {
-    setSearchParams(newFilter === "all" ? {} : { filter: newFilter });
+    setSearchParams(newFilter === "all" ? { tab: "lessons" } : { filter: newFilter, tab: "lessons" });
   };
 
   return (
