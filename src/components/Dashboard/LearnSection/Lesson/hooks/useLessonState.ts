@@ -1,17 +1,18 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProgress } from '../../hooks/useProgress';
+import { toast } from 'react-hot-toast';
 import type { Lesson } from '../../types/lesson.types';
 
-export const useLessonState = (lessonId: string, userId: string, lesson?: Lesson) => {
+export const useLessonState = (lessonId: string, userId: string) => {
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState(0);
 
   const {
     completedSections,
     totalPoints,
-    markSectionComplete,
-    handleQuizComplete,
+    markSectionComplete: updateSectionProgress,
+    handleQuizComplete: updateQuizProgress,
     saveProgress
   } = useProgress(lessonId, userId);
 
@@ -19,35 +20,44 @@ export const useLessonState = (lessonId: string, userId: string, lesson?: Lesson
     setActiveSection(index);
   }, []);
 
-  const handleSectionComplete = useCallback((sectionIndex: number) => {
-    if (lesson?.sections) {
-      markSectionComplete(sectionIndex, lesson.sections.length);
-    }
-  }, [markSectionComplete, lesson?.sections?.length]);
-
-  const handleQuizFinish = useCallback((correctAnswers: number, totalQuestions: number) => {
-    handleQuizComplete(correctAnswers, totalQuestions);
-  }, [handleQuizComplete]);
-
-  const handleComplete = useCallback(async () => {
+  const handleComplete = useCallback(async (lesson: Lesson) => {
     try {
+      if (lesson.isCompleted) {
+        toast.custom('Ta lekcja została już wcześniej ukończona', {
+          duration: 3000,
+          position: 'bottom-right',
+        });
+        navigate('/dashboard/learn?tab=lessons');
+        return;
+      }
+
       await saveProgress();
-      navigate('/dashboard/learn');
+      navigate('/dashboard/learn?tab=lessons');
     } catch (error) {
       console.error('Błąd podczas zapisywania postępu:', error);
+      toast.error('Nie udało się zapisać postępu. Spróbuj ponownie.', {
+        duration: 4000,
+        position: 'bottom-right',
+      });
     }
   }, [saveProgress, navigate]);
+
+  const markSectionComplete = useCallback((sectionIndex: number, totalSections: number) => {
+    if (!completedSections.includes(sectionIndex)) {
+      updateSectionProgress(sectionIndex, totalSections);
+    }
+  }, [completedSections, updateSectionProgress]);
+
+  const saveQuizResult = useCallback((quizId: string, correctAnswers: number, totalQuestions: number) => {
+    updateQuizProgress(quizId, correctAnswers, totalQuestions);
+  }, [updateQuizProgress]);
 
   const progress = {
     xpEarned: totalPoints,
     completed: completedSections.length,
-    total: lesson?.sections?.length ?? 0,
-    percentage: lesson?.sections
-      ? Math.round((completedSections.length / lesson.sections.length) * 100)
-      : 0,
-    isCompleted: lesson?.sections
-      ? completedSections.length === lesson.sections.length
-      : false,
+    total: 0,
+    percentage: 0,
+    isCompleted: false,
     lastCompletedSection: Math.max(...completedSections, -1)
   };
 
@@ -56,7 +66,9 @@ export const useLessonState = (lessonId: string, userId: string, lesson?: Lesson
     progress,
     handleSectionChange,
     handleComplete,
-    markSectionComplete: handleSectionComplete,
-    saveQuizResult: handleQuizFinish
+    markSectionComplete,
+    saveQuizResult
   };
 }; 
+
+

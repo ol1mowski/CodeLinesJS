@@ -86,6 +86,7 @@ export const LessonPage = memo(() => {
             sections={sections}
             activeSection={activeSection}
             onSectionChange={handleSectionChange}
+            isCompleted={lesson.isCompleted}
           />
 
           <LessonMainContent
@@ -101,6 +102,7 @@ export const LessonPage = memo(() => {
         totalSections={totalSections}
         progress={progress}
         onComplete={() => handleComplete(lesson)}
+        isCompleted={lesson.isCompleted}
       />
     </>
   );

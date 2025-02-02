@@ -1,32 +1,46 @@
 import { useState, useCallback } from 'react';
 import { useUserProgress } from './useUserProgress';
 import { toast } from 'react-hot-toast';
+import { useQueryClient } from '@tanstack/react-query';
 
 export const useProgress = (lessonId: string, userId: string) => {
   const [completedSections, setCompletedSections] = useState<number[]>([]);
   const [totalPoints, setTotalPoints] = useState(0);
 
   const { updateProgress: updateUserProgress } = useUserProgress(userId);
+  const queryClient = useQueryClient();
 
-  const markSectionComplete = useCallback((sectionIndex: number, totalSections: number) => {
+  const markSectionComplete = useCallback(async (sectionIndex: number, totalSections: number) => {
+    const lessonData = queryClient.getQueryData<any>(['lesson', lessonId]);
+    
+    if (lessonData?.isCompleted) {
+      return;
+    }
+
     if (!completedSections.includes(sectionIndex)) {
       setCompletedSections(prev => [...prev, sectionIndex]);
       
       const pointsPerSection = 50;
       setTotalPoints(prev => prev + pointsPerSection);
 
-      updateUserProgress({
+      const result = await updateUserProgress({
         lessonId,
-        points: pointsPerSection
+        points: pointsPerSection,
+        isCompleted: false
       });
+
+      if (result === null) {
+        return;
+      }
 
       if (completedSections.length + 1 === totalSections) {
         const bonusPoints = 100;
         setTotalPoints(prev => prev + bonusPoints);
         
-        updateUserProgress({
+        await updateUserProgress({
           lessonId,
-          points: bonusPoints
+          points: bonusPoints,
+          isCompleted: true
         });
 
         toast.success('Gratulacje! Ukończyłeś całą lekcję!', {
@@ -35,25 +49,36 @@ export const useProgress = (lessonId: string, userId: string) => {
         });
       }
     }
-  }, [completedSections, lessonId, updateUserProgress]);
+  }, [completedSections, lessonId, updateUserProgress, queryClient]);
 
   const handleQuizComplete = useCallback(async (
     correctAnswers: number, 
     totalQuestions: number
   ) => {
+    const lessonData = queryClient.getQueryData<any>(['lesson', lessonId]);
+    
+    if (lessonData?.isCompleted) {
+      return;
+    }
+
     const quizPoints = Math.round((correctAnswers / totalQuestions) * 100);
     setTotalPoints(prev => prev + quizPoints);
 
-    await updateUserProgress({
+    const result = await updateUserProgress({
       lessonId,
-      points: quizPoints
+      points: quizPoints,
+      isCompleted: false
     });
+
+    if (result === null) {
+      return;
+    }
 
     toast.success(`Zdobyłeś ${quizPoints} punktów za quiz!`, {
       duration: 3000,
       position: 'bottom-right',
     });
-  }, [lessonId, updateUserProgress]);
+  }, [lessonId, updateUserProgress, queryClient]);
 
   const saveProgress = useCallback(async () => {
     try {

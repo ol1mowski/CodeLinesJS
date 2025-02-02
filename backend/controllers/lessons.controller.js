@@ -1,7 +1,7 @@
-import { Lesson } from '../models/index.js';
-import { User } from '../models/user.model.js';
-import { ValidationError } from '../utils/errors.js';
-import { LessonContent } from '../models/lessonContent.model.js';
+import { Lesson } from "../models/index.js";
+import { User } from "../models/user.model.js";
+import { ValidationError } from "../utils/errors.js";
+import { LessonContent } from "../models/lessonContent.model.js";
 
 export const getLessons = async (req, res, next) => {
   try {
@@ -9,31 +9,33 @@ export const getLessons = async (req, res, next) => {
     const userId = req.user.userId;
 
     const user = await User.findById(userId)
-      .select('stats.completedLessons')
+      .select("stats.completedLessons")
       .lean();
 
     const query = {
       isPublished: true,
-      isAvailable: true
+      isAvailable: true,
     };
 
     if (category) query.category = category;
     if (difficulty) query.difficulty = difficulty;
     if (search) {
       query.$or = [
-        { title: { $regex: search, $options: 'i' } },
-        { description: { $regex: search, $options: 'i' } }
+        { title: { $regex: search, $options: "i" } },
+        { description: { $regex: search, $options: "i" } },
       ];
     }
 
     const lessons = await Lesson.find(query)
-      .select('title description category difficulty duration points slug requirements')
+      .select(
+        "title description category difficulty duration points slug requirements"
+      )
       .sort({ order: 1 })
       .lean();
 
     const completedLessons = user.stats?.completedLessons || [];
 
-    const formattedLessons = lessons.map(lesson => ({
+    const formattedLessons = lessons.map((lesson) => ({
       id: lesson._id,
       title: lesson.title,
       description: lesson.description,
@@ -44,14 +46,13 @@ export const getLessons = async (req, res, next) => {
       slug: lesson.slug,
       requirements: lesson.requirements,
       isCompleted: completedLessons.some(
-        completedId => completedId.toString() === lesson._id.toString()
-      )
+        (completedId) => completedId.toString() === lesson._id.toString()
+      ),
     }));
 
     const groupedLessons = formattedLessons.reduce((acc, lesson) => {
       if (!acc[lesson.category]) {
         acc[lesson.category] = [];
-
       }
       acc[lesson.category].push(lesson);
       return acc;
@@ -62,8 +63,8 @@ export const getLessons = async (req, res, next) => {
       stats: {
         total: lessons.length,
         completed: completedLessons.length,
-        progress: Math.round((completedLessons.length / lessons.length) * 100)
-      }
+        progress: Math.round((completedLessons.length / lessons.length) * 100),
+      },
     });
   } catch (error) {
     next(error);
@@ -73,49 +74,45 @@ export const getLessons = async (req, res, next) => {
 export const getLessonById = async (req, res, next) => {
   try {
     const { id } = req.params;
-    console.log('Szukam lekcji o slug:', id);
+    console.log("Szukam lekcji o slug:", id);
 
     const [lesson, lessonContent, user] = await Promise.all([
       Lesson.findOne({
         slug: id,
-        isPublished: true
-      }).populate('requirements', 'title'),
+        isPublished: true,
+      }).populate("requirements", "title"),
       LessonContent.findOne({ lessonSlug: id }).lean(),
       User.findById(req.user.userId)
-        .select('stats.completedLessons stats.level')
-        .lean()
+        .select("stats.completedLessons stats.level")
+        .lean(),
     ]);
 
-    const lessons = await Lesson.findOne({ slug: id }).lean();
-    console.log("🔍 Znaleziona lekcja (bez filtrów):", lessons);
-
-
-
-    console.log('Znaleziona lekcja:', lesson);
-    console.log('Znaleziona treść:', lessonContent);
-
     if (!lesson) {
-      throw new ValidationError('Lekcja nie została znaleziona');
+      throw new ValidationError("Lekcja nie została znaleziona");
     }
 
     if (!lessonContent) {
-      throw new ValidationError('Treść lekcji nie została znaleziona');
+      throw new ValidationError("Treść lekcji nie została znaleziona");
     }
 
     const userLevel = user.stats?.level || 1;
     const completedLessons = user.stats?.completedLessons || [];
 
     if (userLevel < lesson.requiredLevel) {
-      throw new ValidationError(`Wymagany poziom ${lesson.requiredLevel} do odblokowania tej lekcji`);
+      throw new ValidationError(
+        `Wymagany poziom ${lesson.requiredLevel} do odblokowania tej lekcji`
+      );
     }
 
     if (lesson.requirements?.length > 0) {
-      const hasCompletedRequirements = lesson.requirements.every(req =>
+      const hasCompletedRequirements = lesson.requirements.every((req) =>
         completedLessons.includes(req._id)
       );
 
       if (!hasCompletedRequirements) {
-        throw new ValidationError('Musisz ukończyć wymagane lekcje przed rozpoczęciem tej');
+        throw new ValidationError(
+          "Musisz ukończyć wymagane lekcje przed rozpoczęciem tej"
+        );
       }
     }
 
@@ -129,17 +126,12 @@ export const getLessonById = async (req, res, next) => {
       duration: lesson.duration,
       points: lesson.points,
       requiredLevel: lesson.requiredLevel,
-      requirements: lesson.requirements.map(req => ({
-        id: req._id,
-        title: req.title,
-        isCompleted: completedLessons.includes(req._id)
-      })),
-      isCompleted: completedLessons.includes(lesson._id),
+      isCompleted: completedLessons.some((id) => id.equals(lesson._id)),
       content: {
         xp: lessonContent.xp,
         rewards: lessonContent.rewards,
-        sections: lessonContent.sections
-      }
+        sections: lessonContent.sections,
+      },
     };
 
     res.json(response);
@@ -155,19 +147,19 @@ export const completeLesson = async (req, res, next) => {
 
     const [lesson, user] = await Promise.all([
       Lesson.findOne({ slug: id }),
-      User.findById(userId)
+      User.findById(userId),
     ]);
 
     if (!lesson) {
-      throw new ValidationError('Lekcja nie została znaleziona');
+      throw new ValidationError("Lekcja nie została znaleziona");
     }
 
     const isCompleted = user.stats?.completedLessons?.some(
-      lessonId => lessonId.toString() === lesson._id.toString()
+      (lessonId) => lessonId.toString() === lesson._id.toString()
     );
 
     if (isCompleted) {
-      throw new ValidationError('Lekcja została już ukończona');
+      throw new ValidationError("Lekcja została już ukończona");
     }
 
     user.stats = user.stats || {};
@@ -177,7 +169,9 @@ export const completeLesson = async (req, res, next) => {
     user.stats.completedLessons.push(lesson._id);
 
     const today = new Date().toDateString();
-    const lastActive = user.stats.lastActive ? new Date(user.stats.lastActive).toDateString() : null;
+    const lastActive = user.stats.lastActive
+      ? new Date(user.stats.lastActive).toDateString()
+      : null;
 
     if (today !== lastActive) {
       user.stats.streak = (user.stats.streak || 0) + 1;
@@ -187,14 +181,14 @@ export const completeLesson = async (req, res, next) => {
     await user.save();
 
     res.json({
-      message: 'Lekcja ukończona',
+      message: "Lekcja ukończona",
       points: lesson.points,
       stats: {
         points: user.stats.points,
         completedLessons: user.stats.completedLessons.length,
         streak: user.stats.streak,
-        lastActive: user.stats.lastActive
-      }
+        lastActive: user.stats.lastActive,
+      },
     });
   } catch (error) {
     next(error);
