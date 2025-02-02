@@ -69,9 +69,7 @@ export const getLearningPaths = async (req, res, next) => {
           )?.totalLessons
         )?.length || 0,
         pathsInProgress: user.stats?.learningPaths?.filter(
-          p => p.completedLessonsCount > 0 && p.completedLessonsCount < paths.find(
-            path => path._id.toString() === p.pathId.toString()
-          )?.totalLessons
+          p => p.status === 'active' && !p.progress.completedAt
         )?.length || 0,
         recentActivity: user.stats?.learningPaths
           ?.sort((a, b) => b.lastCompletedAt - a.lastCompletedAt)
