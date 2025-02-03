@@ -52,8 +52,6 @@ export const LearningPaths = memo(() => {
     staleTime: 1000 * 60 * 5 
   });
 
-  console.log(data);
-
   if (error) {
     return (
       <ErrorMessage 
