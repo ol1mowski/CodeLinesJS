@@ -11,10 +11,19 @@ export const learningPathSchema = new mongoose.Schema({
     enum: ['beginner', 'intermediate', 'advanced'],
     required: true
   },
+  category: {
+    type: String,
+    required: true,
+    enum: ['javascript', 'react', 'node', 'database', 'testing']
+  },
   totalLessons: {
     type: Number,
     required: true
   },
+  lessons: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Lesson'
+  }],
   estimatedTime: Number,
   requirements: [String],
   outcomes: [String],

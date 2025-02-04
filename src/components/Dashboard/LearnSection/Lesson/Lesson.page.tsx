@@ -1,5 +1,6 @@
 import { memo, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { LessonProgress } from "./components/LessonProgress.component";
 import { useLessonState } from "./hooks/useLessonState";
 import { LessonNotFound } from "./components/LessonNotFound.component";
@@ -11,11 +12,13 @@ import { LoadingSpinner } from "../components/UI/LoadingSpinner.component";
 import { ErrorMessage } from "../components/ErrorMessage.component";
 import { useAuth } from "../hooks/useAuth";
 import { useLesson } from "../hooks/useLesson";
+import { toast } from "react-hot-toast";
 
 export const LessonPage = memo(() => {
   const { lessonId } = useParams<{ lessonId: string }>();
   const navigate = useNavigate();
-  const { userId } = useAuth();  
+  const queryClient = useQueryClient();
+  const { userId, token } = useAuth();  
   
   const { 
     lesson, 
@@ -33,6 +36,54 @@ export const LessonPage = memo(() => {
     markSectionComplete,
     saveQuizResult
   } = useLessonState(lessonId || '', userId);
+
+  const completeLessonMutation = useMutation({
+    mutationFn: async () => {
+      console.log('Wysyłanie żądania zakończenia lekcji:', {
+        lessonId,
+        userId,
+        token
+      });
+
+      const response = await fetch(`${API_URL}/lessons/${lessonId}/complete`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          userId,
+          completedAt: new Date().toISOString()
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Błąd podczas kończenia lekcji:', errorData);
+        throw new Error(errorData.message || "Nie udało się zaktualizować postępu lekcji");
+      }
+
+      const data = await response.json();
+      console.log('Odpowiedź z serwera:', data);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["lessons"] });
+      queryClient.invalidateQueries({ queryKey: ["userStats"] });
+      queryClient.invalidateQueries({ queryKey: ["lesson", lessonId] });
+      toast.success('Lekcja została ukończona!', {
+        duration: 3000,
+        position: 'bottom-right'
+      });
+    },
+    onError: (error: Error) => {
+      console.error('Błąd podczas kończenia lekcji:', error);
+      toast.error(error.message || 'Nie udało się zakończyć lekcji', {
+        duration: 4000,
+        position: 'bottom-right'
+      });
+    }
+  });
 
   useEffect(() => {
     if (!lessonId) {
@@ -103,6 +154,7 @@ export const LessonPage = memo(() => {
         progress={progress}
         onComplete={() => handleComplete(lesson)}
         isCompleted={lesson.isCompleted}
+        isLoading={completeLessonMutation.isPending}
       />
     </>
   );

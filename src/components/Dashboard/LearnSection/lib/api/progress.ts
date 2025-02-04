@@ -42,6 +42,7 @@ export const updateLessonProgress = async (userId: string, lessonId: string, pro
       },
       body: JSON.stringify(progress)
     }
+    
   );
   if (!response.ok) {
     throw new Error('Failed to update progress');

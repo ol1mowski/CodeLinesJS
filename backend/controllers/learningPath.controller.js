@@ -26,15 +26,17 @@ export const getLearningPaths = async (req, res, next) => {
     const userLearningPaths = user.stats?.learningPaths || [];
 
     const formattedPaths = paths.map((path) => {
+
       const userPathProgress = userLearningPaths.find(
         (lp) => lp.pathId.toString() === path._id.toString()
       );
+
       const completedInPath = userPathProgress?.progress?.completedLessons || 0;
 
       const completedPath = user.stats?.learningPaths.find(
         (lp) => lp.pathId.toString() === path._id.toString()
       );
-
+      
       return {
         id: path._id,
         title: path.title,

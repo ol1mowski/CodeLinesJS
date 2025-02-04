@@ -7,6 +7,7 @@ type ProgressUpdate = {
   lessonId: string;
   points: number;
   isCompleted?: boolean;
+  completedSections?: string[];
 };
 
 export const useUserProgress = (userId: string) => {
@@ -14,9 +15,15 @@ export const useUserProgress = (userId: string) => {
 
   const { mutateAsync: updateProgress } = useMutation({
     mutationFn: async (data: ProgressUpdate) => {
+      console.log('Aktualizacja postępu użytkownika:', {
+        userId,
+        ...data
+      });
+
       const lessonData = queryClient.getQueryData<any>(['lesson', data.lessonId]);
+      
       if (lessonData?.isCompleted && !data.isCompleted) {
-        console.log('Lekcja już ukończona, pomijam aktualizację postępu');
+        console.log('Lekcja już ukończona, pomijam aktualizację');
         return null;
       }
 
@@ -29,16 +36,20 @@ export const useUserProgress = (userId: string) => {
         body: JSON.stringify({
           lessonId: data.lessonId,
           points: data.points,
-          isCompleted: data.isCompleted
+          isCompleted: data.isCompleted,
+          completedSections: data.completedSections
         }),
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Nie udało się zaktualizować postępu');
+        const errorData = await response.json();
+        console.error('Błąd odpowiedzi:', errorData);
+        throw new Error(errorData.message || 'Nie udało się zaktualizować postępu');
       }
 
-      return response.json();
+      const result = await response.json();
+      console.log('Odpowiedź z serwera:', result);
+      return result;
     },
     onSuccess: (data) => {
       if (data) {
@@ -48,13 +59,11 @@ export const useUserProgress = (userId: string) => {
       }
     },
     onError: (error: Error) => {
-      if (error.message !== 'LESSON_ALREADY_COMPLETED') {
-        console.error('Błąd aktualizacji:', error);
-        toast.error('Nie udało się zapisać postępu. Spróbuj ponownie.', {
-          duration: 4000,
-          position: 'bottom-right',
-        });
-      }
+      console.error('Błąd aktualizacji:', error);
+      toast.error('Nie udało się zapisać postępu. Spróbuj ponownie.', {
+        duration: 4000,
+        position: 'bottom-right',
+      });
     }
   });
 

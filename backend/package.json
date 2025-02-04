@@ -9,7 +9,8 @@
     "start": "node server.js",
     "dev": "nodemon server.js",
     "init-data": "node scripts/initLearningData.js",
-    "update-stats": "node scripts/updateUserStats.js"
+    "update-stats": "node scripts/updateUserStats.js",
+    "init-paths": "node scripts/initLearningPaths.js"
   },
   "keywords": [],
   "author": "",

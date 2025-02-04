@@ -82,10 +82,28 @@ export const useProgress = (lessonId: string, userId: string) => {
 
   const saveProgress = useCallback(async () => {
     try {
-      toast.success('Postęp został zapisany!', {
-        duration: 3000,
-        position: 'bottom-right',
+      console.log('Zapisywanie postępu lekcji:', {
+        lessonId,
+        userId,
+        completedSections,
+        totalPoints
       });
+
+      const result = await updateUserProgress({
+        lessonId,
+        points: totalPoints,
+        isCompleted: true,
+        completedSections: completedSections
+      });
+
+      console.log('Wynik zapisywania postępu:', result);
+
+      if (result) {
+        toast.success('Postęp został zapisany!', {
+          duration: 3000,
+          position: 'bottom-right',
+        });
+      }
     } catch (error) {
       console.error('Błąd podczas zapisywania postępu:', error);
       toast.error('Nie udało się zapisać postępu. Spróbuj ponownie.', {
@@ -93,7 +111,7 @@ export const useProgress = (lessonId: string, userId: string) => {
         position: 'bottom-right',
       });
     }
-  }, []);
+  }, [lessonId, userId, completedSections, totalPoints, updateUserProgress]);
 
   return {
     completedSections,

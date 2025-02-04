@@ -12,7 +12,7 @@ type PathsResponse = {
     id: string;
     title: string;
     description: string;
-    difficulty: 'beginner' | 'intermediate' | 'advanced';
+    difficulty: "beginner" | "intermediate" | "advanced";
     estimatedTime: number;
     requirements: string[];
     outcomes: string[];
@@ -40,21 +40,16 @@ type PathsResponse = {
 };
 
 export const LearningPaths = memo(() => {
-  const { 
-    data, 
-    isLoading, 
-    error,
-    refetch 
-  } = useQuery<PathsResponse>({
-    queryKey: ['learningPaths'],
+  const { data, isLoading, error, refetch } = useQuery<PathsResponse>({
+    queryKey: ["learningPaths"],
     queryFn: fetchLearningPaths,
     retry: 2,
-    staleTime: 1000 * 60 * 5 
+    staleTime: 1000 * 60 * 5,
   });
 
   if (error) {
     return (
-      <ErrorMessage 
+      <ErrorMessage
         message="Nie udało się pobrać ścieżek nauki. Spróbuj ponownie później."
         onRetry={() => refetch()}
       />
@@ -72,7 +67,8 @@ export const LearningPaths = memo(() => {
           Brak dostępnych ścieżek nauki
         </h3>
         <p className="text-gray-400 text-sm">
-          Aktualnie nie ma żadnych dostępnych ścieżek nauki. Sprawdź ponownie później.
+          Aktualnie nie ma żadnych dostępnych ścieżek nauki. Sprawdź ponownie
+          później.
         </p>
       </div>
     );
@@ -90,7 +86,9 @@ export const LearningPaths = memo(() => {
           </div>
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray-400">Ukończone ścieżki</span>
-            <span className="text-js">{userStats.completedPaths}/{userStats.totalPaths}</span>
+            <span className="text-js">
+              {userStats.completedPaths}/{userStats.totalPaths}
+            </span>
           </div>
         </div>
 
@@ -120,9 +118,7 @@ export const LearningPaths = memo(() => {
       <div>
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-xl font-bold text-js mb-1">
-              Ścieżki nauki
-            </h3>
+            <h3 className="text-xl font-bold text-js mb-1">Ścieżki nauki</h3>
             <p className="text-gray-400 text-sm">
               Wybierz ścieżkę nauki dopasowaną do Twoich potrzeb
             </p>
@@ -136,10 +132,7 @@ export const LearningPaths = memo(() => {
           className="grid grid-cols-1 lg:grid-cols-2 gap-6"
         >
           {data.paths.map((path) => (
-            <PathCard 
-              key={path.id} 
-              path={path}
-            />
+            <PathCard key={path.id} path={path} />
           ))}
         </motion.div>
       </div>
@@ -147,4 +140,4 @@ export const LearningPaths = memo(() => {
   );
 });
 
-LearningPaths.displayName = "LearningPaths"; 
+LearningPaths.displayName = "LearningPaths";

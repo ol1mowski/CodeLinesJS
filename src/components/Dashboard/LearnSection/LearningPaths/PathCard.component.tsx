@@ -17,7 +17,7 @@ type Path = {
   id: string;
   title: string;
   description: string;
-  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  difficulty: "beginner" | "intermediate" | "advanced";
   estimatedTime: number;
   requirements: string[];
   outcomes: string[];
@@ -31,15 +31,15 @@ type PathCardProps = {
 
 export const PathCard = memo(({ path }: PathCardProps) => {
   const navigate = useNavigate();
-  
-  const { 
-    title, 
-    description, 
-    difficulty, 
+
+  const {
+    title,
+    description,
+    difficulty,
     estimatedTime,
     outcomes,
     progress,
-    isAvailable
+    isAvailable,
   } = path;
 
   const handlePathClick = () => {
@@ -48,47 +48,64 @@ export const PathCard = memo(({ path }: PathCardProps) => {
     }
   };
 
+
   return (
-    <div className={`group ${!isAvailable ? 'cursor-not-allowed' : ''}`}>
+    <div className={`group ${!isAvailable ? "cursor-not-allowed" : ""}`}>
       <motion.div
         whileHover={isAvailable ? { scale: 1.02 } : {}}
         className={`bg-dark-800/50 border rounded-xl p-6 transition-colors
-          ${!isAvailable 
-            ? 'border-gray-700/50 opacity-75'
-            : progress.isCompleted
-              ? 'border-green-500/20 hover:border-green-500/30'
-              : 'border-js/10 hover:border-js/20'}`}
+          ${
+            !isAvailable
+              ? "border-gray-700/50 opacity-75"
+              : progress.isCompleted
+                ? "border-green-500/20 hover:border-green-500/30"
+                : "border-js/10 hover:border-js/20"
+          }`}
       >
         <div className="space-y-4">
           <div>
             <div className="flex justify-between items-start mb-2">
               <div className="flex items-center gap-2">
-                <h3 className={`text-xl font-bold ${!isAvailable
-                    ? 'text-gray-400'
-                    : progress.isCompleted
-                      ? 'text-green-400'
-                      : 'text-js group-hover:text-js/80'
+                <h3
+                  className={`text-xl font-bold ${
+                    !isAvailable
+                      ? "text-gray-400"
+                      : progress.isCompleted
+                        ? "text-green-400"
+                        : "text-js group-hover:text-js/80"
                   } transition-colors`}
                 >
                   {title}
                 </h3>
                 {!isAvailable && <FaLock className="w-4 h-4 text-gray-500" />}
               </div>
-              <span className={`px-2 py-0.5 rounded-md text-xs font-medium
-                ${difficulty === 'beginner' ? 'bg-green-500/10 text-green-400' :
-                  difficulty === 'intermediate' ? 'bg-yellow-500/10 text-yellow-400' :
-                    'bg-red-500/10 text-red-400'}`}
+              <span
+                className={`px-2 py-0.5 rounded-md text-xs font-medium
+                ${
+                  difficulty === "beginner"
+                    ? "bg-green-500/10 text-green-400"
+                    : difficulty === "intermediate"
+                      ? "bg-yellow-500/10 text-yellow-400"
+                      : "bg-red-500/10 text-red-400"
+                }`}
               >
-                {difficulty === 'beginner' ? 'Podstawowy' :
-                  difficulty === 'intermediate' ? 'Średni' : 'Zaawansowany'}
+                {difficulty === "beginner"
+                  ? "Podstawowy"
+                  : difficulty === "intermediate"
+                    ? "Średni"
+                    : "Zaawansowany"}
               </span>
             </div>
-            <p className={`text-sm line-clamp-2 ${!isAvailable ? 'text-gray-500' : 'text-gray-400'}`}>
+            <p
+              className={`text-sm line-clamp-2 ${!isAvailable ? "text-gray-500" : "text-gray-400"}`}
+            >
               {description}
             </p>
           </div>
 
-          <div className={`flex items-center justify-between text-sm ${!isAvailable ? 'text-gray-500' : 'text-gray-400'}`}>
+          <div
+            className={`flex items-center justify-between text-sm ${!isAvailable ? "text-gray-500" : "text-gray-400"}`}
+          >
             <span className="flex items-center gap-1">
               <FaClock className="w-4 h-4" />
               {estimatedTime} min
@@ -99,7 +116,7 @@ export const PathCard = memo(({ path }: PathCardProps) => {
           </div>
 
           {outcomes && outcomes.length > 0 && (
-            <div className={!isAvailable ? 'opacity-50' : ''}>
+            <div className={!isAvailable ? "opacity-50" : ""}>
               <h4 className="text-sm font-medium text-gray-200 mb-2">
                 Czego się nauczysz:
               </h4>
@@ -114,7 +131,7 @@ export const PathCard = memo(({ path }: PathCardProps) => {
           )}
 
           {isAvailable ? (
-            <div 
+            <div
               onClick={handlePathClick}
               className="cursor-pointer flex items-center justify-between"
             >
@@ -123,7 +140,7 @@ export const PathCard = memo(({ path }: PathCardProps) => {
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${progress.percentage}%` }}
-                    className={`h-full ${progress.isCompleted ? 'bg-green-500' : 'bg-js'}`}
+                    className={`h-full ${progress.isCompleted ? "bg-green-500" : "bg-js"}`}
                     transition={{ duration: 0.8 }}
                   />
                 </div>
@@ -142,4 +159,4 @@ export const PathCard = memo(({ path }: PathCardProps) => {
   );
 });
 
-PathCard.displayName = "PathCard"; 
+PathCard.displayName = "PathCard";

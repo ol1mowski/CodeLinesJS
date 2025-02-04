@@ -166,7 +166,6 @@ export const completeLesson = async (req, res, next) => {
     user.stats = user.stats || {};
     user.stats.completedLessons = user.stats.completedLessons || [];
     user.stats.points = (user.stats.points || 0) + (lesson.points || 0);
-
     user.stats.completedLessons.push(lesson._id);
 
     const today = new Date().toDateString();
