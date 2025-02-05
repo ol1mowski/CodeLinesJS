@@ -60,6 +60,7 @@ const userSchema = new mongoose.Schema(
       level: { type: Number, default: 1 },
       xp: { type: Number, default: 0 },
       streak: { type: Number, default: 0 },
+      pointsToNextLevel: { type: Number, default: 1000 },
       bestStreak: { type: Number, default: 0 },
       lastActive: { type: Date },
       learningPaths: [

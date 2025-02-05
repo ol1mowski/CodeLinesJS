@@ -3,8 +3,8 @@ import RewardsService from './rewards.service.js';
 export class LevelService {
   static XP_PER_LEVEL = 100;
 
-  calculateNextLevelThreshold(currentLevel) {
-    return Math.floor(1000 * Math.pow(1.2, currentLevel - 1));
+  static calculatePointsToNextLevel(level) {
+    return Math.floor(1000 * Math.pow(1.2, level - 1));
   }
 
   calculateLevelProgress(stats) {
@@ -58,14 +58,11 @@ export class LevelService {
   }
 
   static async updateLevel(user) {
-    const currentLevel = user.stats.level;
-    const newLevel = Math.floor(user.stats.xp / this.XP_PER_LEVEL) + 1;
-
-    if (newLevel > currentLevel) {
-      user.stats.level = newLevel;
+    while (user.stats.xp >= user.stats.pointsToNextLevel) {
+      user.stats.xp -= user.stats.pointsToNextLevel;
+      user.stats.level += 1;
+      user.stats.pointsToNextLevel = this.calculatePointsToNextLevel(user.stats.level);
     }
-
-    return user;
   }
 }
 

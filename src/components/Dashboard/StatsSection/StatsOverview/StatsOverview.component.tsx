@@ -26,7 +26,7 @@ const container = {
 
 export const StatsOverview = memo(({ stats, isLoading }: StatsOverviewProps) => {
   const { data: statsData, error } = useUserStats();
-  const statsCards = useStatsCards(statsData);
+  const statsCards = useStatsCards(statsData || stats);
 
   if (isLoading) {
     return <LoadingScreen />;
@@ -36,13 +36,15 @@ export const StatsOverview = memo(({ stats, isLoading }: StatsOverviewProps) => 
     return <ErrorState message={`Wystąpił błąd podczas ładowania statystyk: ${error.message}`} />;
   }
 
-  if (!statsData) {
+  const displayData = stats.data;
+
+  if (!displayData) {
     return (
       <div className="p-4 bg-dark/50 rounded-lg">
         <p className="text-gray-400">Brak dostępnych statystyk</p>
       </div>
     );
-  }
+  }  
 
   return (
     <motion.div
@@ -52,9 +54,9 @@ export const StatsOverview = memo(({ stats, isLoading }: StatsOverviewProps) => 
       className="space-y-6"
     >
       <LevelProgress
-        level={statsData.level}
-        experience={statsData.experiencePoints}
-        nextLevel={statsData.nextLevelThreshold}
+        level={displayData.level}
+        experience={displayData.xp}
+        nextLevel={displayData.pointsToNextLevel}
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -63,7 +65,7 @@ export const StatsOverview = memo(({ stats, isLoading }: StatsOverviewProps) => 
         ))}
       </div>
 
-      <BadgesGrid badges={statsData.badges} />
+      <BadgesGrid badges={displayData.badges} />
     </motion.div>
   );
 });
