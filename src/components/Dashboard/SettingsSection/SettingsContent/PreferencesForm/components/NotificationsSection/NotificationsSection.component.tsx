@@ -32,21 +32,6 @@ export const NotificationsSection = memo(({ register, values, onChange }: Notifi
           </span>
         </div>
       </label>
-      <label className={styles.optionLabel}>
-        <input
-          type="checkbox"
-          {...register("pushNotifications")}
-          checked={values.pushNotifications}
-          onChange={(e) => onChange("pushNotifications", e.target.checked)}
-          className={styles.checkbox}
-        />
-        <div className={styles.optionText}>
-          <span className={styles.optionTitle}>Powiadomienia push</span>
-          <span className={styles.optionDescription}>
-            Otrzymuj powiadomienia w przeglądarce
-          </span>
-        </div>
-      </label>
     </div>
   </div>
 ));

@@ -2,9 +2,11 @@ import { useCallback } from 'react';
 import { useProfileForm } from './useProfileForm';
 import { useToast } from '../contexts/ToastContext';
 import { UserProfile } from '../types/settings';
+import { useProfile } from '../hooks/useProfile';
 
 export const useProfileFormLogic = (profile: UserProfile | null, avatarUrl: string) => {
   const { showToast } = useToast();
+  const { updateProfile } = useProfile();
 
   const handleSubmit = useCallback(async (data: UserProfile) => {
     try {
@@ -20,18 +22,20 @@ export const useProfileFormLogic = (profile: UserProfile | null, avatarUrl: stri
     } catch (error) {
       showToast('Nie udało się zaktualizować profilu', 'error');
     }
-  }, [avatarUrl, showToast]);
+  }, [avatarUrl, showToast, updateProfile]);
+
+  const defaultValues = {
+    username: profile?.username || '',
+    email: profile?.email || '',
+    profile: {
+      bio: profile?.profile?.bio || '',
+      avatar: profile?.profile?.avatar || ''
+    }
+  };
 
   const { form, onSubmit } = useProfileForm({
     onSubmit: handleSubmit,
-    defaultValues: profile || {
-      username: '',
-      email: '',
-      profile: {
-        bio: '',
-        avatar: ''
-      }
-    },
+    defaultValues
   });
 
   return {
