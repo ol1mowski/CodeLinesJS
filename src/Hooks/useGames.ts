@@ -1,8 +1,9 @@
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Game } from "../types/games.types";
-import { mockGames } from "../mocks/gamesData.mock";
 import { SortOption } from "../components/Dashboard/GamesSection/GamesSection.component";
 import { GameDifficulty } from "../types/games.types";
+import { mockGames } from "../mocks/gamesData.mock";
 
 const filterAndSortGames = (
   games: Game[], 
@@ -40,6 +41,7 @@ const filterAndSortGames = (
   }
 };
 
+
 export const useGames = (
   sortBy: SortOption = "newest", 
   searchQuery: string = "",
@@ -58,4 +60,21 @@ export const useGames = (
     games,
     isLoading,
   };
+};
+
+export const useGamesLocal = () => {
+  const [games, setGames] = useState<Game[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Symulacja opóźnienia ładowania
+    const timer = setTimeout(() => {
+      setGames(mockGames);
+      setIsLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  return { games, isLoading };
 }; 

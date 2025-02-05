@@ -1,25 +1,50 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { profileSchema } from "../utils/validationSchemas";
+import { z } from "zod";
 import type { UserProfile } from "../types/settings";
 
-export const useProfileForm = (defaultValues: UserProfile) => {
+const profileSchema = z.object({
+  username: z.string()
+    .min(3, "Nazwa użytkownika musi mieć minimum 3 znaki")
+    .max(20, "Nazwa użytkownika może mieć maksymalnie 20 znaków"),
+  email: z.string()
+    .email("Nieprawidłowy adres email"),
+  profile: z.object({
+    bio: z.string()
+      .max(160, "Bio może mieć maksymalnie 160 znaków")
+      .optional(),
+    avatar: z.string().optional()
+  })
+});
+
+interface UseProfileFormProps {
+  onSubmit: (data: UserProfile) => Promise<void>;
+  defaultValues?: Partial<UserProfile>;
+}
+
+export const useProfileForm = ({ onSubmit, defaultValues }: UseProfileFormProps) => {
   const form = useForm<UserProfile>({
     resolver: zodResolver(profileSchema),
-    defaultValues
+    defaultValues: {
+      username: defaultValues?.username || '',
+      email: defaultValues?.email || '',
+      profile: {
+        bio: defaultValues?.profile?.bio || '',
+        avatar: defaultValues?.profile?.avatar || ''
+      }
+    },
   });
 
-  const onSubmit = async (data: UserProfile) => {
+  const handleSubmit = async (data: UserProfile) => {
     try {
-      // TODO: Implement API call
-      console.log(data);
+      await onSubmit(data);
     } catch (error) {
-      console.error(error);
+      console.error('Failed to update profile:', error);
     }
   };
 
   return {
     form,
-    onSubmit: form.handleSubmit(onSubmit)
+    onSubmit: form.handleSubmit(handleSubmit),
   };
 }; 

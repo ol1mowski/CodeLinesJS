@@ -33,11 +33,19 @@ export const NavigationButton = memo(({
 }: NavigationButtonProps) => (
   <motion.button
     onClick={onClick}
+    data-testid={`nav-button-${label?.toLowerCase().replace(/\s/g, '-')}`}
     className={`
       w-full flex items-center gap-3 px-4 py-3 
       rounded-lg transition-all duration-200
       backdrop-blur-sm
-      ${isActive ? variants[variant].active : variants[variant].inactive}
+      ${variant === 'default' 
+        ? isActive 
+          ? 'bg-js/20 border-l-2 border-js text-js'
+          : 'text-gray-400 hover:text-js hover:bg-js/10'
+        : isActive
+          ? 'bg-red-500/20 text-red-400'
+          : 'text-red-400 hover:bg-red-500/10'
+      }
     `}
     whileHover={{ scale: 1.02, x: 5 }}
     whileTap={{ scale: 0.98 }}

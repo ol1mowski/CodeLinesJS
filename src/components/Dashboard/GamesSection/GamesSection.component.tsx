@@ -22,27 +22,50 @@ export const GamesSection = memo(() => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className="min-h-screen p-8"
+      className="min-h-screen bg-dark/50 backdrop-blur-sm"
     >
-      <div className="space-y-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <GamesHeader />
-        <div className="flex flex-col lg:flex-row gap-6">
-          <GamesCategories activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
-          <div className="flex flex-col lg:flex-row gap-4 lg:ml-auto">
-            <GamesSearch value={searchQuery} onChange={setSearchQuery} />
-            <GamesSorting activeSortOption={sortBy} onSortChange={setSortBy} />
+
+        <div className="mt-8 bg-dark-800/50 border border-js/10 rounded-xl p-4 sm:p-6">
+          <div className="space-y-6">
+            <div className="w-full">
+              <GamesCategories 
+                activeCategory={activeCategory} 
+                onCategoryChange={setActiveCategory} 
+              />
+            </div>
+            
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="w-full sm:w-72">
+                <GamesSearch 
+                  value={searchQuery} 
+                  onChange={setSearchQuery} 
+                />
+              </div>
+              <GamesSorting 
+                activeSortOption={sortBy} 
+                onSortChange={setSortBy} 
+              />
+            </div>
+
+            <div>
+              <GamesDifficulty 
+                selectedDifficulty={selectedDifficulty} 
+                onDifficultyChange={setSelectedDifficulty} 
+              />
+            </div>
+          </div>
+
+          <div className="mt-6">
+            <GamesList
+              activeCategory={activeCategory}
+              sortBy={sortBy}
+              searchQuery={searchQuery}
+              selectedDifficulty={selectedDifficulty}
+            />
           </div>
         </div>
-        <GamesDifficulty 
-          selectedDifficulty={selectedDifficulty} 
-          onDifficultyChange={setSelectedDifficulty} 
-        />
-        <GamesList 
-          activeCategory={activeCategory} 
-          sortBy={sortBy} 
-          searchQuery={searchQuery}
-          selectedDifficulty={selectedDifficulty}
-        />
       </div>
     </motion.div>
   );

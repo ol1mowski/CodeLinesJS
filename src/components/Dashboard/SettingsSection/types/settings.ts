@@ -3,7 +3,10 @@ export type SettingsView = "profile" | "security" | "preferences" | "delete";
 export type UserProfile = {
   username: string;
   email: string;
-  bio?: string;
+  profile: {
+    bio?: string;
+    avatar?: string;
+  }
 }
 
 export type SecurityFormData = {
@@ -15,6 +18,5 @@ export type SecurityFormData = {
 export type PreferencesData = {
   emailNotifications: boolean;
   pushNotifications: boolean;
-  darkMode: boolean;
-  language: "pl" | "en";
+  language: "pl";
 } 

@@ -1,59 +1,56 @@
-import { memo, useCallback } from "react";
-import { motion } from "framer-motion";
-import { useProfileForm } from "../../hooks/useProfileForm";
-import { Avatar } from "../../components/Profile/Avatar/Avatar.component";
-import { UserInfoFields } from "../../components/Profile/UserInfoFields/UserInfoFields.component";
-import { BioField } from "../../components/Profile/BioField/BioField.component";
-import { FormButtons } from "../../components/Profile/FormButtons/FormButtons.component";
-import { styles } from "./ProfileForm.styles";
-
-const defaultValues = {
-  username: "JanKowalski",
-  email: "jan@example.com",
-  bio: "Frontend Developer"
-};
+import { memo, useCallback, useEffect } from "react";
+import { useProfile } from "../../hooks/useProfile";
+import { Loader } from "../../components/UI/Loader/Loader.component";
+import { useProfileFormLogic } from "../../hooks/useProfileFormLogic";
+import { useAvatarHandling } from "../../hooks/useAvatarHandling";
+import { ProfileFormContent } from "./components/ProfileFormContent/ProfileFormContent.component";
+import { useToast } from "../../contexts/ToastContext";
 
 export const ProfileForm = memo(() => {
-  const { form, onSubmit } = useProfileForm(defaultValues);
-  const { register, formState: { errors, isSubmitting } } = form;
+  const { showToast } = useToast();
+  const { profile, isLoading, updateProfile, updateAvatar, avatarUrl } = useProfile();
+  const { previewAvatar, handleChangeAvatar } = useAvatarHandling(updateAvatar);
+  const { form, onSubmit } = useProfileFormLogic(profile || null, avatarUrl);
+  
+  const { register, formState: { errors, isSubmitting }, reset, setValue } = form;
 
-  const handleChangeAvatar = useCallback(() => {
-    console.log("Change avatar");
-  }, []);
+  useEffect(() => {
+    if (profile) {
+      setValue('username', profile.username);
+      setValue('email', profile.email);
+      setValue('profile.bio', profile.profile?.bio || '');
+    }
+  }, [profile, setValue]);
 
   const handleCancel = useCallback(() => {
-    console.log("Cancel");
-  }, []);
+    try {
+      if (profile) {
+        reset(profile);
+        showToast('Zmiany zostały anulowane', 'success');
+      }
+    } catch (error) {
+      showToast('Nie udało się anulować zmian', 'error');
+    }
+  }, [profile, reset, showToast]);
+
+  if (isLoading) {
+    return <Loader />;
+  }
 
   return (
-    <motion.form
+    <ProfileFormContent
+      avatarUrl={avatarUrl}
+      previewAvatar={previewAvatar}
+      handleChangeAvatar={handleChangeAvatar}
+      handleCancel={handleCancel}
+      isUploading={updateAvatar.isPending}
+      register={register}
+      errors={errors}
+      defaultBio={profile?.profile?.bio}
+      isSubmitting={isSubmitting}
+      isPending={updateProfile.isPending}
       onSubmit={onSubmit}
-      className={styles.form}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-    >
-      <div className={styles.header}>
-        <Avatar
-          src="https://i.pravatar.cc/100"
-          alt="Avatar"
-          onChangeAvatar={handleChangeAvatar}
-        />
-        <UserInfoFields
-          register={register}
-          errors={errors}
-        />
-      </div>
-
-      <BioField
-        register={register}
-        errors={errors}
-      />
-
-      <FormButtons
-        onCancel={handleCancel}
-        isSubmitting={isSubmitting}
-      />
-    </motion.form>
+    />
   );
 });
 

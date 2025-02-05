@@ -1,68 +1,50 @@
-import { memo } from "react";
+import { memo, useCallback } from "react";
 import { motion } from "framer-motion";
-import { FaLock } from "react-icons/fa";
-import { FormInput } from "../../../../UI/Form/FormInput/FormInput.component";
-import { useSecurityForm } from "../../hooks/useSecurityForm";
-import { styles } from "./SecurityForm.styles";
-
+import { PasswordFields } from "./components/PasswordFields/PasswordFields.component";
+import { useSecurityForm } from "./hooks/useSecurityForm";
+import { FormButtons } from "../ProfileForm/components/FormButtons/FormButtons.component";
+import { useSecurityToasts } from "./hooks/useSecurityToasts";
+import { FORM_ANIMATION } from "./constans/constants";
 
 export const SecurityForm = memo(() => {
-  const { form, onSubmit } = useSecurityForm();
-  const { register, formState: { errors } } = form;
+  const {
+    handleSuccess,
+    handleError,
+    handleCancel: handleCancelToast,
+    handleCancelError
+  } = useSecurityToasts();
+
+  const { form, onSubmit, isUpdating } = useSecurityForm({
+    onSuccess: () => {
+      handleSuccess();
+      form.reset();
+    },
+    onError: handleError
+  });
+
+  const handleCancel = useCallback(() => {
+    try {
+      form.reset();
+      handleCancelToast();
+    } catch (error) {
+      handleCancelError();
+    }
+  }, [form, handleCancelToast, handleCancelError]);
 
   return (
     <motion.form
       onSubmit={onSubmit}
-      className={styles.form}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
+      className="w-full max-w-md sm:ml-0 sm:mr-auto space-y-8 px-4 sm:px-0"
+      {...FORM_ANIMATION}
     >
-      <FormInput
-        type="password"
-        label="Aktualne hasło"
-        placeholder="Wprowadź aktualne hasło"
-        icon={<FaLock />}
-        error={errors.currentPassword?.message}
-        {...register("currentPassword")}
+      <PasswordFields form={form} />
+      
+      <FormButtons 
+        onCancel={handleCancel}
+        isSubmitting={form.formState.isSubmitting || isUpdating}
+        submitText="Zmień hasło"
+        loadingText="Zmienianie hasła"
       />
-
-      <FormInput
-        type="password"
-        label="Nowe hasło"
-        placeholder="Wprowadź nowe hasło"
-        icon={<FaLock />}
-        error={errors.newPassword?.message}
-        {...register("newPassword")}
-      />
-
-      <FormInput
-        type="password"
-        label="Potwierdź nowe hasło"
-        placeholder="Potwierdź nowe hasło"
-        icon={<FaLock />}
-        error={errors.confirmPassword?.message}
-        {...register("confirmPassword")}
-      />
-
-      <div className={styles.buttonContainer}>
-        <motion.button
-          type="button"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          className={styles.cancelButton}
-        >
-          Anuluj
-        </motion.button>
-
-        <motion.button
-          type="submit"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          className={styles.submitButton}
-        >
-          Zmień hasło
-        </motion.button>
-      </div>
     </motion.form>
   );
 });

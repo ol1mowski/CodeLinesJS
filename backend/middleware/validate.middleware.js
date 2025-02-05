@@ -36,8 +36,6 @@ export const validateStats = (req, res, next) => {
     completedChallenges, 
     averageScore, 
     totalTimeSpent,
-    points,
-    challenges 
   } = req.body;
 
   const errors = [];
@@ -77,27 +75,3 @@ export const validateStats = (req, res, next) => {
 
   next();
 };
-
-export const validateCategory = (req, res, next) => {
-  const { completed, total } = req.body;
-
-  const errors = [];
-
-  if (completed !== undefined && (!Number.isInteger(completed) || completed < 0)) {
-    errors.push('Nieprawidłowa liczba ukończonych zadań');
-  }
-
-  if (total !== undefined && (!Number.isInteger(total) || total < 0)) {
-    errors.push('Nieprawidłowa liczba wszystkich zadań');
-  }
-
-  if (completed > total) {
-    errors.push('Liczba ukończonych zadań nie może być większa niż liczba wszystkich zadań');
-  }
-
-  if (errors.length > 0) {
-    throw new ValidationError(errors.join(', '));
-  }
-
-  next();
-}; 

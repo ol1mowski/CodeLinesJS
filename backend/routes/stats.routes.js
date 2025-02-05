@@ -1,12 +1,17 @@
-import express from 'express';
-import { getStats, updateStats, updateCategory } from '../controllers/stats.controller.js';
+import { Router } from 'express';
 import { authMiddleware } from '../middleware/auth.middleware.js';
-import { validateStats, validateCategory } from '../middleware/validate.middleware.js';
+import { 
+  getStats, 
+  updateStats, 
+  getDailyStats,
+} from '../controllers/stats.controller.js';
 
-const router = express.Router();
+const router = Router();
 
 router.get('/', authMiddleware, getStats);
-router.put('/', authMiddleware, validateStats, updateStats);
-router.put('/category/:categoryName', authMiddleware, validateCategory, updateCategory);
+
+router.put('/', authMiddleware, updateStats);
+
+router.get('/daily', authMiddleware, getDailyStats);
 
 export default router; 

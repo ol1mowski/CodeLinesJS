@@ -1,24 +1,47 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { deleteAccountSchema } from "../utils/validationSchemas";
-import type { DeleteAccountFormData } from "../types/forms";
+import { z } from "zod";
+import { useMutation } from "@tanstack/react-query";
+import { deleteAccount } from "../utils/api/account";
 
-export const useDeleteAccountForm = () => {
+const deleteAccountSchema = z.object({
+  password: z.string().min(1, "Hasło jest wymagane"),
+  confirmation: z.string().refine(val => val === "USUŃ KONTO", {
+    message: "Wpisz dokładnie 'USUŃ KONTO' aby potwierdzić"
+  })
+});
+
+type DeleteAccountFormData = z.infer<typeof deleteAccountSchema>;
+
+interface UseDeleteAccountFormProps {
+  onSuccess?: () => void;
+  onError?: (error: unknown) => void;
+}
+
+export const useDeleteAccountForm = ({ onSuccess, onError }: UseDeleteAccountFormProps = {}) => {
   const form = useForm<DeleteAccountFormData>({
     resolver: zodResolver(deleteAccountSchema)
   });
 
-  const onSubmit = async (data: DeleteAccountFormData) => {
-    try {
-      // TODO: Implement API call
-      console.log(data);
-    } catch (error) {
-      console.error(error);
+  const deleteAccountMutation = useMutation({
+    mutationFn: deleteAccount,
+    onSuccess: () => {
+      form.reset();
+      onSuccess?.();
+      window.location.href = '/logowanie';
+    },
+    onError: (error) => {
+      onError?.(error);
     }
-  };
+  });
+
+  const handleSubmit = form.handleSubmit(async (data) => {
+    await deleteAccountMutation.mutateAsync(data);
+  });
 
   return {
     form,
-    onSubmit: form.handleSubmit(onSubmit)
+    onSubmit: handleSubmit,
+    isDeleting: deleteAccountMutation.isPending
   };
 }; 
