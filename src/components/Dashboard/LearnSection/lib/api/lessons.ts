@@ -1,32 +1,45 @@
 import { getAuthToken } from '../utils/auth';
 
-const API_URL = 'http://localhost:5001/api';
+import type { Lesson } from "../../types/lesson.types";
 
-export const fetchLesson = async (lessonId: string) => {
-  if (!lessonId) throw new Error('No lesson ID provided');
+const API_URL = "http://localhost:5001/api";
 
+export const fetchLesson = async (lessonId: string): Promise<Lesson> => {
+  const response = await fetch(`${API_URL}/lessons/${lessonId}`);
+  
 
-  try {
-    const response = await fetch(`${API_URL}/lessons/${lessonId}`, {
-      headers: {
-        'Authorization': `Bearer ${getAuthToken()}`,
-        'Content-Type': 'application/json'
-      }
-    });
-
-    if (!response.ok) {
-      if (response.status === 404) {
-        throw new Error('lesson_not_found');
-      }
-      throw new Error(`HTTP error! status: ${response.status}`);
+  if (!response.ok) {
+    if (response.status === 404) {
+      throw new Error("lesson_not_found");
     }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Error fetching lesson:', error);
-    throw error;
+    throw new Error("Failed to fetch lesson");
   }
+
+  return response.json();
+};
+
+export const completeLesson = async ({
+  userId,
+  lessonId,
+  pathId
+}: {
+  userId: string;
+  lessonId: string;
+  pathId?: string;
+}) => {
+  const response = await fetch(`${API_URL}/lessons/${lessonId}/complete`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ userId, pathId }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to complete lesson");
+  }
+
+  return response.json();
 };
 
 export const fetchLessons = async () => {   
