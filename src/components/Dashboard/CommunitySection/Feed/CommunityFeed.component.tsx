@@ -1,7 +1,6 @@
 import { memo } from "react";
 import { CreatePost } from "./CreatePost.component";
 import { PostsList } from "./PostsList.component";
-import { TrendingTopics } from "./TrendingTopics.component";
 import { usePosts } from "../../../../Hooks/usePosts";
 
 const CommunityFeed = memo(() => {
@@ -16,7 +15,7 @@ const CommunityFeed = memo(() => {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      <div className="lg:col-span-2 space-y-6">
+      <div className="lg:col-span-3 space-y-6">
         <CreatePost />
         <PostsList 
           posts={posts}
@@ -26,9 +25,6 @@ const CommunityFeed = memo(() => {
           onLoadMore={fetchNextPage}
           onLike={likePost}
         />
-      </div>
-      <div className="hidden lg:block">
-        <TrendingTopics />
       </div>
     </div>
   );
