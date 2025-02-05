@@ -1,11 +1,12 @@
-import { motion } from "framer-motion";
-import { memo } from "react";
-import { LessonCard } from "./LessonCard.component";
+import { memo, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { LessonsFilter } from "../../../../Lessons/LessonsFilter.component";
 import { useLessons } from "../hooks/useLessons";
 import { LoadingSpinner } from "../../../../components/UI/LoadingSpinner.component";
 import { ErrorMessage } from "../../../../components/ErrorMessage.component";
-import { FaBookOpen, FaFilter, FaSadTear, FaSearch } from "react-icons/fa";
+import { FaBookOpen, FaSadTear, FaSearch } from "react-icons/fa";
+import type { FilterType } from "../../../../types/filter.types";
+import { LessonsList } from "./LessonsList.component";
 
 const getDifficultyLabel = (filter: string) => {
   switch (filter) {
@@ -17,16 +18,38 @@ const getDifficultyLabel = (filter: string) => {
 };
 
 export const Lessons = memo(() => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentFilter = (searchParams.get("filter") as FilterType) || "all";
+  
   const { 
     filteredLessons, 
-    filter, 
-    setFilter, 
+    filter,
+    setFilter,
     isLoading,
     error,
     refetch,
     isEmpty,
-    userProgress 
+    userProgress,
+    userId
   } = useLessons();
+
+  // Synchronizacja filtra z URL przy pierwszym renderowaniu i zmianach URL
+  useEffect(() => {
+    if (currentFilter !== filter) {
+      setFilter(currentFilter);
+    }
+  }, [currentFilter, setFilter, filter]);
+
+  const handleFilterChange = (newFilter: FilterType) => {
+    setSearchParams(prev => {
+      if (newFilter === "all") {
+        prev.delete("filter");
+      } else {
+        prev.set("filter", newFilter);
+      }
+      return prev;
+    });
+  };
 
   if (error) {
     return (
@@ -71,7 +94,7 @@ export const Lessons = memo(() => {
           W tej kategorii nie znaleziono żadnych lekcji. 
           Możesz wybrać inny poziom trudności lub
           <button 
-            onClick={() => setFilter('all')}
+            onClick={() => handleFilterChange("all")}
             className="text-js hover:text-js/80 underline mx-1 font-medium"
           >
             wyświetlić wszystkie lekcje
@@ -80,7 +103,7 @@ export const Lessons = memo(() => {
         <div className="mt-8">
           <LessonsFilter 
             activeFilter={filter} 
-            onFilterChange={setFilter}
+            onFilterChange={handleFilterChange}
             className="justify-center"
           />
         </div>
@@ -89,45 +112,14 @@ export const Lessons = memo(() => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h3 className="text-xl font-bold text-js mb-1">
-            {filter === 'all' ? 'Wszystkie lekcje' : `Lekcje ${getDifficultyLabel(filter)}`}
-          </h3>
-          <p className="text-gray-400 text-sm">
-            {filter === 'all' 
-              ? 'Wybierz interesującą Cię lekcję i rozpocznij naukę'
-              : `Przeglądasz lekcje o poziomie trudności: ${getDifficultyLabel(filter)}`
-            }
-          </p>
-          <div className="flex items-center gap-2 mt-2">
-            <p className="text-sm text-js">
-              Poziom: {userProgress.userLevel}
-            </p>
-            <span className="text-gray-400 text-sm">•</span>
-            <p className="text-sm text-js">
-              Ukończone lekcje: {userProgress.completedLessons}
-            </p>
-          </div>
-        </div>
-        <LessonsFilter activeFilter={filter} onFilterChange={setFilter} />
-      </div>
-
-      <motion.div 
-        initial="hidden"
-        animate="visible"
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-      >
-        {filteredLessons.map((lesson) => (
-          <LessonCard 
-            key={lesson.id} 
-            lesson={lesson}
-            userLevel={userProgress.userLevel}
-          />
-        ))}
-      </motion.div>
-    </div>
+    <>
+      <LessonsList 
+        lessons={filteredLessons}
+        userId={userId}
+        filter={filter}
+        userLevel={userProgress.userLevel}
+      />
+    </>
   );
 });
 

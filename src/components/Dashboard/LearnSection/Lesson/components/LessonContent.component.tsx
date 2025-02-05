@@ -1,86 +1,65 @@
-import { memo, useEffect } from 'react';
-import { type LessonSection } from '../../types/lesson.types';
-import { CodeExample } from './code/CodeExample.component';
-import { LessonQuiz } from './LessonQuiz.component';
-import { SectionLayout } from './common/SectionLayout.component';
-import { marked } from 'marked';
+import { memo } from "react";
+import { BackToLessons } from "./BackToLessons.component";
+import { LessonLayout } from "./LessonLayout.component";
+import { LessonSidebar } from "./LessonSidebar.component";
+import { LessonMainContent } from "./LessonMainContent.component";
+import { LessonProgress } from "./LessonProgress.component";
+import type { Lesson } from "../../types/lesson.types";
 
 type LessonContentProps = {
-  sections?: LessonSection[];
-  onSectionComplete: (sectionIndex: number) => void;
-  onQuizComplete: (quizId: string, correct: number, total: number) => void;
-}
+  lesson: Lesson;
+  activeSection: number;
+  progress: number;
+  onSectionChange: (index: number) => void;
+  onSectionComplete: (sectionId: string) => void;
+  onQuizComplete: (points: number) => void;
+  onLessonComplete: () => void;
+  isCompletingLesson: boolean;
+};
 
-export const LessonContent = memo(({ 
-  sections = [], 
-  onSectionComplete, 
-  onQuizComplete 
+export const LessonContent = memo(({
+  lesson,
+  activeSection,
+  progress,
+  onSectionChange,
+  onSectionComplete,
+  onQuizComplete,
+  onLessonComplete,
+  isCompletingLesson
 }: LessonContentProps) => {
-  useEffect(() => {
-    if (sections.length > 0) {
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const sectionIndex = Number(entry.target.id.split('-')[1]);
-            onSectionComplete(sectionIndex);
-          }
-        });
-      }, { threshold: 0.5 });
-
-      sections.forEach((_, index) => {
-        const element = document.getElementById(`section-${index}`);
-        if (element) observer.observe(element);
-      });
-
-      return () => observer.disconnect();
-    }
-  }, [sections, onSectionComplete]);
-
-  if (!sections || sections.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center py-12 text-center">
-        <h3 className="text-xl font-bold text-js mb-2">
-          Brak zawartości lekcji
-        </h3>
-        <p className="text-gray-400 text-sm">
-          Ta lekcja nie posiada jeszcze żadnej zawartości.
-        </p>
-      </div>
-    );
-  }
+  const sections = lesson.sections || [];
+  const totalSections = sections.length;
 
   return (
-    <div className="space-y-12">
-      {sections.map((section, index) => (
-        <SectionLayout key={index} id={`section-${index}`} index={index}>
-          <h2 className="text-2xl font-bold text-js mb-6">
-            {section.title}
-          </h2>
-          
-          <div 
-            className="prose prose-invert max-w-none"
-            dangerouslySetInnerHTML={{ __html: marked(section.content) }} 
+    <>
+      <LessonLayout>
+        <BackToLessons />
+        
+        <div className="grid grid-cols-12 gap-8">
+          <LessonSidebar
+            sections={sections}
+            activeSection={activeSection}
+            onSectionChange={onSectionChange}
+            isCompleted={lesson.isCompleted}
           />
 
-          {section.examples?.map((example, exampleIndex) => (
-            <CodeExample 
-              key={exampleIndex}
-              example={example}
-              index={exampleIndex}
-            />
-          ))}
+          <LessonMainContent
+            lesson={lesson}
+            onSectionComplete={onSectionComplete}
+            onQuizComplete={onQuizComplete}
+          />
+        </div>
+      </LessonLayout>
 
-          {section.quiz && (
-            <LessonQuiz
-              questions={section.quiz}
-              onComplete={(correct, total) => 
-                onQuizComplete(`quiz-${index}`, correct, total)
-              }
-            />
-          )}
-        </SectionLayout>
-      ))}
-    </div>
+      <LessonProgress
+        currentSection={activeSection}
+        totalSections={totalSections}
+        progress={progress}
+        onComplete={onLessonComplete}
+        isCompleted={lesson.isCompleted}
+        isLoading={isCompletingLesson}
+      />
+    </>
   );
 });
 

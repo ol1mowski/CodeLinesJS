@@ -1,112 +1,118 @@
-import { LearningPath } from '../models/index.js';
-import { User } from '../models/user.model.js';
-import { ValidationError } from '../utils/errors.js';
+import { LearningPath } from "../models/index.js";
+import { User } from "../models/user.model.js";
+import { ValidationError } from "../utils/errors.js";
 
 export const getLearningPaths = async (req, res, next) => {
   try {
-    const { difficulty, search, category } = req.query;
+    const { difficulty, search } = req.query;
     const query = { isActive: true };
-    
+
     if (difficulty) query.difficulty = difficulty;
-    if (category) query.category = category;
     if (search) {
       query.$or = [
-        { title: { $regex: search, $options: 'i' } },
-        { description: { $regex: search, $options: 'i' } }
+        { title: { $regex: search, $options: "i" } },
+        { description: { $regex: search, $options: "i" } },
       ];
     }
-    
-    const [learningPaths, user] = await Promise.all([
-      LearningPath.find(query)
-        .populate({
-          path: 'lessons',
-          select: 'title description category difficulty duration points'
-        })
-        .lean(),
+
+    const [paths, user] = await Promise.all([
+      LearningPath.find(query).lean(),
       User.findById(req.user.userId)
-        .select('stats.completedChallenges stats.progress.currentLevel')
-        .lean()
+        .select("stats.points stats.level stats.learningPaths")
+        .lean(),
     ]);
 
-    const completedLessons = user.stats?.completedChallenges || [];
-    const userLevel = user.stats?.progress?.currentLevel || 1;
-    
-    const pathsWithProgress = learningPaths.map(path => {
-      const pathCompletedLessons = path.lessons.filter(lesson => 
-        completedLessons.some(id => id.toString() === lesson._id.toString())
-      );
-      
-      const progress = {
-        completed: pathCompletedLessons.length,
-        total: path.lessons.length,
-        percentage: Math.round((pathCompletedLessons.length / path.lessons.length) * 100)
-      };
+    const userLevel = user.stats?.level || 1;
+    const userLearningPaths = user.stats?.learningPaths || [];
 
-      const isAvailableForUser = path.isAvailable && userLevel >= path.requiredLevel;
+    const formattedPaths = paths.map((path) => {
+
+      const userPathProgress = userLearningPaths.find(
+        (lp) => lp.pathId.toString() === path._id.toString()
+      );
+
+      const completedInPath = userPathProgress?.progress?.completedLessons || 0;
+
+      const completedPath = user.stats?.learningPaths.find(
+        (lp) => lp.pathId.toString() === path._id.toString()
+      );
       
       return {
         id: path._id,
         title: path.title,
         description: path.description,
         difficulty: path.difficulty,
-        category: path.category,
         estimatedTime: path.estimatedTime,
         requirements: path.requirements,
         outcomes: path.outcomes,
-        progress,
-        isAvailable: isAvailableForUser,
         requiredLevel: path.requiredLevel,
-        isLocked: userLevel < path.requiredLevel,
-        lessons: path.lessons.map(lesson => ({
-          id: lesson._id,
-          title: lesson.title,
-          description: lesson.description,
-          category: lesson.category,
-          difficulty: lesson.difficulty,
-          duration: lesson.duration,
-          points: lesson.points,
-          isCompleted: completedLessons.some(id => id.toString() === lesson._id.toString())
-        }))
+        isAvailable: userLevel >= path.requiredLevel,
+        totalLessons: path.totalLessons,
+        progress: {
+          completed: completedPath?.progress?.completedLessons,
+          total: path.totalLessons,
+          percentage:
+            path.totalLessons > 0
+              ? Math.round((completedInPath / path.totalLessons) * 100)
+              : 0,
+          isStarted: completedInPath > 0,
+          isCompleted: completedInPath === path.totalLessons,
+        },
       };
     });
-    
-    res.json(pathsWithProgress);
+
+    res.json({
+      paths: formattedPaths,
+      userStats: {
+        level: userLevel,
+        totalPoints: user.stats?.points || 0,
+        totalPaths: paths.length,
+        completedPaths: formattedPaths.filter((p) => p.progress.isCompleted)
+          .length,
+        pathsInProgress: formattedPaths.filter(
+          (p) => !p.progress.isCompleted && userLevel >= p.requiredLevel
+        ).length,
+      },
+    });
   } catch (error) {
     next(error);
   }
 };
 
+
 export const getLearningPathById = async (req, res, next) => {
   try {
     const { id } = req.params;
-    
+
     const [learningPath, user] = await Promise.all([
-      LearningPath.findOne({ 
+      LearningPath.findOne({
         _id: id,
-        isActive: true 
+        isActive: true,
       }).populate({
-        path: 'lessons',
-        select: 'title description category difficulty duration points requirements'
+        path: "lessons",
+        select:
+          "title description category difficulty duration points requirements slug",
       }),
       User.findById(req.user.userId)
-        .select('stats.completedChallenges stats.progress.currentLevel')
-        .lean()
+        .select("stats.level stats.learningPaths")
+        .lean(),
     ]);
-    
+
     if (!learningPath) {
-      throw new ValidationError('Ścieżka nauki nie została znaleziona');
+      throw new ValidationError("Ścieżka nauki nie została znaleziona");
     }
 
-    const userLevel = user.stats?.progress?.currentLevel || 1;
-    
-    if (!learningPath.isAvailable || userLevel < learningPath.requiredLevel) {
-      throw new ValidationError('Nie masz dostępu do tej ścieżki nauki');
-    }
-    
-    const completedLessons = learningPath.lessons.filter(lesson => 
-      user.stats.completedChallenges.includes(lesson._id)
+    const userLevel = user.stats?.level || 1;
+    const userLearningPaths = user.stats?.learningPaths || [];
+    const userPathProgress = userLearningPaths.find(
+      (lp) => lp.pathId.toString() === learningPath._id.toString()
     );
-    
+    const completedLessons = userPathProgress?.progress?.completedLessons || 0;
+
+    if (userLevel < learningPath.requiredLevel) {
+      throw new ValidationError("Nie masz dostępu do tej ścieżki nauki");
+    }
+
     const response = {
       id: learningPath._id,
       title: learningPath.title,
@@ -116,14 +122,18 @@ export const getLearningPathById = async (req, res, next) => {
       estimatedTime: learningPath.estimatedTime,
       requirements: learningPath.requirements,
       outcomes: learningPath.outcomes,
-      isAvailable: learningPath.isAvailable,
+      isAvailable: userLevel >= learningPath.requiredLevel,
       requiredLevel: learningPath.requiredLevel,
       progress: {
-        completed: completedLessons.length,
+        completed: completedLessons,
         total: learningPath.lessons.length,
-        percentage: Math.round((completedLessons.length / learningPath.lessons.length) * 100)
+        percentage:
+          learningPath.lessons.length > 0
+            ? Math.round((completedLessons / learningPath.lessons.length) * 100)
+            : 0,
       },
-      lessons: learningPath.lessons.map(lesson => ({
+      completedLessons: completedLessons, // Liczba ukończonych lekcji
+      lessons: learningPath.lessons.map((lesson) => ({
         id: lesson._id,
         title: lesson.title,
         description: lesson.description,
@@ -131,13 +141,16 @@ export const getLearningPathById = async (req, res, next) => {
         difficulty: lesson.difficulty,
         duration: lesson.duration,
         points: lesson.points,
-        isCompleted: user.stats.completedChallenges.includes(lesson._id),
-        requirements: lesson.requirements
-      }))
+        slug: lesson.slug,
+        isCompleted:
+          userPathProgress?.progress?.completedLessons?.includes(lesson._id) ||
+          false,
+        requirements: lesson.requirements,
+      })),
     };
-    
+
     res.json(response);
   } catch (error) {
     next(error);
   }
-}; 
+};

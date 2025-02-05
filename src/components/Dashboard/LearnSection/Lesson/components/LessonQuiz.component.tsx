@@ -44,7 +44,7 @@ type QuizSummaryProps = {
   earnedXP: number;
 }
 
-const QuizSummary = memo(({ correctAnswers, totalQuestions, earnedXP }: QuizSummaryProps) => {
+const QuizSummary = memo(({ correctAnswers, totalQuestions }: QuizSummaryProps) => {
   const percentage = (correctAnswers / totalQuestions) * 100;
   const badge = getQuizBadge(percentage);
   const BadgeIcon = badge.icon;
@@ -78,10 +78,6 @@ const QuizSummary = memo(({ correctAnswers, totalQuestions, earnedXP }: QuizSumm
       </p>
       
       <div className="space-y-4">
-        <div className="inline-flex items-center gap-2 px-4 py-2 bg-js/10 rounded-lg text-js">
-          <FaStar className="w-4 h-4" />
-          <span>Zdobyłeś {earnedXP} XP</span>
-        </div>
 
         <motion.div 
           initial={{ width: 0 }}
@@ -146,21 +142,41 @@ export const LessonQuiz = memo(({ questions, onComplete }: LessonQuizProps) => {
 
   return (
     <div className="space-y-6">
+      
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-4">
           <span className="text-sm text-gray-400">
             Pytanie {currentQuestion + 1} z {questions.length}
           </span>
           <span className="text-js">•</span>
-          <span className="flex items-center gap-1 text-sm text-gray-400">
-            <FaStar className="w-4 h-4 text-js" />
-            Do zdobycia: {totalXP} XP
-          </span>
         </div>
         <div className="text-sm text-gray-400">
           {Math.round(progressPercent)}% ukończone
         </div>
       </div>
+
+      {showExplanation && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="p-4 bg-dark-800/50 border border-js/10 rounded-lg text-gray-400 text-sm"
+        >
+          {questions[currentQuestion].explanation}
+        </motion.div>
+      )}
+
+      {selectedAnswer !== null && (
+        <motion.button
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={handleNext}
+          className="w-full py-3 bg-js/10 text-js rounded-lg hover:bg-js/20 transition-colors"
+        >
+          {currentQuestion < questions.length - 1 ? 'Następne pytanie' : 'Zakończ quiz'}
+        </motion.button>
+      )}
 
 
       <div className="text-lg font-medium text-gray-200">
@@ -199,28 +215,7 @@ export const LessonQuiz = memo(({ questions, onComplete }: LessonQuizProps) => {
         ))}
       </div>
 
-      {showExplanation && (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="p-4 bg-dark-800/50 border border-js/10 rounded-lg text-gray-400 text-sm"
-        >
-          {questions[currentQuestion].explanation}
-        </motion.div>
-      )}
-
-      {selectedAnswer !== null && (
-        <motion.button
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={handleNext}
-          className="w-full py-3 bg-js/10 text-js rounded-lg hover:bg-js/20 transition-colors"
-        >
-          {currentQuestion < questions.length - 1 ? 'Następne pytanie' : 'Zakończ quiz'}
-        </motion.button>
-      )}
+      
     </div>
   );
 });

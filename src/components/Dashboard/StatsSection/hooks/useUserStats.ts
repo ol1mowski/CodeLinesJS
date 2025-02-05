@@ -23,31 +23,22 @@ const fetchUserStats = async (): Promise<UserStats> => {
       }
     }
 
-    const data = await response.json();
+    const dataParsed = await response.json();
+
+    const data = dataParsed.data;
 
     if (!data || typeof data !== 'object') {
       throw new Error('Otrzymano nieprawidłowe dane z serwera');
     }
 
-    const formattedBadges = data.badges?.map((badge: any) => {
-      if (typeof badge === 'string' || Array.isArray(badge)) {
-        const badgeObj = Array.isArray(badge) ? { _id: badge._id } : { _id: 'default-id' };
-        return {
-          id: badgeObj._id,
-          name: Array.isArray(badge) ? badge.join('') : String(badge),
-          icon: '��',
-          earnedAt: new Date().toISOString(),
-          description: 'Odznaka za osiągnięcie'
-        };
-      }
-      return {
-        id: badge._id || badge.id || 'default-id',
-        name: badge.name || 'Odznaka',
-        icon: badge.icon || '🏆',
-        earnedAt: badge.earnedAt || new Date().toISOString(),
-        description: badge.description || 'Odznaka za osiągnięcie'
-      };
-    }) || [];
+
+    const formattedBadges = data.badges?.map((badge: any) => ({
+      id: badge.id || badge._id || String(Math.random()),
+      name: badge.name || 'Odznaka',
+      icon: badge.icon || '🏆',
+      earnedAt: badge.earnedAt || new Date().toISOString(),
+      description: badge.description || 'Odznaka za osiągnięcie'
+    })) || [];
 
     const stats: UserStats = {
       level: data.level,
@@ -65,6 +56,7 @@ const fetchUserStats = async (): Promise<UserStats> => {
         categories: data.chartData?.categories || []
       }
     };
+
 
     return stats;
   } catch (error) {

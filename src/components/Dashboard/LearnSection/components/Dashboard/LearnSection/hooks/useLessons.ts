@@ -15,8 +15,8 @@ export type LessonsResponse = {
   };
 }
 
-export const useLessons = () => {
-  const [filter, setFilter] = useState<FilterType>('all');
+export const useLessons = (initialFilter: FilterType = 'all') => {
+  const [filter, setFilter] = useState<FilterType>(initialFilter);
   const [category] = useState<Category>('javascript');
 
   const { 
@@ -25,8 +25,8 @@ export const useLessons = () => {
     error,
     refetch 
   } = useQuery<LessonsResponse>({
-    queryKey: ['lessons'],
-    queryFn: fetchLessons,
+    queryKey: ['lessons', filter],
+    queryFn: () => fetchLessons(filter),
     retry: 2,
     refetchOnWindowFocus: false
   });

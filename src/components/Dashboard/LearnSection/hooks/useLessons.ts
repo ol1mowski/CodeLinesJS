@@ -13,6 +13,7 @@ type LessonsResponse = {
     completed: number;
     progress: number;
   };
+  requiredLevel: number;
 };
 
 const getDifficultyLabel = (filter: FilterType) => {
@@ -79,9 +80,6 @@ export const useLessons = () => {
     isEmpty,
     hasNoLessonsForFilter,
     filterState,
-    userProgress: {
-      completedLessons: stats.completed,
-      userLevel: 1
-    }
+    requiredLevel: data?.requiredLevel,
   };
 }; 

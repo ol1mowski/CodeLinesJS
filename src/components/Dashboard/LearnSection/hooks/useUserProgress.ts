@@ -6,6 +6,8 @@ const API_URL = 'http://localhost:5001/api';
 type ProgressUpdate = {
   lessonId: string;
   points: number;
+  isCompleted?: boolean;
+  completedSections?: string[];
 };
 
 export const useUserProgress = (userId: string) => {
@@ -13,29 +15,48 @@ export const useUserProgress = (userId: string) => {
 
   const { mutateAsync: updateProgress } = useMutation({
     mutationFn: async (data: ProgressUpdate) => {
+      console.log('Aktualizacja postępu użytkownika:', {
+        userId,
+        ...data
+      });
+
+      const lessonData = queryClient.getQueryData<any>(['lesson', data.lessonId]);
+      
+      if (lessonData?.isCompleted && !data.isCompleted) {
+        console.log('Lekcja już ukończona, pomijam aktualizację');
+        return null;
+      }
+
       const response = await fetch(`${API_URL}/users/${userId}/progress`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token') || sessionStorage.getItem('token') }`,
+          'Authorization': `Bearer ${localStorage.getItem('token') || sessionStorage.getItem('token')}`,
         },
         body: JSON.stringify({
           lessonId: data.lessonId,
-          points: data.points
+          points: data.points,
+          isCompleted: data.isCompleted,
+          completedSections: data.completedSections
         }),
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Nie udało się zaktualizować postępu');
+        const errorData = await response.json();
+        console.error('Błąd odpowiedzi:', errorData);
+        throw new Error(errorData.message || 'Nie udało się zaktualizować postępu');
       }
 
-      return response.json();
+      const result = await response.json();
+      console.log('Odpowiedź z serwera:', result);
+      return result;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['userProgress'] });
-      queryClient.invalidateQueries({ queryKey: ['lessons'] });
-      queryClient.invalidateQueries({ queryKey: ['userStats'] });
+    onSuccess: (data) => {
+      if (data) {
+        queryClient.invalidateQueries({ queryKey: ['userProgress'] });
+        queryClient.invalidateQueries({ queryKey: ['lessons'] });
+        queryClient.invalidateQueries({ queryKey: ['userStats'] });
+      }
     },
     onError: (error: Error) => {
       console.error('Błąd aktualizacji:', error);

@@ -28,6 +28,12 @@ export const fetchLearningPaths = async () => {
 };
 
 export const fetchLearningPathProgress = async (userId: string, pathId: string) => {
+  const token = getAuthToken();
+
+  if (!token) {
+    throw new Error('No authentication token found');
+  }
+
   const response = await fetch(`${API_URL}/users/${userId}/paths/${pathId}/progress`, {
     headers: {
       'Content-Type': 'application/json',

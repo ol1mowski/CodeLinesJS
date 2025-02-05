@@ -6,9 +6,10 @@ import { statsSectionStyles as styles } from "../style/StatsSection.styles";
 type StatCardProps = {
   icon: IconType;
   label: string;
-  value: string;
+  value: number;
   subValue?: string;
   gradient: string;
+
 };
 
 const item = {

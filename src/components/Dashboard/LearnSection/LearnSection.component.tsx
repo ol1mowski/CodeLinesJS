@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import { memo, useState } from "react";
+import { memo, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { SectionTitle } from "../../UI/SectionTitle/SectionTitle.component";
 import { Lessons } from "./Lessons/Lessons.component";
 import { Resources } from "./Resources/Resources.component";
@@ -8,12 +9,25 @@ import { LearnTabs } from "./LearnTabs/LearnTabs.component";
 import { useAuth } from "./hooks/useAuth";
 import { LoadingSpinner } from "./components/UI/LoadingSpinner.component";
 
-
 type TabType = "paths" | "lessons" | "resources" | "articles";
 
 export const LearnSection = memo(() => {
-  const [activeTab, setActiveTab] = useState<TabType>("paths");
-  const { token, isAuthenticated } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { isAuthenticated } = useAuth();
+  
+  const activeTab = (searchParams.get("tab") as TabType) || "paths";
+
+  const handleTabChange = (tab: TabType) => {
+    setSearchParams(prev => {
+      if (tab === "paths") {
+        prev.delete("tab");
+        prev.delete("filter");
+      } else {
+        prev.set("tab", tab);
+      }
+      return prev;
+    });
+  };
 
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -27,26 +41,13 @@ export const LearnSection = memo(() => {
     }
   };
 
-  const renderContent = () => {
-    if (!isAuthenticated) {
-      return (
-        <div className="flex justify-center py-12">
-          <LoadingSpinner />
-        </div>
-      );
-    }
-
-    switch (activeTab) {
-      case "paths":
-        return <LearningPaths />;
-      case "lessons":
-        return <Lessons />;
-      case "resources":
-        return <Resources />;
-      default:
-        return null;
-    }
-  };
+  if (!isAuthenticated) {
+    return (
+      <div className="flex justify-center py-12">
+        <LoadingSpinner />
+      </div>
+    );
+  }
 
   return (
     <motion.div
@@ -65,7 +66,7 @@ export const LearnSection = memo(() => {
         />
 
         <div className="bg-dark-800/50 border border-js/10 rounded-xl p-6">
-          <LearnTabs activeTab={activeTab} onTabChange={setActiveTab} />
+          <LearnTabs activeTab={activeTab} onTabChange={handleTabChange} />
           
           <motion.div
             key={activeTab}
@@ -80,7 +81,9 @@ export const LearnSection = memo(() => {
             }}
             className="mt-8"
           >
-            {renderContent()}
+            {activeTab === "paths" && <LearningPaths />}
+            {activeTab === "lessons" && <Lessons />}
+            {activeTab === "resources" && <Resources />}
           </motion.div>
         </div>
       </div>

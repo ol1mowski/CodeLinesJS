@@ -9,6 +9,10 @@ type LessonsListProps = {
   lessons: Lesson[];
   userId: string;
   filter: FilterType;
+  userData: {
+    userLevel: number;
+    requiredLevel: number;
+  };
 };
 
 const containerVariants = {
@@ -16,66 +20,71 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1
-    }
-  }
+      staggerChildren: 0.1,
+    },
+  },
 };
 
 const getDifficultyLabel = (filter: FilterType) => {
   switch (filter) {
-    case 'beginner': return 'podstawowym';
-    case 'intermediate': return 'średnim';
-    case 'advanced': return 'zaawansowanym';
-    default: return '';
+    case "beginner":
+      return "podstawowym";
+    case "intermediate":
+      return "średnim";
+    case "advanced":
+      return "zaawansowanym";
+    default:
+      return "";
   }
 };
 
-export const LessonsList = memo(({ lessons, userId, filter }: LessonsListProps) => {
-  if (lessons.length === 0) {
+export const LessonsList = memo(
+  ({ lessons, filter, userData }: LessonsListProps) => {
+    const processedLessons = lessons.map((lesson) => ({
+      ...lesson,
+      isLocked: lesson.requiredLevel > userData.userLevel,
+    }));
+
+    if (processedLessons.length === 0) {
+      return (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex flex-col items-center justify-center py-12 text-center"
+        >
+          <div className="relative mb-6">
+            <FaSearch className="w-20 h-20 text-gray-600 opacity-20" />
+            <div className="absolute -right-2 -bottom-2">
+              <FaSadTear className="w-8 h-8 text-gray-500" />
+            </div>
+          </div>
+          <h3 className="text-xl font-bold text-js mb-3">
+            {filter === "all"
+              ? "Brak dostępnych lekcji"
+              : `Brak lekcji o poziomie ${getDifficultyLabel(filter)}`}
+          </h3>
+          <p className="text-gray-400 text-sm max-w-md">
+            {filter === "all"
+              ? "Aktualnie nie ma żadnych dostępnych lekcji. Sprawdź ponownie później."
+              : "W tej kategorii nie znaleziono żadnych lekcji. Wybierz inny poziom trudności."}
+          </p>
+        </motion.div>
+      );
+    }
+
     return (
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col items-center justify-center py-12 text-center"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
       >
-        <div className="relative mb-6">
-          <FaSearch className="w-20 h-20 text-gray-600 opacity-20" />
-          <div className="absolute -right-2 -bottom-2">
-            <FaSadTear className="w-8 h-8 text-gray-500" />
-          </div>
-        </div>
-        <h3 className="text-xl font-bold text-js mb-3">
-          {filter === 'all' 
-            ? 'Brak dostępnych lekcji'
-            : `Brak lekcji o poziomie ${getDifficultyLabel(filter)}`
-          }
-        </h3>
-        <p className="text-gray-400 text-sm max-w-md">
-          {filter === 'all' 
-            ? 'Aktualnie nie ma żadnych dostępnych lekcji. Sprawdź ponownie później.'
-            : 'W tej kategorii nie znaleziono żadnych lekcji. Wybierz inny poziom trudności.'
-          }
-        </p>
+        {processedLessons.map((lesson) => (
+          <LessonCard key={lesson.slug} lesson={lesson} />
+        ))}
       </motion.div>
     );
   }
+);
 
-  return (
-    <motion.div 
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-    >
-      {lessons.map((lesson) => (
-        <LessonCard 
-          key={lesson.slug} 
-          lesson={lesson}
-          userId={userId}
-        />
-      ))}
-    </motion.div>
-  );
-});
-
-LessonsList.displayName = "LessonsList"; 
+LessonsList.displayName = "LessonsList";

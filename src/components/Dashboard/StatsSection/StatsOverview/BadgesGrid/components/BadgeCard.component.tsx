@@ -14,7 +14,6 @@ export const BadgeCard = memo(({ badge }: BadgeCardProps) => {
 
   return (
     <motion.div
-      key={badge.id}
       variants={item}
       className="flex flex-col items-center p-4 bg-dark/30 rounded-lg border border-js/10 hover:border-js/30 transition-colors"
     >

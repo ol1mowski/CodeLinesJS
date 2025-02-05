@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import { Lesson, LearningPath, initializeModels, Resource } from '../models/index.js';
+import { Lesson } from '../models/index.js';
 import { LessonContent } from '../models/lessonContent.model.js';
 
 dotenv.config();
@@ -265,152 +265,32 @@ const lessonsContent = [
   }
 ];
 
-const learningPaths = [
-  {
-    title: "Ścieżka JavaScript od podstaw",
-    description: "Kompletny kurs JavaScript dla początkujących",
-    difficulty: "beginner",
-    category: "javascript",
-    estimatedTime: 135,
-    requirements: ["Podstawowa znajomość HTML i CSS"],
-    outcomes: [
-      "Zrozumienie podstaw JavaScript",
-      "Umiejętność pracy z funkcjami",
-      "Znajomość struktur danych"
-    ],
-    isActive: true,
-    isAvailable: true,
-    requiredLevel: 1
-  },
-  {
-    title: "React Developer",
-    description: "Zostań programistą React",
-    difficulty: "intermediate",
-    category: "react",
-    estimatedTime: 135,
-    requirements: ["Podstawowa znajomość JavaScript"],
-    outcomes: [
-      "Tworzenie aplikacji w React",
-      "Zarządzanie stanem aplikacji",
-      "Praca z komponentami"
-    ],
-    isActive: true,
-    isAvailable: true,
-    requiredLevel: 3
-  }
-];
-
-const resources = [
-  {
-    title: "JavaScript - przewodnik po ES6+",
-    description: "Kompletny przewodnik po nowych funkcjach JavaScript ES6+",
-    url: "https://example.com/js-es6-guide",
-    type: "article",
-    category: "javascript",
-    difficulty: "intermediate",
-    tags: ["ES6", "JavaScript", "Modern JS"],
-    author: {
-      name: "John Doe",
-      url: "https://example.com/author/john"
-    },
-    isRecommended: false
-  },
-  {
-    title: "React Hooks - podstawy",
-    description: "Wprowadzenie do React Hooks i zarządzania stanem",
-    url: "https://example.com/react-hooks",
-    type: "tutorial",
-    category: "react",
-    difficulty: "beginner",
-    tags: ["React", "Hooks", "State Management"],
-    author: {
-      name: "Jane Smith",
-      url: "https://example.com/author/jane"
-    },
-    isRecommended: false
-  },
-  {
-    title: "Node.js - najlepsze praktyki",
-    description: "Zbiór najlepszych praktyk w Node.js",
-    url: "https://example.com/nodejs-best-practices",
-    type: "documentation",
-    category: "node",
-    difficulty: "advanced",
-    tags: ["Node.js", "Best Practices", "Backend"],
-    author: {
-      name: "Mike Johnson",
-      url: "https://example.com/author/mike"
-    },
-    isRecommended: false
-  }
-];
-
 const initializeData = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI);
     console.log('Połączono z bazą danych');
     
-    initializeModels();
-
-    // Usuń wszystkie kolekcje
     await Promise.all([
-      mongoose.connection.collection('lessons').drop().catch(() => console.log('Kolekcja lessons nie istnieje')),
-      mongoose.connection.collection('lessoncontents').drop().catch(() => console.log('Kolekcja lessoncontents nie istnieje')),
-      mongoose.connection.collection('learningpaths').drop().catch(() => console.log('Kolekcja learningpaths nie istnieje')),
-      mongoose.connection.collection('resources').drop().catch(() => console.log('Kolekcja resources nie istnieje'))
+      Lesson.collection.drop().catch(() => console.log('Kolekcja lessons nie istnieje')),
+      LessonContent.collection.drop().catch(() => console.log('Kolekcja lessoncontents nie istnieje'))
     ]);
     console.log('Usunięto stare kolekcje');
 
-    // Utwórz kolekcje na nowo
-    await Promise.all([
-      mongoose.connection.createCollection('lessons'),
-      mongoose.connection.createCollection('lessoncontents'),
-      mongoose.connection.createCollection('learningpaths'),
-      mongoose.connection.createCollection('resources')
-    ]);
-    console.log('Utworzono nowe kolekcje');
-
-    // Dodaj nowe dane
     const createdLessons = await Lesson.insertMany(lessonsData);
-    console.log('Dodano lekcje');
+    console.log('Dodano lekcje:', createdLessons.map(l => l.slug));
 
     await LessonContent.insertMany(lessonsContent);
     console.log('Dodano treści lekcji');
 
-    const jsLessons = createdLessons.filter(lesson => lesson.category === 'javascript');
-    const reactLessons = createdLessons.filter(lesson => lesson.category === 'react');
-
-    const pathsWithLessons = [
-      {
-        ...learningPaths[0],
-        lessons: jsLessons.map(lesson => lesson._id)
-      },
-      {
-        ...learningPaths[1],
-        lessons: reactLessons.map(lesson => lesson._id)
-      }
-    ];
-
-    await LearningPath.insertMany(pathsWithLessons);
-    console.log('Dodano ścieżki nauki');
-
-    await Resource.insertMany(resources);
-    console.log('Dodano zasoby');
-
-    // Utwórz nowe indeksy
-    await Promise.all([
-      Lesson.createIndexes(),
-      LessonContent.createIndexes(),
-      LearningPath.createIndexes()
-    ]);
-    console.log('Utworzono nowe indeksy');
+    const lessonCount = await Lesson.countDocuments();
+    const contentCount = await LessonContent.countDocuments();
+    console.log(`Dodano ${lessonCount} lekcji i ${contentCount} treści`);
 
     console.log('Inicjalizacja zakończona pomyślnie');
   } catch (error) {
     console.error('Błąd podczas inicjalizacji:', error);
   } finally {
     await mongoose.disconnect();
-    console.log('Rozłączono z bazą danych');
   }
 };
 

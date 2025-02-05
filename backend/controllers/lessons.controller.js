@@ -1,44 +1,41 @@
-import { Lesson } from '../models/index.js';
-import { User } from '../models/user.model.js';
-import { ValidationError } from '../utils/errors.js';
-import { LessonContent } from '../models/lessonContent.model.js';
+import { Lesson } from "../models/index.js";
+import { User } from "../models/user.model.js";
+import { ValidationError } from "../utils/errors.js";
+import { LessonContent } from "../models/lessonContent.model.js";
 
 export const getLessons = async (req, res, next) => {
   try {
     const { category, difficulty, search } = req.query;
     const userId = req.user.userId;
 
-    // Pobierz użytkownika i jego ukończone lekcje
     const user = await User.findById(userId)
-      .select('stats.completedLessons')
+      .select("stats.completedLessons")
       .lean();
 
-    // Buduj query dla lekcji
     const query = {
       isPublished: true,
-      isAvailable: true
+      isAvailable: true,
     };
 
     if (category) query.category = category;
     if (difficulty) query.difficulty = difficulty;
     if (search) {
       query.$or = [
-        { title: { $regex: search, $options: 'i' } },
-        { description: { $regex: search, $options: 'i' } }
+        { title: { $regex: search, $options: "i" } },
+        { description: { $regex: search, $options: "i" } },
       ];
     }
 
-    // Pobierz lekcje
     const lessons = await Lesson.find(query)
-      .select('title description category difficulty duration points slug requirements')
+      .select(
+        "title description category difficulty duration points slug requirements requiredLevel"
+      )
       .sort({ order: 1 })
       .lean();
 
-    // Przygotuj listę ukończonych lekcji
     const completedLessons = user.stats?.completedLessons || [];
 
-    // Dodaj informację o ukończeniu do każdej lekcji
-    const formattedLessons = lessons.map(lesson => ({
+    const formattedLessons = lessons.map((lesson) => ({
       id: lesson._id,
       title: lesson.title,
       description: lesson.description,
@@ -48,12 +45,12 @@ export const getLessons = async (req, res, next) => {
       points: lesson.points,
       slug: lesson.slug,
       requirements: lesson.requirements,
+      requiredLevel: lesson.requiredLevel,
       isCompleted: completedLessons.some(
-        completedId => completedId.toString() === lesson._id.toString()
-      )
+        (completedId) => completedId.toString() === lesson._id.toString()
+      ),
     }));
 
-    // Grupuj lekcje według kategorii
     const groupedLessons = formattedLessons.reduce((acc, lesson) => {
       if (!acc[lesson.category]) {
         acc[lesson.category] = [];
@@ -67,8 +64,8 @@ export const getLessons = async (req, res, next) => {
       stats: {
         total: lessons.length,
         completed: completedLessons.length,
-        progress: Math.round((completedLessons.length / lessons.length) * 100)
-      }
+        progress: Math.round((completedLessons.length / lessons.length) * 100),
+      },
     });
   } catch (error) {
     next(error);
@@ -78,43 +75,45 @@ export const getLessons = async (req, res, next) => {
 export const getLessonById = async (req, res, next) => {
   try {
     const { id } = req.params;
-    
+    console.log("Szukam lekcji o slug:", id);
+
     const [lesson, lessonContent, user] = await Promise.all([
-      Lesson.findOne({ 
+      Lesson.findOne({
         slug: id,
         isPublished: true,
-        isAvailable: true
-      }).populate('requirements', 'title'),
+      }).populate("requirements", "title"),
       LessonContent.findOne({ lessonSlug: id }).lean(),
       User.findById(req.user.userId)
-        .select('stats.completedChallenges stats.progress.currentLevel')
-        .lean()
+        .select("stats.completedLessons stats.level")
+        .lean(),
     ]);
-    
+
     if (!lesson) {
-      throw new ValidationError('Lekcja nie została znaleziona');
+      throw new ValidationError("Lekcja nie została znaleziona");
     }
 
     if (!lessonContent) {
-      throw new ValidationError('Treść lekcji nie została znaleziona');
+      throw new ValidationError("Treść lekcji nie została znaleziona");
     }
-    
-    const userLevel = user.stats?.progress?.currentLevel || 1;
-    const completedChallenges = Array.isArray(user.stats?.completedChallenges) 
-      ? user.stats.completedChallenges 
-      : [];
+
+    const userLevel = user.stats?.level || 1;
+    const completedLessons = user.stats?.completedLessons || [];
 
     if (userLevel < lesson.requiredLevel) {
-      throw new ValidationError(`Wymagany poziom ${lesson.requiredLevel} do odblokowania tej lekcji`);
-    }
-    
-    if (lesson.requirements?.length > 0) {
-      const hasCompletedRequirements = lesson.requirements.every(req => 
-        completedChallenges.includes(req._id)
+      throw new ValidationError(
+        `Wymagany poziom ${lesson.requiredLevel} do odblokowania tej lekcji`
       );
-      
+    }
+
+    if (lesson.requirements?.length > 0) {
+      const hasCompletedRequirements = lesson.requirements.every((req) =>
+        completedLessons.includes(req._id)
+      );
+
       if (!hasCompletedRequirements) {
-        throw new ValidationError('Musisz ukończyć wymagane lekcje przed rozpoczęciem tej');
+        throw new ValidationError(
+          "Musisz ukończyć wymagane lekcje przed rozpoczęciem tej"
+        );
       }
     }
     
@@ -128,19 +127,14 @@ export const getLessonById = async (req, res, next) => {
       duration: lesson.duration,
       points: lesson.points,
       requiredLevel: lesson.requiredLevel,
-      requirements: lesson.requirements.map(req => ({
-        id: req._id,
-        title: req.title,
-        isCompleted: completedChallenges.includes(req._id)
-      })),
-      isCompleted: completedChallenges.includes(lesson._id),
+      isCompleted: completedLessons.some((id) => id.equals(lesson._id)),
       content: {
         xp: lessonContent.xp,
         rewards: lessonContent.rewards,
-        sections: lessonContent.sections
-      }
+        sections: lessonContent.sections,
+      },
     };
-    
+
     res.json(response);
   } catch (error) {
     next(error);
@@ -151,39 +145,50 @@ export const completeLesson = async (req, res, next) => {
   try {
     const { id } = req.params;
     const userId = req.user.userId;
-    
+
     const [lesson, user] = await Promise.all([
-      Lesson.findById(id),
-      User.findById(userId)
+      Lesson.findOne({ slug: id }),
+      User.findById(userId),
     ]);
 
     if (!lesson) {
-      throw new ValidationError('Lekcja nie została znaleziona');
+      throw new ValidationError("Lekcja nie została znaleziona");
     }
-    
-    const completedLessons = user.stats?.completedChallenges || [];
-    if (completedLessons.some(lessonId => lessonId.toString() === id)) {
-      throw new ValidationError('Lekcja została już ukończona');
+
+    const isCompleted = user.stats?.completedLessons?.some(
+      (lessonId) => lessonId.toString() === lesson._id.toString()
+    );
+
+    if (isCompleted) {
+      throw new ValidationError("Lekcja została już ukończona");
     }
-    
+
     user.stats = user.stats || {};
-    user.stats.completedChallenges = [...completedLessons, lesson._id];
-    user.stats.totalPoints = (user.stats.totalPoints || 0) + lesson.points;
-    
+    user.stats.completedLessons = user.stats.completedLessons || [];
+    user.stats.points = (user.stats.points || 0) + (lesson.points || 0);
+    user.stats.completedLessons.push(lesson._id);
+
     const today = new Date().toDateString();
-    const lastActive = user.stats.lastActive ? new Date(user.stats.lastActive).toDateString() : null;
-    
+    const lastActive = user.stats.lastActive
+      ? new Date(user.stats.lastActive).toDateString()
+      : null;
+
     if (today !== lastActive) {
       user.stats.streak = (user.stats.streak || 0) + 1;
     }
-    
+
     user.stats.lastActive = new Date();
     await user.save();
-    
+
     res.json({
-      message: 'Lekcja ukończona',
+      message: "Lekcja ukończona",
       points: lesson.points,
-      stats: user.stats
+      stats: {
+        points: user.stats.points,
+        completedLessons: user.stats.completedLessons.length,
+        streak: user.stats.streak,
+        lastActive: user.stats.lastActive,
+      },
     });
   } catch (error) {
     next(error);

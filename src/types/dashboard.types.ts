@@ -1,6 +1,6 @@
 export interface DashboardStats {
-  completedChallenges: number;
-  totalPoints: number;
+  level: number;
+  points: number;
   streak: number;
   lastActive: string;
 }
