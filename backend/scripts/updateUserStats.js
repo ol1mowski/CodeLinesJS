@@ -13,37 +13,56 @@ const updateUserStats = async () => {
     console.log(`Znaleziono ${users.length} użytkowników do aktualizacji`);
 
     for (const user of users) {
-      // Inicjalizacja stats jeśli nie istnieje
       if (!user.stats) {
         user.stats = {};
       }
 
-      // Zachowaj istniejące wartości lub ustaw domyślne
-      user.stats = {
-        // Zachowaj istniejące pola
-        points: user.stats.points || 0,
-        level: user.stats.level || 1,
-        xp: user.stats.xp || 0,
-        streak: user.stats.streak || 0,
-        pointsToNextLevel: user.stats.pointsToNextLevel || 1000,
-        bestStreak: user.stats.bestStreak || 0,
-        lastActive: user.stats.lastActive || new Date(),
-        learningPaths: user.stats.learningPaths || [],
-        categories: user.stats.categories || [],
-        daily: user.stats.daily || [],
+      const existingStats = { ...user.stats };
 
-        // Dodaj nowe pola
-        experiencePoints: user.stats.xp || 0,
-        nextLevelThreshold: user.stats.pointsToNextLevel || 1000,
-        completedChallenges: user.stats.completedChallenges || 0,
-        currentStreak: user.stats.streak || 0,
-        averageScore: user.stats.averageScore || 0,
-        totalTimeSpent: user.stats.totalTimeSpent || 0,
-        badges: user.stats.badges || [],
-        unlockedFeatures: user.stats.unlockedFeatures || [],
+      const last7Days = [];
+      const today = new Date();
+      
+      for (let i = 6; i >= 0; i--) {
+        const date = new Date(today);
+        date.setDate(date.getDate() - i);
+        const dateStr = date.toISOString().split('T')[0];
+        
+        const dailyStats = existingStats.daily?.find(d => d.date === dateStr);
+        
+        last7Days.push({
+          date: dateStr,
+          points: dailyStats?.points || 0,
+          timeSpent: 0 
+        });
+      }
+
+      user.stats = {
+        ...existingStats,
+        points: existingStats.points || 0,
+        level: existingStats.level || 1,
+        xp: existingStats.xp || 0,
+        streak: existingStats.streak || 0,
+        pointsToNextLevel: existingStats.pointsToNextLevel || 1000,
+        bestStreak: existingStats.bestStreak || 0,
+        lastActive: existingStats.lastActive || new Date(),
+        learningPaths: existingStats.learningPaths || [],
+        categories: existingStats.categories || [],
+        daily: existingStats.daily || [],
+        experiencePoints: existingStats.xp || 0,
+        nextLevelThreshold: existingStats.pointsToNextLevel || 1000,
+        completedChallenges: existingStats.completedChallenges || 0,
+        currentStreak: existingStats.streak || 0,
+        averageScore: existingStats.averageScore || 0,
+        totalTimeSpent: existingStats.totalTimeSpent || 0,
+        badges: existingStats.badges || [],
+        unlockedFeatures: existingStats.unlockedFeatures || [],
         chartData: {
-          daily: user.stats.chartData?.daily || [],
-          categories: user.stats.chartData?.categories || []
+          daily: last7Days,
+          progress: existingStats.chartData?.progress || [{
+            day: today.toISOString().split('T')[0],
+            points: existingStats.points || 0,
+            timeSpent: existingStats.totalTimeSpent || 0
+          }]
         }
       };
 

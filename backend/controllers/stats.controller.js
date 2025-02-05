@@ -12,7 +12,7 @@ export const getStats = async (req, res, next) => {
 
     if (!user) throw new ValidationError('Nie znaleziono użytkownika');
 
-    const stats = user.stats || {};
+    const stats = user.stats || {};  
 
     const pointsToNextLevel = stats.pointsToNextLevel || calculatePointsToNextLevel(stats.level || 1);
 
@@ -36,16 +36,7 @@ export const getStats = async (req, res, next) => {
         badges: stats.badges || [],
         unlockedFeatures: stats.unlockedFeatures || [],
         chartData: {
-          daily: stats.chartData?.daily || stats.daily?.map(d => ({
-            date: d.date,
-            points: d.points,
-            timeSpent: d.timeSpent || 0
-          })) || [],
-          categories: stats.chartData?.categories || stats.categories?.map(c => ({
-            name: c.name,
-            progress: c.progress,
-            timeSpent: c.timeSpent || 0
-          })) || []
+          daily: stats.chartData?.daily || [],
         }
       }
     });
@@ -64,14 +55,14 @@ export const getDailyStats = async (req, res, next) => {
     if (!userId) throw new AuthError('Brak autoryzacji');
 
     const user = await User.findById(userId)
-      .select('stats.daily')
+      .select('stats.chartData.daily')
       .lean();
 
     if (!user) throw new ValidationError('Nie znaleziono użytkownika');
 
     res.json({
       status: 'success',
-      data: user.stats?.daily || []
+      data: user.stats?.chartData?.daily || []
     });
   } catch (error) {
     next(error);
@@ -132,15 +123,17 @@ export const updateStats = async (req, res, next) => {
     }
 
     const todayStr = today.toISOString().split('T')[0];
-    if (!user.stats.daily) user.stats.daily = [];
+    if (!user.stats.chartData.daily) user.stats.chartData.daily = [];
 
-    const dailyIndex = user.stats.daily.findIndex(d => d.date === todayStr);
+    const dailyIndex = user.stats.chartData.daily.findIndex(d => d.date === todayStr);
+
 
     if (dailyIndex >= 0) {
-      user.stats.daily[dailyIndex].points += req.body.points || 0;
-      user.stats.daily[dailyIndex].challenges += req.body.challenges || 0;
+      user.stats.chartData.daily[dailyIndex].points += req.body.points || 0;
+      user.stats.chartData.daily[dailyIndex].challenges += req.body.challenges || 0;
     } else {
-      user.stats.daily.push({
+      user.stats.chartData.daily.push({
+
         date: todayStr,
         points: req.body.points || 0,
         challenges: req.body.challenges || 0

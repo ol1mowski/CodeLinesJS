@@ -82,7 +82,7 @@ const userSchema = new mongoose.Schema(
           points: { type: Number, default: 0 },
           timeSpent: { type: Number, default: 0 }
         }],
-        categories: [{
+        progress: [{
           name: String,
           progress: { type: Number, default: 0 },
           timeSpent: { type: Number, default: 0 }
