@@ -63,6 +63,31 @@ const userSchema = new mongoose.Schema(
       pointsToNextLevel: { type: Number, default: 1000 },
       bestStreak: { type: Number, default: 0 },
       lastActive: { type: Date },
+      experiencePoints: { type: Number, default: 0 },
+      nextLevelThreshold: { type: Number, default: 1000 },
+      completedChallenges: { type: Number, default: 0 },
+      currentStreak: { type: Number, default: 0 },
+      averageScore: { type: Number, default: 0 },
+      totalTimeSpent: { type: Number, default: 0 },
+      badges: [{
+        name: { type: String, default: 'Odznaka' },
+        icon: { type: String, default: '🏆' },
+        earnedAt: { type: Date, default: Date.now },
+        description: { type: String, default: 'Odznaka za osiągnięcie' }
+      }],
+      unlockedFeatures: [String],
+      chartData: {
+        daily: [{
+          date: String,
+          points: { type: Number, default: 0 },
+          timeSpent: { type: Number, default: 0 }
+        }],
+        categories: [{
+          name: String,
+          progress: { type: Number, default: 0 },
+          timeSpent: { type: Number, default: 0 }
+        }]
+      },
       learningPaths: [
         {
           pathId: {

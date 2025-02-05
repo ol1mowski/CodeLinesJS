@@ -41,6 +41,8 @@ export const StatsSection = memo(() => {
       message="Brak dostępnych statystyk." 
     />;
   }  
+  
+
 
   return (
     <>

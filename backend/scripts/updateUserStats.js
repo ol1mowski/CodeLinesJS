@@ -13,54 +13,39 @@ const updateUserStats = async () => {
     console.log(`Znaleziono ${users.length} użytkowników do aktualizacji`);
 
     for (const user of users) {
-      const existingStats = user.stats || {};
-      
-      user.stats = {
-        points: existingStats.points || 0,
-        completedLessons: existingStats.completedLessons || [],
-        lastActive: existingStats.lastActive || new Date(),
-        
-        level: existingStats.level || 1,
-        xp: existingStats.xp || existingStats.points || 0,
-        streak: existingStats.streak || 0,
-        bestStreak: existingStats.bestStreak || 0,
-    
-        categories: existingStats.categories || [
-          {
-            name: 'javascript',
-            progress: 0,
-            level: 1
-          },
-          {
-            name: 'react',
-            progress: 0,
-            level: 1
-          },
-          {
-            name: 'node',
-            progress: 0,
-            level: 1
-          },
-          {
-            name: 'database',
-            progress: 0,
-            level: 1
-          },
-          {
-            name: 'testing',
-            progress: 0,
-            level: 1
-          }
-        ],
-        
-        daily: existingStats.daily || [{
-          date: new Date().toISOString().split('T')[0],
-          points: 0,
-          challenges: 0
-        }]
-      };
+      // Inicjalizacja stats jeśli nie istnieje
+      if (!user.stats) {
+        user.stats = {};
+      }
 
-      user.stats.level = Math.floor(user.stats.xp / 100) + 1;
+      // Zachowaj istniejące wartości lub ustaw domyślne
+      user.stats = {
+        // Zachowaj istniejące pola
+        points: user.stats.points || 0,
+        level: user.stats.level || 1,
+        xp: user.stats.xp || 0,
+        streak: user.stats.streak || 0,
+        pointsToNextLevel: user.stats.pointsToNextLevel || 1000,
+        bestStreak: user.stats.bestStreak || 0,
+        lastActive: user.stats.lastActive || new Date(),
+        learningPaths: user.stats.learningPaths || [],
+        categories: user.stats.categories || [],
+        daily: user.stats.daily || [],
+
+        // Dodaj nowe pola
+        experiencePoints: user.stats.xp || 0,
+        nextLevelThreshold: user.stats.pointsToNextLevel || 1000,
+        completedChallenges: user.stats.completedChallenges || 0,
+        currentStreak: user.stats.streak || 0,
+        averageScore: user.stats.averageScore || 0,
+        totalTimeSpent: user.stats.totalTimeSpent || 0,
+        badges: user.stats.badges || [],
+        unlockedFeatures: user.stats.unlockedFeatures || [],
+        chartData: {
+          daily: user.stats.chartData?.daily || [],
+          categories: user.stats.chartData?.categories || []
+        }
+      };
 
       await user.save();
       console.log(`Zaktualizowano statystyki dla użytkownika ${user.username}`);

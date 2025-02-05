@@ -8,7 +8,7 @@ export const useStatsCards = (stats: UserStats | undefined) => {
 
   return useMemo(() => {
     if (!stats) return [];
-    
+        
     return [
       {
         icon: FaTrophy,

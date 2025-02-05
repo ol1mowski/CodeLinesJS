@@ -7,7 +7,7 @@ export const getStats = async (req, res, next) => {
     if (!userId) throw new AuthError('Brak autoryzacji');
 
     const user = await User.findById(userId)
-      .select('stats.points stats.level stats.xp stats.streak stats.bestStreak stats.lastActive stats.pointsToNextLevel username')
+      .select('stats username')
       .lean();
 
     if (!user) throw new ValidationError('Nie znaleziono użytkownika');
@@ -26,7 +26,27 @@ export const getStats = async (req, res, next) => {
         points: stats.points || 0,
         streak: stats.streak || 0,
         bestStreak: stats.bestStreak || 0,
-        lastActive: stats.lastActive || new Date()
+        lastActive: stats.lastActive || new Date(),
+        experiencePoints: stats.xp || 0,
+        nextLevelThreshold: pointsToNextLevel,
+        completedChallenges: stats.completedChallenges || 0,
+        currentStreak: stats.streak || 0,
+        averageScore: stats.averageScore || 0,
+        totalTimeSpent: stats.totalTimeSpent || 0,
+        badges: stats.badges || [],
+        unlockedFeatures: stats.unlockedFeatures || [],
+        chartData: {
+          daily: stats.chartData?.daily || stats.daily?.map(d => ({
+            date: d.date,
+            points: d.points,
+            timeSpent: d.timeSpent || 0
+          })) || [],
+          categories: stats.chartData?.categories || stats.categories?.map(c => ({
+            name: c.name,
+            progress: c.progress,
+            timeSpent: c.timeSpent || 0
+          })) || []
+        }
       }
     });
   } catch (error) {
@@ -76,7 +96,16 @@ export const updateStats = async (req, res, next) => {
         streak: 0,
         bestStreak: 0,
         daily: [],
-        lastActive: new Date()
+        lastActive: new Date(),
+        completedChallenges: 0,
+        averageScore: 0,
+        totalTimeSpent: 0,
+        badges: [],
+        unlockedFeatures: [],
+        chartData: {
+          daily: [],
+          categories: []
+        }
       };
     }
 
@@ -130,7 +159,16 @@ export const updateStats = async (req, res, next) => {
         pointsToNextLevel: user.stats.pointsToNextLevel,
         streak: user.stats.streak,
         bestStreak: user.stats.bestStreak,
-        lastActive: user.stats.lastActive
+        lastActive: user.stats.lastActive,
+        experiencePoints: user.stats.xp,
+        nextLevelThreshold: user.stats.pointsToNextLevel,
+        completedChallenges: user.stats.completedChallenges,
+        currentStreak: user.stats.streak,
+        averageScore: user.stats.averageScore,
+        totalTimeSpent: user.stats.totalTimeSpent,
+        badges: user.stats.badges,
+        unlockedFeatures: user.stats.unlockedFeatures,
+        chartData: user.stats.chartData
       }
     });
   } catch (error) {

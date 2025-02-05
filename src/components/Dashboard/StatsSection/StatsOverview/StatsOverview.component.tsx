@@ -26,7 +26,8 @@ const container = {
 
 export const StatsOverview = memo(({ stats, isLoading }: StatsOverviewProps) => {
   const { data: statsData, error } = useUserStats();
-  const statsCards = useStatsCards(statsData || stats);
+
+  const statsCards = useStatsCards(statsData);
 
   if (isLoading) {
     return <LoadingScreen />;
@@ -45,6 +46,8 @@ export const StatsOverview = memo(({ stats, isLoading }: StatsOverviewProps) => 
       </div>
     );
   }  
+
+  
 
   return (
     <motion.div

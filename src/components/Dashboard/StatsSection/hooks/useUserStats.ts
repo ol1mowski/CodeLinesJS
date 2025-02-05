@@ -23,11 +23,14 @@ const fetchUserStats = async (): Promise<UserStats> => {
       }
     }
 
-    const data = await response.json();
+    const dataParsed = await response.json();
+
+    const data = dataParsed.data;
 
     if (!data || typeof data !== 'object') {
       throw new Error('Otrzymano nieprawidłowe dane z serwera');
     }
+
 
     const formattedBadges = data.badges?.map((badge: any) => {
       if (typeof badge === 'string' || Array.isArray(badge)) {
@@ -65,6 +68,7 @@ const fetchUserStats = async (): Promise<UserStats> => {
         categories: data.chartData?.categories || []
       }
     };
+
 
     return stats;
   } catch (error) {
