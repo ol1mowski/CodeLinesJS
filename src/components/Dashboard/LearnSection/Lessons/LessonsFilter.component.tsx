@@ -1,40 +1,55 @@
 import { motion } from "framer-motion";
-import { memo } from "react";
-
-type FilterType = "all" | "beginner" | "intermediate" | "advanced";
+import { memo, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import { type FilterType } from "../types/filter.types";
 
 type LessonsFilterProps = {
-  activeFilter: string;
   onFilterChange: (filter: FilterType) => void;
+  className?: string;
 };
 
-const filters = [
-  { id: "all" as const, label: "Wszystkie" },
-  { id: "beginner" as const, label: "Podstawowe" },
-  { id: "intermediate" as const, label: "Średnie" },
-  { id: "advanced" as const, label: "Zaawansowane" }
+const filters: Array<{ id: FilterType; label: string }> = [
+  { id: "all", label: "Wszystkie" },
+  { id: "beginner", label: "Podstawowe" },
+  { id: "intermediate", label: "Średnie" },
+  { id: "advanced", label: "Zaawansowane" }
 ];
 
-export const LessonsFilter = memo(({ activeFilter, onFilterChange }: LessonsFilterProps) => {
+export const LessonsFilter = memo(({ onFilterChange, className = "" }: LessonsFilterProps) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeFilter = (searchParams.get("filter") as FilterType) || "all";
+
+  useEffect(() => {
+    onFilterChange(activeFilter);
+  }, [activeFilter, onFilterChange]);
+
+  const handleFilterChange = (newFilter: FilterType) => {
+    setSearchParams(newFilter === "all" ? { tab: "lessons" } : { filter: newFilter, tab: "lessons" });
+  };
+
   return (
-    <div className="flex gap-2">
-      {filters.map((filter) => (
-        <motion.button
-          key={filter.id}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={() => onFilterChange(filter.id)}
-          className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all
-            ${activeFilter === filter.id 
-              ? "text-js bg-js/10 border border-js/20" 
-              : "text-gray-400 hover:text-js/80 border border-transparent"
-            }`}
-        >
-          {filter.label}
-        </motion.button>
-      ))}
+    <div className={`flex gap-2 ${className}`}>
+      {filters.map((filter) => {
+        const isActive = activeFilter === filter.id;
+
+        return (
+          <motion.button
+            key={filter.id}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => handleFilterChange(filter.id)}
+            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all
+              ${isActive 
+                ? "text-js bg-js/10 border border-js/20" 
+                : "text-gray-400 hover:text-js/80 border border-transparent"
+              }`}
+          >
+            {filter.label}
+          </motion.button>
+        );
+      })}
     </div>
   );
 });
 
-LessonsFilter.displayName = "LessonsFilter"; 
+LessonsFilter.displayName = "LessonsFilter";

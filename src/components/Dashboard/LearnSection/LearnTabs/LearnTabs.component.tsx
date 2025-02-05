@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { memo } from "react";
 import { FaGraduationCap, FaBook, FaLightbulb } from "react-icons/fa";
 
-type TabType = "paths" | "lessons" | "resources";
+type TabType = "paths" | "lessons" | "resources" | "articles";
 
 type LearnTabsProps = {
   activeTab: TabType;

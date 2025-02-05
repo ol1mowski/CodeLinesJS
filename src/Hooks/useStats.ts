@@ -23,7 +23,6 @@ export const useStats = () => {
       }
 
       const data = await response.json();
-      console.log('Received stats:', data);
       
       return {
         ...data,

@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { FaTrophy, FaStar, FaChartLine } from "react-icons/fa";
+import { FaStar, FaChartLine, FaMedal } from "react-icons/fa";
 import { DashboardStats } from "../../../../types/dashboard.types";
 import { statsBlockStyles as styles } from "./style/StatsBlock.styles";
 import { useDateFormat } from "./hooks/useDateFormat";
@@ -22,7 +22,7 @@ const StatItem = memo(({ icon, label, value }: StatItemProps) => (
 
 StatItem.displayName = "StatItem";
 
-interface StatsBlockProps {
+type StatsBlockProps = {
   stats: DashboardStats;
 }
 
@@ -32,18 +32,19 @@ export const StatsBlock = memo(({ stats }: StatsBlockProps) => {
   return (
     <div className={styles.container}>
       <div className={styles.stats.grid}>
+
         <StatItem
-          icon={<FaTrophy />}
-          label="Ukończone Wyzwania"
-          value={stats.completedChallenges}
+          icon={<FaMedal />}
+          label="Poziom"
+          value={stats.level}
         />
-        
+
         <StatItem
           icon={<FaStar />}
           label="Punkty"
-          value={stats.totalPoints}
+          value={stats.points}
         />
-        
+
         <StatItem
           icon={<FaChartLine />}
           label="Seria"

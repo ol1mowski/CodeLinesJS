@@ -14,7 +14,7 @@ const statsSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
-  nextLevelThreshold: {
+  pointsToNextLevel: {
     type: Number,
     default: 1000
   },
