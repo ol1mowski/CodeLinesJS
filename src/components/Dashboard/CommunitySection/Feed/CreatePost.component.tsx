@@ -3,19 +3,27 @@ import { memo, useState } from "react";
 import { FaCode, FaImage, FaLink } from "react-icons/fa";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
+const token = sessionStorage.getItem('token') || localStorage.getItem('token');
+
 export const CreatePost = memo(() => {
   const [content, setContent] = useState("");
   const queryClient = useQueryClient();
 
+  const user = localStorage.getItem('user') || sessionStorage.getItem('user');
+
+  const userId = user ? JSON.parse(user).id : null;
+
   const createPostMutation = useMutation({
     mutationFn: async (content: string) => {
+
       const response = await fetch('http://localhost:5001/api/posts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({ content }),
+        body: JSON.stringify({ content, userId }),
+
       });
       
       if (!response.ok) {

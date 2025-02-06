@@ -1,6 +1,7 @@
 import { Post } from '../models/post.model.js';
+import { ValidationError } from '../utils/errors.js';
 
-export const getPosts = async (req, res) => {
+export const getPosts = async (req, res, next) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 5;
@@ -11,7 +12,7 @@ export const getPosts = async (req, res) => {
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
-        .populate('author', 'name avatar'),
+        .populate('author', 'username avatar'),
       Post.countDocuments()
     ]);
 
@@ -24,71 +25,107 @@ export const getPosts = async (req, res) => {
       nextPage
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
-export const createPost = async (req, res) => {
+export const createPost = async (req, res, next) => {
   try {
+    if (!req.body.content) {
+      throw new ValidationError('Treść posta jest wymagana');
+    }
+
     const post = new Post({
       content: req.body.content,
-      author: req.user.id,
+      author: req.user.userId,
+      likes: [],
+      comments: []
     });
+
     await post.save();
-    res.status(201).json(post);
+
+    const populatedPost = await Post.findById(post._id)
+      .populate('author', 'username avatar');
+
+    res.status(201).json(populatedPost);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
-export const likePost = async (req, res) => {
+export const likePost = async (req, res, next) => {
   try {
     const post = await Post.findById(req.params.id);
     if (!post) {
-      return res.status(404).json({ message: 'Post nie istnieje' });
+      throw new ValidationError('Post nie istnieje');
     }
 
-    const userLikeIndex = post.likes.indexOf(req.user.id);
+    const userLikeIndex = post.likes.indexOf(req.user.userId);
     if (userLikeIndex === -1) {
-      post.likes.push(req.user.id);
+      post.likes.push(req.user.userId);
     } else {
       post.likes.splice(userLikeIndex, 1);
     }
 
     await post.save();
-    res.json(post);
+
+    const populatedPost = await Post.findById(post._id)
+      .populate('author', 'username avatar');
+
+    res.json(populatedPost);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
-export const getComments = async (req, res) => {
+export const getComments = async (req, res, next) => {
   try {
     const post = await Post.findById(req.params.id)
-      .populate('comments')
+      .populate({
+        path: 'comments.author',
+        select: 'username avatar'
+      })
       .select('comments');
+
+    if (!post) {
+      throw new ValidationError('Post nie istnieje');
+    }
+
     res.json(post.comments);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
-export const addComment = async (req, res) => {
+export const addComment = async (req, res, next) => {
   try {
+    if (!req.body.content) {
+      throw new ValidationError('Treść komentarza jest wymagana');
+    }
+
     const post = await Post.findById(req.params.id);
     if (!post) {
-      return res.status(404).json({ message: 'Post nie istnieje' });
+      throw new ValidationError('Post nie istnieje');
     }
 
     const comment = {
       content: req.body.content,
-      author: req.user.id,
+      author: req.user.userId,
+      createdAt: new Date()
     };
 
     post.comments.push(comment);
     await post.save();
-    res.status(201).json(comment);
+
+    const populatedPost = await Post.findById(post._id)
+      .populate('author', 'username avatar')
+      .populate({
+        path: 'comments.author',
+        select: 'username avatar'
+      });
+
+    res.status(201).json(populatedPost.comments[populatedPost.comments.length - 1]);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 }; 

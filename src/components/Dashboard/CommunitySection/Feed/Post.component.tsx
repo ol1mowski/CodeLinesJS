@@ -19,7 +19,12 @@ export const Post = memo(({ post, onLike }: PostProps) => {
 
   const handleLike = useCallback(() => {
     setIsLiked(prev => !prev);
-    setLikesCount(prev => isLiked ? prev - 1 : prev + 1);
+    setLikesCount(prev => {
+      if (isLiked) {
+        return Math.max(0, prev - 1);
+      }
+      return prev + 1;
+    });
     onLike(post.id);
   }, [isLiked, post.id, onLike]);
 
@@ -38,10 +43,11 @@ export const Post = memo(({ post, onLike }: PostProps) => {
           <FaUserCircle className="w-6 h-6 text-js" />
         </div>
         <div>
-          <h3 className="font-medium text-js">{post.author.name}</h3>
+          <h3 className="font-medium text-js">{post.author.username}</h3>
           <span className="text-sm text-gray-400">
             {formatDistanceToNow(post.createdAt, { addSuffix: true, locale: pl })}
           </span>
+
         </div>
       </div>
       <PostContent content={post.content} />
@@ -56,6 +62,8 @@ export const Post = memo(({ post, onLike }: PostProps) => {
     </motion.div>
   );
 });
+
+
 
 const PostContent = memo(({ content }: { content: string }) => (
   <p className="text-gray-300 mb-4">{content}</p>
@@ -96,14 +104,6 @@ const PostActions = memo(({
     >
       <FaComment />
       <span>{commentsCount}</span>
-    </motion.button>
-    <motion.button
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.9 }}
-      className="flex items-center gap-2 text-gray-400 hover:text-indigo-400 transition-colors"
-    >
-      <FaShare />
-      <span>Udostępnij</span>
     </motion.button>
   </div>
 ));
