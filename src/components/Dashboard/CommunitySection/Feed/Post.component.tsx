@@ -1,6 +1,6 @@
 import { memo, useCallback, useState } from "react";
 import { motion } from "framer-motion";
-import { FaUserCircle, FaHeart, FaComment, FaShare } from "react-icons/fa";
+import { FaUserCircle, FaHeart, FaComment } from "react-icons/fa";
 import { formatDistanceToNow } from "date-fns";
 import { pl } from "date-fns/locale";
 import { Comments } from "./Comments.component";
@@ -28,19 +28,16 @@ export const Post = memo(({ post }: PostProps) => {
       return likePost(post._id);
     },
     onMutate: async () => {
-      // Optymistyczna aktualizacja UI
       setIsLiked(prev => !prev);
       setLikesCount(prev => isLiked ? prev - 1 : prev + 1);
     },
     onError: (error) => {
-      // Cofnij zmiany w przypadku błędu
       setIsLiked(prev => !prev);
       setLikesCount(prev => isLiked ? prev + 1 : prev - 1);
       toast.error("Nie udało się zaktualizować polubienia");
       console.error("Błąd podczas aktualizacji polubienia:", error);
     },
     onSettled: () => {
-      // Odśwież dane posta
       queryClient.invalidateQueries({ queryKey: ["posts"] });
     }
   });

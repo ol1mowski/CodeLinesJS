@@ -60,11 +60,13 @@ export const likePost = async (req, res, next) => {
       throw new ValidationError('Post nie istnieje');
     }
 
-    const userLikeIndex = post.likes.indexOf(req.user.userId);
-    if (userLikeIndex === -1) {
+    const isLiked = post.likes.includes(req.user.userId);
+    
+    if (req.body.isLiked && !isLiked) {
       post.likes.push(req.user.userId);
-    } else {
-      post.likes.splice(userLikeIndex, 1);
+    } else if (!req.body.isLiked && isLiked) {
+      const index = post.likes.indexOf(req.user.userId);
+      post.likes.splice(index, 1);
     }
 
     await post.save();
