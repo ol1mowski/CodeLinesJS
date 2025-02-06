@@ -5,32 +5,55 @@ import { formatDistanceToNow } from "date-fns";
 import { pl } from "date-fns/locale";
 import { Comments } from "./Comments.component";
 import { Post as PostType } from "../../../../types/post.types";
+import { likePost, unlikePost } from "../api/posts";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 
 type PostProps = {
   post: PostType;
-  onLike: (postId: string) => void;
 };
 
-export const Post = memo(({ post, onLike }: PostProps) => {
+export const Post = memo(({ post }: PostProps) => {
   const [showComments, setShowComments] = useState(false);
   const [isLiked, setIsLiked] = useState(post.isLiked);
   const [likesCount, setLikesCount] = useState(post.likesCount);
+  const queryClient = useQueryClient();
+
+  const likeMutation = useMutation({
+    mutationFn: async () => {
+      if (isLiked) {
+        return unlikePost(post._id);
+      }
+      return likePost(post._id);
+    },
+    onMutate: async () => {
+      // Optymistyczna aktualizacja UI
+      setIsLiked(prev => !prev);
+      setLikesCount(prev => isLiked ? prev - 1 : prev + 1);
+    },
+    onError: (error) => {
+      // Cofnij zmiany w przypadku błędu
+      setIsLiked(prev => !prev);
+      setLikesCount(prev => isLiked ? prev + 1 : prev - 1);
+      toast.error("Nie udało się zaktualizować polubienia");
+      console.error("Błąd podczas aktualizacji polubienia:", error);
+    },
+    onSettled: () => {
+      // Odśwież dane posta
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+    }
+  });
 
   const handleLike = useCallback(() => {
-    setIsLiked(prev => !prev);
-    setLikesCount(prev => {
-      if (isLiked) {
-        return Math.max(0, prev - 1);
-      }
-      return prev + 1;
-    });
-    onLike(post.id);
-  }, [isLiked, post.id, onLike]);
+    likeMutation.mutate();
+  }, [likeMutation]);
 
   const toggleComments = useCallback(() => {
     setShowComments(prev => !prev);
   }, []);
+
+
 
   return (
     <motion.div
@@ -57,8 +80,9 @@ export const Post = memo(({ post, onLike }: PostProps) => {
         commentsCount={post.commentsCount}
         onLike={handleLike}
         onCommentClick={toggleComments}
+        isLikeLoading={likeMutation.isPending}
       />
-      {showComments && <Comments postId={post.id} />}
+      <Comments postId={post._id} isOpen={showComments} />
     </motion.div>
   );
 });
@@ -75,6 +99,7 @@ type PostActionsProps = {
   commentsCount: number;
   onLike: () => void;
   onCommentClick: () => void;
+  isLikeLoading: boolean;
 };
 
 const PostActions = memo(({ 
@@ -82,18 +107,22 @@ const PostActions = memo(({
   likesCount, 
   commentsCount, 
   onLike, 
-  onCommentClick 
+  onCommentClick,
+  isLikeLoading 
 }: PostActionsProps) => (
   <div className="flex items-center gap-6">
     <motion.button
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
       onClick={onLike}
-      className={`flex items-center gap-2 focus:outline-none ${
-        isLiked ? "text-pink-500" : "text-gray-400 hover:text-pink-500"
-      } transition-colors`}
+      disabled={isLikeLoading}
+      className={`flex items-center gap-2 focus:outline-none 
+                ${isLiked ? "text-pink-500" : "text-gray-400 hover:text-pink-500"}
+                ${isLikeLoading ? "opacity-50 cursor-not-allowed" : ""}
+                transition-colors`}
     >
-      <FaHeart className={isLiked ? "fill-current" : "stroke-current"} />
+      <FaHeart className={`${isLiked ? "fill-current" : "stroke-current"}
+                        ${isLikeLoading ? "animate-pulse" : ""}`} />
       <span>{likesCount}</span>
     </motion.button>
     <motion.button

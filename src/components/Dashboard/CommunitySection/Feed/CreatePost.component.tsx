@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
 import { memo, useState } from "react";
-import { FaCode, FaImage, FaLink } from "react-icons/fa";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const token = sessionStorage.getItem('token') || localStorage.getItem('token');
@@ -56,17 +55,6 @@ export const CreatePost = memo(() => {
         rows={3}
       />
       <div className="flex justify-between items-center mt-4">
-        <div className="flex gap-4">
-          <button className="text-gray-400 hover:text-js transition-colors">
-            <FaCode className="text-xl" />
-          </button>
-          <button className="text-gray-400 hover:text-js transition-colors">
-            <FaImage className="text-xl" />
-          </button>
-          <button className="text-gray-400 hover:text-js transition-colors">
-            <FaLink className="text-xl" />
-          </button>
-        </div>
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
