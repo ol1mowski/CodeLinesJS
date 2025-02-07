@@ -10,18 +10,22 @@ import { useGroups } from "../../../../Hooks/useGroups";
 
 
 export const GroupsList = memo(() => {
-  const { groups, isLoading } = useGroups();
+  const { groups, isLoading, joinGroup, leaveGroup, isJoining, isLeaving } = useGroups();
 
-  const handleJoinGroup = useCallback((groupId: string) => {
-    console.log('Dołączanie do grupy:', groupId);
-  }, []);
+  const handleJoinGroup = useCallback((groupId: string, isJoined: boolean) => {
+    if (isJoined) {
+      leaveGroup(groupId);
+    } else {
+      joinGroup(groupId);
+    }
+  }, [joinGroup, leaveGroup]);
 
   if (isLoading) {
     return (
       <div className="space-y-4">
-        {[1, 2, 3].map(i => (
+        {Array.from({ length: 3 }).map((_, i) => (
           <motion.div
-            key={i}
+            key={`skeleton-${i}`}
             className="bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10 p-6 shadow-lg animate-pulse"
           >
             <div className="flex items-center gap-4">
@@ -48,11 +52,13 @@ export const GroupsList = memo(() => {
 
   return (
     <div className="space-y-4">
-      {groups?.map((group: Group) => (
+      {groups.map((group) => (
         <GroupCard 
-          key={group.id} 
+          key={group._id} 
           group={group} 
-          onJoin={handleJoinGroup} 
+          onJoin={handleJoinGroup}
+          isJoining={isJoining}
+          isLeaving={isLeaving}
         />
       ))}
     </div>
@@ -62,14 +68,20 @@ export const GroupsList = memo(() => {
 
 const GroupCard = memo(({ 
   group, 
-  onJoin 
+  onJoin,
+  isJoining,
+  isLeaving
 }: { 
-  group: Group; 
-  onJoin: (groupId: string) => void;
+  group: Group;
+  onJoin: (groupId: string, isJoined: boolean) => void;
+  isJoining: boolean;
+  isLeaving: boolean;
 }) => {
   const handleJoinClick = useCallback(() => {
-    onJoin(group.id);
-  }, [group.id, onJoin]);
+    onJoin(group._id, group.isJoined);
+  }, [group._id, group.isJoined, onJoin]);
+
+  const isLoading = (group.isJoined ? isLeaving : isJoining);
 
   return (
     <motion.div
@@ -102,11 +114,15 @@ const GroupCard = memo(({
               onClick={handleJoinClick}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              disabled={isLoading}
               className={`
                 px-4 py-2 bg-js text-dark rounded-lg hover:bg-js/90 transition-colors
+                ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}
               `}
             >
-              {group.isJoined ? "Opuść grupę" : "Dołącz"}
+              {isLoading 
+                ? (group.isJoined ? "Opuszczanie..." : "Dołączanie...") 
+                : (group.isJoined ? "Opuść grupę" : "Dołącz")}
             </motion.button>
           </div>
           
@@ -144,3 +160,4 @@ const GroupCard = memo(({
 });
 
 GroupCard.displayName = "GroupCard";
+GroupsList.displayName = "GroupsList";
