@@ -2,6 +2,13 @@ import { Group } from '../../types/groups.types';
 
 const BASE_URL = 'http://localhost:5001';
 
+const getToken = () => {
+  return sessionStorage.getItem('token') || localStorage.getItem('token');
+};
+
+const token = getToken();
+
+
 export const groupsApi = {
   getGroups: async (): Promise<Group[]> => {
     const response = await fetch(`${BASE_URL}/api/groups`);
@@ -16,6 +23,7 @@ export const groupsApi = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
       }
     });
     if (!response.ok) {

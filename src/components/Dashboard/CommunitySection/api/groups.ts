@@ -73,15 +73,53 @@ export const fetchGroups = async (): Promise<Group[]> => {
 
 export const joinGroup = async (groupId: string): Promise<void> => {
   const token = getToken();
+  console.log(token);
+  
   const response = await fetch(`http://localhost:5001/api/groups/${groupId}/join`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
-
     }
   });
+  
   if (!response.ok) {
-    throw new Error('Failed to join group');
+    if (response.status === 401) {
+      throw new Error('Sesja wygasła. Zaloguj się ponownie.');
+    }
+    throw new Error('Nie udało się dołączyć do grupy');
   }
+};
+
+export const fetchGroupMessages = async (groupId: string): Promise<Message[]> => {
+  const token = getToken();
+  const response = await fetch(`http://localhost:5001/api/groups/${groupId}/messages`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+  
+  if (!response.ok) {
+    throw new Error('Nie udało się pobrać wiadomości');
+  }
+  
+  return response.json();
+};
+
+export const sendGroupMessage = async (groupId: string, content: string): Promise<Message> => {
+  const token = getToken();
+  const response = await fetch(`http://localhost:5001/api/groups/${groupId}/messages`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({ content })
+  });
+  
+  if (!response.ok) {
+    throw new Error('Nie udało się wysłać wiadomości');
+  }
+  
+  return response.json();
 };

@@ -1,7 +1,5 @@
 const token = sessionStorage.getItem("token") || localStorage.getItem("token");
 
-const parsedUser = localStorage.getItem("user") || sessionStorage.getItem("user");
-
 
 export const addComment = async (postId: string, content: string) => {
   const response = await fetch(`http://localhost:5001/api/posts/${postId}/comments`, {
@@ -25,18 +23,6 @@ type LikeResponse = {
   likesCount: number;
 };
 
-const getUser = () => {
-  try {
-    const parsedUser = localStorage.getItem("user") || sessionStorage.getItem("user");
-    return parsedUser ? JSON.parse(parsedUser) : null;
-  } catch (error) {
-    console.error("Błąd podczas parsowania danych użytkownika:", error);
-    return null;
-  }
-};
-
-const user = getUser();
-const userId = user?.id;
 
 export const toggleLike = async (postId: string, isLiked: boolean): Promise<LikeResponse> => {
   console.log('API call - setting like to:', isLiked);
