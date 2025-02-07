@@ -38,7 +38,10 @@ export const createPost = async (req, res, next) => {
     const post = new Post({
       content: req.body.content,
       author: req.user.userId,
-      likes: [],
+      likes: {
+        count: 0,
+        userIds: []
+      },
       comments: []
     });
 
@@ -55,26 +58,53 @@ export const createPost = async (req, res, next) => {
 
 export const likePost = async (req, res, next) => {
   try {
+    const userId = req.user.userId;
     const post = await Post.findById(req.params.id);
+    
     if (!post) {
       throw new ValidationError('Post nie istnieje');
     }
 
-    const isLiked = post.likes.includes(req.user.userId);
-    
-    if (req.body.isLiked && !isLiked) {
-      post.likes.push(req.user.userId);
-    } else if (!req.body.isLiked && isLiked) {
-      const index = post.likes.indexOf(req.user.userId);
-      post.likes.splice(index, 1);
+    if (!post.likes) {
+      post.likes = {
+        count: 0,
+        userIds: []
+      };
     }
 
+    if (!post.likes.userIds) {
+      post.likes.userIds = [];
+    }
+
+    if (typeof post.likes.count !== 'number') {
+      post.likes.count = 0;
+    }
+
+    const hasLiked = post.likes.userIds.some(id => id.toString() === userId.toString());
+    const isLiked = Boolean(req.body.isLiked);
+
+    if (isLiked && !hasLiked) {
+      post.likes.userIds.push(userId);
+      post.likes.count += 1;
+    } else if (!isLiked && hasLiked) {
+      post.likes.userIds = post.likes.userIds.filter(id => id.toString() !== userId.toString());
+      post.likes.count = Math.max(0, post.likes.count - 1);
+    }
+
+    post.markModified('likes');
     await post.save();
 
     const populatedPost = await Post.findById(post._id)
-      .populate('author', 'username avatar');
+      .populate('author', 'username avatar')
+      .populate({
+        path: 'comments.author',
+        select: 'username avatar'
+      });
 
-    res.json(populatedPost);
+    res.json({
+      ...populatedPost.toObject(),
+      isLiked: post.likes.userIds.some(id => id.toString() === userId.toString())
+    });
   } catch (error) {
     next(error);
   }

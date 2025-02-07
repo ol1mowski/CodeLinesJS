@@ -158,20 +158,18 @@ export const Comments = memo(({ postId, isOpen }: CommentsProps) => {
                   {comment.author.avatar ? (
                     <img
                       src={comment.author.avatar}
-                      alt={comment.author.username}
+                      alt={comment.author.name}
                       className="w-10 h-10 rounded-full"
                     />
-
                   ) : (
                     <FaUserCircle className="w-10 h-10 text-gray-400" />
                   )}
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="font-medium text-gray-300">
-                        {comment.author.username}
+                        {comment.author.name}
                       </span>
                       <span className="text-sm text-gray-500">
-
                         {new Date(comment.createdAt).toLocaleDateString()}
                       </span>
                     </div>
