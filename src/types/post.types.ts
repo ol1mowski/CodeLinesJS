@@ -7,7 +7,7 @@ export type Post = {
   };
   content: string;
   createdAt: Date;
-  likes: string[];
+  likes: number;
   commentsCount: number;
 };
 

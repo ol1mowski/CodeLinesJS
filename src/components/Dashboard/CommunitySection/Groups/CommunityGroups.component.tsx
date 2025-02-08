@@ -1,6 +1,5 @@
 import { memo } from "react";
 import { GroupsList } from "./GroupsList.component";
-
 import { YourGroups } from "./YourGroups.component";
 import { GroupsFilter } from "./GroupsFilter.component";
 import { CreateGroupButton } from "./CreateGroupButton.component";

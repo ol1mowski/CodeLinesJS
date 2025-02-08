@@ -12,7 +12,7 @@ const router = express.Router();
 
 router.get('/', getPosts);
 router.post('/', authMiddleware, createPost);
-router.post('/:id/like', authMiddleware, likePost);
+router.put('/:id/like', authMiddleware, likePost);
 router.get('/:id/comments', getComments);
 router.post('/:id/comments', authMiddleware, addComment);
 
