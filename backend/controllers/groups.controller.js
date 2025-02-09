@@ -71,6 +71,11 @@ export const createGroupController = async (req, res, next) => {
       throw new ValidationError('Grupa o takiej nazwie już istnieje');
     }
 
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new ValidationError('Użytkownik nie istnieje');
+    }
+
     const group = new Group({
       name,
       description,
@@ -80,12 +85,30 @@ export const createGroupController = async (req, res, next) => {
       lastActive: new Date()
     });
 
-    await group.save();
+    const membershipDetails = {
+      groupId: group._id,
+      joinedAt: new Date(),
+      role: 'admin',
+      notifications: true,
+      lastActivity: new Date()
+    };
+
+    user.groups.push(membershipDetails);
+
+    await Promise.all([
+      group.save(),
+      user.save()
+    ]);
 
     const populatedGroup = await Group.findById(group._id)
       .populate('members', 'username avatar');
 
-    res.status(201).json(populatedGroup);
+    res.status(201).json({
+      ...populatedGroup.toObject(),
+      isMember: true,
+      membershipDetails,
+      isAdmin: true
+    });
   } catch (error) {
     next(error);
   }
@@ -120,7 +143,6 @@ export const joinGroupController = async (req, res, next) => {
         user.groups.splice(userGroupIndex, 1);
       }
 
-      // Jeśli po usunięciu członków ich liczba wynosi 0, usuń grupę
       if (group.membersCount === 0) {
         await Group.findByIdAndDelete(groupId);
       } else {
