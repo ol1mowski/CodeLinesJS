@@ -129,7 +129,6 @@ export const CreateGroupForm = memo(({ isOpen, onClose }: CreateGroupFormProps) 
             className="fixed inset-4 lg:inset-12 bg-dark/95 backdrop-blur-lg rounded-2xl shadow-2xl z-50 overflow-hidden"
             onClick={e => e.stopPropagation()}
           >
-            {/* Nagłówek */}
             <div className="absolute top-0 inset-x-0 bg-gradient-to-b from-js/5 to-transparent h-32">
               <div className="flex justify-between items-center p-6">
                 <div>
@@ -147,10 +146,8 @@ export const CreateGroupForm = memo(({ isOpen, onClose }: CreateGroupFormProps) 
               </div>
             </div>
 
-            {/* Formularz */}
             <div className="h-full overflow-y-auto pt-32 pb-24">
               <form onSubmit={onSubmit} className="max-w-3xl mx-auto p-6 space-y-8">
-                {/* Nazwa grupy */}
                 <div className="space-y-2">
                   <label className="text-js font-medium block">Nazwa grupy</label>
                   <input
@@ -168,7 +165,6 @@ export const CreateGroupForm = memo(({ isOpen, onClose }: CreateGroupFormProps) 
                   )}
                 </div>
 
-                {/* Opis grupy */}
                 <div className="space-y-2">
                   <label className="text-js font-medium block">Opis grupy</label>
                   <textarea
@@ -184,7 +180,6 @@ export const CreateGroupForm = memo(({ isOpen, onClose }: CreateGroupFormProps) 
                   )}
                 </div>
 
-                {/* Tagi */}
                 <div className="space-y-2">
                   <label className="text-js font-medium block">Tagi (max. 5)</label>
                   <Controller
@@ -254,7 +249,6 @@ export const CreateGroupForm = memo(({ isOpen, onClose }: CreateGroupFormProps) 
               </form>
             </div>
 
-            {/* Przyciski akcji */}
             <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-dark/95 to-transparent p-6">
               <div className="max-w-3xl mx-auto flex gap-4">
                 <motion.button
