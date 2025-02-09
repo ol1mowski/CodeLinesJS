@@ -11,7 +11,7 @@ import { z } from "zod";
 
 
 
-const AVAILABLE_TAGS = [
+export const AVAILABLE_TAGS = [
   { value: 'javascript', label: 'JavaScript' },
   { value: 'typescript', label: 'TypeScript' },
   { value: 'react', label: 'React' },

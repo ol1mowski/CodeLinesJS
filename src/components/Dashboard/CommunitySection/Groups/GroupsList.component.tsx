@@ -1,4 +1,4 @@
-import { memo, useCallback } from "react";
+import { memo, useCallback, useMemo } from "react";
 import { motion } from "framer-motion";
 import { FaUsers, FaComments, FaClock } from "react-icons/fa";
 import { HiOutlineUserGroup } from "react-icons/hi2";
@@ -7,10 +7,27 @@ import { formatDistanceToNow } from "date-fns";
 import { pl } from "date-fns/locale";
 import { Group } from "../../../../types/groups.types";
 import { useGroups } from "../../../../Hooks/useGroups";
+import { useGroupsSearch } from "./context/GroupsSearchContext";
 
 
 export const GroupsList = memo(() => {
   const { groups, isLoading, joinGroup, leaveGroup, isJoining, isLeaving } = useGroups();
+  const { searchQuery, selectedTags } = useGroupsSearch();
+
+  const filteredGroups = useMemo(() => {
+    if (!groups) return [];
+    
+    return groups.filter(group => {
+      const matchesSearch = searchQuery.toLowerCase().trim() === '' || 
+        group.name.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
+        group.description.toLowerCase().includes(searchQuery.toLowerCase().trim());
+
+      const matchesTags = selectedTags.length === 0 || 
+        selectedTags.every(tag => group.tags.includes(tag));
+
+      return matchesSearch && matchesTags;
+    });
+  }, [groups, searchQuery, selectedTags]);
 
   const handleJoinGroup = useCallback((groupId: string, isJoined: boolean) => {
     if (isJoined) {
@@ -41,18 +58,18 @@ export const GroupsList = memo(() => {
     );
   }
 
-  if (!groups?.length) {
+  if (!filteredGroups.length) {
     return (
       <div className="text-center text-gray-400 py-8">
         <HiOutlineUserGroup className="w-12 h-12 mx-auto mb-3 opacity-50" />
-        <div>Nie znaleziono żadnych grup</div>
+        <div>Nie znaleziono grup spełniających kryteria wyszukiwania</div>
       </div>
     );
   }
 
   return (
     <div className="space-y-4">
-      {groups.map((group) => (
+      {filteredGroups.map((group) => (
         <GroupCard 
           key={group._id} 
           group={group} 
