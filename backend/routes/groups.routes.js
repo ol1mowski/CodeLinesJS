@@ -4,12 +4,12 @@ import {
   getGroupsController, 
   createGroupController,
   joinGroupController,
-  checkGroupName 
+  checkGroupName
 } from '../controllers/groups.controller.js';
 
 const router = Router();
 
-router.get('/', getGroupsController);
+router.get('/', authMiddleware, getGroupsController);
 router.post('/', authMiddleware, createGroupController);
 router.post('/:groupId/join', authMiddleware, joinGroupController);
 router.post('/check-name', authMiddleware, checkGroupName);

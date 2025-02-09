@@ -11,12 +11,17 @@ const token = getToken();
 
 export const groupsApi = {
   getGroups: async (): Promise<Group[]> => {
-    const response = await fetch(`${BASE_URL}/api/groups`);
+    const response = await fetch(`${BASE_URL}/api/groups`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
     if (!response.ok) {
       throw new Error('Failed to fetch groups');
     }
     return response.json();
   },
+
   
   joinGroup: async (groupId: string): Promise<void> => {
     const response = await fetch(`${BASE_URL}/api/groups/${groupId}/join`, {
