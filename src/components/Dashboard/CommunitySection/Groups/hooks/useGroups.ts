@@ -13,7 +13,7 @@ export const useGroups = () => {
   });
 
   const joinGroupMutation = useMutation({
-    mutationFn: joinGroup,
+    mutationFn: (groupId: string) => joinGroup(groupId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [GROUPS_QUERY_KEY] });
     }

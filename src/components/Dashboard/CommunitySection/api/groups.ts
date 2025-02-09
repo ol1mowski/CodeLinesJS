@@ -1,11 +1,14 @@
+import { Message } from "react-hook-form";
 import { Group } from "../../../../types/groups.types";
 
 const getToken = () => {
   return sessionStorage.getItem('token') || localStorage.getItem('token');
 };
 
+
 export const checkGroupNameAvailability = async (name: string): Promise<boolean> => {
   try {
+
     const token = getToken();
 
     const response = await fetch(`http://localhost:5001/api/groups/check-name`, {
@@ -73,7 +76,6 @@ export const fetchGroups = async (): Promise<Group[]> => {
 
 export const joinGroup = async (groupId: string): Promise<void> => {
   const token = getToken();
-  console.log(token);
   
   const response = await fetch(`http://localhost:5001/api/groups/${groupId}/join`, {
     method: 'POST',
@@ -83,6 +85,7 @@ export const joinGroup = async (groupId: string): Promise<void> => {
     }
   });
   
+
   if (!response.ok) {
     if (response.status === 401) {
       throw new Error('Sesja wygasła. Zaloguj się ponownie.');

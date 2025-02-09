@@ -1,4 +1,5 @@
 import { Group } from '../models/group.model.js';
+import { User } from '../models/user.model.js';
 import { ValidationError } from '../utils/errors.js';
 
 export const getGroupsController = async (req, res, next) => {
@@ -21,10 +22,10 @@ export const createGroupController = async (req, res, next) => {
       throw new ValidationError('Nazwa i opis grupy są wymagane');
     }
 
-    const existingGroup = await Group.findOne({ 
-      name: { 
-        $regex: new RegExp(`^${name}$`, 'i') 
-      } 
+    const existingGroup = await Group.findOne({
+      name: {
+        $regex: new RegExp(`^${name}$`, 'i')
+      }
     });
 
     if (existingGroup) {
@@ -56,29 +57,56 @@ export const joinGroupController = async (req, res, next) => {
     const { groupId } = req.params;
     const userId = req.user.userId;
 
-    const group = await Group.findById(groupId);
+    const [group, user] = await Promise.all([
+      Group.findById(groupId),
+      User.findById(userId)
+    ]);
+
     if (!group) {
       throw new ValidationError('Grupa nie istnieje');
     }
 
+    if (!user) {
+      throw new ValidationError('Użytkownik nie istnieje');
+    }
+
     const isMember = group.members.includes(userId);
+    const userGroupIndex = user.groups.findIndex(g => g.groupId.toString() === groupId);
+
     if (isMember) {
       group.members = group.members.filter(id => id.toString() !== userId);
       group.membersCount = Math.max(0, group.membersCount - 1);
+      
+      if (userGroupIndex !== -1) {
+        user.groups.splice(userGroupIndex, 1);
+      }
     } else {
       group.members.push(userId);
       group.membersCount += 1;
+
+      user.groups.push({
+        groupId: group._id,
+        joinedAt: new Date(),
+        role: 'member',
+        notifications: true,
+        lastActivity: new Date()
+      });
     }
 
     group.lastActive = new Date();
-    await group.save();
+
+    await Promise.all([
+      group.save(),
+      user.save()
+    ]);
 
     const populatedGroup = await Group.findById(group._id)
       .populate('members', 'username avatar');
 
     res.json({
       ...populatedGroup.toObject(),
-      isMember: !isMember
+      isMember: !isMember,
+      membershipDetails: !isMember ? user.groups[user.groups.length - 1] : null
     });
   } catch (error) {
     next(error);
@@ -93,22 +121,22 @@ export const checkGroupName = async (req, res, next) => {
       throw new ValidationError('Nazwa grupy jest wymagana');
     }
 
-    const existingGroup = await Group.findOne({ 
-      name: { 
-        $regex: new RegExp(`^${name}$`, 'i') 
-      } 
+    const existingGroup = await Group.findOne({
+      name: {
+        $regex: new RegExp(`^${name}$`, 'i')
+      }
     });
 
     if (existingGroup) {
-      return res.status(409).json({ 
+      return res.status(409).json({
         message: 'Grupa o takiej nazwie już istnieje',
-        available: false 
+        available: false
       });
     }
 
-    res.json({ 
+    res.json({
       message: 'Nazwa jest dostępna',
-      available: true 
+      available: true
     });
   } catch (error) {
     next(error);
