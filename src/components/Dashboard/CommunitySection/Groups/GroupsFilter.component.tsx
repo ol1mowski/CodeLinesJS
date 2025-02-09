@@ -23,7 +23,7 @@ export const GroupsFilter = memo(() => {
   const hasFilters = searchQuery || selectedTags.length > 0;
 
   return (
-    <div className="flex flex-col gap-4 w-full lg:max-w-2xl">
+    <div className="flex-1 flex flex-col gap-4">
       <div className="flex gap-4">
         <div className="relative flex-1">
           <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -39,7 +39,7 @@ export const GroupsFilter = memo(() => {
         {hasFilters && (
           <button
             onClick={handleClearFilters}
-            className="px-3 py-2 text-gray-400 hover:text-js transition-colors"
+            className="px-3 py-2 text-gray-400 hover:text-js transition-colors flex-shrink-0"
             title="Wyczyść filtry"
           >
             <FaTimes />
