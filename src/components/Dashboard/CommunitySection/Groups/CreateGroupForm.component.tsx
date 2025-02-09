@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useForm, Controller } from "react-hook-form";
 import { FaTimes } from "react-icons/fa";
@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import Select from 'react-select';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { createPortal } from 'react-dom';
 
 export const AVAILABLE_TAGS = [
   { value: 'javascript', label: 'JavaScript' },
@@ -109,10 +110,22 @@ export const CreateGroupForm = memo(({ isOpen, onClose }: CreateGroupFormProps) 
     }
   });
 
-  return (
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
+
+  return createPortal(
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[9999] overflow-hidden">
+        <div className="fixed inset-0 z-[9999] isolate">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -121,13 +134,13 @@ export const CreateGroupForm = memo(({ isOpen, onClose }: CreateGroupFormProps) 
             onClick={onClose}
           />
           
-          <form onSubmit={handleSubmit(onSubmit)} className="relative h-screen">
+          <form onSubmit={handleSubmit(onSubmit)} className="fixed inset-0 overflow-hidden">
             <motion.div
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 50 }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed inset-0 overflow-y-auto scrollbar-thin scrollbar-track-dark/20 
+              className="h-full overflow-y-auto scrollbar-thin scrollbar-track-dark/20 
                        scrollbar-thumb-js/20 hover:scrollbar-thumb-js/30"
             >
               <div className="min-h-screen bg-dark/95 backdrop-blur-md py-6">
@@ -282,7 +295,8 @@ export const CreateGroupForm = memo(({ isOpen, onClose }: CreateGroupFormProps) 
           </form>
         </div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 });
 
