@@ -1,5 +1,4 @@
 import { memo } from "react";
-import { motion } from "framer-motion";
 import { FaUsers } from "react-icons/fa";
 import { useGroups } from "../../../../Hooks/useGroups";
 import { Link } from "react-router-dom";
@@ -7,7 +6,9 @@ import { Link } from "react-router-dom";
 export const YourGroups = memo(() => {
   const { groups, isLoading } = useGroups();
 
-  const userGroups = groups?.filter(group => group.isJoined) || [];
+  const userGroups = groups?.userGroups || [];
+
+  console.log(userGroups);
 
   if (isLoading) {
     return (
@@ -54,17 +55,9 @@ export const YourGroups = memo(() => {
             to={`/groups/${group._id}`}
             className="flex items-center gap-3 p-2 rounded-lg hover:bg-dark/40 transition-colors group"
           >
-            {group.image ? (
-              <img
-                src={group.image}
-                alt={group.name}
-                className="w-10 h-10 rounded-lg object-cover"
-              />
-            ) : (
-              <div className="w-10 h-10 rounded-lg bg-js/10 flex items-center justify-center">
-                <FaUsers className="w-5 h-5 text-js" />
-              </div>
-            )}
+            <div className="w-10 h-10 rounded-lg bg-js/10 flex items-center justify-center">
+              <FaUsers className="w-5 h-5 text-js" />
+            </div>
             <div>
               <h3 className="font-medium text-gray-200 group-hover:text-js transition-colors">
                 {group.name}

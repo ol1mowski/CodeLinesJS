@@ -71,7 +71,9 @@ export const fetchGroups = async (): Promise<Group[]> => {
   if (!response.ok) {
     throw new Error('Failed to fetch groups');
   }
-  return response.json();
+  const data = await response.json();
+  console.log(data);
+  return data;
 };
 
 export const joinGroup = async (groupId: string): Promise<void> => {

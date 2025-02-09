@@ -17,7 +17,7 @@ export const GroupsList = memo(() => {
   const filteredGroups = useMemo(() => {
     if (!groups) return [];
     
-    return groups.filter(group => {
+    return groups?.groups?.filter(group => {
       const matchesSearch = searchQuery.toLowerCase().trim() === '' || 
         group.name.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
         group.description.toLowerCase().includes(searchQuery.toLowerCase().trim());

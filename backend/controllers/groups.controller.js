@@ -4,14 +4,46 @@ import { ValidationError } from '../utils/errors.js';
 
 export const getGroupsController = async (req, res, next) => {
   try {
-    const groups = await Group.find()
-      .sort({ lastActive: -1 })
-      .populate('members', 'username avatar');
-    res.json(groups);
+    const userId = req.user?.userId;
+
+    const [groups, user] = await Promise.all([
+      Group.find()
+        .sort({ lastActive: -1 })
+        .populate('members', 'username avatar'),
+      userId ? User.findById(userId)
+        .populate({
+          path: 'groups.groupId',
+          select: 'name membersCount image lastActive description'
+        }) : null
+    ]);
+
+    const formattedGroups = groups.map(group => ({
+      ...group.toObject(),
+      isMember: userId ? group.members.some(member => member._id.toString() === userId) : false,
+      membersCount: group.members.length
+    }));
+
+    const userGroups = user?.groups.map(membership => ({
+      _id: membership.groupId._id,
+      name: membership.groupId.name,
+      membersCount: membership.groupId.membersCount,
+      image: membership.groupId.image,
+      description: membership.groupId.description,
+      lastActive: membership.groupId.lastActive,
+      joinedAt: membership.joinedAt,
+      role: membership.role,
+      notifications: membership.notifications
+    })) || [];
+
+    res.json({
+      groups: formattedGroups,
+      userGroups: userGroups
+    });
   } catch (error) {
     next(error);
   }
 };
+
 
 export const createGroupController = async (req, res, next) => {
   try {
@@ -76,7 +108,7 @@ export const joinGroupController = async (req, res, next) => {
     if (isMember) {
       group.members = group.members.filter(id => id.toString() !== userId);
       group.membersCount = Math.max(0, group.membersCount - 1);
-      
+
       if (userGroupIndex !== -1) {
         user.groups.splice(userGroupIndex, 1);
       }
@@ -84,13 +116,15 @@ export const joinGroupController = async (req, res, next) => {
       group.members.push(userId);
       group.membersCount += 1;
 
-      user.groups.push({
+      const membershipDetails = {
         groupId: group._id,
         joinedAt: new Date(),
-        role: 'member',
+        role: group.members.length === 1 ? 'admin' : 'member',
         notifications: true,
         lastActivity: new Date()
-      });
+      };
+
+      user.groups.push(membershipDetails);
     }
 
     group.lastActive = new Date();
@@ -103,10 +137,17 @@ export const joinGroupController = async (req, res, next) => {
     const populatedGroup = await Group.findById(group._id)
       .populate('members', 'username avatar');
 
+    const membershipDetails = !isMember ? 
+      await User.findById(userId)
+        .select('groups')
+        .populate('groups.groupId', 'name membersCount image')
+        .then(u => u.groups.find(g => g.groupId._id.toString() === groupId)) 
+      : null;
+
     res.json({
       ...populatedGroup.toObject(),
       isMember: !isMember,
-      membershipDetails: !isMember ? user.groups[user.groups.length - 1] : null
+      membershipDetails
     });
   } catch (error) {
     next(error);
