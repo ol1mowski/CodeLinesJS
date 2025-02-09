@@ -100,7 +100,9 @@ const GroupCard = memo(({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-dark/30 backdrop-blur-sm rounded-lg p-4 hover:bg-dark/40 transition-colors border border-js/10"
+      transition={{ duration: 0.3, ease: "easeOut" }}
+      className="bg-dark/30 backdrop-blur-sm rounded-lg p-4 hover:bg-dark/40 transition-all duration-300 border border-js/10 
+                hover:border-js/20 hover:shadow-lg hover:shadow-js/5"
     >
       <div className="flex gap-6">
         {group.image ? (
@@ -134,20 +136,28 @@ const GroupCard = memo(({
             </div>
             <motion.button
               onClick={handleJoinClick}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ duration: 0.2 }}
               disabled={isLoading}
               className={`
-                px-4 py-2 rounded-lg transition-all
+                px-4 py-2 rounded-lg transition-all duration-300
                 ${group.isJoined 
-                  ? "bg-red-500/20 text-red-400 hover:bg-red-500/30 border border-red-500/30" 
-                  : "bg-js text-dark hover:bg-js/90"}
+                  ? "bg-red-500/20 text-red-400 hover:bg-red-500/30 border border-red-500/30 hover:border-red-500/50" 
+                  : "bg-js text-dark hover:bg-js/90 hover:shadow-md hover:shadow-js/20"}
                 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}
               `}
             >
-              {isLoading 
-                ? (group.isJoined ? "Opuszczanie..." : "Dołączanie...") 
-                : (group.isJoined ? "Opuść grupę" : "Dołącz")}
+              <motion.span
+                initial={false}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                {isLoading 
+                  ? (group.isJoined ? "Opuszczanie..." : "Dołączanie...") 
+                  : (group.isJoined ? "Opuść grupę" : "Dołącz")}
+              </motion.span>
             </motion.button>
           </div>
           
@@ -176,12 +186,15 @@ const GroupCard = memo(({
           
           <div className="flex flex-wrap gap-2 mt-3">
             {group.tags.map((tag) => (
-              <span
+              <motion.span
                 key={tag}
-                className="px-3 py-1 rounded-full text-xs font-medium bg-js/10 text-js border border-js/20 hover:border-js/30 transition-colors"
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.2 }}
+                className="px-3 py-1 rounded-full text-xs font-medium bg-js/10 text-js border border-js/20 
+                         hover:border-js/30 transition-all duration-300 hover:bg-js/15"
               >
                 {tag}
-              </span>
+              </motion.span>
             ))}
           </div>
         </div>

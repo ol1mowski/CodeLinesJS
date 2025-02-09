@@ -23,17 +23,24 @@ export const getGroupsController = async (req, res, next) => {
       membersCount: group.members.length
     }));
 
-    const userGroups = user?.groups.map(membership => ({
-      _id: membership.groupId._id,
-      name: membership.groupId.name,
-      membersCount: membership.groupId.membersCount,
-      image: membership.groupId.image,
-      description: membership.groupId.description,
-      lastActive: membership.groupId.lastActive,
-      joinedAt: membership.joinedAt,
-      role: membership.role,
-      notifications: membership.notifications
-    })) || [];
+    const userGroups = user?.groups
+      .filter(membership => membership.groupId != null)
+      .map(membership => ({
+        _id: membership.groupId._id,
+        name: membership.groupId.name,
+        membersCount: membership.groupId.membersCount,
+        image: membership.groupId.image,
+        description: membership.groupId.description,
+        lastActive: membership.groupId.lastActive,
+        joinedAt: membership.joinedAt,
+        role: membership.role,
+        notifications: membership.notifications
+      })) || [];
+
+    if (user && user.groups.length !== userGroups.length) {
+      user.groups = user.groups.filter(membership => membership.groupId != null);
+      await user.save();
+    }
 
     res.json({
       groups: formattedGroups,
@@ -112,6 +119,14 @@ export const joinGroupController = async (req, res, next) => {
       if (userGroupIndex !== -1) {
         user.groups.splice(userGroupIndex, 1);
       }
+
+      // Jeśli po usunięciu członków ich liczba wynosi 0, usuń grupę
+      if (group.membersCount === 0) {
+        await Group.findByIdAndDelete(groupId);
+      } else {
+        group.lastActive = new Date();
+        await group.save();
+      }
     } else {
       group.members.push(userId);
       group.membersCount += 1;
@@ -125,14 +140,11 @@ export const joinGroupController = async (req, res, next) => {
       };
 
       user.groups.push(membershipDetails);
+      group.lastActive = new Date();
+      await group.save();
     }
 
-    group.lastActive = new Date();
-
-    await Promise.all([
-      group.save(),
-      user.save()
-    ]);
+    await user.save();
 
     const populatedGroup = await Group.findById(group._id)
       .populate('members', 'username avatar');
@@ -145,7 +157,7 @@ export const joinGroupController = async (req, res, next) => {
       : null;
 
     res.json({
-      ...populatedGroup.toObject(),
+      ...populatedGroup?.toObject(),
       isMember: !isMember,
       membershipDetails
     });
