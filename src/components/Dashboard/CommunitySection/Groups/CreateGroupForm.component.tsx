@@ -123,131 +123,162 @@ export const CreateGroupForm = memo(({ isOpen, onClose }: CreateGroupFormProps) 
             onClick={onClose}
           />
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md 
-                     bg-dark/95 backdrop-blur-lg rounded-xl p-6 shadow-xl z-50"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            className="fixed inset-4 lg:inset-12 bg-dark/95 backdrop-blur-lg rounded-2xl shadow-2xl z-50 overflow-hidden"
             onClick={e => e.stopPropagation()}
           >
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-bold text-js">Utwórz nową grupę</h2>
-              <button
-                onClick={onClose}
-                className="text-gray-400 hover:text-gray-300 transition-colors"
-              >
-                <FaTimes />
-              </button>
+            {/* Nagłówek */}
+            <div className="absolute top-0 inset-x-0 bg-gradient-to-b from-js/5 to-transparent h-32">
+              <div className="flex justify-between items-center p-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-js">Utwórz nową grupę</h2>
+                  <p className="text-gray-400 mt-1">Stwórz przestrzeń dla swojej społeczności</p>
+                </div>
+                <motion.button
+                  whileHover={{ scale: 1.1, rotate: 90 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={onClose}
+                  className="text-gray-400 hover:text-gray-300 transition-colors p-2"
+                >
+                  <FaTimes size={24} />
+                </motion.button>
+              </div>
             </div>
 
-            <form onSubmit={onSubmit} className="space-y-4">
-              <div>
-                <input
-                  {...register("name")}
-                  placeholder="Nazwa grupy"
-                  className={`w-full bg-dark/50 rounded-lg px-4 py-2 text-gray-300 
-                           border ${errors.name ? 'border-red-500' : 'border-js/10'} 
-                           focus:outline-none focus:border-js/30`}
-                />
-                {errors.name && (
-                  <span className="text-sm text-red-400 mt-1">{errors.name.message}</span>
-                )}
-                {checkNameMutation.isPending && (
-                  <span className="text-sm text-js mt-1">Sprawdzanie dostępności nazwy...</span>
-                )}
-              </div>
-
-              <div>
-                <textarea
-                  {...register("description")}
-                  placeholder="Opis grupy (min. 10 znaków)"
-                  rows={4}
-                  className={`w-full bg-dark/50 rounded-lg px-4 py-2 text-gray-300 
-                           border ${errors.description ? 'border-red-500' : 'border-js/10'} 
-                           focus:outline-none focus:border-js/30`}
-                />
-                {errors.description && (
-                  <span className="text-sm text-red-400 mt-1">{errors.description.message}</span>
-                )}
-              </div>
-
-              <div>
-                <Controller
-                  name="tags"
-                  control={control}
-                  render={({ field }) => (
-                    <Select
-                      {...field}
-                      isMulti
-                      options={AVAILABLE_TAGS}
-                      placeholder="Wybierz tagi (max. 5)"
-                      className="react-select-container"
-                      classNamePrefix="react-select"
-                      styles={{
-                        control: (base, state) => ({
-                          ...base,
-                          backgroundColor: 'rgba(17, 17, 17, 0.5)',
-                          borderColor: errors.tags
-                            ? '#ef4444'
-                            : state.isFocused
-                              ? 'rgba(247, 223, 30, 0.3)'
-                              : 'rgba(247, 223, 30, 0.1)',
-                          '&:hover': {
-                            borderColor: 'rgba(247, 223, 30, 0.3)'
-                          }
-                        }),
-                        menu: (base) => ({
-                          ...base,
-                          backgroundColor: 'rgba(17, 17, 17, 0.95)',
-                          backdropFilter: 'blur(10px)'
-                        }),
-                        option: (base, state) => ({
-                          ...base,
-                          backgroundColor: state.isFocused
-                            ? 'rgba(247, 223, 30, 0.1)'
-                            : 'transparent',
-                          color: state.isSelected ? '#f7df1e' : '#d1d5db',
-                          '&:hover': {
-                            backgroundColor: 'rgba(247, 223, 30, 0.1)'
-                          }
-                        }),
-                        multiValue: (base) => ({
-                          ...base,
-                          backgroundColor: 'rgba(247, 223, 30, 0.1)',
-                        }),
-                        multiValueLabel: (base) => ({
-                          ...base,
-                          color: '#f7df1e',
-                        }),
-                        multiValueRemove: (base) => ({
-                          ...base,
-                          color: '#f7df1e',
-                          '&:hover': {
-                            backgroundColor: 'rgba(247, 223, 30, 0.2)',
-                            color: '#f7df1e',
-                          }
-                        }),
-                      }}
-                    />
+            {/* Formularz */}
+            <div className="h-full overflow-y-auto pt-32 pb-24">
+              <form onSubmit={onSubmit} className="max-w-3xl mx-auto p-6 space-y-8">
+                {/* Nazwa grupy */}
+                <div className="space-y-2">
+                  <label className="text-js font-medium block">Nazwa grupy</label>
+                  <input
+                    {...register("name")}
+                    placeholder="np. JavaScript Enthusiasts"
+                    className={`w-full bg-dark/50 rounded-lg px-4 py-3 text-gray-200 text-lg
+                             border ${errors.name ? 'border-red-500' : 'border-js/10'} 
+                             focus:outline-none focus:border-js/30 transition-colors`}
+                  />
+                  {errors.name && (
+                    <span className="text-sm text-red-400">{errors.name.message}</span>
                   )}
-                />
-                {errors.tags && (
-                  <span className="text-sm text-red-400 mt-1">{errors.tags.message}</span>
-                )}
-              </div>
+                  {checkNameMutation.isPending && (
+                    <span className="text-sm text-js">Sprawdzanie dostępności nazwy...</span>
+                  )}
+                </div>
 
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                type="submit"
-                disabled={isSubmitting || createGroupMutation.isPending}
-                className="w-full py-2 bg-js text-dark font-medium rounded-lg 
-                         hover:bg-js/90 transition-colors disabled:opacity-50 
-                         disabled:cursor-not-allowed"
-              >
-                {createGroupMutation.isPending ? "Tworzenie..." : "Utwórz grupę"}
-              </motion.button>
-            </form>
+                {/* Opis grupy */}
+                <div className="space-y-2">
+                  <label className="text-js font-medium block">Opis grupy</label>
+                  <textarea
+                    {...register("description")}
+                    placeholder="Opisz, czym będzie się zajmować Twoja grupa..."
+                    rows={6}
+                    className={`w-full bg-dark/50 rounded-lg px-4 py-3 text-gray-200 
+                             border ${errors.description ? 'border-red-500' : 'border-js/10'} 
+                             focus:outline-none focus:border-js/30 transition-colors`}
+                  />
+                  {errors.description && (
+                    <span className="text-sm text-red-400">{errors.description.message}</span>
+                  )}
+                </div>
+
+                {/* Tagi */}
+                <div className="space-y-2">
+                  <label className="text-js font-medium block">Tagi (max. 5)</label>
+                  <Controller
+                    name="tags"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        {...field}
+                        isMulti
+                        options={AVAILABLE_TAGS}
+                        placeholder="Wybierz tagi opisujące tematykę grupy"
+                        className="react-select-container"
+                        classNamePrefix="react-select"
+                        styles={{
+                          control: (base, state) => ({
+                            ...base,
+                            backgroundColor: 'rgba(17, 17, 17, 0.5)',
+                            borderColor: errors.tags 
+                              ? '#ef4444' 
+                              : state.isFocused 
+                                ? 'rgba(247, 223, 30, 0.3)'
+                                : 'rgba(247, 223, 30, 0.1)',
+                            padding: '4px',
+                            '&:hover': {
+                              borderColor: 'rgba(247, 223, 30, 0.3)'
+                            }
+                          }),
+                          menu: (base) => ({
+                            ...base,
+                            backgroundColor: 'rgba(17, 17, 17, 0.95)',
+                            backdropFilter: 'blur(10px)'
+                          }),
+                          option: (base, state) => ({
+                            ...base,
+                            backgroundColor: state.isFocused
+                              ? 'rgba(247, 223, 30, 0.1)'
+                              : 'transparent',
+                            color: state.isSelected ? '#f7df1e' : '#d1d5db',
+                            '&:hover': {
+                              backgroundColor: 'rgba(247, 223, 30, 0.1)'
+                            }
+                          }),
+                          multiValue: (base) => ({
+                            ...base,
+                            backgroundColor: 'rgba(247, 223, 30, 0.1)',
+                          }),
+                          multiValueLabel: (base) => ({
+                            ...base,
+                            color: '#f7df1e',
+                          }),
+                          multiValueRemove: (base) => ({
+                            ...base,
+                            color: '#f7df1e',
+                            '&:hover': {
+                              backgroundColor: 'rgba(247, 223, 30, 0.2)',
+                              color: '#f7df1e',
+                            }
+                          }),
+                        }}
+                      />
+                    )}
+                  />
+                  {errors.tags && (
+                    <span className="text-sm text-red-400">{errors.tags.message}</span>
+                  )}
+                </div>
+              </form>
+            </div>
+
+            {/* Przyciski akcji */}
+            <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-dark/95 to-transparent p-6">
+              <div className="max-w-3xl mx-auto flex gap-4">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={onClose}
+                  className="flex-1 py-3 px-6 bg-dark/50 text-gray-300 font-medium rounded-lg 
+                           hover:bg-dark/70 transition-colors border border-js/10"
+                >
+                  Anuluj
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleSubmit(onSubmit)}
+                  disabled={isSubmitting || createGroupMutation.isPending}
+                  className="flex-1 py-3 px-6 bg-js text-dark font-medium rounded-lg 
+                           hover:bg-js/90 transition-colors disabled:opacity-50 
+                           disabled:cursor-not-allowed"
+                >
+                  {createGroupMutation.isPending ? "Tworzenie..." : "Utwórz grupę"}
+                </motion.button>
+              </div>
+            </div>
           </motion.div>
         </>
       )}
