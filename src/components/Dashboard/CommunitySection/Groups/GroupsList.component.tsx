@@ -11,7 +11,7 @@ import { useGroupsSearch } from "./context/GroupsSearchContext";
 
 
 export const GroupsList = memo(() => {
-  const { groups, isLoading, joinGroup, leaveGroup, isJoining, isLeaving } = useGroups();
+  const { groups, isLoading, joinGroup, isJoining } = useGroups();
   const { searchQuery, selectedTags } = useGroupsSearch();
 
   const filteredGroups = useMemo(() => {
@@ -26,16 +26,15 @@ export const GroupsList = memo(() => {
         selectedTags.every(tag => group.tags.includes(tag));
 
       return matchesSearch && matchesTags;
-    });
+    }).map(group => ({
+      ...group,
+      isJoined: groups.userGroups.some(userGroup => userGroup._id === group._id)
+    }));
   }, [groups, searchQuery, selectedTags]);
 
-  const handleJoinGroup = useCallback((groupId: string, isJoined: boolean) => {
-    if (isJoined) {
-      leaveGroup(groupId);
-    } else {
-      joinGroup(groupId);
-    }
-  }, [joinGroup, leaveGroup]);
+  const handleJoinGroup = useCallback((groupId: string) => {
+    joinGroup(groupId);
+  }, [joinGroup]);
 
   if (isLoading) {
     return (
@@ -75,7 +74,6 @@ export const GroupsList = memo(() => {
           group={group} 
           onJoin={handleJoinGroup}
           isJoining={isJoining}
-          isLeaving={isLeaving}
         />
       ))}
     </div>
@@ -86,19 +84,17 @@ export const GroupsList = memo(() => {
 const GroupCard = memo(({ 
   group, 
   onJoin,
-  isJoining,
-  isLeaving
+  isJoining
 }: { 
   group: Group;
-  onJoin: (groupId: string, isJoined: boolean) => void;
+  onJoin: (groupId: string) => void;
   isJoining: boolean;
-  isLeaving: boolean;
 }) => {
   const handleJoinClick = useCallback(() => {
-    onJoin(group._id, group.isJoined);
-  }, [group._id, group.isJoined, onJoin]);
+    onJoin(group._id);
+  }, [group._id, onJoin]);
 
-  const isLoading = (group.isJoined ? isLeaving : isJoining);
+  const isLoading = isJoining;
 
   return (
     <motion.div

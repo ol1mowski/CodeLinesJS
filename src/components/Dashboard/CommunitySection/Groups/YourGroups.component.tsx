@@ -8,8 +8,6 @@ export const YourGroups = memo(() => {
 
   const userGroups = groups?.userGroups || [];
 
-  console.log(userGroups);
-
   if (isLoading) {
     return (
       <div className="bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10 p-4">
