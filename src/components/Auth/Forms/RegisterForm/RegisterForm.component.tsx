@@ -1,12 +1,13 @@
 import { motion } from "framer-motion";
-import { FaEnvelope, FaLock, FaUser } from "react-icons/fa";
+import { FaEnvelope, FaLock, FaUser, FaEye, FaEyeSlash } from "react-icons/fa";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 
 import { Button } from "../../../UI/Button/Button.component";
 import { FormInput } from "../../../UI/Form/FormInput/FormInput.component";
 import { RegisterFormData, registerSchema } from "../../../../schemas/auth.schema";
-import { useAuth } from "../../../../hooks/useAuth";
+import { useAuth } from "../../../../Hooks/useAuth";
 
 const RegisterForm = () => {
   const { register: registerUser, loading, error } = useAuth();
@@ -17,6 +18,9 @@ const RegisterForm = () => {
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
   });
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const onSubmit = async (data: RegisterFormData) => {
     await registerUser(data.email, data.password, data.username);
@@ -60,21 +64,39 @@ const RegisterForm = () => {
       />
       
       <FormInput
-        type="password"
+        type={showPassword ? "text" : "password"}
         label="Hasło"
         placeholder="••••••••"
         icon={<FaLock />}
         error={errors.password?.message}
         {...register("password")}
+        rightIcon={
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="focus:outline-none text-gray-400 hover:text-gray-500 transition-colors"
+          >
+            {showPassword ? <FaEyeSlash /> : <FaEye />}
+          </button>
+        }
       />
 
       <FormInput
-        type="password"
+        type={showConfirmPassword ? "text" : "password"}
         label="Potwierdź hasło"
         placeholder="••••••••"
         icon={<FaLock />}
         error={errors.confirmPassword?.message}
         {...register("confirmPassword")}
+        rightIcon={
+          <button
+            type="button"
+            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            className="focus:outline-none text-gray-400 hover:text-gray-500 transition-colors"
+          >
+            {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+          </button>
+        }
       />
 
       <Button type="submit" className="w-full" disabled={loading}>
