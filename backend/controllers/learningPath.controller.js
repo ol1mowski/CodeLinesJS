@@ -36,7 +36,10 @@ export const getLearningPaths = async (req, res, next) => {
       const completedPath = user.stats?.learningPaths.find(
         (lp) => lp.pathId.toString() === path._id.toString()
       );
+
+      const completedLessons = completedPath?.progress?.completedLessons;
       
+
       return {
         id: path._id,
         title: path.title,
@@ -49,17 +52,19 @@ export const getLearningPaths = async (req, res, next) => {
         isAvailable: userLevel >= path.requiredLevel,
         totalLessons: path.totalLessons,
         progress: {
-          completed: completedPath?.progress?.completedLessons || [],
+          completed: completedLessons,
           total: path.totalLessons,
           percentage:
             path.totalLessons > 0
               ? Math.round((completedPath?.progress?.completedLessons.length / path.totalLessons) * 100)
               : 0,
           isStarted: completedInPath > 0,
-          isCompleted: completedInPath === path.totalLessons,
+          isCompleted: completedLessons?.length === path.totalLessons,
         },
       };
     });
+
+
 
     res.json({
       paths: formattedPaths,
