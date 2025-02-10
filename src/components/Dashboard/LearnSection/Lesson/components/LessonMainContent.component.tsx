@@ -24,6 +24,9 @@ export const LessonMainContent = memo(({
 
   const { sections = [] } = lesson.content;  
 
+  console.log(lesson);
+  
+
   return (
     <div className="col-span-9 lesson-content overflow-y-auto max-h-[calc(100vh-200px)]">
       <motion.div
@@ -37,7 +40,7 @@ export const LessonMainContent = memo(({
             title={lesson.title}
             duration={lesson.duration}
             difficulty={lesson.difficulty}
-            xp={lesson.xp}
+            xp={lesson.points}
           />
 
           <div className="space-y-8">

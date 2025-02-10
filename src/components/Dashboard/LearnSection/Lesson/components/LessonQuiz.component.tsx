@@ -22,7 +22,7 @@ const quizBadges: Record<string, QuizBadge> = {
   },
   good: {
     icon: FaStar,
-    label: "Dobrze!",
+    label: "Mogło być lepiej!",
     color: "text-blue-500"
   }
 };
