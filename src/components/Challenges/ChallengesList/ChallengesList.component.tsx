@@ -1,23 +1,24 @@
-import { motion } from "framer-motion";
+import { memo } from 'react';
+import { motion } from 'framer-motion';
 
-import { challenges } from "../../../data/challengesData.data";
-import { ChallengeCard } from "./ChallengeCard.component";
+import { challengesList } from './constants/challengesList.data';
+import { containerAnimation, itemAnimation } from './constants/animations';
+import { ChallengeCard } from './components/ChallengeCard/ChallengeCard.component';
 
-
-export const ChallengesList = () => (
-  <motion.div
-    initial={{ opacity: 0 }}
-    whileInView={{ opacity: 1 }}
+export const ChallengesList = memo(() => (
+  <motion.div 
+    variants={containerAnimation}
+    initial="hidden"
+    whileInView="show"
     viewport={{ once: true }}
-    transition={{ duration: 0.6 }}
-    className="w-full xl:w-1/2 flex flex-col gap-4 px-4 md:px-0"
+    className="w-full xl:w-1/2 grid sm:grid-cols-2 gap-4"
   >
-    {challenges.map((challenge, index) => (
-      <ChallengeCard
-        key={challenge.title}
-        {...challenge}
-        index={index}
-      />
+    {challengesList.map((challenge) => (
+      <motion.div key={challenge.title} variants={itemAnimation}>
+        <ChallengeCard {...challenge} />
+      </motion.div>
     ))}
   </motion.div>
-); 
+));
+
+ChallengesList.displayName = 'ChallengesList'; 
