@@ -5,10 +5,11 @@ type FormInputProps = {
   label: string;
   error?: string;
   icon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
 } & React.InputHTMLAttributes<HTMLInputElement>;
 
 export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
-  ({ label, error, icon, ...props }, ref) => (
+  ({ label, error, icon, rightIcon, ...props }, ref) => (
     <div className="space-y-1">
       <label className="block text-sm font-medium text-gray-400">
         {label}
@@ -22,7 +23,9 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
         <input
           ref={ref}
           className={`
-            w-full py-2 ${icon ? 'pl-10' : 'pl-3'} pr-3 
+            w-full py-2 
+            ${icon ? 'pl-10' : 'pl-3'} 
+            ${rightIcon ? 'pr-10' : 'pr-3'}
             bg-dark/50 border rounded-lg 
             text-gray-200 placeholder-gray-500
             focus:outline-none focus:ring-1
@@ -34,6 +37,11 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
           `}
           {...props}
         />
+        {rightIcon && (
+          <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+            {rightIcon}
+          </div>
+        )}
       </div>
       {error && (
         <motion.p

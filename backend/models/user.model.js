@@ -55,12 +55,36 @@ const userSchema = new mongoose.Schema(
         default: "pl",
       },
     },
+    groups: [{
+      groupId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Group'
+      },
+      joinedAt: {
+        type: Date,
+        default: Date.now
+      },
+      role: {
+        type: String,
+        enum: ['member', 'moderator', 'admin'],
+        default: 'member'
+      },
+      notifications: {
+        type: Boolean,
+        default: true
+      },
+      lastActivity: {
+        type: Date,
+        default: Date.now
+      }
+    }],
     stats: {
       points: { type: Number, default: 0 },
       level: { type: Number, default: 1 },
       xp: { type: Number, default: 0 },
       streak: { type: Number, default: 0 },
       pointsToNextLevel: { type: Number, default: 1000 },
+
       bestStreak: { type: Number, default: 0 },
       lastActive: { type: Date },
       experiencePoints: { type: Number, default: 0 },

@@ -12,8 +12,6 @@ import { GamesSection } from "../components/Dashboard/GamesSection/GamesSection.
 import { CodeEditor } from "../components/Dashboard/CodeEditor/CodeEditor.component";
 import { LessonPage } from "../components/Dashboard/LearnSection/Lesson/Lesson.page";
 
-
-
 const Home = lazy(() => import("../pages/Home"));
 const Auth = lazy(() => import("../pages/Auth"));
 

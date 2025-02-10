@@ -1,4 +1,4 @@
-import { memo, useCallback } from "react";
+import { memo, useCallback, useEffect } from "react";
 import { useProfile } from "../../hooks/useProfile";
 import { Loader } from "../../components/UI/Loader/Loader.component";
 import { useProfileFormLogic } from "../../hooks/useProfileFormLogic";
@@ -12,7 +12,15 @@ export const ProfileForm = memo(() => {
   const { previewAvatar, handleChangeAvatar } = useAvatarHandling(updateAvatar);
   const { form, onSubmit } = useProfileFormLogic(profile || null, avatarUrl);
   
-  const { register, formState: { errors, isSubmitting }, reset } = form;
+  const { register, formState: { errors, isSubmitting }, reset, setValue } = form;
+
+  useEffect(() => {
+    if (profile) {
+      setValue('username', profile.username);
+      setValue('email', profile.email);
+      setValue('profile.bio', profile.profile?.bio || '');
+    }
+  }, [profile, setValue]);
 
   const handleCancel = useCallback(() => {
     try {

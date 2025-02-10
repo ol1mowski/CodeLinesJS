@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
-import { FaEnvelope, FaLock } from "react-icons/fa";
+import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 
 import { Button } from "../../../UI/Button/Button.component";
 import { FormInput } from "../../../UI/Form/FormInput/FormInput.component";
@@ -24,6 +25,7 @@ const LoginForm = () => {
   });
 
   const rememberMe: boolean = watch("rememberMe", false) || false;
+  const [showPassword, setShowPassword] = useState(false);
 
   const onSubmit = async (data: LoginFormData) => {
     await login(data.email, data.password, data.rememberMe);
@@ -48,12 +50,21 @@ const LoginForm = () => {
       />
 
       <FormInput
-        type="password"
+        type={showPassword ? "text" : "password"}
         label="Hasło"
         placeholder="••••••••"
         icon={<FaLock />}
         error={errors.password?.message}
         {...register("password")}
+        rightIcon={
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="focus:outline-none text-gray-400 hover:text-gray-500 transition-colors"
+          >
+            {showPassword ? <FaEyeSlash /> : <FaEye />}
+          </button>
+        }
       />
 
       <RememberMeCheckbox register={register} />

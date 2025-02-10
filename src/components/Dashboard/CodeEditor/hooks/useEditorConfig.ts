@@ -1,23 +1,9 @@
 import { useCallback } from 'react';
 import { editor } from 'monaco-editor';
-import prettier from 'prettier/standalone';
-import parserBabel from 'prettier/parser-babel';
 import { jsSnippets } from '../constants/snippets';
 
 export const useEditorConfig = () => {
-  const formatCode = useCallback(async (code: string): Promise<string> => {
-    try {
-      return await prettier.format(code, {
-        parser: 'babel',
-        plugins: [parserBabel],
-        semi: true,
-        singleQuote: true,
-      });
-    } catch (error) {
-      console.error('Błąd formatowania:', error);
-      return code;
-    }
-  }, []);
+
 
   const editorOptions: editor.IStandaloneEditorConstructionOptions = {
     minimap: { enabled: false },
@@ -57,7 +43,6 @@ export const useEditorConfig = () => {
   }, []);
 
   return {
-    formatCode,
     editorOptions,
     setupEditor,
   };

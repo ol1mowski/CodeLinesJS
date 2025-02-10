@@ -22,7 +22,7 @@ export const CodeEditor = memo(() => {
   const editorRef = useRef<any>(null);
   const { output, isExecuting, executeCode, clearConsole } = useCodeExecution();
   const { history, addToHistory, clearHistory } = useCodeHistory();
-  const { formatCode, editorOptions, setupEditor } = useEditorConfig();
+  const { editorOptions, setupEditor } = useEditorConfig();
   const [code, setCode] = useState(defaultCode);
   const [showHistory, setShowHistory] = useState(false);
   const [isEditorReady, setIsEditorReady] = useState(false);
@@ -42,13 +42,6 @@ export const CodeEditor = memo(() => {
     addToHistory(code);
   }, [code, executeCode, addToHistory]);
 
-  const handleFormatCode = useCallback(async () => {
-    const formatted = await formatCode(code);
-    setCode(formatted);
-    if (editorRef.current) {
-      editorRef.current.setValue(formatted);
-    }
-  }, [code, formatCode]);
 
   const handleHistorySelect = useCallback((selectedCode: string) => {
     setCode(selectedCode);
@@ -61,13 +54,12 @@ export const CodeEditor = memo(() => {
         handleRunCode();
       } else if (e.altKey && e.shiftKey && e.key === 'F') {
         e.preventDefault();
-        handleFormatCode();
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleRunCode, handleFormatCode]);
+  }, [handleRunCode]);
 
   useEffect(() => {
     loader.init().then(monaco => {
@@ -97,13 +89,6 @@ export const CodeEditor = memo(() => {
           >
             <FaDownload className="w-4 h-4 mr-2 inline-block" />
             Zapisz do Pliku
-          </button>
-          <button
-            onClick={handleFormatCode}
-            disabled={!isEditorReady}
-            className="px-4 py-2 text-sm text-js border border-js/20 rounded hover:bg-js/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Formatuj Kod (Alt + Shift + F)
           </button>
           <div className="relative">
             <button

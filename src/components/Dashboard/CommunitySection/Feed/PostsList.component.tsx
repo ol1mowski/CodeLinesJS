@@ -49,6 +49,7 @@ export const PostsList = memo(({ posts, isLoading }: PostsListProps) => {
   if (isLoading) {
     return <PostsListSkeleton />;
   }
+  
 
   if (posts.length === 0) {
     return (
