@@ -14,7 +14,6 @@ type LessonMainContentProps = {
 
 export const LessonMainContent = memo(({
   lesson,
-  onSectionComplete,
   onQuizComplete
 }: LessonMainContentProps) => {
   if (!lesson) {

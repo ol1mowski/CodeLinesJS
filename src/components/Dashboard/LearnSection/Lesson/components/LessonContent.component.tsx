@@ -57,8 +57,8 @@ export const LessonContent = memo(({
         currentSection={activeSection}
         totalSections={totalSections}
         progress={progress}
-        onComplete={onLessonComplete}
         isCompleted={lesson.isCompleted}
+        onComplete={onLessonComplete}
       />
     </>
   );

@@ -34,16 +34,25 @@ export const completeLesson = async ({
   lessonId: string;
   pathId?: string;
 }) => {
+  const token = getAuthToken();
+
+  if (!token) {
+    throw new Error('No authentication token found');
+  }
+
   const response = await fetch(`${API_URL}/lessons/${lessonId}/complete`, {
-    method: "POST",
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ userId, pathId }),
+    body: JSON.stringify({ userId, pathId })
   });
 
   if (!response.ok) {
-    throw new Error("Failed to complete lesson");
+    const error = await response.text();
+    console.error('API error:', error);
+    throw new Error(error || 'Failed to complete lesson');
   }
 
   return response.json();

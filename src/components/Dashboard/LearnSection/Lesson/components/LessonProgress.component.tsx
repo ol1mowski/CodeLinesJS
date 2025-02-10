@@ -1,25 +1,35 @@
 import { memo, useEffect, useState } from "react";
-import { motion, useMotionValue, useSpring } from "framer-motion";
+import { motion, useMotionValue } from "framer-motion";
 import { FaCheck } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 type LessonProgressProps = {
-  onComplete: () => void;
+  currentSection: number;
+  totalSections: number;
+  progress: number;
+  isCompleted: boolean;
+  onComplete: () => Promise<void>;
 };
 
-export const LessonProgress = memo(({ onComplete }: LessonProgressProps) => {
+export const LessonProgress = memo(({ 
+  isCompleted,
+  onComplete 
+}: LessonProgressProps) => {
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const motionValue = useMotionValue(0);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const lessonContent = document.querySelector(".lesson-content");
-
     if (!lessonContent) return;
 
     const handleScroll = () => {
       const { scrollTop, scrollHeight, clientHeight } = lessonContent;
       const progress = (scrollTop / (scrollHeight - clientHeight)) * 100;
-      setScrollProgress(progress);
-      motionValue.set(progress);
+      setScrollProgress(Math.min(progress, 100));
+      motionValue.set(Math.min(progress, 100));
     };
 
     lessonContent.addEventListener("scroll", handleScroll);
@@ -28,7 +38,23 @@ export const LessonProgress = memo(({ onComplete }: LessonProgressProps) => {
     return () => lessonContent.removeEventListener("scroll", handleScroll);
   }, [motionValue]);
 
-  const isLessonCompleted = scrollProgress >= 98;
+  const isLessonCompleted = scrollProgress >= 98 && !isCompleted;
+
+  const handleComplete = async () => {
+    if (!isLessonCompleted || isSubmitting) {
+      console.log('Nie można ukończyć lekcji:', { isLessonCompleted, isSubmitting });
+      return;
+    }
+    
+    try {
+      setIsSubmitting(true);
+      await onComplete();
+      navigate("/dashboard/learn?tab=lessons");
+    } catch (error) {
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-dark-800/95 border-t border-js/10 backdrop-blur-sm">
@@ -40,24 +66,27 @@ export const LessonProgress = memo(({ onComplete }: LessonProgressProps) => {
               className="absolute inset-y-0 left-0 bg-js rounded-full"
             />
           </div>
-
           <div className="flex justify-between text-sm text-gray-400 mt-2">
-            <span>{Math.round(scrollProgress)}% ukończone</span>
+            <span>{Math.round(scrollProgress)}% przeczytane</span>
           </div>
         </div>
 
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          onClick={onComplete}
-          disabled={!isLessonCompleted}
+          onClick={handleComplete}
+          disabled={!isLessonCompleted || isSubmitting}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors
-            ${isLessonCompleted
+            ${isLessonCompleted && !isSubmitting
               ? "bg-js/10 text-js hover:bg-js/20"
               : "bg-gray-800/50 text-gray-500 cursor-not-allowed"}`}
         >
           <FaCheck className="w-4 h-4" />
-          {isLessonCompleted ? "Zakończ lekcję" : "Ukończ całą lekcję"}
+          {isSubmitting 
+            ? "Zapisywanie..." 
+            : isLessonCompleted 
+              ? "Zakończ lekcję" 
+              : "Przeczytaj całą lekcję"}
         </motion.button>
       </div>
     </div>

@@ -155,7 +155,7 @@ export const completeLesson = async (req, res, next) => {
     const userId = req.user.userId;
 
     const [lesson, user] = await Promise.all([
-      Lesson.findOne({ slug: id }),
+      Lesson.findOne({ _id: id }),
       User.findById(userId),
     ]);
 
@@ -171,10 +171,15 @@ export const completeLesson = async (req, res, next) => {
       throw new ValidationError("Lekcja została już ukończona");
     }
 
+    const userLearningPaths = user.stats.learningPaths[0].progress.completedLessons;
+
     user.stats = user.stats || {};
-    user.stats.completedLessons = user.stats.completedLessons || [];
+    user.stats.learningPaths = user.stats.learningPaths || [];
     user.stats.points = (user.stats.points || 0) + (lesson.points || 0);
-    user.stats.completedLessons.push(lesson._id);
+
+    if (!userLearningPaths.some(lesson => lesson._id.toString() === lesson._id.toString())) {
+      userLearningPaths.push({ _id: lesson._id, completedAt: new Date() });
+    }
 
     const today = new Date().toDateString();
     const lastActive = user.stats.lastActive
@@ -193,9 +198,10 @@ export const completeLesson = async (req, res, next) => {
       points: lesson.points,
       stats: {
         points: user.stats.points,
-        completedLessons: user.stats.completedLessons.length,
+        completedLessons: userLearningPaths.length,
         streak: user.stats.streak,
         lastActive: user.stats.lastActive,
+
       },
     });
   } catch (error) {

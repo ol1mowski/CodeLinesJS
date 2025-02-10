@@ -72,8 +72,6 @@ export const LessonsList = memo(
       );
     }
 
-    console.log(processedLessons);
-
     return (
       <motion.div
         variants={containerVariants}
