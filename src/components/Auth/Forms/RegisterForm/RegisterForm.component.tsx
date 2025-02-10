@@ -8,6 +8,7 @@ import { Button } from "../../../UI/Button/Button.component";
 import { FormInput } from "../../../UI/Form/FormInput/FormInput.component";
 import { RegisterFormData, registerSchema } from "../../../../schemas/auth.schema";
 import { useAuth } from "../../../../Hooks/useAuth";
+import { PrivacyPolicyCheckbox } from "./PrivacyPolicyCheckbox.component";
 
 const RegisterForm = () => {
   const { register: registerUser, loading, error } = useAuth();
@@ -17,6 +18,10 @@ const RegisterForm = () => {
     formState: { errors },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
+    mode: "onChange",
+    defaultValues: {
+      acceptPrivacy: false
+    }
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -88,6 +93,7 @@ const RegisterForm = () => {
         icon={<FaLock />}
         error={errors.confirmPassword?.message}
         {...register("confirmPassword")}
+
         rightIcon={
           <button
             type="button"
@@ -97,6 +103,11 @@ const RegisterForm = () => {
             {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
           </button>
         }
+      />
+
+      <PrivacyPolicyCheckbox 
+        register={register("acceptPrivacy")} 
+        error={errors.acceptPrivacy?.message}
       />
 
       <Button type="submit" className="w-full" disabled={loading}>
