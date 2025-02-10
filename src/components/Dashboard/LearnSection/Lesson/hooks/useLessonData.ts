@@ -5,7 +5,7 @@ import { updateLessonProgress } from "../../lib/api/progress";
 import { useAuth } from "../../hooks/useAuth";
 import type { LessonProgress } from "../../types/lesson.types";
 
-export const useLessonData = (lessonId: string | null) => {
+export const useLessonData = (lessonSlug: string) => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [activeSection, setActiveSection] = useState(0);
@@ -16,9 +16,10 @@ export const useLessonData = (lessonId: string | null) => {
     error,
     refetch
   } = useQuery({
-    queryKey: ["lesson", lessonId],
-    queryFn: () => fetchLesson(lessonId!),
-    enabled: !!lessonId,
+    queryKey: ["lesson", lessonSlug],
+    queryFn: () => fetchLesson(lessonSlug),
+    enabled: !!lessonSlug,
+    retry: false
   });
 
   const isNotFound = error?.message === "lesson_not_found";
@@ -33,7 +34,7 @@ export const useLessonData = (lessonId: string | null) => {
 
   const updateProgressMutation = useMutation({
     mutationFn: (progress: LessonProgress) => 
-      updateLessonProgress(user!.id, lessonId!, progress),
+      updateLessonProgress(user!.id, lessonSlug, progress),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["userProgress"] });
     }
@@ -44,7 +45,7 @@ export const useLessonData = (lessonId: string | null) => {
   };
 
   const handleSectionComplete = async (sectionId: string) => {
-    if (!user || !lessonId) return;
+    if (!user || !lessonSlug) return;
     
     await updateProgressMutation.mutateAsync({
       completedSections: [...(lesson?.completedSections || []), sectionId],
@@ -54,7 +55,7 @@ export const useLessonData = (lessonId: string | null) => {
   };
 
   const handleQuizComplete = async (points: number) => {
-    if (!user || !lessonId) return;
+    if (!user || !lessonSlug) return;
 
     await updateProgressMutation.mutateAsync({
       completedSections: lesson?.completedSections || [],
@@ -64,11 +65,11 @@ export const useLessonData = (lessonId: string | null) => {
   };
 
   const handleLessonComplete = async () => {
-    if (!user || !lessonId || !lesson) return;
+    if (!user || !lessonSlug || !lesson) return;
     
     await completeLessonMutation.mutateAsync({
       userId: user.id,
-      lessonId,
+      lessonSlug,
       pathId: lesson.pathId
     });
   };

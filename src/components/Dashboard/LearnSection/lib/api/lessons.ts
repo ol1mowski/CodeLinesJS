@@ -5,8 +5,16 @@ import type { Lesson } from "../../types/lesson.types";
 const API_URL = "http://localhost:5001/api";
 
 export const fetchLesson = async (lessonId: string): Promise<Lesson> => {
-  const response = await fetch(`${API_URL}/lessons/${lessonId}`);
+  const token = getAuthToken();
+  const response = await fetch(`${API_URL}/lessons/${lessonId}`, {
+    headers: {
+      'Content-Type': 'application/json',
+
+      'Authorization': `Bearer ${token}`,
+    },
+  });
   
+
 
   if (!response.ok) {
     if (response.status === 404) {

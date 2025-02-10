@@ -26,10 +26,6 @@ export const router = createBrowserRouter([
     element: <Auth />,
   },
   {
-    path: "/lesson/:lessonId",
-    element: <LessonPage />
-  },
-  {
     path: "/dashboard",
     element: (
       <ProtectedRoute>
@@ -48,6 +44,10 @@ export const router = createBrowserRouter([
       {
         path: "learn",
         element: <LearnSection />,
+      },
+      {
+        path: "learn/lesson/:lessonSlug",
+        element: <LessonPage />
       },
       {
         path: "community",

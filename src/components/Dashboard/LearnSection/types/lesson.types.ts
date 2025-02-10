@@ -38,7 +38,7 @@ export type LessonProgress = {
 }
 
 export type Lesson = {
-    _id: string;
+    id: string;
     slug: string;
     sections: LessonSection[];
     title: string;
@@ -47,7 +47,7 @@ export type Lesson = {
     difficulty: 'beginner' | 'intermediate' | 'advanced';
     category: string;
     points: number;
-    requiredLevel: number;
-    isLocked: boolean;
-    isCompleted: boolean;
+    requiredLevel?: number;
+    isLocked?: boolean;
+    isCompleted?: boolean;
 }
