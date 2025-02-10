@@ -9,7 +9,6 @@ export const fetchLesson = async (lessonId: string): Promise<Lesson> => {
   const response = await fetch(`${API_URL}/lessons/${lessonId}`, {
     headers: {
       'Content-Type': 'application/json',
-
       'Authorization': `Bearer ${token}`,
     },
   });

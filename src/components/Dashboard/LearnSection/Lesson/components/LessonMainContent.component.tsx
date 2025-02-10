@@ -2,21 +2,26 @@ import { memo } from 'react';
 import { motion } from 'framer-motion';
 import { type Lesson } from '../../types/lesson.types';
 
-import { LessonHeader } from './LessonHeader.component';
-import { LessonContent } from './LessonContent.component';
+import { LessonHeader } from './LessonHeader.component';;
+import { LessonSection } from './LessonSection.component';
+import { LessonQuiz } from './LessonQuiz.component';
 
 type LessonMainContentProps = {
   lesson: Lesson;
-  onSectionComplete?: (sectionIndex: number) => void;
-  onQuizComplete?: (quizId: string, correct: number, total: number) => void;
+  onSectionComplete: (sectionId: string) => void;
+  onQuizComplete: (points: number) => void;
 };
 
-export const LessonMainContent = memo(({ 
-  lesson, 
-  onSectionComplete = () => {}, 
-  onQuizComplete = () => {} 
+export const LessonMainContent = memo(({
+  lesson,
+  onSectionComplete,
+  onQuizComplete
 }: LessonMainContentProps) => {
-  const sections = lesson.content?.sections || [];
+  if (!lesson) {
+    return null;
+  }
+
+  const { sections = [] } = lesson.content;
 
   return (
     <div className="col-span-9 lesson-content overflow-y-auto max-h-[calc(100vh-200px)]">
@@ -31,14 +36,29 @@ export const LessonMainContent = memo(({
             title={lesson.title}
             duration={lesson.duration}
             difficulty={lesson.difficulty}
-            xp={lesson.content?.xp}
+            xp={lesson.xp}
           />
-          
-          <LessonContent 
-            sections={sections}
-            onSectionComplete={onSectionComplete}
-            onQuizComplete={onQuizComplete}
-          />
+
+          <div className="space-y-8">
+            {sections.map((section, index) => (
+              <LessonSection
+                key={index}
+                section={section}
+                index={index}
+                onComplete={() => onSectionComplete(section.id)}
+              />
+            ))}
+
+            {lesson.content.quiz && (
+              <LessonQuiz
+                questions={lesson.content.quiz}
+                onComplete={onQuizComplete}
+              />
+            )}
+
+
+
+          </div>
         </div>
       </motion.div>
     </div>

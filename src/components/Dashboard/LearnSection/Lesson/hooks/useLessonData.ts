@@ -21,7 +21,7 @@ export const useLessonData = (lessonSlug: string) => {
     enabled: !!lessonSlug,
     retry: false
   });
-
+  
   const isNotFound = error?.message === "lesson_not_found";
 
   const completeLessonMutation = useMutation({
@@ -33,7 +33,7 @@ export const useLessonData = (lessonSlug: string) => {
   });
 
   const updateProgressMutation = useMutation({
-    mutationFn: (progress: LessonProgress) => 
+    mutationFn: (progress: LessonProgress) =>
       updateLessonProgress(user!.id, lessonSlug, progress),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["userProgress"] });
@@ -46,7 +46,7 @@ export const useLessonData = (lessonSlug: string) => {
 
   const handleSectionComplete = async (sectionId: string) => {
     if (!user || !lessonSlug) return;
-    
+
     await updateProgressMutation.mutateAsync({
       completedSections: [...(lesson?.completedSections || []), sectionId],
       isCompleted: false,
@@ -66,7 +66,7 @@ export const useLessonData = (lessonSlug: string) => {
 
   const handleLessonComplete = async () => {
     if (!user || !lessonSlug || !lesson) return;
-    
+
     await completeLessonMutation.mutateAsync({
       userId: user.id,
       lessonSlug,

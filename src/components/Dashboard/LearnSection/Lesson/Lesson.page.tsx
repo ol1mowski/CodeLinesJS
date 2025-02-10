@@ -1,7 +1,5 @@
-import { memo, useEffect } from "react";
-import { useNavigate, useSearchParams, useLocation, useParams, Navigate } from "react-router-dom";
+import { useParams, Navigate } from "react-router-dom";
 import { useLessonData } from "./hooks/useLessonData";
-import { useLessonState } from "./hooks/useLessonState";
 import { LessonLayout } from "./components/LessonLayout.component";
 import { LessonContent } from "./components/LessonContent.component";
 import { LessonNotFound } from "./components/LessonNotFound.component";
@@ -28,16 +26,11 @@ export const LessonPage = () => {
     handleLessonComplete
   } = useLessonData(lessonSlug);
 
-  const {
-    progress: lessonProgress,
-    handleComplete,
-    markSectionComplete,
-    saveQuizResult
-  } = useLessonState(lessonSlug, lesson?.userId || '');
 
   if (isLoading) {
     return <LessonLoadingState />;
   }
+  
 
   if (isNotFound) {
     return <LessonNotFound />;
@@ -46,8 +39,8 @@ export const LessonPage = () => {
   if (error) {
     return <LessonErrorState onRetry={() => window.location.reload()} />;
   }
-
-  if (!lesson || !lesson.sections) {
+  
+  if (!lesson) {
     return <LessonNotFound />;
   }
 

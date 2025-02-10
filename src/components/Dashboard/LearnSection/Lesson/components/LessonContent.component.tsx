@@ -25,7 +25,11 @@ export const LessonContent = memo(({
   onQuizComplete,
   onLessonComplete,
 }: LessonContentProps) => {
-  const sections = lesson?.sections || [];
+  if (!lesson) {
+    return null;
+  }
+
+  const sections = lesson.sections || [];
   const totalSections = sections.length;
 
   return (
@@ -38,7 +42,7 @@ export const LessonContent = memo(({
             sections={sections}
             activeSection={activeSection}
             onSectionChange={onSectionChange}
-            isCompleted={lesson?.isCompleted}
+            isCompleted={lesson.isCompleted}
           />
 
           <LessonMainContent
@@ -54,7 +58,7 @@ export const LessonContent = memo(({
         totalSections={totalSections}
         progress={progress}
         onComplete={onLessonComplete}
-        isCompleted={lesson?.isCompleted}
+        isCompleted={lesson.isCompleted}
       />
     </>
   );

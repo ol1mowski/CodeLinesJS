@@ -88,6 +88,8 @@ export const getLessonById = async (req, res, next) => {
         .lean(),
     ]);
 
+    console.log(lessonContent);
+
     if (!lesson) {
       throw new ValidationError("Lekcja nie została znaleziona");
     }
@@ -132,6 +134,7 @@ export const getLessonById = async (req, res, next) => {
         xp: lessonContent.xp,
         rewards: lessonContent.rewards,
         sections: lessonContent.sections,
+        quiz: lessonContent.quiz,
       },
     };
 
