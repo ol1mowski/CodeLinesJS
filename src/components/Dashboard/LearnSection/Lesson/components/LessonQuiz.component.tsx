@@ -108,7 +108,7 @@ export const LessonQuiz = memo(({ questions, onComplete }: LessonQuizProps) => {
   const [showExplanation, setShowExplanation] = useState(false);
 
   const totalXP = 100; 
-  const progressPercent = ((currentQuestion + 1) / questions.length) * 100;
+  const progressPercent = ((currentQuestion) / questions.length) * 100;
 
   const handleAnswer = (answerIndex: number) => {
     setSelectedAnswer(answerIndex);

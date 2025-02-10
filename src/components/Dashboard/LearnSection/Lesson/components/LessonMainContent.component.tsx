@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import { motion } from 'framer-motion';
 import { type Lesson } from '../../types/lesson.types';
+import { CodeExample } from "./code/CodeExample.component";
 
 import { LessonHeader } from './LessonHeader.component';;
 import { LessonSection } from './LessonSection.component';
@@ -21,7 +22,7 @@ export const LessonMainContent = memo(({
     return null;
   }
 
-  const { sections = [] } = lesson.content;
+  const { sections = [] } = lesson.content;  
 
   return (
     <div className="col-span-9 lesson-content overflow-y-auto max-h-[calc(100vh-200px)]">
@@ -45,7 +46,6 @@ export const LessonMainContent = memo(({
                 key={index}
                 section={section}
                 index={index}
-                onComplete={() => onSectionComplete(section.id)}
               />
             ))}
 
@@ -55,8 +55,6 @@ export const LessonMainContent = memo(({
                 onComplete={onQuizComplete}
               />
             )}
-
-
 
           </div>
         </div>

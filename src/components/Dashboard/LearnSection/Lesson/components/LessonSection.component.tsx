@@ -1,13 +1,13 @@
 import { memo } from 'react';
 import { type LessonSection as LessonSectionType } from '../../types/lesson.types';
+import { CodeExample } from './code/CodeExample.component';
 
 type LessonSectionProps = {
   section: LessonSectionType;
   index: number;
-  onComplete: () => void;
 };
 
-export const LessonSection = memo(({ section, index, onComplete }: LessonSectionProps) => {
+export const LessonSection = memo(({ section, index }: LessonSectionProps) => {
   return (
     <section className="space-y-4">
       <h2 className="text-xl font-bold text-js">
@@ -16,14 +16,22 @@ export const LessonSection = memo(({ section, index, onComplete }: LessonSection
       <div className="prose prose-invert max-w-none">
         {section.content}
       </div>
-      <button 
-        onClick={onComplete}
-        className="px-4 py-2 bg-js/10 text-js rounded-lg hover:bg-js/20 transition-colors"
-      >
-        Zakończ sekcję
-      </button>
+      <div className="space-y-8 mt-8">
+        {section.examples && section.examples.length > 0 && (
+          <div className="space-y-8 mt-8">
+            {section.examples.map((example, index) => (
+              <CodeExample
+                key={index}
+                example={example}
+                index={index}
+              />
+            ))}
+          </div>
+        )}
+      </div>
     </section>
   );
 });
+
 
 LessonSection.displayName = "LessonSection"; 
