@@ -33,7 +33,6 @@ export const Lessons = memo(() => {
     userId
   } = useLessons();
 
-  // Synchronizacja filtra z URL przy pierwszym renderowaniu i zmianach URL
   useEffect(() => {
     if (currentFilter !== filter) {
       setFilter(currentFilter);

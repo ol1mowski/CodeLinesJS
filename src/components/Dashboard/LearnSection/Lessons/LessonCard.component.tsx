@@ -23,7 +23,7 @@ export const LessonCard = memo(({ lesson }: LessonCardProps) => {
   const { 
     title, 
     description, 
-    duration, 
+    duration,
     slug,
     isCompleted,
     isLocked,
@@ -64,11 +64,10 @@ export const LessonCard = memo(({ lesson }: LessonCardProps) => {
           )}
         </div>
         {!isLocked && (
-          <FaChevronRight 
-            className={`w-4 h-4 transition-all ${
-              isCompleted ? 'text-js' : 'text-gray-500'
-            } group-hover:translate-x-1`} 
-          />
+          <div className="flex items-center gap-2 text-js">
+            <span>{isCompleted ? 'Powtórz' : 'Rozpocznij'}</span>
+            <FaChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          </div>
         )}
       </div>
     </div>
@@ -85,7 +84,7 @@ export const LessonCard = memo(({ lesson }: LessonCardProps) => {
         </div>
       ) : (
         <Link 
-          to={`/lesson/${slug}`}
+          to={`/dashboard/learn/lesson/${slug}`}
           className="block p-6 rounded-xl bg-dark-800 border border-js/10 hover:border-js/20 transition-colors"
         >
           {cardContent}

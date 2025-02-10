@@ -4,9 +4,10 @@ import { fetchLesson, completeLesson } from "../../lib/api/lessons";
 import { updateLessonProgress } from "../../lib/api/progress";
 import { useAuth } from "../../hooks/useAuth";
 import type { LessonProgress } from "../../types/lesson.types";
+import { toast } from "react-hot-toast";
 
-export const useLessonData = (lessonId: string | null) => {
-  const { user } = useAuth();
+export const useLessonData = (lessonSlug: string) => {
+  const { userId } = useAuth();
   const queryClient = useQueryClient();
   const [activeSection, setActiveSection] = useState(0);
 
@@ -16,9 +17,10 @@ export const useLessonData = (lessonId: string | null) => {
     error,
     refetch
   } = useQuery({
-    queryKey: ["lesson", lessonId],
-    queryFn: () => fetchLesson(lessonId!),
-    enabled: !!lessonId,
+    queryKey: ["lesson", lessonSlug],
+    queryFn: () => fetchLesson(lessonSlug),
+    enabled: !!lessonSlug,
+    retry: false
   });
 
   const isNotFound = error?.message === "lesson_not_found";
@@ -32,11 +34,12 @@ export const useLessonData = (lessonId: string | null) => {
   });
 
   const updateProgressMutation = useMutation({
-    mutationFn: (progress: LessonProgress) => 
-      updateLessonProgress(user!.id, lessonId!, progress),
+    mutationFn: (progress: LessonProgress) =>
+      updateLessonProgress(userId!, lessonSlug, progress),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["userProgress"] });
     }
+
   });
 
   const handleSectionChange = (index: number) => {
@@ -44,8 +47,9 @@ export const useLessonData = (lessonId: string | null) => {
   };
 
   const handleSectionComplete = async (sectionId: string) => {
-    if (!user || !lessonId) return;
-    
+    if (!userId || !lessonSlug) return;
+
+
     await updateProgressMutation.mutateAsync({
       completedSections: [...(lesson?.completedSections || []), sectionId],
       isCompleted: false,
@@ -54,23 +58,40 @@ export const useLessonData = (lessonId: string | null) => {
   };
 
   const handleQuizComplete = async (points: number) => {
-    if (!user || !lessonId) return;
+    if (!userId || !lessonSlug) return;
 
     await updateProgressMutation.mutateAsync({
       completedSections: lesson?.completedSections || [],
       isCompleted: false,
       points
     });
+
   };
 
   const handleLessonComplete = async () => {
-    if (!user || !lessonId || !lesson) return;
-    
-    await completeLessonMutation.mutateAsync({
-      userId: user.id,
-      lessonId,
-      pathId: lesson.pathId
-    });
+    if (!userId || !lessonSlug || !lesson) {
+      console.error('Brak wymaganych danych:', { userId, lessonSlug, lesson });
+      return;
+    }
+
+    try {
+      await completeLessonMutation.mutateAsync({
+        userId: userId,
+        lessonId: lesson.id,
+        pathId: lesson.pathId
+      });
+      toast.success('Lekcja ukończona!', {
+        duration: 3000,
+        position: 'bottom-right'
+      });
+    } catch (error) {
+      console.error('Błąd podczas kończenia lekcji:', error);
+      toast.error('Nie udało się ukończyć lekcji. Spróbuj ponownie.', {
+        duration: 4000,
+        position: 'bottom-right'
+      });
+      throw error;
+    }
   };
 
   return {

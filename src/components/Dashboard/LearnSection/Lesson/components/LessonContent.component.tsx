@@ -14,7 +14,6 @@ type LessonContentProps = {
   onSectionComplete: (sectionId: string) => void;
   onQuizComplete: (points: number) => void;
   onLessonComplete: () => void;
-  isCompletingLesson: boolean;
 };
 
 export const LessonContent = memo(({
@@ -25,8 +24,11 @@ export const LessonContent = memo(({
   onSectionComplete,
   onQuizComplete,
   onLessonComplete,
-  isCompletingLesson
 }: LessonContentProps) => {
+  if (!lesson) {
+    return null;
+  }
+
   const sections = lesson.sections || [];
   const totalSections = sections.length;
 
@@ -55,9 +57,8 @@ export const LessonContent = memo(({
         currentSection={activeSection}
         totalSections={totalSections}
         progress={progress}
-        onComplete={onLessonComplete}
         isCompleted={lesson.isCompleted}
-        isLoading={isCompletingLesson}
+        onComplete={onLessonComplete}
       />
     </>
   );

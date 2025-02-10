@@ -10,7 +10,7 @@ import { PathCard } from "./components/PathCard/PathCard.component";
 
 
 export const LearningPaths = memo(() => {
-  const { paths, userStats, isLoading, error, refetch, isEmpty } = useLearningPaths();
+  const { paths, userStats, isLoading, error, refetch, isEmpty } = useLearningPaths();  
 
   if (isLoading) return <LoadingSpinner />;
   
