@@ -1,7 +1,6 @@
 import { memo } from 'react';
 import { motion } from 'framer-motion';
 import { type Lesson } from '../../types/lesson.types';
-import { CodeExample } from "./code/CodeExample.component";
 
 import { LessonHeader } from './LessonHeader.component';;
 import { LessonSection } from './LessonSection.component';
@@ -24,8 +23,6 @@ export const LessonMainContent = memo(({
 
   const { sections = [] } = lesson.content;  
 
-  console.log(lesson);
-  
 
   return (
     <div className="col-span-9 lesson-content overflow-y-auto max-h-[calc(100vh-200px)]">

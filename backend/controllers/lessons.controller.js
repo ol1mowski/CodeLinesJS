@@ -75,8 +75,7 @@ export const getLessons = async (req, res, next) => {
 export const getLessonById = async (req, res, next) => {
   try {
     const { id } = req.params;
-    console.log("Szukam lekcji o slug:", id);
-
+    
     const [lesson, lessonContent, user] = await Promise.all([
       Lesson.findOne({
         slug: id,
@@ -87,8 +86,6 @@ export const getLessonById = async (req, res, next) => {
         .select("stats.completedLessons stats.level")
         .lean(),
     ]);
-
-    console.log(lessonContent);
 
     if (!lesson) {
       throw new ValidationError("Lekcja nie została znaleziona");
