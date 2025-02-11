@@ -90,10 +90,9 @@ export const likePost = async (req, res, next) => {
       post.likes.userIds = post.likes.userIds.filter(id => id.toString() !== userId.toString());
       post.likes.count = post.likes.userIds.length;
     }
+    
 
     post.markModified('likes');
-
-    console.log(post.likes);
 
     await post.save();
 

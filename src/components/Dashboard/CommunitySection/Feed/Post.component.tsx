@@ -15,6 +15,7 @@ type PostProps = {
 };
 
 export const Post = memo(({ post }: PostProps) => {
+
   const queryClient = useQueryClient();
   const [showComments, setShowComments] = useState(false);
   const [isLiked, setIsLiked] = useState(post.isLiked);
@@ -24,7 +25,7 @@ export const Post = memo(({ post }: PostProps) => {
     mutationFn: () => toggleLike(post._id, isLiked),
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ["posts"] });
-      
+
       const previousState = {
         isLiked,
         likesCount
@@ -54,7 +55,7 @@ export const Post = memo(({ post }: PostProps) => {
     if (likeMutation.isPending) return;
     likeMutation.mutate();
   }, [likeMutation]);
-  
+
 
   const toggleComments = useCallback(() => {
     setShowComments(prev => !prev);
@@ -87,6 +88,7 @@ export const Post = memo(({ post }: PostProps) => {
       <PostContent content={post.content} />
       <PostActions
         isLiked={isLiked}
+        post={post}
         likesCount={likesCount}
         commentsCount={safeCommentsCount}
         onLike={handleLike}
@@ -106,18 +108,18 @@ const PostContent = memo(({ content }: { content: string }) => (
 
 type PostActionsProps = {
   isLiked: boolean;
-  likesCount: number;
   commentsCount: number;
   onLike: () => void;
   onCommentClick: () => void;
   isLikeLoading: boolean;
+  post: PostType;
 };
 
 const PostActions = memo(({
   isLiked,
-  likesCount,
   commentsCount,
   onLike,
+  post,
   onCommentClick,
   isLikeLoading
 }: PostActionsProps) => (
@@ -132,8 +134,8 @@ const PostActions = memo(({
                 ${isLikeLoading ? "opacity-50 cursor-not-allowed" : ""}
                 transition-colors`}
     >
-      <FaHeart className={isLiked ? "fill-current" : "stroke-current"} />
-      <span>{Math.max(0, Number(likesCount) || 0)}</span>
+      <FaHeart className={post.likes.isLiked ? "fill-current" : "stroke-current"} />
+      <span>{Math.max(0, Number(post.likes.count) || 0)}</span>
     </motion.button>
     <motion.button
       whileHover={{ scale: 1.1 }}
