@@ -85,13 +85,16 @@ export const likePost = async (req, res, next) => {
 
     if (isLiked && !hasLiked) {
       post.likes.userIds.push(userId);
-      post.likes.count += 1;
+      post.likes.count = post.likes.userIds.length;
     } else if (!isLiked && hasLiked) {
       post.likes.userIds = post.likes.userIds.filter(id => id.toString() !== userId.toString());
-      post.likes.count = Math.max(0, post.likes.count - 1);
+      post.likes.count = post.likes.userIds.length;
     }
 
     post.markModified('likes');
+
+    console.log(post.likes);
+
     await post.save();
 
     const populatedPost = await Post.findById(post._id)

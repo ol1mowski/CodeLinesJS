@@ -35,6 +35,7 @@ export const toggleLike = async (postId: string, isLiked: boolean): Promise<Like
     },
     body: JSON.stringify({ isLiked: isLiked })
   });
+  
 
   if (!response.ok) {
     throw new Error("Nie udało się zaktualizować polubienia");
@@ -44,6 +45,6 @@ export const toggleLike = async (postId: string, isLiked: boolean): Promise<Like
   
   return {
     isLiked: Boolean(data.isLiked),
-    likesCount: Number(data.likesCount)
+    likesCount: Number(data.likes.count)
   };
 };
