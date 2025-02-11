@@ -17,18 +17,11 @@ type PostProps = {
 export const Post = memo(({ post }: PostProps) => {
   const queryClient = useQueryClient();
   const [showComments, setShowComments] = useState(false);
-  const [isLiked, setIsLiked] = useState(post.isLiked || false);
-  const [likesCount, setLikesCount] = useState(() => {
-    const count = Number(post.likes);
-    return !isNaN(count) ? count : 0;
-  });
+  const [isLiked, setIsLiked] = useState(post.isLiked);
+  const [likesCount, setLikesCount] = useState(Number(post.likes) || 0);
 
   const likeMutation = useMutation({
-    mutationFn: () => {
-      const newIsLiked = !isLiked;
-      console.log('Sending like state:', newIsLiked);
-      return toggleLike(post._id, newIsLiked);
-    },
+    mutationFn: () => toggleLike(post._id, isLiked),
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ["posts"] });
       
@@ -37,40 +30,23 @@ export const Post = memo(({ post }: PostProps) => {
         likesCount
       };
 
-      const willBeLiked = !isLiked;
-      setIsLiked(willBeLiked);
-      setLikesCount(current => {
-        const count = Number(current);
-        if (isNaN(count)) return willBeLiked ? 1 : 0;
-        return willBeLiked ? count + 1 : Math.max(0, count - 1);
-      });
+      setIsLiked(!isLiked);
+      setLikesCount(prev => isLiked ? prev - 1 : prev + 1);
 
-      console.log('Previous state:', previousState, 'New isLiked:', willBeLiked);
       return previousState;
     },
     onError: (error, variables, context) => {
       if (context) {
-        console.log('Error - restoring state:', context);
         setIsLiked(context.isLiked);
         setLikesCount(context.likesCount);
       }
       toast.error("Nie udało się zaktualizować polubienia");
     },
     onSuccess: (response) => {
-      console.log('Success response:', response);
-      if (response) {
-        const newIsLiked = Boolean(response.isLiked);
-        const newLikesCount = Number(response.likesCount);
-        
-        console.log('Updating state to:', { isLiked: newIsLiked, likesCount: newLikesCount });
-        
-        setIsLiked(newIsLiked);
-        setLikesCount(!isNaN(newLikesCount) ? Math.max(0, newLikesCount) : 0);
-        
-        queryClient.invalidateQueries({ queryKey: ["posts"] });
-        
-        toast.success(newIsLiked ? "Polubiono post!" : "Usunięto polubienie");
-      }
+      setIsLiked(response.isLiked);
+      setLikesCount(response.likesCount);
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      toast.success(response.isLiked ? "Polubiono post!" : "Usunięto polubienie");
     }
   });
 
