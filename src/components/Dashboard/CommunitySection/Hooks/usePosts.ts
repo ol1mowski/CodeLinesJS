@@ -1,5 +1,4 @@
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useCallback } from 'react';
 import { Post } from '../types/post.types';
 
 const POSTS_PER_PAGE = 5;
@@ -35,66 +34,37 @@ export const usePosts = () => {
     initialPageParam: 1,
   });
 
-
-  const prefetchNextPage = useCallback(async () => {
-    if (hasNextPage) {
-      await queryClient.prefetchInfiniteQuery({
-        queryKey: [POSTS_QUERY_KEY],
-        queryFn: async ({ pageParam = 1 }) => {
-          const response = await fetch(
-            `${API_URL}/posts?page=${pageParam}&limit=${POSTS_PER_PAGE}`
-          );
-          if (!response.ok) {
-            throw new Error('Nie udało się pobrać postów');
-          }
-          return response.json();
-        },
-        initialPageParam: 1,
-      });
-    }
-  }, [hasNextPage, queryClient]);
-
   const likeMutation = useMutation({
     mutationFn: async (postId: string) => {
+      const token = localStorage.getItem('token');
       const response = await fetch(`${API_URL}/posts/${postId}/like`, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
+        headers: { 'Authorization': `Bearer ${token}` },
       });
-      if (!response.ok) {
-        throw new Error('Nie udało się polubić posta');
-      }
+      if (!response.ok) throw new Error('Nie udało się polubić posta');
       return response.json();
     },
     onMutate: async (postId) => {
       await queryClient.cancelQueries({ queryKey: [POSTS_QUERY_KEY] });
-      const previousPosts = queryClient.getQueryData([POSTS_QUERY_KEY]);
-
-      queryClient.setQueryData([POSTS_QUERY_KEY], (oldData: any) => ({
-        pages: oldData.pages.map((page: any) => ({
+      const previousData = queryClient.getQueryData([POSTS_QUERY_KEY]);
+      
+      queryClient.setQueryData([POSTS_QUERY_KEY], (old: any) => ({
+        pages: old.pages.map((page: any) => ({
           ...page,
-          posts: page.posts.map((post: Post) =>
-            post.id === postId
-              ? { ...post, likes: { count: post.likes.count + 1, isLiked: true } }
+          posts: page.posts.map((post: Post) => 
+            post._id === postId 
+              ? { ...post, isLiked: !post.isLiked, likes: post.isLiked ? post.likes - 1 : post.likes + 1 }
               : post
-          ),
-        })),
-        pageParams: oldData.pageParams,
+          )
+        }))
       }));
 
-      return { previousPosts };
+      return { previousData };
     },
     onError: (_, __, context) => {
-      if (context?.previousPosts) {
-        queryClient.setQueryData([POSTS_QUERY_KEY], context.previousPosts);
-      }
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: [POSTS_QUERY_KEY] });
-    },
+      queryClient.setQueryData([POSTS_QUERY_KEY], context?.previousData);
+    }
   });
-
 
   return {
     posts: data?.pages.flatMap(page => page.posts) ?? [],
@@ -102,7 +72,6 @@ export const usePosts = () => {
     isFetchingNextPage,
     hasNextPage,
     fetchNextPage,
-    prefetchNextPage,
     likePost: likeMutation.mutate
   };
 }; 

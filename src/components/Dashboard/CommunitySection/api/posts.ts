@@ -23,9 +23,8 @@ type LikeResponse = {
   likesCount: number;
 };
 
-
 export const toggleLike = async (postId: string, isLiked: boolean): Promise<LikeResponse> => {
-  console.log('API call - setting like to:', isLiked);
+  const token = sessionStorage.getItem("token") || localStorage.getItem("token");
   
   const response = await fetch(`http://localhost:5001/api/posts/${postId}/like`, {
     method: "PUT",
@@ -33,20 +32,18 @@ export const toggleLike = async (postId: string, isLiked: boolean): Promise<Like
       "Content-Type": "application/json",
       "Authorization": `Bearer ${token}`,
     },
-    body: JSON.stringify({ isLiked })
+    body: JSON.stringify({ isLiked: !isLiked })
   });
-
-  console.log('API response status:', response.status);
+  
 
   if (!response.ok) {
     throw new Error("Nie udało się zaktualizować polubienia");
   }
 
   const data = await response.json();
-  console.log('API response data:', data);
   
   return {
     isLiked: Boolean(data.isLiked),
-    likesCount: Number(data.likesCount)
+    likesCount: Number(data.likes.count)
   };
 };

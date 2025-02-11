@@ -1,4 +1,4 @@
-import { memo, useCallback, useState, useMemo } from "react";
+import { memo, useCallback, useState } from "react";
 import { motion } from "framer-motion";
 import { FaUserCircle, FaHeart, FaComment } from "react-icons/fa";
 import { formatDistanceToNow } from "date-fns";
@@ -9,68 +9,44 @@ import { toggleLike } from "../api/posts";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
-
 type PostProps = {
   post: PostType;
 };
 
 export const Post = memo(({ post }: PostProps) => {
+  
   const queryClient = useQueryClient();
   const [showComments, setShowComments] = useState(false);
-  const [isLiked, setIsLiked] = useState(post.isLiked || false);
-  const [likesCount, setLikesCount] = useState(() => {
-    const count = Number(post.likes);
-    return !isNaN(count) ? count : 0;
-  });
 
   const likeMutation = useMutation({
-    mutationFn: () => {
-      const newIsLiked = !isLiked;
-      console.log('Sending like state:', newIsLiked);
-      return toggleLike(post._id, newIsLiked);
-    },
+    mutationFn: () => toggleLike(post._id, post.likes.isLiked),
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ["posts"] });
-      
-      const previousState = {
-        isLiked,
-        likesCount
-      };
+      const previousPosts = queryClient.getQueryData(["posts"]);
 
-      const willBeLiked = !isLiked;
-      setIsLiked(willBeLiked);
-      setLikesCount(current => {
-        const count = Number(current);
-        if (isNaN(count)) return willBeLiked ? 1 : 0;
-        return willBeLiked ? count + 1 : Math.max(0, count - 1);
-      });
+      queryClient.setQueryData(["posts"], (old: any) => ({
+        ...old,
+        pages: old.pages.map((page: any) => ({
+          ...page,
+          posts: page.posts.map((p: PostType) => 
+            p._id === post._id 
+              ? {
+                  ...p,
+                  likes: {
+                    isLiked: !p.likes.isLiked,
+                    count: p.likes.isLiked ? p.likes.count - 1 : p.likes.count + 1
+                  }
+                }
+              : p
+          )
+        }))
+      }));
 
-      console.log('Previous state:', previousState, 'New isLiked:', willBeLiked);
-      return previousState;
+      return { previousPosts };
     },
-    onError: (error, variables, context) => {
-      if (context) {
-        console.log('Error - restoring state:', context);
-        setIsLiked(context.isLiked);
-        setLikesCount(context.likesCount);
-      }
+    onError: (_, __, context) => {
+      queryClient.setQueryData(["posts"], context?.previousPosts);
       toast.error("Nie udało się zaktualizować polubienia");
-    },
-    onSuccess: (response) => {
-      console.log('Success response:', response);
-      if (response) {
-        const newIsLiked = Boolean(response.isLiked);
-        const newLikesCount = Number(response.likesCount);
-        
-        console.log('Updating state to:', { isLiked: newIsLiked, likesCount: newLikesCount });
-        
-        setIsLiked(newIsLiked);
-        setLikesCount(!isNaN(newLikesCount) ? Math.max(0, newLikesCount) : 0);
-        
-        queryClient.invalidateQueries({ queryKey: ["posts"] });
-        
-        toast.success(newIsLiked ? "Polubiono post!" : "Usunięto polubienie");
-      }
     }
   });
 
@@ -78,17 +54,10 @@ export const Post = memo(({ post }: PostProps) => {
     if (likeMutation.isPending) return;
     likeMutation.mutate();
   }, [likeMutation]);
-  
 
   const toggleComments = useCallback(() => {
     setShowComments(prev => !prev);
   }, []);
-
-  const safeCommentsCount = useMemo(() => {
-    const count = Number(post.comments.length);
-    return !isNaN(count) ? count : 0;
-  }, [post.comments]);
-
 
   return (
     <motion.div
@@ -103,16 +72,15 @@ export const Post = memo(({ post }: PostProps) => {
         <div>
           <h3 className="font-medium text-js">{post.author.username}</h3>
           <span className="text-sm text-gray-400">
-            {formatDistanceToNow(post.createdAt, { addSuffix: true, locale: pl })}
+            {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true, locale: pl })}
           </span>
-
         </div>
       </div>
       <PostContent content={post.content} />
       <PostActions
-        isLiked={isLiked}
-        likesCount={likesCount}
-        commentsCount={safeCommentsCount}
+        isLiked={post.likes.isLiked}
+        likesCount={post.likes.count}
+        commentsCount={post.comments.length}
         onLike={handleLike}
         onCommentClick={toggleComments}
         isLikeLoading={likeMutation.isPending}
@@ -121,8 +89,6 @@ export const Post = memo(({ post }: PostProps) => {
     </motion.div>
   );
 });
-
-
 
 const PostContent = memo(({ content }: { content: string }) => (
   <p className="text-gray-300 mb-4">{content}</p>
@@ -152,12 +118,12 @@ const PostActions = memo(({
       onClick={onLike}
       disabled={isLikeLoading}
       className={`flex items-center gap-2 focus:outline-none 
-                ${isLiked ? "text-pink-500" : "text-gray-400 hover:text-pink-500"}
-                ${isLikeLoading ? "opacity-50 cursor-not-allowed" : ""}
-                transition-colors`}
+        ${isLiked ? "text-pink-500" : "text-gray-400 hover:text-pink-500"}
+        ${isLikeLoading ? "opacity-50 cursor-not-allowed" : ""}
+        transition-colors`}
     >
       <FaHeart className={isLiked ? "fill-current" : "stroke-current"} />
-      <span>{Math.max(0, Number(likesCount) || 0)}</span>
+      <span>{Math.max(0, likesCount)}</span>
     </motion.button>
     <motion.button
       whileHover={{ scale: 1.1 }}
@@ -166,11 +132,11 @@ const PostActions = memo(({
       className="flex items-center gap-2 text-gray-400 hover:text-indigo-400 transition-colors"
     >
       <FaComment />
-      <span>{Math.max(0, Number(commentsCount) || 0)}</span>
+      <span>{Math.max(0, commentsCount)}</span>
     </motion.button>
   </div>
 ));
 
 PostContent.displayName = "PostContent";
 PostActions.displayName = "PostActions";
-Post.displayName = "Post"; 
+Post.displayName = "Post";
