@@ -23,7 +23,6 @@ type LikeResponse = {
   likesCount: number;
 };
 
-
 export const toggleLike = async (postId: string, isLiked: boolean): Promise<LikeResponse> => {
   const token = sessionStorage.getItem("token") || localStorage.getItem("token");
   
@@ -33,7 +32,7 @@ export const toggleLike = async (postId: string, isLiked: boolean): Promise<Like
       "Content-Type": "application/json",
       "Authorization": `Bearer ${token}`,
     },
-    body: JSON.stringify({ isLiked: isLiked })
+    body: JSON.stringify({ isLiked: !isLiked })
   });
   
 

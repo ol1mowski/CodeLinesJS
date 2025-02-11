@@ -1,4 +1,4 @@
-import { memo, useCallback, useState, useMemo } from "react";
+import { memo, useCallback, useState } from "react";
 import { motion } from "framer-motion";
 import { FaUserCircle, FaHeart, FaComment } from "react-icons/fa";
 import { formatDistanceToNow } from "date-fns";
@@ -9,45 +9,44 @@ import { toggleLike } from "../api/posts";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
-
 type PostProps = {
   post: PostType;
 };
 
 export const Post = memo(({ post }: PostProps) => {
-
+  
   const queryClient = useQueryClient();
   const [showComments, setShowComments] = useState(false);
-  const [isLiked, setIsLiked] = useState(post.isLiked);
-  const [likesCount, setLikesCount] = useState(Number(post.likes) || 0);
 
   const likeMutation = useMutation({
-    mutationFn: () => toggleLike(post._id, isLiked),
+    mutationFn: () => toggleLike(post._id, post.likes.isLiked),
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ["posts"] });
+      const previousPosts = queryClient.getQueryData(["posts"]);
 
-      const previousState = {
-        isLiked,
-        likesCount
-      };
+      queryClient.setQueryData(["posts"], (old: any) => ({
+        ...old,
+        pages: old.pages.map((page: any) => ({
+          ...page,
+          posts: page.posts.map((p: PostType) => 
+            p._id === post._id 
+              ? {
+                  ...p,
+                  likes: {
+                    isLiked: !p.likes.isLiked,
+                    count: p.likes.isLiked ? p.likes.count - 1 : p.likes.count + 1
+                  }
+                }
+              : p
+          )
+        }))
+      }));
 
-      setIsLiked(!isLiked);
-      setLikesCount(prev => isLiked ? prev - 1 : prev + 1);
-
-      return previousState;
+      return { previousPosts };
     },
-    onError: (error, variables, context) => {
-      if (context) {
-        setIsLiked(context.isLiked);
-        setLikesCount(context.likesCount);
-      }
+    onError: (_, __, context) => {
+      queryClient.setQueryData(["posts"], context?.previousPosts);
       toast.error("Nie udało się zaktualizować polubienia");
-    },
-    onSuccess: (response) => {
-      setIsLiked(response.isLiked);
-      setLikesCount(response.likesCount);
-      queryClient.invalidateQueries({ queryKey: ["posts"] });
-      toast.success(response.isLiked ? "Polubiono post!" : "Usunięto polubienie");
     }
   });
 
@@ -56,16 +55,9 @@ export const Post = memo(({ post }: PostProps) => {
     likeMutation.mutate();
   }, [likeMutation]);
 
-
   const toggleComments = useCallback(() => {
     setShowComments(prev => !prev);
   }, []);
-
-  const safeCommentsCount = useMemo(() => {
-    const count = Number(post.comments.length);
-    return !isNaN(count) ? count : 0;
-  }, [post.comments]);
-
 
   return (
     <motion.div
@@ -80,17 +72,15 @@ export const Post = memo(({ post }: PostProps) => {
         <div>
           <h3 className="font-medium text-js">{post.author.username}</h3>
           <span className="text-sm text-gray-400">
-            {formatDistanceToNow(post.createdAt, { addSuffix: true, locale: pl })}
+            {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true, locale: pl })}
           </span>
-
         </div>
       </div>
       <PostContent content={post.content} />
       <PostActions
-        isLiked={isLiked}
-        post={post}
-        likesCount={likesCount}
-        commentsCount={safeCommentsCount}
+        isLiked={post.likes.isLiked}
+        likesCount={post.likes.count}
+        commentsCount={post.comments.length}
         onLike={handleLike}
         onCommentClick={toggleComments}
         isLikeLoading={likeMutation.isPending}
@@ -100,26 +90,24 @@ export const Post = memo(({ post }: PostProps) => {
   );
 });
 
-
-
 const PostContent = memo(({ content }: { content: string }) => (
   <p className="text-gray-300 mb-4">{content}</p>
 ));
 
 type PostActionsProps = {
   isLiked: boolean;
+  likesCount: number;
   commentsCount: number;
   onLike: () => void;
   onCommentClick: () => void;
   isLikeLoading: boolean;
-  post: PostType;
 };
 
 const PostActions = memo(({
   isLiked,
+  likesCount,
   commentsCount,
   onLike,
-  post,
   onCommentClick,
   isLikeLoading
 }: PostActionsProps) => (
@@ -130,12 +118,12 @@ const PostActions = memo(({
       onClick={onLike}
       disabled={isLikeLoading}
       className={`flex items-center gap-2 focus:outline-none 
-                ${isLiked ? "text-pink-500" : "text-gray-400 hover:text-pink-500"}
-                ${isLikeLoading ? "opacity-50 cursor-not-allowed" : ""}
-                transition-colors`}
+        ${isLiked ? "text-pink-500" : "text-gray-400 hover:text-pink-500"}
+        ${isLikeLoading ? "opacity-50 cursor-not-allowed" : ""}
+        transition-colors`}
     >
-      <FaHeart className={post.likes.isLiked ? "fill-current" : "stroke-current"} />
-      <span>{Math.max(0, Number(post.likes.count) || 0)}</span>
+      <FaHeart className={isLiked ? "fill-current" : "stroke-current"} />
+      <span>{Math.max(0, likesCount)}</span>
     </motion.button>
     <motion.button
       whileHover={{ scale: 1.1 }}
@@ -144,11 +132,11 @@ const PostActions = memo(({
       className="flex items-center gap-2 text-gray-400 hover:text-indigo-400 transition-colors"
     >
       <FaComment />
-      <span>{Math.max(0, Number(commentsCount) || 0)}</span>
+      <span>{Math.max(0, commentsCount)}</span>
     </motion.button>
   </div>
 ));
 
 PostContent.displayName = "PostContent";
 PostActions.displayName = "PostActions";
-Post.displayName = "Post"; 
+Post.displayName = "Post";

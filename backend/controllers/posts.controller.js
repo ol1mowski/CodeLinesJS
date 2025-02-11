@@ -80,19 +80,25 @@ export const likePost = async (req, res, next) => {
       post.likes.count = 0;
     }
 
+    console.log(req.body.isLiked);
+
     const hasLiked = post.likes.userIds.some(id => id.toString() === userId.toString());
     const isLiked = Boolean(req.body.isLiked);
 
     if (isLiked && !hasLiked) {
       post.likes.userIds.push(userId);
+      post.likes.isLiked = true;
       post.likes.count = post.likes.userIds.length;
     } else if (!isLiked && hasLiked) {
       post.likes.userIds = post.likes.userIds.filter(id => id.toString() !== userId.toString());
       post.likes.count = post.likes.userIds.length;
+      post.likes.isLiked = false;
     }
     
 
     post.markModified('likes');
+
+    console.log(post);
 
     await post.save();
 
