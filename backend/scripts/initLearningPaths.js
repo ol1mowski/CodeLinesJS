@@ -10,7 +10,6 @@ const initializeLearningPaths = async () => {
     await mongoose.connect(process.env.MONGODB_URI);
     console.log('Połączono z bazą danych');
 
-    // Pobierz wszystkie lekcje
     const jsLessons = await Lesson.find({ category: 'javascript' });
     const reactLessons = await Lesson.find({ category: 'react' });
 

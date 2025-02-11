@@ -9,13 +9,16 @@ export const getLessons = async (req, res, next) => {
     const userId = req.user.userId;
 
     const user = await User.findById(userId)
-      .select("stats.completedLessons")
+      .select("stats.learningPaths")
       .lean();
 
     const query = {
       isPublished: true,
       isAvailable: true,
     };
+
+    const usersCompletedLessons = user.stats.learningPaths[0].progress.completedLessons;
+
 
     if (category) query.category = category;
     if (difficulty) query.difficulty = difficulty;
@@ -33,23 +36,26 @@ export const getLessons = async (req, res, next) => {
       .sort({ order: 1 })
       .lean();
 
-    const completedLessons = user.stats?.completedLessons || [];
+    const formattedLessons = lessons.map((lesson) => {
+      const isCompleted = usersCompletedLessons.some(
+        (completedLesson) => completedLesson._id.toString() === lesson._id.toString()
+      );
 
-    const formattedLessons = lessons.map((lesson) => ({
-      id: lesson._id,
-      title: lesson.title,
-      description: lesson.description,
-      category: lesson.category,
-      difficulty: lesson.difficulty,
-      duration: lesson.duration,
-      points: lesson.points,
-      slug: lesson.slug,
-      requirements: lesson.requirements,
-      requiredLevel: lesson.requiredLevel,
-      isCompleted: completedLessons.some(
-        (completedId) => completedId.toString() === lesson._id.toString()
-      ),
-    }));
+
+      return {
+        id: lesson._id,
+        title: lesson.title,
+        description: lesson.description,
+        category: lesson.category,
+        difficulty: lesson.difficulty,
+        duration: lesson.duration,
+        points: lesson.points,
+        slug: lesson.slug,
+        requirements: lesson.requirements,
+        requiredLevel: lesson.requiredLevel,
+        isCompleted: isCompleted,
+      };
+    });
 
     const groupedLessons = formattedLessons.reduce((acc, lesson) => {
       if (!acc[lesson.category]) {
@@ -63,8 +69,8 @@ export const getLessons = async (req, res, next) => {
       lessons: groupedLessons,
       stats: {
         total: lessons.length,
-        completed: completedLessons.length,
-        progress: Math.round((completedLessons.length / lessons.length) * 100),
+        completed: usersCompletedLessons.length,
+        progress: lessons.length ? Math.round((usersCompletedLessons.length / lessons.length) * 100) : 0,
       },
     });
   } catch (error) {
@@ -72,10 +78,10 @@ export const getLessons = async (req, res, next) => {
   }
 };
 
+
 export const getLessonById = async (req, res, next) => {
   try {
     const { id } = req.params;
-    console.log("Szukam lekcji o slug:", id);
 
     const [lesson, lessonContent, user] = await Promise.all([
       Lesson.findOne({
@@ -99,6 +105,7 @@ export const getLessonById = async (req, res, next) => {
     const userLevel = user.stats?.level || 1;
     const completedLessons = user.stats?.completedLessons || [];
 
+
     if (userLevel < lesson.requiredLevel) {
       throw new ValidationError(
         `Wymagany poziom ${lesson.requiredLevel} do odblokowania tej lekcji`
@@ -116,7 +123,7 @@ export const getLessonById = async (req, res, next) => {
         );
       }
     }
-    
+
     const response = {
       id: lesson._id,
       slug: lesson.slug,
@@ -132,6 +139,7 @@ export const getLessonById = async (req, res, next) => {
         xp: lessonContent.xp,
         rewards: lessonContent.rewards,
         sections: lessonContent.sections,
+        quiz: lessonContent.quiz,
       },
     };
 
@@ -147,7 +155,7 @@ export const completeLesson = async (req, res, next) => {
     const userId = req.user.userId;
 
     const [lesson, user] = await Promise.all([
-      Lesson.findOne({ slug: id }),
+      Lesson.findOne({ _id: id }),
       User.findById(userId),
     ]);
 
@@ -163,10 +171,15 @@ export const completeLesson = async (req, res, next) => {
       throw new ValidationError("Lekcja została już ukończona");
     }
 
+    const userLearningPaths = user.stats.learningPaths[0].progress.completedLessons;
+
     user.stats = user.stats || {};
-    user.stats.completedLessons = user.stats.completedLessons || [];
+    user.stats.learningPaths = user.stats.learningPaths || [];
     user.stats.points = (user.stats.points || 0) + (lesson.points || 0);
-    user.stats.completedLessons.push(lesson._id);
+
+    if (!userLearningPaths.some(lesson => lesson._id.toString() === lesson._id.toString())) {
+      userLearningPaths.push({ _id: lesson._id, completedAt: new Date() });
+    }
 
     const today = new Date().toDateString();
     const lastActive = user.stats.lastActive
@@ -185,9 +198,10 @@ export const completeLesson = async (req, res, next) => {
       points: lesson.points,
       stats: {
         points: user.stats.points,
-        completedLessons: user.stats.completedLessons.length,
+        completedLessons: userLearningPaths.length,
         streak: user.stats.streak,
         lastActive: user.stats.lastActive,
+
       },
     });
   } catch (error) {

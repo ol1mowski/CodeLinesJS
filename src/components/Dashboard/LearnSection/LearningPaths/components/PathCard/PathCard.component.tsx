@@ -16,7 +16,7 @@ export const PathCard = memo(({ path }: PathCardProps) => {
     safeData,
     cardStyles,
     hoverAnimation 
-  } = usePathCardData(path);
+  } = usePathCardData(path);  
 
   return (
     <motion.div
