@@ -5,7 +5,7 @@ import { GroupChat } from "./Chat/GroupChat.component";
 
 export const GroupView = memo(() => {
   const { groupId } = useParams<{ groupId: string }>();
-  const { group, isLoading, error } = useGroup(groupId);
+  const { data: group, isLoading, error } = useGroup(groupId);
 
   if (isLoading) {
     return <div>Ładowanie...</div>;
