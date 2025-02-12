@@ -26,7 +26,7 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
   const sendMessageMutation = useMutation({
     mutationFn: (content: string) => sendGroupMessage(groupId, content),
     onSuccess: () => {
-      queryClient.invalidateQueries(['groupMessages', groupId]);
+      queryClient.invalidateQueries({ queryKey: ['groupMessages', groupId] });
       reset();
     },
     onError: () => {

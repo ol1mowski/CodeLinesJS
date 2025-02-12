@@ -8,9 +8,6 @@ export const RankingList = () => {
   const { data, isLoading } = useRanking();
   const users = data?.ranking;
 
-  console.log(users);
-
-
   if (isLoading) {
     return (
       <div className="space-y-4">

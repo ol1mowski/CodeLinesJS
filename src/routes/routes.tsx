@@ -12,6 +12,7 @@ import { GamesSection } from "../components/Dashboard/GamesSection/GamesSection.
 import { CodeEditor } from "../components/Dashboard/CodeEditor/CodeEditor.component";
 import { LessonPage } from "../components/Dashboard/LearnSection/Lesson/Lesson.page";
 import { CommunityProvider } from "../contexts/CommunityContext";
+import { GroupView } from "../components/Dashboard/CommunitySection/Groups/GroupView.component";
 
 const Home = lazy(() => import("../pages/Home"));
 const Auth = lazy(() => import("../pages/Auth"));
@@ -75,7 +76,13 @@ export const router = createBrowserRouter([
           },
           {
             path: "groups",
-            element: <CommunityGroups />
+            element: <CommunityGroups />,
+            children: [
+              {
+                path: ":groupId",
+                element: <GroupView />
+              }
+            ]
           }
         ]
       },
