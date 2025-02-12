@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import { FaCrown, FaUserCog, FaTrash, FaUserPlus } from "react-icons/fa";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { InviteMemberModal } from "./Modals/InviteMemberModal.component";
 import { ChangeRoleModal } from "./Modals/ChangeRoleModal.component";
 import { DeleteMemberModal } from "./Modals/DeleteMemberModal.component";
 
@@ -20,7 +19,6 @@ type GroupMembersProps = {
 
 export const GroupMembers = memo(({ members, groupId, userRole }: GroupMembersProps) => {
   const [selectedMember, setSelectedMember] = useState<{ id: string; username: string; role: string } | null>(null);
-  const [showInviteModal, setShowInviteModal] = useState(false);
   const [memberToDelete, setMemberToDelete] = useState<{ id: string; username: string } | null>(null);
   const queryClient = useQueryClient();
   const isAdmin = userRole === 'admin';
@@ -46,11 +44,6 @@ export const GroupMembers = memo(({ members, groupId, userRole }: GroupMembersPr
     }
   });
 
-  const handleInvite = (data: { username: string }) => {
-    console.log('Inviting user:', data.username);
-    toast.success(`Zaproszenie zostało wysłane do ${data.username}`);
-    setShowInviteModal(false);
-  };
 
   return (
     <>
@@ -61,17 +54,6 @@ export const GroupMembers = memo(({ members, groupId, userRole }: GroupMembersPr
       >
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold text-js">Członkowie grupy ({members.length})</h2>
-          {isAdmin && (
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setShowInviteModal(true)}
-              className="px-4 py-2 rounded-lg bg-js/10 text-js hover:bg-js/20 transition-colors flex items-center gap-2"
-            >
-              <FaUserPlus />
-              <span>Zaproś</span>
-            </motion.button>
-          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -142,12 +124,6 @@ export const GroupMembers = memo(({ members, groupId, userRole }: GroupMembersPr
         </div>
       </motion.div>
 
-      {showInviteModal && (
-        <InviteMemberModal
-          onClose={() => setShowInviteModal(false)}
-          onSubmit={handleInvite}
-        />
-      )}
 
       {selectedMember && (
         <ChangeRoleModal
