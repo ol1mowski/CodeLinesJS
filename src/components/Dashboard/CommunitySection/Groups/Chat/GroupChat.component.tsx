@@ -44,12 +44,10 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
 
   return (
     <div className="flex flex-col h-[calc(100vh-6rem)] bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10">
-      {/* Nagłówek czatu */}
       <div className="p-4 border-b border-js/10">
         <h2 className="text-xl font-bold text-js">Czat grupy</h2>
       </div>
 
-      {/* Lista wiadomości */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {isLoading ? (
           <div className="flex justify-center">
