@@ -2,6 +2,7 @@ import { memo } from "react";
 import { CreatePost } from "./CreatePost.component";
 import { PostsList } from "./PostsList.component";
 import { usePosts } from "../../../../Hooks/usePosts";
+import { ActiveUsers } from "./ActiveUsers.component";
 
 const CommunityFeed = memo(() => {
   const { 
@@ -14,18 +15,17 @@ const CommunityFeed = memo(() => {
   } = usePosts();
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      <div className="lg:col-span-3 space-y-6">
-        <CreatePost />
-        <PostsList 
-          posts={posts}
-          isLoading={isLoading}
-          isFetchingMore={isFetchingNextPage}
-          hasMore={hasNextPage}
-          onLoadMore={fetchNextPage}
-          onLike={likePost}
-        />
-      </div>
+    <div className="space-y-6">
+      <ActiveUsers />
+      <CreatePost />
+      <PostsList 
+        posts={posts}
+        isLoading={isLoading}
+        isFetchingMore={isFetchingNextPage}
+        hasMore={hasNextPage}
+        onLoadMore={fetchNextPage}
+        onLike={likePost}
+      />
     </div>
   );
 });

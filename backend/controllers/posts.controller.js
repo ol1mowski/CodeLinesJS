@@ -98,7 +98,6 @@ export const likePost = async (req, res, next) => {
 
     post.markModified('likes');
 
-    console.log(post);
 
     await post.save();
 
