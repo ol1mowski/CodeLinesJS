@@ -1,17 +1,15 @@
-import { memo } from "react";
 import { motion } from "framer-motion";
 import { FaUserCircle, FaTrophy, FaCode, FaBullseye } from "react-icons/fa";
 import { useRanking } from "../../../../Hooks/useRanking";
-import { RankingPeriod } from "../../../../types/ranking.types";
 import { HiOutlineTrophy } from "react-icons/hi2";
 
-type RankingListProps = {
-  period: RankingPeriod;
-};
 
-export const RankingList = memo(({ period }: RankingListProps) => {
-  const { data, isLoading } = useRanking(period);
-  const users = data?.users;
+export const RankingList = () => {
+  const { data, isLoading } = useRanking();
+  const users = data?.ranking;
+
+  console.log(users);
+
 
   if (isLoading) {
     return (
@@ -48,7 +46,7 @@ export const RankingList = memo(({ period }: RankingListProps) => {
     <div className="space-y-4">
       {users?.map((user, index) => (
         <motion.div
-          key={user.id}
+          key={index}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: index * 0.1 }}
@@ -56,40 +54,36 @@ export const RankingList = memo(({ period }: RankingListProps) => {
         >
           <div className="flex items-center gap-4">
             <div className="relative">
-              {user.avatar ? (
-                <img
-                  src={user.avatar}
-                  alt={user.name}
-                  className="w-12 h-12 rounded-full"
-                />
-              ) : (
-                <FaUserCircle className="w-12 h-12 text-gray-400" />
-              )}
+              <div className="text-2xl font-bold text-js flex items-center justify-center w-12 h-12 rounded-full bg-js/10">
+                {user.username.slice(0, 1)}
+              </div>
+
               {index < 3 && (
-                <div className="absolute -top-2 -right-2 bg-js rounded-full p-1">
-                  <FaTrophy className="w-4 h-4 text-dark" />
+                <div className="absolute -top-2 -right-2 rounded-full p-1 shadow-lg flex items-center justify-center w-8 h-8 text-sm font-bold text-dark"
+                  style={{
+                    background: index === 0
+                      ? 'linear-gradient(45deg, #FFD700, #FFC107)'
+                      : index === 1
+                        ? 'linear-gradient(45deg, #C0C0C0, #B0B0B0)'
+                        : 'linear-gradient(45deg, #CD7F32, #B87333)',
+                  }}
+                >
+                  {user.rank}
                 </div>
               )}
             </div>
+
             <div className="flex-1">
-              <div className="font-bold text-gray-200">{user.name}</div>
+              <div className="font-bold text-gray-200">{user.username}</div>
               <div className="text-sm text-gray-400">
-                Poziom {user.level} • {user.points} punktów
+                Poziom {user.stats.level} • {user.stats.points} punktów
               </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <FaCode className="text-js" />
-              <span className="text-js font-bold">{user.stats.completedChallenges}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <FaBullseye className="text-js" />
-              <span className="text-js font-bold">{user.stats.accuracy}%</span>
             </div>
           </div>
         </motion.div>
       ))}
     </div>
   );
-});
+};
 
 RankingList.displayName = "RankingList"; 

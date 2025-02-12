@@ -1,10 +1,14 @@
 import { useQuery, useQueryClient, QueryClient } from '@tanstack/react-query';
-import { RankingPeriod } from '../../../../../types/ranking.types';
 
 const RANKING_QUERY_KEY = 'ranking';
 
-const fetchRanking = async (period: RankingPeriod) => {
-  const response = await fetch(`http://localhost:5001/api/ranking?period=${period}`);
+const fetchRanking = async () => {
+  const token = sessionStorage.getItem('token') || localStorage.getItem('token');
+  const response = await fetch(`http://localhost:5001/api/ranking`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
   if (!response.ok) {
     throw new Error('Failed to fetch ranking');
   }
@@ -13,25 +17,24 @@ const fetchRanking = async (period: RankingPeriod) => {
 
 export const prefetchRanking = async (
   queryClient: QueryClient,
-  period: RankingPeriod
 ) => {
   await queryClient.prefetchQuery({
-    queryKey: [RANKING_QUERY_KEY, period],
-    queryFn: () => fetchRanking(period),
+    queryKey: [RANKING_QUERY_KEY],
+    queryFn: () => fetchRanking(),
   });
 };
 
-export const useRanking = (period: RankingPeriod) => {
+export const useRanking = () => {
   const queryClient = useQueryClient();
 
   const { data, isLoading, error } = useQuery({
-    queryKey: [RANKING_QUERY_KEY, period],
-    queryFn: () => fetchRanking(period),
+    queryKey: [RANKING_QUERY_KEY],
+    queryFn: () => fetchRanking(),
     staleTime: 5 * 60 * 1000, 
   });
 
-  const prefetchNextPeriod = async (nextPeriod: RankingPeriod) => {
-    await prefetchRanking(queryClient, nextPeriod);
+  const prefetchNextPeriod = async () => {
+    await prefetchRanking(queryClient);
   };
 
   return {
