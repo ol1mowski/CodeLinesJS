@@ -15,9 +15,15 @@ export const ActiveUsers = memo(() => {
   const { data: users } = useQuery<User[]>({
     queryKey: ['activeUsers'],
     queryFn: async () => {
-      const response = await fetch('http://localhost:5001/api/users/active');
+      const response = await fetch('http://localhost:5001/api/users/active', {
+        headers: {
+          'Authorization': `Bearer ${sessionStorage.getItem('token') || localStorage.getItem('token')}`
+        }
+      });
       if (!response.ok) throw new Error('Nie udało się pobrać aktywnych użytkowników');
-      return response.json();
+      const data = await response.json();
+      console.log(data);
+      return data;
     },
     refetchInterval: 30000
   });

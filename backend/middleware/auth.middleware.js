@@ -27,16 +27,28 @@ export const authMiddleware = async (req, res, next) => {
         email: decoded.email
       };
 
-      // Aktualizacja lastActive przy każdym żądaniu
       await User.findByIdAndUpdate(decoded.userId, {
-        $set: { 'stats.lastActive': new Date() }
+        $set: { 
+          isActive: true,
+          'stats.lastActive': new Date()
+        }
       });
+
+      const timeToExpiry = decoded.exp * 1000 - Date.now();
+      setTimeout(async () => {
+        await User.findByIdAndUpdate(decoded.userId, {
+          $set: { isActive: false }
+        });
+      }, timeToExpiry);
 
       next();
     } catch (error) {
       if (error.name === 'JsonWebTokenError') {
         throw new AuthError('Nieprawidłowy token');
       } else if (error.name === 'TokenExpiredError') {
+        await User.findByIdAndUpdate(decoded?.userId, {
+          $set: { isActive: false }
+        });
         throw new AuthError('Token wygasł');
       } else {
         throw error;
