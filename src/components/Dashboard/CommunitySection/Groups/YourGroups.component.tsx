@@ -50,7 +50,7 @@ export const YourGroups = memo(() => {
         {userGroups.map(group => (
           <Link
             key={group._id}
-            to={`/groups/${group._id}`}
+            to={`/dashboard/community/groups/${group._id}`}
             className="flex items-center gap-3 p-2 rounded-lg hover:bg-dark/40 transition-colors group"
           >
             <div className="w-10 h-10 rounded-lg bg-js/10 flex items-center justify-center">

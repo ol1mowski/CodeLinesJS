@@ -1,6 +1,7 @@
 import { Group } from '../models/group.model.js';
 import { User } from '../models/user.model.js';
 import { ValidationError } from '../utils/errors.js';
+import mongoose from 'mongoose';
 
 export const getGroupsController = async (req, res, next) => {
   try {
@@ -213,6 +214,58 @@ export const checkGroupName = async (req, res, next) => {
       message: 'Nazwa jest dostępna',
       available: true
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getGroupById = async (req, res, next) => {
+  try {
+    const groupId = req.params.id;
+    const userId = req.user?.userId;
+
+    if (!mongoose.Types.ObjectId.isValid(groupId)) {
+      throw new ValidationError('Nieprawidłowe ID grupy');
+    }
+
+    const [group, user] = await Promise.all([
+      Group.findById(groupId)
+        .populate('members', 'username avatar stats.level stats.points')
+        .lean(),
+      userId ? User.findById(userId).select('groups').lean() : null
+    ]);
+
+
+    if (!group) {
+      throw new ValidationError('Grupa nie została znaleziona');
+    }
+
+    const isMember = group.members.some(member => member._id.toString() === userId);
+    const userMembership = user?.groups?.find(g => g.groupId.toString() === groupId);
+
+    const formattedGroup = {
+      _id: group._id,
+      name: group.name,
+      description: group.description,
+      tags: group.tags,
+      membersCount: group.members.length,
+      postsCount: group.postsCount,
+      lastActive: group.lastActive,
+      createdAt: group.createdAt,
+      isMember,
+      members: group.members.map(member => ({
+        _id: member._id,
+        username: member.username,
+        level: member.stats?.level || 1,
+        points: member.stats?.points || 0,
+        isAdmin: member._id.toString() === group.members[0]._id.toString()
+      })),
+      userRole: userMembership?.role || null,
+      joinedAt: userMembership?.joinedAt || null,
+      notifications: userMembership?.notifications || false
+    };
+
+    res.json(formattedGroup);
   } catch (error) {
     next(error);
   }

@@ -1,4 +1,5 @@
 import { memo } from "react";
+import { Outlet, useLocation } from "react-router-dom";
 import { GroupsList } from "./GroupsList.component";
 import { YourGroups } from "./YourGroups.component";
 import { GroupsFilter } from "./GroupsFilter.component";
@@ -6,6 +7,13 @@ import { CreateGroupButton } from "./CreateGroupButton.component";
 import { GroupsSearchProvider } from "./context/GroupsSearchContext";
 
 const CommunityGroups = memo(() => {
+  const location = useLocation();
+  const isGroupView = location.pathname.includes("/groups/") && location.pathname.split("/").length > 4;
+
+  if (isGroupView) {
+    return <Outlet />;
+  }
+
   return (
     <GroupsSearchProvider>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -28,6 +36,6 @@ const CommunityGroups = memo(() => {
   );
 });
 
-export default CommunityGroups;
+CommunityGroups.displayName = "CommunityGroups";
 
-CommunityGroups.displayName = "CommunityGroups"; 
+export default CommunityGroups;

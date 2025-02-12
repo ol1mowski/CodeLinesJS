@@ -1,11 +1,14 @@
 import { motion } from "framer-motion";
 import { memo } from "react";
-import { FaTrophy, FaUsers, FaCode } from "react-icons/fa";
+import { FaTrophy, FaStar, FaCalendarDay } from "react-icons/fa";
 import { useRanking } from "../../../../Hooks/useRanking";
 
 export const RankingStats = memo(() => {
-  const { data, isLoading } = useRanking('weekly');
-  const userStats = data?.stats;
+  const { data, isLoading } = useRanking();
+  const userStats = data?.userStats;
+
+  console.log(data);
+  
 
   if (isLoading) {
     return (
@@ -37,24 +40,24 @@ export const RankingStats = memo(() => {
       gradient: "from-js/20 to-js/30",
     },
     {
-      icon: FaUsers,
-      label: "Aktywni gracze",
-      value: userStats?.activePlayers?.toLocaleString() || '-',
-      change: userStats?.activePlayersChange !== undefined
-        ? userStats.activePlayersChange > 0
-          ? `+${userStats.activePlayersChange}`
-          : userStats.activePlayersChange.toString()
+      icon: FaStar,
+      label: "Poziom",
+      value: userStats?.stats.level?.toLocaleString() || '-',
+      change: userStats?.stats.level !== undefined
+        ? userStats.stats.level > 0
+          ? `+${userStats.stats.level}`
+          : userStats.stats.level.toString()
         : undefined,
       gradient: "from-js/20 to-js/30",
     },
     {
-      icon: FaCode,
-      label: "Ukończone wyzwania",
-      value: userStats?.completedChallenges?.toString() || '-',
-      change: userStats?.challengesChange !== undefined
-        ? userStats.challengesChange > 0
-          ? `+${userStats.challengesChange}`
-          : userStats.challengesChange.toString()
+      icon: FaCalendarDay,
+      label: "Streak",
+      value: userStats?.stats.streak?.toLocaleString() || '-',
+      change: userStats?.stats.streak !== undefined
+        ? userStats.stats.streak > 0
+          ? `+${userStats.stats.streak}`
+          : userStats.stats.streak.toString()
         : undefined,
       gradient: "from-js/20 to-js/30",
     },
@@ -73,11 +76,6 @@ export const RankingStats = memo(() => {
             <stat.icon className="w-6 h-6 text-js mb-2" />
             <p className="text-gray-400 text-sm">{stat.label}</p>
             <p className="text-2xl font-bold text-js">{stat.value}</p>
-            {stat.change && (
-              <p className={`text-sm ${Number(stat.change) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                {stat.change}
-              </p>
-            )}
           </motion.div>
         ))}
       </div>
