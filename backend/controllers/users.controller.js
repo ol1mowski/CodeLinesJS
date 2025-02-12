@@ -3,7 +3,7 @@ import { User } from '../models/user.model.js';
 export const getActiveUsers = async (req, res, next) => {
   try {
     const activeUsers = await User.find({ isActive: true })
-      .select('username isActive avatar')
+      .select('username isActive _id')
       .lean();
 
     let usersToReturn = [...activeUsers];
@@ -14,7 +14,7 @@ export const getActiveUsers = async (req, res, next) => {
       const inactiveUsers = await User.aggregate([
         { $match: { isActive: false } },
         { $sample: { size: additionalUsersNeeded } },
-        { $project: { username: 1, isActive: 1, avatar: 1 } }
+        { $project: { username: 1, isActive: 1, avatar: 1, _id: 1 } }
       ]);
 
       usersToReturn = [...activeUsers, ...inactiveUsers];
@@ -28,7 +28,7 @@ export const getActiveUsers = async (req, res, next) => {
       users: usersToReturn.map(user => ({
         username: user.username,
         isActive: user.isActive || false,
-        avatar: user.avatar
+        _id: user._id
       })),
       totalActive: activeUsers.length
     });

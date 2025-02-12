@@ -1,14 +1,14 @@
 import { memo } from "react";
 import { motion } from "framer-motion";
-import { FaUserCircle } from "react-icons/fa";
 import { useQuery } from "@tanstack/react-query";
 
 type User = {
-  _id: string;
-  username: string;
-  avatar?: string;
-  isActive: boolean;
-  lastActive: Date;
+  users: {
+    _id: string;
+    username: string;
+    isActive: boolean;
+  }[];
+  totalActive: number;
 };
 
 export const ActiveUsers = memo(() => {
@@ -36,7 +36,7 @@ export const ActiveUsers = memo(() => {
     >
       <h3 className="text-js text-sm font-medium mb-3">Aktywni użytkownicy</h3>
       <div className="flex items-center gap-2">
-        {users?.slice(0, 8).map((user) => (
+        {users?.users.map((user) => (
           <motion.div
             key={user._id}
             className="relative group"
@@ -44,27 +44,15 @@ export const ActiveUsers = memo(() => {
             transition={{ type: "spring", stiffness: 400, damping: 17 }}
           >
             <div className="w-10 h-10 rounded-full relative">
-
               <div className="w-full h-full rounded-full bg-js/20 flex items-center justify-center border-2 border-dark/50">
-                <FaUserCircle className="w-6 h-6 text-js" />
+                {user.username.charAt(0).toUpperCase()}
               </div>
-
               {user.isActive && (
                 <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-dark">
                   <div className="absolute inset-0 bg-green-500 rounded-full animate-ping opacity-75"></div>
                 </div>
               )}
             </div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              whileHover={{ opacity: 1, y: 0 }}
-              className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-dark/90 px-2 py-1 rounded-md 
-                         text-xs text-gray-300 whitespace-nowrap opacity-0 group-hover:opacity-100
-                         transition-opacity pointer-events-none border border-js/10"
-            >
-              {user.username}
-            </motion.div>
           </motion.div>
         ))}
 
