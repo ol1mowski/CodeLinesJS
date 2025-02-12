@@ -3,6 +3,7 @@ import { ValidationError } from '../utils/errors.js';
 
 export const getPosts = async (req, res, next) => {
   try {
+    const userId = req.user?.userId;
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 5;
     const skip = (page - 1) * limit;
@@ -16,11 +17,19 @@ export const getPosts = async (req, res, next) => {
       Post.countDocuments()
     ]);
 
+    const formattedPosts = posts.map(post => ({
+      ...post.toObject(),
+      isLiked: userId ? post.likes.userIds.includes(userId) : false,
+      likes: {
+        count: post.likes.count || 0
+      }
+    }));
+
     const hasNextPage = skip + posts.length < total;
     const nextPage = hasNextPage ? page + 1 : undefined;
 
     res.json({
-      posts,
+      posts: formattedPosts,
       hasNextPage,
       nextPage
     });
@@ -68,37 +77,23 @@ export const likePost = async (req, res, next) => {
     if (!post.likes) {
       post.likes = {
         count: 0,
-        userIds: []
+        userIds: [],
+        isLiked: false
       };
     }
 
-    if (!post.likes.userIds) {
-      post.likes.userIds = [];
-    }
-
-    if (typeof post.likes.count !== 'number') {
-      post.likes.count = 0;
-    }
-
-    console.log(req.body.isLiked);
-
-    const hasLiked = post.likes.userIds.some(id => id.toString() === userId.toString());
+    const hasLiked = post.likes.userIds.includes(userId);
     const isLiked = Boolean(req.body.isLiked);
 
     if (isLiked && !hasLiked) {
       post.likes.userIds.push(userId);
-      post.likes.isLiked = true;
       post.likes.count = post.likes.userIds.length;
     } else if (!isLiked && hasLiked) {
       post.likes.userIds = post.likes.userIds.filter(id => id.toString() !== userId.toString());
       post.likes.count = post.likes.userIds.length;
-      post.likes.isLiked = false;
     }
     
-
     post.markModified('likes');
-
-
     await post.save();
 
     const populatedPost = await Post.findById(post._id)
@@ -110,7 +105,10 @@ export const likePost = async (req, res, next) => {
 
     res.json({
       ...populatedPost.toObject(),
-      isLiked: post.likes.userIds.some(id => id.toString() === userId.toString())
+      isLiked: post.likes.userIds.includes(userId),
+      likes: {
+        count: post.likes.count
+      }
     });
   } catch (error) {
     next(error);

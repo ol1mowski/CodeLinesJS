@@ -20,41 +20,48 @@ export const authMiddleware = async (req, res, next) => {
       throw new AuthError('Brak tokenu');
     }
 
+    let decoded;
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      req.user = {
-        userId: decoded.userId,
-        email: decoded.email
-      };
-
-      await User.findByIdAndUpdate(decoded.userId, {
-        $set: { 
-          isActive: true,
-          'stats.lastActive': new Date()
-        }
-      });
-
-      const timeToExpiry = decoded.exp * 1000 - Date.now();
-      setTimeout(async () => {
-        await User.findByIdAndUpdate(decoded.userId, {
-          $set: { isActive: false }
-        });
-      }, timeToExpiry);
-
-      next();
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
     } catch (error) {
       if (error.name === 'JsonWebTokenError') {
         throw new AuthError('Nieprawidłowy token');
-      } else if (error.name === 'TokenExpiredError') {
-        await User.findByIdAndUpdate(decoded?.userId, {
-          $set: { isActive: false }
-        });
-        throw new AuthError('Token wygasł');
-      } else {
-        throw error;
       }
+      if (error.name === 'TokenExpiredError') {
+        await User.findByIdAndUpdate(decoded?.userId, { $set: { isActive: false } });
+        throw new AuthError('Token wygasł');
+      }
+      throw error;
     }
+
+    req.user = {
+      userId: decoded.userId,
+      email: decoded.email
+    };
+
+    await User.findByIdAndUpdate(decoded.userId, {
+      $set: { 
+        isActive: true,
+        'stats.lastActive': new Date()
+      }
+    });
+
+    const timeToExpiry = decoded.exp * 1000 - Date.now();
+    
+    if (timeToExpiry > 0) {
+      setTimeout(async () => {
+        const user = await User.findById(decoded.userId);
+        
+        if (user && user.isActive) {
+          await User.findByIdAndUpdate(decoded.userId, {
+            $set: { isActive: false }
+          });
+        }
+      }, timeToExpiry);
+    }
+
+    next();
   } catch (error) {
     next(error);
   }
-}; 
+};

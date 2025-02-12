@@ -12,7 +12,7 @@ type User = {
 };
 
 export const ActiveUsers = memo(() => {
-  const { data: users } = useQuery<User[]>({
+  const { data } = useQuery<User>({
     queryKey: ['activeUsers'],
     queryFn: async () => {
       const response = await fetch('http://localhost:5001/api/users/active', {
@@ -22,7 +22,6 @@ export const ActiveUsers = memo(() => {
       });
       if (!response.ok) throw new Error('Nie udało się pobrać aktywnych użytkowników');
       const data = await response.json();
-      console.log(data);
       return data;
     },
     refetchInterval: 30000
@@ -36,7 +35,7 @@ export const ActiveUsers = memo(() => {
     >
       <h3 className="text-js text-sm font-medium mb-3">Aktywni użytkownicy</h3>
       <div className="flex items-center gap-2">
-        {users?.users.map((user) => (
+        {data?.users.map((user) => (
           <motion.div
             key={user._id}
             className="relative group"
@@ -56,13 +55,13 @@ export const ActiveUsers = memo(() => {
           </motion.div>
         ))}
 
-        {users && users.length > 8 && (
+        {data?.users.length > 8 && (
           <motion.div
             whileHover={{ scale: 1.1 }}
             className="w-10 h-10 rounded-full bg-js/10 flex items-center justify-center
                      text-js text-sm font-medium border-2 border-dark/50"
           >
-            +{users.length - 8}
+            +{data.users.length - 8}
           </motion.div>
         )}
       </div>
