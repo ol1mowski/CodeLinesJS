@@ -6,11 +6,15 @@ import { useGroup } from "../hooks/useGroup";
 import { GroupChat } from "./Chat/GroupChat.component";
 import { format } from "date-fns";
 import { pl } from "date-fns/locale";
+import { GroupMembers } from "./GroupMembers.component";
+import { GroupTabs } from "./GroupTabs.component";
+import { useState } from "react";
 
 export const GroupView = memo(() => {
   const { groupId } = useParams<{ groupId: string }>();
   const navigate = useNavigate();
   const { data: group, isLoading, error } = useGroup(groupId!);
+  const [activeTab, setActiveTab] = useState<'chat' | 'members' | 'settings'>('chat');
 
   console.log(group);
 
@@ -35,6 +39,25 @@ export const GroupView = memo(() => {
       </div>
     );
   }
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'chat':
+        return <GroupChat groupId={groupId!} />;
+      case 'members':
+        return (
+          <GroupMembers 
+            members={group.members} 
+            groupId={groupId!} 
+            userRole={group.userRole} 
+          />
+        );
+      case 'settings':
+        return <div>Ustawienia grupy</div>;
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -107,7 +130,13 @@ export const GroupView = memo(() => {
         </div>
       </motion.div>
 
-      <GroupChat groupId={groupId!} />
+      <GroupTabs 
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        isAdmin={group.userRole === 'admin'}
+      />
+
+      {renderContent()}
     </div>
   );
 });
