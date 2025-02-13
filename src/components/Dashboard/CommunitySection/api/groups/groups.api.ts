@@ -20,6 +20,20 @@ export const groupsApi = {
   }
 };
 
+export const leaveGroup = async (groupId: string) => {
+  const token = sessionStorage.getItem("token") || localStorage.getItem("token");
+  const response = await fetch(`${API_URL}/groups/${groupId}/leave`, {
+    method: "POST",
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error('Nie udało się opuścić grupy');
+  }
+};
+
 export const updateGroupName = async (groupId: string, title: string) => {
   const token = sessionStorage.getItem("token") || localStorage.getItem("token");
   const response = await fetch(`${API_URL}/groups/${groupId}/name`, {

@@ -1,22 +1,35 @@
-import { memo } from "react";
+import { memo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FaArrowLeft, FaUsers, FaBell, FaClock, FaCalendar, FaTag } from "react-icons/fa";
+import { FaArrowLeft, FaUsers,  FaClock, FaCalendar, FaTag, FaSignOutAlt } from "react-icons/fa";
 import { useGroup } from "../hooks/useGroup";
 import { GroupChat } from "./Chat/GroupChat.component";
 import { format } from "date-fns";
 import { pl } from "date-fns/locale";
 import { GroupMembers } from "./GroupMembers.component";
 import { GroupTabs } from "./GroupTabs.component";
-import { useState } from "react";
 import { GroupSettings } from "./GroupSettings.component";
+import { LeaveGroupModal } from "./Modals/LeaveGroupModal.component";
+import { useMutation } from "@tanstack/react-query";
+import { leaveGroup } from "../api/groups/groups.api";
+import toast from "react-hot-toast";
 
 export const GroupView = memo(() => {
   const { groupId } = useParams<{ groupId: string }>();
   const navigate = useNavigate();
   const { data: group, isLoading, error } = useGroup(groupId!);
   const [activeTab, setActiveTab] = useState<'chat' | 'members' | 'settings'>('chat');
+  const [showLeaveModal, setShowLeaveModal] = useState(false);
 
+  const leaveGroupMutation = useMutation({
+    mutationFn: async () => {
+      await leaveGroup(groupId!);
+    },
+    onSuccess: () => {
+      navigate('/dashboard/community/groups');
+      toast.success('Opuściłeś grupę');
+    }
+  });
 
   if (isLoading) {
     return (
@@ -81,6 +94,17 @@ export const GroupView = memo(() => {
               <p className="text-gray-400">{group.description}</p>
             </div>
           </div>
+
+          {!group.isAdmin && (
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setShowLeaveModal(true)}
+              className="p-3 rounded-lg bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20 transition-colors"
+            >
+              <FaSignOutAlt />
+            </motion.button>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
@@ -137,6 +161,17 @@ export const GroupView = memo(() => {
       />
 
       {renderContent()}
+
+      {showLeaveModal && (
+        <LeaveGroupModal
+          groupName={group.name}
+          onClose={() => setShowLeaveModal(false)}
+          onConfirm={() => {
+            leaveGroupMutation.mutate();
+            setShowLeaveModal(false);
+          }}
+        />
+      )}
     </div>
   );
 });

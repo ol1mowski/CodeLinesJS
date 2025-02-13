@@ -9,7 +9,8 @@ import {
   updateGroupName,
   updateGroupTags,
   deleteGroup,
-  removeMember
+  removeMember,
+  leaveGroup
 } from '../controllers/groups.controller.js';
 
 const router = Router();
@@ -23,5 +24,6 @@ router.put('/:groupId/name', authMiddleware, updateGroupName);
 router.put('/:groupId/tags', authMiddleware, updateGroupTags);
 router.delete('/:groupId', authMiddleware, deleteGroup);
 router.delete('/:groupId/members/:memberId', authMiddleware, removeMember);
+router.post('/:groupId/leave', authMiddleware, leaveGroup);
 
 export default router; 

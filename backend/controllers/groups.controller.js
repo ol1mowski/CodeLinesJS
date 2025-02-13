@@ -461,4 +461,71 @@ export const removeMember = async (req, res, next) => {
       error: error.message
     });
   }
+};
+
+export const leaveGroup = async (req, res, next) => {
+  try {
+    const { groupId } = req.params;
+    const userId = req.user.userId;
+
+    const [group, user] = await Promise.all([
+      Group.findById(groupId),
+      User.findById(userId)
+    ]);
+
+    if (!group) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'Grupa nie istnieje'
+      });
+    }
+
+    if (!user) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'Użytkownik nie istnieje'
+      });
+    }
+
+    const isMember = group.members.some(id => id.toString() === userId);
+    if (!isMember) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Nie jesteś członkiem tej grupy'
+      });
+    }
+
+    if (group.members[0].toString() === userId) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Założyciel nie może opuścić grupy. Możesz ją jedynie usunąć.'
+      });
+    }
+
+    group.members = group.members.filter(id => id.toString() !== userId);
+    group.membersCount = Math.max(0, group.membersCount - 1);
+
+
+    user.groups = user.groups.filter(g => g.groupId.toString() !== groupId);
+
+    await Promise.all([
+      group.save(),
+      user.save()
+    ]);
+
+    res.json({
+      status: 'success',
+      message: 'Opuściłeś grupę',
+      data: {
+        groupId: group._id,
+        membersCount: group.membersCount
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'error',
+      message: 'Wystąpił błąd podczas opuszczania grupy',
+      error: error.message
+    });
+  }
 }; 

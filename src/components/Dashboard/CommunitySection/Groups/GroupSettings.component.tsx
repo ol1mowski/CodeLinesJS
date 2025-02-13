@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { data, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { deleteGroup, updateGroupName, updateGroupTags } from "../api/groups/groups.api";
 import { EditTagsModal } from "./Modals/EditTagsModal.component";
