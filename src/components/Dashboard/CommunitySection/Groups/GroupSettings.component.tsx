@@ -5,7 +5,9 @@ import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { data, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { updateGroupName } from "../api/groups/groups.api";
+import { deleteGroup, updateGroupName, updateGroupTags } from "../api/groups/groups.api";
+import { EditTagsModal } from "./Modals/EditTagsModal.component";
+import { DeleteGroupModal } from "./Modals/DeleteGroupModal.component";
 
 type GroupSettingsProps = {
   group: {
@@ -18,6 +20,7 @@ type GroupSettingsProps = {
 export const GroupSettings = memo(({ group }: GroupSettingsProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isEditingTags, setIsEditingTags] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { register, handleSubmit } = useForm({
@@ -39,7 +42,7 @@ export const GroupSettings = memo(({ group }: GroupSettingsProps) => {
 
   const updateTagsMutation = useMutation({
     mutationFn: async (tags: string[]) => {
-      console.log('Updating tags:', tags);
+      await updateGroupTags(group._id, tags);
     },
     onSuccess: () => {
       setIsEditingTags(false);
@@ -50,7 +53,7 @@ export const GroupSettings = memo(({ group }: GroupSettingsProps) => {
 
   const deleteGroupMutation = useMutation({
     mutationFn: async () => {
-      console.log('Deleting group:', group._id);
+      await deleteGroup(group._id);
     },
     onSuccess: () => {
       navigate('/dashboard/community/groups');
@@ -109,7 +112,7 @@ export const GroupSettings = memo(({ group }: GroupSettingsProps) => {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => setIsEditingTags(!isEditingTags)}
+            onClick={() => setIsEditingTags(true)}
             className="p-2 rounded-lg bg-js/10 text-js hover:bg-js/20 transition-colors"
           >
             <FaEdit />
@@ -128,7 +131,14 @@ export const GroupSettings = memo(({ group }: GroupSettingsProps) => {
         </div>
       </motion.div>
 
-      {/* Usuwanie grupy */}
+      {isEditingTags && (
+        <EditTagsModal
+          currentTags={group.tags}
+          onClose={() => setIsEditingTags(false)}
+          onSubmit={(tags) => updateTagsMutation.mutate(tags)}
+        />
+      )}
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -144,17 +154,24 @@ export const GroupSettings = memo(({ group }: GroupSettingsProps) => {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => {
-              if (window.confirm('Czy na pewno chcesz usunąć tę grupę? Tej akcji nie można cofnąć.')) {
-                deleteGroupMutation.mutate();
-              }
-            }}
+            onClick={() => setShowDeleteModal(true)}
             className="p-3 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500/20 transition-colors"
           >
             <FaTrash />
           </motion.button>
         </div>
       </motion.div>
+
+      {showDeleteModal && (
+        <DeleteGroupModal
+          groupName={group.name}
+          onClose={() => setShowDeleteModal(false)}
+          onConfirm={() => {
+            deleteGroupMutation.mutate();
+            setShowDeleteModal(false);
+          }}
+        />
+      )}
     </div>
   );
 });
