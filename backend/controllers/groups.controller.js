@@ -387,4 +387,110 @@ export const deleteGroup = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+};
+
+export const changeUserRole = async (req, res, next) => {
+  try {
+    const { groupId } = req.params;
+    const { memberId, newRole } = req.body;
+    const adminId = req.user.userId;
+
+    if (!['admin', 'moderator', 'member'].includes(newRole)) {
+      throw new ValidationError('Nieprawidłowa rola');
+    }
+
+    const [group, member] = await Promise.all([
+      Group.findById(groupId),
+      User.findById(memberId)
+    ]);
+
+    if (!group) {
+      throw new ValidationError('Grupa nie istnieje');
+    }
+
+    if (!member) {
+      throw new ValidationError('Użytkownik nie istnieje');
+    }
+
+    const isAdmin = group.members[0].toString() === adminId;
+    if (!isAdmin) {
+      throw new ValidationError('Nie masz uprawnień do zarządzania rolami');
+    }
+
+    if (memberId === group.members[0].toString()) {
+      throw new ValidationError('Nie można zmienić roli założyciela grupy');
+    }
+
+    const memberGroupIndex = member.groups.findIndex(
+      g => g.groupId.toString() === groupId
+    );
+
+    if (memberGroupIndex === -1) {
+      throw new ValidationError('Użytkownik nie jest członkiem grupy');
+    }
+
+    member.groups[memberGroupIndex].role = newRole;
+    await member.save();
+
+    res.json({
+      message: 'Rola użytkownika została zaktualizowana',
+      member: {
+        _id: member._id,
+        username: member.username,
+        role: newRole
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const removeMember = async (req, res, next) => {
+  try {
+    const { groupId } = req.params;
+    const { memberId } = req.body;
+    const adminId = req.user.userId;
+
+    const [group, member] = await Promise.all([
+      Group.findById(groupId),
+      User.findById(memberId)
+    ]);
+
+    if (!group) {
+      throw new ValidationError('Grupa nie istnieje');
+    }
+
+    if (!member) {
+      throw new ValidationError('Użytkownik nie istnieje');
+    }
+
+    const isAdmin = group.members[0].toString() === adminId;
+    if (!isAdmin) {
+      throw new ValidationError('Nie masz uprawnień do usuwania członków');
+    }
+
+    if (memberId === group.members[0].toString()) {
+      throw new ValidationError('Nie można usunąć założyciela grupy');
+    }
+
+    group.members = group.members.filter(id => id.toString() !== memberId);
+    group.membersCount = Math.max(0, group.membersCount - 1);
+
+    member.groups = member.groups.filter(g => g.groupId.toString() !== groupId);
+
+    await Promise.all([
+      group.save(),
+      member.save()
+    ]);
+
+    res.json({
+      message: 'Użytkownik został usunięty z grupy',
+      removedMember: {
+        _id: member._id,
+        username: member.username
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
 }; 
