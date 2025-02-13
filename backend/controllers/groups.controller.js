@@ -269,4 +269,127 @@ export const getGroupById = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+};
+
+export const updateGroupName = async (req, res, next) => {
+  try {
+    const { groupId } = req.params;
+    const { name } = req.body;
+    const userId = req.user.userId;
+
+    if (!name) {
+      throw new ValidationError('Nazwa grupy jest wymagana');
+    }
+
+    const group = await Group.findById(groupId);
+    if (!group) {
+      throw new ValidationError('Grupa nie istnieje');
+    }
+
+    // Sprawdź czy użytkownik jest adminem grupy
+    const isAdmin = group.members[0].toString() === userId;
+    if (!isAdmin) {
+      throw new ValidationError('Nie masz uprawnień do edycji grupy');
+    }
+
+    // Sprawdź czy nazwa nie jest już zajęta
+    const existingGroup = await Group.findOne({
+      _id: { $ne: groupId },
+      name: { $regex: new RegExp(`^${name}$`, 'i') }
+    });
+
+    if (existingGroup) {
+      throw new ValidationError('Grupa o takiej nazwie już istnieje');
+    }
+
+    group.name = name;
+    await group.save();
+
+    res.json({
+      message: 'Nazwa grupy została zaktualizowana',
+      group: {
+        _id: group._id,
+        name: group.name
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateGroupTags = async (req, res, next) => {
+  try {
+    const { groupId } = req.params;
+    const { tags } = req.body;
+    const userId = req.user.userId;
+
+    if (!Array.isArray(tags)) {
+      throw new ValidationError('Tagi muszą być tablicą');
+    }
+
+    const group = await Group.findById(groupId);
+    if (!group) {
+      throw new ValidationError('Grupa nie istnieje');
+    }
+
+    // Sprawdź uprawnienia
+    const isAdmin = group.members[0].toString() === userId;
+    if (!isAdmin) {
+      throw new ValidationError('Nie masz uprawnień do edycji grupy');
+    }
+
+    // Walidacja tagów
+    const validTags = tags.filter(tag => 
+      typeof tag === 'string' && 
+      tag.length >= 2 && 
+      tag.length <= 20
+    );
+
+    group.tags = validTags;
+    await group.save();
+
+    res.json({
+      message: 'Tagi grupy zostały zaktualizowane',
+      group: {
+        _id: group._id,
+        tags: group.tags
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteGroup = async (req, res, next) => {
+  try {
+    const { groupId } = req.params;
+    const userId = req.user.userId;
+
+    const group = await Group.findById(groupId);
+    if (!group) {
+      throw new ValidationError('Grupa nie istnieje');
+    }
+
+    // Sprawdź czy użytkownik jest adminem
+    const isAdmin = group.members[0].toString() === userId;
+    if (!isAdmin) {
+      throw new ValidationError('Nie masz uprawnień do usunięcia grupy');
+    }
+
+    // Usuń referencje do grupy u wszystkich członków
+    await User.updateMany(
+      { 'groups.groupId': groupId },
+      { $pull: { groups: { groupId: groupId } } }
+    );
+
+    // Usuń grupę
+    await Group.findByIdAndDelete(groupId);
+
+    res.json({
+      message: 'Grupa została usunięta',
+      groupId
+    });
+  } catch (error) {
+    next(error);
+  }
 }; 
