@@ -3,8 +3,9 @@ import { motion } from "framer-motion";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { data, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { updateGroupName } from "../api/groups/groups.api";
 
 type GroupSettingsProps = {
   group: {
@@ -27,7 +28,7 @@ export const GroupSettings = memo(({ group }: GroupSettingsProps) => {
 
   const updateGroupMutation = useMutation({
     mutationFn: async (data: { name: string }) => {
-      console.log('Updating group:', data);
+      await updateGroupName(group._id, data.name);
     },
     onSuccess: () => {
       setIsEditing(false);

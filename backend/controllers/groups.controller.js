@@ -277,6 +277,8 @@ export const updateGroupName = async (req, res, next) => {
     const { name } = req.body;
     const userId = req.user.userId;
 
+    console.log(req.body);
+
     if (!name) {
       throw new ValidationError('Nazwa grupy jest wymagana');
     }
@@ -286,13 +288,11 @@ export const updateGroupName = async (req, res, next) => {
       throw new ValidationError('Grupa nie istnieje');
     }
 
-    // Sprawdź czy użytkownik jest adminem grupy
     const isAdmin = group.members[0].toString() === userId;
     if (!isAdmin) {
       throw new ValidationError('Nie masz uprawnień do edycji grupy');
     }
 
-    // Sprawdź czy nazwa nie jest już zajęta
     const existingGroup = await Group.findOne({
       _id: { $ne: groupId },
       name: { $regex: new RegExp(`^${name}$`, 'i') }
@@ -332,13 +332,11 @@ export const updateGroupTags = async (req, res, next) => {
       throw new ValidationError('Grupa nie istnieje');
     }
 
-    // Sprawdź uprawnienia
     const isAdmin = group.members[0].toString() === userId;
     if (!isAdmin) {
       throw new ValidationError('Nie masz uprawnień do edycji grupy');
     }
 
-    // Walidacja tagów
     const validTags = tags.filter(tag => 
       typeof tag === 'string' && 
       tag.length >= 2 && 
@@ -370,19 +368,16 @@ export const deleteGroup = async (req, res, next) => {
       throw new ValidationError('Grupa nie istnieje');
     }
 
-    // Sprawdź czy użytkownik jest adminem
     const isAdmin = group.members[0].toString() === userId;
     if (!isAdmin) {
       throw new ValidationError('Nie masz uprawnień do usunięcia grupy');
     }
 
-    // Usuń referencje do grupy u wszystkich członków
     await User.updateMany(
       { 'groups.groupId': groupId },
       { $pull: { groups: { groupId: groupId } } }
     );
 
-    // Usuń grupę
     await Group.findByIdAndDelete(groupId);
 
     res.json({
