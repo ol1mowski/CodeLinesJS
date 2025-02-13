@@ -66,3 +66,18 @@ export const deleteGroup = async (groupId: string) => {
     throw new Error('Nie udało się usunąć grupy');
   }
 };
+
+export const deleteMember = async (groupId: string, memberId: string) => {
+  const token = sessionStorage.getItem("token") || localStorage.getItem("token");
+  const response = await fetch(`${API_URL}/groups/${groupId}/members/${memberId}`, {
+    method: "DELETE",
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error('Nie udało się usunąć członka');
+  }
+};
+

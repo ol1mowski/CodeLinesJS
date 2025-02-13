@@ -9,7 +9,6 @@ import {
   updateGroupName,
   updateGroupTags,
   deleteGroup,
-  changeUserRole,
   removeMember
 } from '../controllers/groups.controller.js';
 
@@ -23,7 +22,6 @@ router.post('/check-name', authMiddleware, checkGroupName);
 router.put('/:groupId/name', authMiddleware, updateGroupName);
 router.put('/:groupId/tags', authMiddleware, updateGroupTags);
 router.delete('/:groupId', authMiddleware, deleteGroup);
-router.put('/:groupId/users/change-role', authMiddleware, changeUserRole);
-router.delete('/:groupId/users/remove', authMiddleware, removeMember);
+router.delete('/:groupId/members/:memberId', authMiddleware, removeMember);
 
 export default router; 

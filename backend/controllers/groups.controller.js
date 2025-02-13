@@ -389,66 +389,9 @@ export const deleteGroup = async (req, res, next) => {
   }
 };
 
-export const changeUserRole = async (req, res, next) => {
-  try {
-    const { groupId } = req.params;
-    const { memberId, newRole } = req.body;
-    const adminId = req.user.userId;
-
-    if (!['admin', 'moderator', 'member'].includes(newRole)) {
-      throw new ValidationError('Nieprawidłowa rola');
-    }
-
-    const [group, member] = await Promise.all([
-      Group.findById(groupId),
-      User.findById(memberId)
-    ]);
-
-    if (!group) {
-      throw new ValidationError('Grupa nie istnieje');
-    }
-
-    if (!member) {
-      throw new ValidationError('Użytkownik nie istnieje');
-    }
-
-    const isAdmin = group.members[0].toString() === adminId;
-    if (!isAdmin) {
-      throw new ValidationError('Nie masz uprawnień do zarządzania rolami');
-    }
-
-    if (memberId === group.members[0].toString()) {
-      throw new ValidationError('Nie można zmienić roli założyciela grupy');
-    }
-
-    const memberGroupIndex = member.groups.findIndex(
-      g => g.groupId.toString() === groupId
-    );
-
-    if (memberGroupIndex === -1) {
-      throw new ValidationError('Użytkownik nie jest członkiem grupy');
-    }
-
-    member.groups[memberGroupIndex].role = newRole;
-    await member.save();
-
-    res.json({
-      message: 'Rola użytkownika została zaktualizowana',
-      member: {
-        _id: member._id,
-        username: member.username,
-        role: newRole
-      }
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
 export const removeMember = async (req, res, next) => {
   try {
-    const { groupId } = req.params;
-    const { memberId } = req.body;
+    const { groupId, memberId } = req.params;
     const adminId = req.user.userId;
 
     const [group, member] = await Promise.all([
@@ -457,25 +400,43 @@ export const removeMember = async (req, res, next) => {
     ]);
 
     if (!group) {
-      throw new ValidationError('Grupa nie istnieje');
+      return res.status(404).json({
+        status: 'error',
+        message: 'Grupa nie istnieje'
+      });
     }
 
     if (!member) {
-      throw new ValidationError('Użytkownik nie istnieje');
+      return res.status(404).json({
+        status: 'error',
+        message: 'Użytkownik nie istnieje'
+      });
     }
 
     const isAdmin = group.members[0].toString() === adminId;
     if (!isAdmin) {
-      throw new ValidationError('Nie masz uprawnień do usuwania członków');
+      return res.status(403).json({
+        status: 'error',
+        message: 'Nie masz uprawnień do usuwania członków'
+      });
     }
 
     if (memberId === group.members[0].toString()) {
-      throw new ValidationError('Nie można usunąć założyciela grupy');
+      return res.status(400).json({
+        status: 'error',
+        message: 'Nie można usunąć założyciela grupy'
+      });
+    }
+
+    if (!group.members.some(id => id.toString() === memberId)) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'Użytkownik nie jest członkiem grupy'
+      });
     }
 
     group.members = group.members.filter(id => id.toString() !== memberId);
     group.membersCount = Math.max(0, group.membersCount - 1);
-
     member.groups = member.groups.filter(g => g.groupId.toString() !== groupId);
 
     await Promise.all([
@@ -484,13 +445,20 @@ export const removeMember = async (req, res, next) => {
     ]);
 
     res.json({
+      status: 'success',
       message: 'Użytkownik został usunięty z grupy',
-      removedMember: {
-        _id: member._id,
-        username: member.username
+      data: {
+        removedMember: {
+          _id: member._id,
+          username: member.username
+        }
       }
     });
   } catch (error) {
-    next(error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Wystąpił błąd podczas usuwania członka grupy',
+      error: error.message
+    });
   }
 }; 
