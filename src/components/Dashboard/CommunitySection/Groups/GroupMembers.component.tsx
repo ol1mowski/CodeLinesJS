@@ -1,10 +1,10 @@
 import { memo, useState } from "react";
 import { motion } from "framer-motion";
-import { FaCrown, FaUserCog, FaTrash, FaUserPlus } from "react-icons/fa";
+import { FaCrown, FaTrash } from "react-icons/fa";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { ChangeRoleModal } from "./Modals/ChangeRoleModal.component";
 import { DeleteMemberModal } from "./Modals/DeleteMemberModal.component";
+import { deleteMember } from "../api/groups/groups.api";
 
 type GroupMembersProps = {
   members: Array<{
@@ -18,29 +18,18 @@ type GroupMembersProps = {
 };
 
 export const GroupMembers = memo(({ members, groupId, userRole }: GroupMembersProps) => {
-  const [selectedMember, setSelectedMember] = useState<{ id: string; username: string; role: string } | null>(null);
+
   const [memberToDelete, setMemberToDelete] = useState<{ id: string; username: string } | null>(null);
   const queryClient = useQueryClient();
   const isAdmin = userRole === 'admin';
 
   const removeMemberMutation = useMutation({
     mutationFn: async (memberId: string) => {
-      console.log('Removing member:', memberId);
+      await deleteMember(groupId, memberId);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['group', groupId] });
       toast.success('Członek grupy został usunięty');
-    }
-  });
-
-  const changeRoleMutation = useMutation({
-    mutationFn: async ({ memberId, newRole }: { memberId: string; newRole: string }) => {
-      console.log('Changing role:', { memberId, newRole });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['group', groupId] });
-      toast.success('Rola została zmieniona');
-      setSelectedMember(null);
     }
   });
 
@@ -82,30 +71,18 @@ export const GroupMembers = memo(({ members, groupId, userRole }: GroupMembersPr
                     <span className="font-medium text-gray-200">
                       {member.username}
                     </span>
-                    {member.role === 'admin' && (
+                    {member.isAdmin && (
                       <FaCrown className="text-yellow-500 text-sm" />
                     )}
                   </div>
                   <span className="text-xs text-gray-400 capitalize">
-                    {member.role || 'member'}
+                    {member.isAdmin ? 'admin' : 'member'}
                   </span>
                 </div>
               </div>
 
-              {isAdmin && member.role !== 'admin' && (
+              {isAdmin && !member.isAdmin && (
                 <div className="flex items-center gap-2">
-                  <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => setSelectedMember({
-                      id: member._id,
-                      username: member.username,
-                      role: member.role || 'member'
-                    })}
-                    className="p-2 rounded-lg bg-js/10 text-js hover:bg-js/20 transition-colors"
-                  >
-                    <FaUserCog />
-                  </motion.button>
                   <motion.button
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
@@ -123,19 +100,6 @@ export const GroupMembers = memo(({ members, groupId, userRole }: GroupMembersPr
           ))}
         </div>
       </motion.div>
-
-
-      {selectedMember && (
-        <ChangeRoleModal
-          username={selectedMember.username}
-          currentRole={selectedMember.role}
-          onClose={() => setSelectedMember(null)}
-          onSubmit={(newRole) => changeRoleMutation.mutate({
-            memberId: selectedMember.id,
-            newRole
-          })}
-        />
-      )}
 
       {memberToDelete && (
         <DeleteMemberModal

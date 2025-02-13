@@ -269,4 +269,263 @@ export const getGroupById = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+};
+
+export const updateGroupName = async (req, res, next) => {
+  try {
+    const { groupId } = req.params;
+    const { name } = req.body;
+    const userId = req.user.userId;
+
+    console.log(req.body);
+
+    if (!name) {
+      throw new ValidationError('Nazwa grupy jest wymagana');
+    }
+
+    const group = await Group.findById(groupId);
+    if (!group) {
+      throw new ValidationError('Grupa nie istnieje');
+    }
+
+    const isAdmin = group.members[0].toString() === userId;
+    if (!isAdmin) {
+      throw new ValidationError('Nie masz uprawnień do edycji grupy');
+    }
+
+    const existingGroup = await Group.findOne({
+      _id: { $ne: groupId },
+      name: { $regex: new RegExp(`^${name}$`, 'i') }
+    });
+
+    if (existingGroup) {
+      throw new ValidationError('Grupa o takiej nazwie już istnieje');
+    }
+
+    group.name = name;
+    await group.save();
+
+    res.json({
+      message: 'Nazwa grupy została zaktualizowana',
+      group: {
+        _id: group._id,
+        name: group.name
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateGroupTags = async (req, res, next) => {
+  try {
+    const { groupId } = req.params;
+    const { tags } = req.body;
+    const userId = req.user.userId;
+
+    if (!Array.isArray(tags)) {
+      throw new ValidationError('Tagi muszą być tablicą');
+    }
+
+    const group = await Group.findById(groupId);
+    if (!group) {
+      throw new ValidationError('Grupa nie istnieje');
+    }
+
+    const isAdmin = group.members[0].toString() === userId;
+    if (!isAdmin) {
+      throw new ValidationError('Nie masz uprawnień do edycji grupy');
+    }
+
+    const validTags = tags.filter(tag => 
+      typeof tag === 'string' && 
+      tag.length >= 2 && 
+      tag.length <= 20
+    );
+
+    group.tags = validTags;
+    await group.save();
+
+    res.json({
+      message: 'Tagi grupy zostały zaktualizowane',
+      group: {
+        _id: group._id,
+        tags: group.tags
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteGroup = async (req, res, next) => {
+  try {
+    const { groupId } = req.params;
+    const userId = req.user.userId;
+
+    const group = await Group.findById(groupId);
+    if (!group) {
+      throw new ValidationError('Grupa nie istnieje');
+    }
+
+    const isAdmin = group.members[0].toString() === userId;
+    if (!isAdmin) {
+      throw new ValidationError('Nie masz uprawnień do usunięcia grupy');
+    }
+
+    await User.updateMany(
+      { 'groups.groupId': groupId },
+      { $pull: { groups: { groupId: groupId } } }
+    );
+
+    await Group.findByIdAndDelete(groupId);
+
+    res.json({
+      message: 'Grupa została usunięta',
+      groupId
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const removeMember = async (req, res, next) => {
+  try {
+    const { groupId, memberId } = req.params;
+    const adminId = req.user.userId;
+
+    const [group, member] = await Promise.all([
+      Group.findById(groupId),
+      User.findById(memberId)
+    ]);
+
+    if (!group) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'Grupa nie istnieje'
+      });
+    }
+
+    if (!member) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'Użytkownik nie istnieje'
+      });
+    }
+
+    const isAdmin = group.members[0].toString() === adminId;
+    if (!isAdmin) {
+      return res.status(403).json({
+        status: 'error',
+        message: 'Nie masz uprawnień do usuwania członków'
+      });
+    }
+
+    if (memberId === group.members[0].toString()) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Nie można usunąć założyciela grupy'
+      });
+    }
+
+    if (!group.members.some(id => id.toString() === memberId)) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'Użytkownik nie jest członkiem grupy'
+      });
+    }
+
+    group.members = group.members.filter(id => id.toString() !== memberId);
+    group.membersCount = Math.max(0, group.membersCount - 1);
+    member.groups = member.groups.filter(g => g.groupId.toString() !== groupId);
+
+    await Promise.all([
+      group.save(),
+      member.save()
+    ]);
+
+    res.json({
+      status: 'success',
+      message: 'Użytkownik został usunięty z grupy',
+      data: {
+        removedMember: {
+          _id: member._id,
+          username: member.username
+        }
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'error',
+      message: 'Wystąpił błąd podczas usuwania członka grupy',
+      error: error.message
+    });
+  }
+};
+
+export const leaveGroup = async (req, res, next) => {
+  try {
+    const { groupId } = req.params;
+    const userId = req.user.userId;
+
+    const [group, user] = await Promise.all([
+      Group.findById(groupId),
+      User.findById(userId)
+    ]);
+
+    if (!group) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'Grupa nie istnieje'
+      });
+    }
+
+    if (!user) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'Użytkownik nie istnieje'
+      });
+    }
+
+    const isMember = group.members.some(id => id.toString() === userId);
+    if (!isMember) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Nie jesteś członkiem tej grupy'
+      });
+    }
+
+    if (group.members[0].toString() === userId) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Założyciel nie może opuścić grupy. Możesz ją jedynie usunąć.'
+      });
+    }
+
+    group.members = group.members.filter(id => id.toString() !== userId);
+    group.membersCount = Math.max(0, group.membersCount - 1);
+
+
+    user.groups = user.groups.filter(g => g.groupId.toString() !== groupId);
+
+    await Promise.all([
+      group.save(),
+      user.save()
+    ]);
+
+    res.json({
+      status: 'success',
+      message: 'Opuściłeś grupę',
+      data: {
+        groupId: group._id,
+        membersCount: group.membersCount
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'error',
+      message: 'Wystąpił błąd podczas opuszczania grupy',
+      error: error.message
+    });
+  }
 }; 
