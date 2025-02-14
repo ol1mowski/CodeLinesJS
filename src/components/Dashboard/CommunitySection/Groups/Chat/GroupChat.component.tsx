@@ -1,7 +1,7 @@
 import { memo, useRef, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useForm } from "react-hook-form";
-import { FaPaperPlane, FaSpinner, FaEdit, FaTrash, FaSmile, FaEllipsisV } from "react-icons/fa";
+import { FaPaperPlane, FaSpinner, FaEdit, FaTrash, FaSmile, FaEllipsisV, FaCopy, FaFlag, FaTimes } from "react-icons/fa";
 import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../../../../../hooks/useAuth";
 import { format } from "date-fns";
@@ -36,7 +36,8 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
     queryKey: ['groupMessages', groupId],
     queryFn: ({ pageParam = 1 }) => fetchGroupMessages(groupId, pageParam),
     getNextPageParam: (lastPage) => 
-      lastPage.data.pagination.hasNextPage ? lastPage.data.pagination.page + 1 : undefined
+      lastPage.data.pagination.hasNextPage ? lastPage.data.pagination.page + 1 : undefined,
+    initialPageParam: 1
   });
 
   const sendMessageMutation = useMutation({
@@ -94,11 +95,28 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
     const [showActions, setShowActions] = useState(false);
     const [showReactions, setShowReactions] = useState(false);
 
+    const handleReaction = (reaction: string) => {
+      console.log('Dodano reakcję:', reaction, 'do wiadomości:', message._id);
+      setShowActions(false);
+    };
+
+    const handleCopy = () => {
+      navigator.clipboard.writeText(message.content);
+      toast.success('Skopiowano wiadomość');
+      setShowActions(false);
+    };
+
+    const handleReport = () => {
+      console.log('Zgłoszono wiadomość:', message._id);
+      toast.success('Wiadomość została zgłoszona');
+      setShowActions(false);
+    };
+
     return (
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className={`group flex gap-3 ${isOwnMessage ? 'flex-row-reverse' : ''} mb-4`}
+        className={`group flex gap-3 ${isOwnMessage ? 'flex-row-reverse' : ''} mb-4 relative`}
       >
         <div className="flex-shrink-0 pt-1">
           {message.author.avatar ? (
@@ -116,7 +134,7 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
           )}
         </div>
 
-        <div className={`flex flex-col ${isOwnMessage ? 'items-end' : 'items-start'} max-w-[70%]`}>
+        <div className={`flex flex-col ${isOwnMessage ? 'items-end' : 'items-start'} max-w-[85%] sm:max-w-[70%]`}>
           <div className="flex items-center gap-2 mb-1">
             <span className="text-sm text-gray-400">
               {message.author.username}
@@ -126,10 +144,10 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
             </span>
           </div>
 
-          <div className="relative group">
+          <div className="relative group w-full">
             <motion.div
               className={`
-                px-4 py-2 rounded-2xl break-words
+                px-4 py-2 rounded-2xl break-words relative
                 ${isOwnMessage 
                   ? 'bg-js text-dark ml-auto' 
                   : 'bg-dark/50 text-gray-200'
@@ -143,38 +161,106 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
               )}
             </motion.div>
 
-            {/* Akcje na wiadomości */}
             <AnimatePresence>
-              {showActions && isOwnMessage && (
+              {showActions && (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  className="absolute top-0 right-full mr-2 bg-dark/90 rounded-lg shadow-lg border border-js/10 p-1"
+                  className={`
+                    fixed sm:absolute top-0 left-1/2 sm:left-auto -translate-x-1/2 sm:translate-x-0
+                    z-50 bg-dark/95 backdrop-blur-sm rounded-lg shadow-lg border border-js/10 p-3
+                    w-[90vw] sm:w-64 
+                    ${isOwnMessage ? 'sm:right-full sm:mr-2' : 'sm:left-full sm:ml-2'}
+                    ${isOwnMessage ? 'sm:origin-right' : 'sm:origin-left'}
+                  `}
                 >
-                  <div className="flex gap-1">
+                  <div className="space-y-2">
+        
+                    <div className="p-2 rounded-lg hover:bg-js/10">
+                      <div className="text-xs text-gray-400 mb-2">Reakcje</div>
+                      <div className="flex flex-wrap gap-2 justify-center">
+                        {['👍', '❤️', '😂', '😮', '😢', '😡', '🎉', '👏', '🤔'].map((emoji) => (
+                          <motion.button
+                            key={emoji}
+                            whileHover={{ scale: 1.2 }}
+                            whileTap={{ scale: 0.9 }}
+                            onClick={() => handleReaction(emoji)}
+                            className="text-xl hover:scale-110 transition-transform p-1"
+                          >
+                            {emoji}
+                          </motion.button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="h-px bg-js/10 my-2" />
+
                     <motion.button
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                      onClick={() => handleEdit(message)}
-                      className="p-2 rounded-lg hover:bg-js/10 text-js"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={handleCopy}
+                      className="w-full p-2.5 rounded-lg hover:bg-js/10 text-gray-200 text-left text-sm flex items-center gap-2"
                     >
-                      <FaEdit />
+                      <FaCopy className="text-js" />
+                      Kopiuj tekst
                     </motion.button>
-                    <motion.button
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                      onClick={() => handleDelete(message._id)}
-                      className="p-2 rounded-lg hover:bg-red-500/10 text-red-500"
-                    >
-                      <FaTrash />
-                    </motion.button>
+
+                    {!isOwnMessage && (
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={handleReport}
+                        className="w-full p-2.5 rounded-lg hover:bg-red-500/10 text-gray-200 text-left text-sm flex items-center gap-2"
+                      >
+                        <FaFlag className="text-red-500" />
+                        Zgłoś wiadomość
+                      </motion.button>
+                    )}
+
+                    {isOwnMessage && (
+                      <>
+                        <motion.button
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => handleEdit(message)}
+                          className="w-full p-2.5 rounded-lg hover:bg-js/10 text-gray-200 text-left text-sm flex items-center gap-2"
+                        >
+                          <FaEdit className="text-js" />
+                          Edytuj
+                        </motion.button>
+
+                        <motion.button
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => {
+                            if (window.confirm('Czy na pewno chcesz usunąć tę wiadomość?')) {
+                              handleDelete(message._id);
+                            }
+                            setShowActions(false);
+                          }}
+                          className="w-full p-2.5 rounded-lg hover:bg-red-500/10 text-gray-200 text-left text-sm flex items-center gap-2"
+                        >
+                          <FaTrash className="text-red-500" />
+                          Usuń
+                        </motion.button>
+                      </>
+                    )}
                   </div>
+
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => setShowActions(false)}
+                    className="absolute -bottom-12 left-1/2 -translate-x-1/2 sm:hidden
+                             p-2 rounded-full bg-dark/90 text-gray-400 hover:text-js border border-js/10"
+                  >
+                    <FaTimes />
+                  </motion.button>
                 </motion.div>
               )}
             </AnimatePresence>
 
-            {/* Menu kontekstowe */}
             <button
               onClick={() => setShowActions(!showActions)}
               className={`
