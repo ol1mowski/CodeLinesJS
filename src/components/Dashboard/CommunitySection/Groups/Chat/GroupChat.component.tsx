@@ -20,7 +20,7 @@ type GroupChatProps = {
 };
 
 export const GroupChat = memo(({ groupId }: GroupChatProps) => {
-  const { userId } = useAuth();
+  const { user } = useAuth();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
   const queryClient = useQueryClient();
@@ -320,7 +320,7 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
             <MessageBubble
               key={message._id}
               message={message}
-              isOwnMessage={message.author._id === userId}
+              isOwnMessage={message.author._id === user?._id}
             />
           ))}
         </div>

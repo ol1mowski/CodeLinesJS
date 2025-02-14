@@ -31,6 +31,18 @@ export const getMessages = async (req, res, next) => {
       Message.countDocuments({ groupId })
     ]);
 
+    const formattedMessages = messages.map(message => ({
+      ...message,
+      isAuthor: message.author._id.toString() === userId,
+      reactions: {
+        summary: groupReactions(message.reactions || []),
+        userReactions: (message.reactions || [])
+          .filter(r => r.userId.toString() === userId)
+          .map(r => r.emoji)
+      },
+      hasReported: (message.reports || []).some(r => r.userId.toString() === userId) || false
+    }));
+
     await Message.updateMany(
       { 
         groupId,
@@ -51,7 +63,7 @@ export const getMessages = async (req, res, next) => {
     res.json({
       status: 'success',
       data: {
-        messages: messages.reverse(),
+        messages: formattedMessages.reverse(),
         pagination: {
           page,
           limit,
@@ -189,4 +201,127 @@ export const deleteMessage = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+};
+
+export const addReaction = async (req, res, next) => {
+  try {
+    const { groupId, messageId } = req.params;
+    const { emoji } = req.body;
+    const userId = req.user.userId;
+
+    if (!emoji) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Emoji jest wymagane'
+      });
+    }
+
+    const message = await Message.findOne({
+      _id: messageId,
+      groupId
+    });
+
+    if (!message) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'Wiadomość nie istnieje'
+      });
+    }
+
+    message.reactions = message.reactions.filter(
+      r => r.userId.toString() !== userId
+    );
+
+    message.reactions.push({
+      emoji,
+      userId
+    });
+
+    await message.save();
+
+    const updatedMessage = await Message.findById(messageId)
+      .populate('author', 'username avatar')
+      .lean();
+
+    res.json({
+      status: 'success',
+      data: {
+        message: {
+          ...updatedMessage,
+          isAuthor: updatedMessage.author._id.toString() === userId,
+          reactions: {
+            summary: groupReactions(updatedMessage.reactions || []),
+            userReactions: updatedMessage.reactions
+              .filter(r => r.userId.toString() === userId)
+              .map(r => r.emoji)
+          }
+        }
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const reportMessage = async (req, res, next) => {
+  try {
+    const { groupId, messageId } = req.params;
+    const { reason, description } = req.body;
+    const userId = req.user.userId;
+
+    if (!reason) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Powód zgłoszenia jest wymagany'
+      });
+    }
+
+    const message = await Message.findOne({
+      _id: messageId,
+      groupId
+    });
+
+    if (!message) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'Wiadomość nie istnieje'
+      });
+    }
+
+    const hasReported = message.reports.some(
+      r => r.userId.toString() === userId
+    );
+
+    if (hasReported) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Już zgłosiłeś tę wiadomość'
+      });
+    }
+
+    message.reports.push({
+      userId,
+      reason,
+      description,
+      createdAt: new Date(),
+      status: 'pending'
+    });
+
+    await message.save();
+
+    res.json({
+      status: 'success',
+      message: 'Wiadomość została zgłoszona'
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const groupReactions = (reactions = []) => {
+  if (!Array.isArray(reactions)) return {};
+  return reactions.reduce((acc, reaction) => {
+    acc[reaction.emoji] = (acc[reaction.emoji] || 0) + 1;
+    return acc;
+  }, {});
 }; 

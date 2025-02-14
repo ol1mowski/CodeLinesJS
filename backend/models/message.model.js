@@ -36,6 +36,39 @@ const messageSchema = new mongoose.Schema({
       type: Date,
       default: Date.now
     }
+  }],
+  reactions: [{
+    emoji: {
+      type: String,
+      required: true
+    },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true
+    }
+  }],
+  reports: [{
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true
+    },
+    reason: {
+      type: String,
+      required: true,
+      enum: ['spam', 'inappropriate', 'harassment', 'other']
+    },
+    description: String,
+    createdAt: {
+      type: Date,
+      default: Date.now
+    },
+    status: {
+      type: String,
+      enum: ['pending', 'reviewed', 'resolved'],
+      default: 'pending'
+    }
   }]
 }, {
   timestamps: true
