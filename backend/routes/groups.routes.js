@@ -16,7 +16,9 @@ import {
   getMessages,
   sendMessage,
   editMessage,
-  deleteMessage
+  deleteMessage,
+  addReaction,
+  reportMessage
 } from '../controllers/groupMessages.controller.js';
 
 const router = Router();
@@ -35,5 +37,7 @@ router.get('/:groupId/messages', authMiddleware, getMessages);
 router.post('/:groupId/messages', authMiddleware, sendMessage);
 router.put('/:groupId/messages/:messageId', authMiddleware, editMessage);
 router.delete('/:groupId/messages/:messageId', authMiddleware, deleteMessage);
+router.post('/:groupId/messages/:messageId/reactions', authMiddleware, addReaction);
+router.post('/:groupId/messages/:messageId/report', authMiddleware, reportMessage);
 
 export default router; 
