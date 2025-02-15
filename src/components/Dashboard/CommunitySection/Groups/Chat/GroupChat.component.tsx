@@ -1,7 +1,7 @@
 import { memo, useRef, useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useForm } from "react-hook-form";
-import { FaPaperPlane, FaSpinner, FaEdit, FaTrash, FaSmile, FaEllipsisV, FaCopy, FaFlag, FaTimes } from "react-icons/fa";
+import { FaPaperPlane, FaSpinner, FaEdit, FaTrash, FaSmile, FaEllipsisV, FaCopy, FaFlag, FaTimes, FaExclamationTriangle } from "react-icons/fa";
 import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../../../../../hooks/useAuth";
 import { format } from "date-fns";
@@ -25,6 +25,8 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
   const queryClient = useQueryClient();
   const { register, handleSubmit, reset, setValue } = useForm<{ message: string }>();
+  const [messageToDelete, setMessageToDelete] = useState<Message | null>(null);
+  const [editMessage, setEditMessage] = useState<{ id: string; content: string } | null>(null);
 
   const {
     data,
@@ -100,20 +102,14 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
 
   const handleEdit = (message: Message) => {
     setEditingMessageId(message._id);
-    setValue('message', message.content);
-  };
-
-  const handleDelete = async (messageId: string) => {
-    if (window.confirm('Czy na pewno chcesz usunąć tę wiadomość?')) {
-      deleteMessageMutation.mutate(messageId);
-    }
+    setEditMessage({ id: message._id, content: message.content });
   };
 
   const MessageBubble = ({ message, isOwnMessage }: { message: Message; isOwnMessage: boolean }) => {
     const [showActions, setShowActions] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
     const buttonRef = useRef<HTMLButtonElement>(null);
-
+    
     useEffect(() => {
       const handleClickOutside = (event: MouseEvent) => {
         if (
@@ -186,21 +182,41 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
           </div>
 
           <div className="relative group w-full">
-            <motion.div
-              className={`
-                px-4 py-3 rounded-2xl break-words relative
-                ${isOwnMessage 
-                  ? 'bg-js text-dark ml-auto shadow-lg' 
-                  : 'bg-dark/50 text-gray-200 border border-js/10 shadow-md'
-                }
-                ${editingMessageId === message._id ? 'hidden' : 'block'}
-              `}
-            >
-              <p>{message.content}</p>
-              {message.isEdited && (
-                <span className="text-xs opacity-70 ml-2">(edytowano)</span>
-              )}
-            </motion.div>
+            {editingMessageId === message._id ? (
+              <form
+                onSubmit={handleSubmit((data) => {
+                  editMessageMutation.mutate({
+                    messageId: message._id,
+                    content: data.message
+                  });
+                  setEditMessage(null);
+                })}
+                className="w-full mt-1"
+              >
+                <input
+                  {...register("message")}
+                  defaultValue={editMessage?.content}
+                  className="w-full bg-dark/50 rounded-lg px-3 py-1.5 text-gray-200 border border-js/10 focus:outline-none focus:border-js"
+                  autoFocus
+                />
+              </form>
+            ) : (
+              <motion.div
+                className={`
+                  px-4 py-3 rounded-2xl break-words relative
+                  ${isOwnMessage 
+                    ? 'bg-js text-dark ml-auto shadow-lg' 
+                    : 'bg-dark/50 text-gray-200 border border-js/10 shadow-md'
+                  }
+                  ${editingMessageId === message._id ? 'hidden' : 'block'}
+                `}
+              >
+                <p>{message.content}</p>
+                {message.isEdited && (
+                  <span className="text-xs opacity-70 ml-2">(edytowano)</span>
+                )}
+              </motion.div>
+            )}
 
             <button
               ref={buttonRef}
@@ -290,9 +306,7 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                           onClick={() => {
-                            if (window.confirm('Czy na pewno chcesz usunąć tę wiadomość?')) {
-                              handleDelete(message._id);
-                            }
+                            setMessageToDelete(message);
                             setShowActions(false);
                           }}
                           className="w-full p-2.5 rounded-lg hover:bg-red-500/10 text-gray-200 text-left text-sm flex items-center gap-2"
@@ -323,72 +337,131 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-6rem)] bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10">
-      <div className="p-4 border-b border-js/10">
-        <h2 className="text-xl font-bold text-js">Czat grupy</h2>
-      </div>
+    <>
+      <div className="flex flex-col h-[calc(100vh-6rem)] bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10">
+        <div className="p-4 border-b border-js/10">
+          <h2 className="text-xl font-bold text-js">Czat grupy</h2>
+        </div>
 
-      <div className="flex-1 overflow-y-auto p-4 pt-12">
-        {hasNextPage && (
-          <button
-            onClick={() => fetchNextPage()}
-            disabled={isFetchingNextPage}
-            className="w-full text-center text-js hover:text-js/80 disabled:opacity-50 mb-4"
-          >
-            {isFetchingNextPage ? (
-              <FaSpinner className="animate-spin mx-auto" />
-            ) : (
-              'Załaduj starsze wiadomości'
-            )}
-          </button>
-        )}
+        <div className="flex-1 overflow-y-auto p-4 pt-12">
+          {hasNextPage && (
+            <button
+              onClick={() => fetchNextPage()}
+              disabled={isFetchingNextPage}
+              className="w-full text-center text-js hover:text-js/80 disabled:opacity-50 mb-4"
+            >
+              {isFetchingNextPage ? (
+                <FaSpinner className="animate-spin mx-auto" />
+              ) : (
+                'Załaduj starsze wiadomości'
+              )}
+            </button>
+          )}
 
-        <div className="space-y-4 mt-4">
-          {messages.map((message) => (
-            <MessageBubble
-              key={message._id}
-              message={message}
-              isOwnMessage={message.author._id === user?._id}
+          <div className="space-y-4 mt-4">
+            {messages.map((message) => (
+              <MessageBubble
+                key={message._id}
+                message={message}
+                isOwnMessage={message.author._id === user?._id}
+              />
+            ))}
+          </div>
+          <div ref={messagesEndRef} />
+        </div>
+
+        <form
+          onSubmit={handleSubmit((data) => sendMessageMutation.mutate(data.message))}
+          className="p-4 border-t border-js/10"
+        >
+          <div className="flex gap-2">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              type="button"
+              className="p-2 rounded-lg bg-js/10 text-js hover:bg-js/20 transition-colors"
+            >
+              <FaSmile />
+            </motion.button>
+            <input
+              {...register("message", { required: true })}
+              placeholder="Napisz wiadomość..."
+              className="flex-1 bg-dark/50 rounded-lg px-4 py-2 text-gray-200 border border-js/10 focus:outline-none focus:border-js"
             />
-          ))}
-        </div>
-        <div ref={messagesEndRef} />
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              type="submit"
+              disabled={sendMessageMutation.isPending}
+              className="px-4 py-2 bg-js text-dark rounded-lg hover:bg-js/90 transition-colors disabled:opacity-50"
+            >
+              {sendMessageMutation.isPending ? (
+                <FaSpinner className="animate-spin" />
+              ) : (
+                <FaPaperPlane />
+              )}
+            </motion.button>
+          </div>
+        </form>
       </div>
 
-      <form
-        onSubmit={handleSubmit((data) => sendMessageMutation.mutate(data.message))}
-        className="p-4 border-t border-js/10"
-      >
-        <div className="flex gap-2">
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            type="button"
-            className="p-2 rounded-lg bg-js/10 text-js hover:bg-js/20 transition-colors"
+      <AnimatePresence>
+        {messageToDelete && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
           >
-            <FaSmile />
-          </motion.button>
-          <input
-            {...register("message", { required: true })}
-            placeholder="Napisz wiadomość..."
-            className="flex-1 bg-dark/50 rounded-lg px-4 py-2 text-gray-200 border border-js/10 focus:outline-none focus:border-js"
-          />
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            type="submit"
-            disabled={sendMessageMutation.isPending}
-            className="px-4 py-2 bg-js text-dark rounded-lg hover:bg-js/90 transition-colors disabled:opacity-50"
-          >
-            {sendMessageMutation.isPending ? (
-              <FaSpinner className="animate-spin" />
-            ) : (
-              <FaPaperPlane />
-            )}
-          </motion.button>
-        </div>
-      </form>
-    </div>
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-dark/90 rounded-xl p-6 w-full max-w-md relative"
+            >
+              <div className="flex items-center gap-3 mb-6">
+                <FaExclamationTriangle className="text-red-500 text-3xl" />
+                <div>
+                  <h2 className="text-xl font-bold text-red-500">Usuń wiadomość</h2>
+                  <p className="text-gray-400 text-sm mt-1">Ta akcja jest nieodwracalna</p>
+                </div>
+              </div>
+
+              <div className="bg-red-500/10 rounded-lg p-4 mb-6">
+                <p className="text-gray-300 mb-2">Czy na pewno chcesz usunąć tę wiadomość?</p>
+                <div className="text-gray-400 text-sm bg-dark/30 rounded-lg p-3 mt-2">
+                  {messageToDelete.content}
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => setMessageToDelete(null)}
+                  className="px-4 py-2 rounded-lg bg-dark/50 text-gray-400 hover:text-white transition-colors"
+                >
+                  Anuluj
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => {
+                    handleDelete(messageToDelete._id);
+                    setMessageToDelete(null);
+                  }}
+                  className="px-6 py-2 rounded-lg bg-red-500 text-white font-medium hover:bg-red-600 
+                           transition-colors flex items-center gap-2"
+                >
+                  <FaTrash className="text-sm" />
+                  Usuń wiadomość
+                </motion.button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 });
 
