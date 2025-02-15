@@ -1,4 +1,4 @@
-import { memo, useRef, useEffect, useState } from "react";
+import { memo, useRef, useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { FaPaperPlane, FaSpinner, FaEdit, FaTrash, FaSmile, FaEllipsisV, FaCopy, FaFlag, FaTimes } from "react-icons/fa";
@@ -78,6 +78,24 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
     }
   }, [data]);
 
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest('.message-actions-menu') && !target.closest('.message-actions-trigger')) {
+        const allMessages = document.querySelectorAll('.message-bubble');
+        allMessages.forEach(message => {
+          const messageComponent = message as any;
+          if (messageComponent.showActions) {
+            messageComponent.showActions = false;
+          }
+        });
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const messages = data?.pages.flatMap(page => page.data.messages) ?? [];
 
   const handleEdit = (message: Message) => {
@@ -116,7 +134,10 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className={`group flex gap-3 ${isOwnMessage ? 'flex-row-reverse' : ''} mb-4 relative`}
+        className={`
+          group flex gap-3 ${isOwnMessage ? 'flex-row-reverse' : ''} 
+          mb-6 message-bubble relative
+        `}
       >
         <div className="flex-shrink-0 pt-1">
           {message.author.avatar ? (
@@ -134,8 +155,11 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
           )}
         </div>
 
-        <div className={`flex flex-col ${isOwnMessage ? 'items-end' : 'items-start'} max-w-[85%] sm:max-w-[70%]`}>
-          <div className="flex items-center gap-2 mb-1">
+        <div className={`
+          flex flex-col ${isOwnMessage ? 'items-end' : 'items-start'} 
+          max-w-[85%] sm:max-w-[70%]
+        `}>
+          <div className="flex items-center gap-2 mb-2">
             <span className="text-sm text-gray-400">
               {message.author.username}
             </span>
@@ -147,10 +171,10 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
           <div className="relative group w-full">
             <motion.div
               className={`
-                px-4 py-2 rounded-2xl break-words relative
+                px-4 py-3 rounded-2xl break-words relative
                 ${isOwnMessage 
-                  ? 'bg-js text-dark ml-auto' 
-                  : 'bg-dark/50 text-gray-200'
+                  ? 'bg-js text-dark ml-auto shadow-lg' 
+                  : 'bg-dark/50 text-gray-200 border border-js/10 shadow-md'
                 }
                 ${editingMessageId === message._id ? 'hidden' : 'block'}
               `}
@@ -161,6 +185,18 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
               )}
             </motion.div>
 
+            <button
+              className={`
+                message-actions-trigger
+                absolute top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 
+                transition-opacity p-2 rounded-full hover:bg-dark/50
+                ${isOwnMessage ? 'left-0 -translate-x-full ml-2' : 'right-0 translate-x-full mr-2'}
+              `}
+              onClick={() => setShowActions(!showActions)}
+            >
+              <FaEllipsisV className="text-gray-400 hover:text-js" />
+            </button>
+
             <AnimatePresence>
               {showActions && (
                 <motion.div
@@ -168,6 +204,7 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   className={`
+                    message-actions-menu
                     fixed sm:absolute top-0 left-1/2 sm:left-auto -translate-x-1/2 sm:translate-x-0
                     z-50 bg-dark/95 backdrop-blur-sm rounded-lg shadow-lg border border-js/10 p-3
                     w-[90vw] sm:w-64 
@@ -260,35 +297,7 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
                 </motion.div>
               )}
             </AnimatePresence>
-
-            <button
-              onClick={() => setShowActions(!showActions)}
-              className={`
-                absolute top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity
-                ${isOwnMessage ? 'left-0 -translate-x-full ml-2' : 'right-0 translate-x-full mr-2'}
-              `}
-            >
-              <FaEllipsisV className="text-gray-400 hover:text-js" />
-            </button>
           </div>
-
-          {editingMessageId === message._id && (
-            <form
-              onSubmit={handleSubmit((data) => 
-                editMessageMutation.mutate({
-                  messageId: message._id,
-                  content: data.message
-                })
-              )}
-              className="w-full mt-1"
-            >
-              <input
-                {...register("message", { required: true })}
-                className="w-full bg-dark/50 rounded-lg px-3 py-1.5 text-gray-200 border border-js/10 focus:outline-none focus:border-js"
-                autoFocus
-              />
-            </form>
-          )}
         </div>
       </motion.div>
     );
@@ -300,7 +309,7 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
         <h2 className="text-xl font-bold text-js">Czat grupy</h2>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="flex-1 overflow-y-auto p-4 pt-12">
         {hasNextPage && (
           <button
             onClick={() => fetchNextPage()}
@@ -315,7 +324,7 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
           </button>
         )}
 
-        <div className="space-y-2">
+        <div className="space-y-4 mt-4">
           {messages.map((message) => (
             <MessageBubble
               key={message._id}
