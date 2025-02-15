@@ -1,9 +1,21 @@
 import { Message, MessagesResponse } from "../../../../types/messages.types";
+import toast from "react-hot-toast";
 
 const BASE_URL = 'http://localhost:5001';
 
 const getToken = () => {
   return sessionStorage.getItem('token') || localStorage.getItem('token');
+};
+
+const handleNetworkError = (error: any) => {
+  if (!navigator.onLine) {
+    toast.error('Brak połączenia z internetem');
+  } else if (error.message) {
+    toast.error(error.message);
+  } else {
+    toast.error('Wystąpił nieoczekiwany błąd');
+  }
+  throw error;
 };
 
 export const fetchGroupMessages = async (
@@ -32,21 +44,26 @@ export const sendGroupMessage = async (
   groupId: string, 
   content: string
 ): Promise<{ status: string; data: { message: Message } }> => {
-  const token = getToken();
-  const response = await fetch(`${BASE_URL}/api/groups/${groupId}/messages`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    },
-    body: JSON.stringify({ content })
-  });
+  try {
+    const token = getToken();
+    const response = await fetch(`${BASE_URL}/api/groups/${groupId}/messages`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ content })
+    });
 
-  if (!response.ok) {
-    throw new Error('Nie udało się wysłać wiadomości');
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Nie udało się wysłać wiadomości');
+    }
+
+    return response.json();
+  } catch (error) {
+    handleNetworkError(error);
   }
-
-  return response.json();
 };
 
 export const editGroupMessage = async (

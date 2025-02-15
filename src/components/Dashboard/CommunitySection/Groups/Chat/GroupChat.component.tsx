@@ -1,4 +1,4 @@
-import { memo, useEffect } from "react";
+import { memo, useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaPaperPlane, FaSpinner, FaEdit, FaTrash, FaSmile, FaEllipsisV, FaCopy, FaFlag, FaTimes, FaExclamationTriangle } from "react-icons/fa";
 import { useAuth } from "../../../../../hooks/useAuth";
@@ -11,6 +11,9 @@ import { useClickOutside } from "./hooks/useClickOutside";
 import { messageValidators } from "./utils/messageValidators";
 import { useReportMessage } from './hooks/useReportMessage';
 import { ReportMessageModal } from './components/ReportMessageModal';
+import { useMessageMutations } from './hooks/useMessageMutations';
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 
 type GroupChatProps = {
   groupId: string;
@@ -47,6 +50,14 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
     closeReportModal,
     handleReport
   } = useReportMessage();
+
+  const {
+    sendMessageMutation: messageMutationsSendMessageMutation,
+    editMessageMutation: messageMutationsEditMessageMutation,
+    deleteMessageMutation: messageMutationsDeleteMessageMutation
+  } = useMessageMutations(groupId);
+
+  const { handleSubmit, reset } = useForm();
 
   useClickOutside(() => {
     const allMessages = document.querySelectorAll('.message-bubble');
@@ -324,6 +335,18 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
     );
   };
 
+  const handleEditMessage = (messageId: string, content: string) => {
+    if (content.trim()) {
+      editMessageMutation.mutate({ messageId, content });
+    } else {
+      toast.error('Wiadomość nie może być pusta');
+    }
+  };
+
+  const handleDeleteMessage = (messageId: string) => {
+    messageMutationsDeleteMessageMutation.mutate(messageId);
+  };
+
   return (
     <>
       <div className="flex flex-col h-[calc(100vh-6rem)] bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10">
@@ -359,7 +382,7 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
         </div>
 
         <form
-          onSubmit={handleSendMessage}
+          onSubmit={handleSubmit(handleSendMessage)}
           className="p-4 border-t border-js/10"
         >
           <div className="flex gap-2">
@@ -435,7 +458,7 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => {
-                    handleDelete(messageToDelete._id);
+                    handleDeleteMessage(messageToDelete._id);
                     closeDeleteModal();
                   }}
                   className="px-6 py-2 rounded-lg bg-red-500 text-white font-medium hover:bg-red-600 

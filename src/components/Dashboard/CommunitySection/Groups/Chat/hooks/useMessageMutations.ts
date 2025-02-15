@@ -6,34 +6,48 @@ export const useMessageMutations = (groupId: string) => {
   const queryClient = useQueryClient();
 
   const sendMessageMutation = useMutation({
-    mutationFn: (content: string) => sendGroupMessage(groupId, content),
+    mutationFn: (content: string) => {
+      const promise = sendGroupMessage(groupId, content);
+      toast.promise(promise, {
+        loading: 'Wysyłanie wiadomości...',
+        success: 'Wiadomość wysłana!',
+        error: 'Nie udało się wysłać wiadomości'
+      });
+      return promise;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['groupMessages', groupId] });
-    },
-    onError: () => toast.error('Nie udało się wysłać wiadomości')
+    }
   });
 
   const editMessageMutation = useMutation({
     mutationFn: ({ messageId, content }: { messageId: string; content: string }) => {
-      return editGroupMessage(groupId, messageId, content);
+      const promise = editGroupMessage(groupId, messageId, content);
+      toast.promise(promise, {
+        loading: 'Aktualizowanie wiadomości...',
+        success: 'Wiadomość zaktualizowana!',
+        error: 'Nie udało się zaktualizować wiadomości'
+      });
+      return promise;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['groupMessages', groupId] });
-      toast.success('Wiadomość została zaktualizowana');
-    },
-    onError: (error) => {
-      console.error('Edit error:', error);
-      toast.error('Nie udało się edytować wiadomości');
     }
   });
 
   const deleteMessageMutation = useMutation({
-    mutationFn: (messageId: string) => deleteGroupMessage(groupId, messageId),
+    mutationFn: (messageId: string) => {
+      const promise = deleteGroupMessage(groupId, messageId);
+      toast.promise(promise, {
+        loading: 'Usuwanie wiadomości...',
+        success: 'Wiadomość usunięta!',
+        error: 'Nie udało się usunąć wiadomości'
+      });
+      return promise;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['groupMessages', groupId] });
-      toast.success('Wiadomość została usunięta');
-    },
-    onError: () => toast.error('Nie udało się usunąć wiadomości')
+    }
   });
 
   return {
