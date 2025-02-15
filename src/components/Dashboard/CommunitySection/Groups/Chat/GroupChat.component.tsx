@@ -24,7 +24,8 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
   const queryClient = useQueryClient();
-  const { register, handleSubmit, reset, setValue } = useForm<{ message: string }>();
+  const { register: registerMessage, handleSubmit: handleSubmitMessage } = useForm<{ message: string }>();
+  const { register: registerEdit, handleSubmit: handleSubmitEdit, setValue: setEditValue, reset: resetEdit } = useForm<{ editedMessage: string }>();
   const [messageToDelete, setMessageToDelete] = useState<Message | null>(null);
   const [editMessage, setEditMessage] = useState<{ id: string; content: string } | null>(null);
 
@@ -46,7 +47,7 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
     mutationFn: (content: string) => sendGroupMessage(groupId, content),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['groupMessages', groupId] });
-      reset();
+      resetMessage();
     },
     onError: () => toast.error('Nie udało się wysłać wiadomości')
   });
@@ -103,6 +104,7 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
   const handleEdit = (message: Message) => {
     setEditingMessageId(message._id);
     setEditMessage({ id: message._id, content: message.content });
+    setEditValue("editedMessage", message.content);
   };
 
   const MessageBubble = ({ message, isOwnMessage }: { message: Message; isOwnMessage: boolean }) => {
@@ -183,23 +185,87 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
 
           <div className="relative group w-full">
             {editingMessageId === message._id ? (
-              <form
-                onSubmit={handleSubmit((data) => {
-                  editMessageMutation.mutate({
-                    messageId: message._id,
-                    content: data.message
-                  });
-                  setEditMessage(null);
-                })}
-                className="w-full mt-1"
+              <motion.div
+                initial={{ opacity: 0, y: -5 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={`
+                  w-full bg-dark/80 rounded-xl p-3 border border-js/20
+                  ${isOwnMessage ? 'ml-auto' : ''}
+                  shadow-lg backdrop-blur-sm
+                `}
               >
-                <input
-                  {...register("message")}
-                  defaultValue={editMessage?.content}
-                  className="w-full bg-dark/50 rounded-lg px-3 py-1.5 text-gray-200 border border-js/10 focus:outline-none focus:border-js"
-                  autoFocus
-                />
-              </form>
+                <form
+                  onSubmit={handleSubmitEdit((data) => {
+                    editMessageMutation.mutate({
+                      messageId: message._id,
+                      content: data.editedMessage
+                    });
+                    setEditingMessageId(null);
+                    setEditMessage(null);
+                    resetEdit();
+                  })}
+                  className="space-y-3"
+                >
+                  <div className="flex items-center gap-2 text-xs text-gray-400 mb-1">
+                    <FaEdit className="text-js" />
+                    Edycja wiadomości
+                  </div>
+                  
+                  <textarea
+                    {...registerEdit("editedMessage", { required: true })}
+                    className="w-full bg-dark/50 rounded-lg px-3 py-2 text-gray-200 
+                             border border-js/10 focus:outline-none focus:border-js
+                             min-h-[80px] resize-none"
+                    autoFocus
+                    onKeyDown={(e) => {
+                      if (e.key === 'Escape') {
+                        setEditingMessageId(null);
+                        setEditMessage(null);
+                        resetEdit();
+                      }
+                    }}
+                  />
+                  
+                  <div className="flex justify-end gap-2">
+                    <motion.button
+                      type="button"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => {
+                        setEditingMessageId(null);
+                        setEditMessage(null);
+                        resetEdit();
+                      }}
+                      className="px-4 py-2 rounded-lg bg-dark/50 text-gray-400 
+                               hover:text-white transition-colors text-sm"
+                    >
+                      Anuluj (Esc)
+                    </motion.button>
+                    
+                    <motion.button
+                      type="submit"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      disabled={editMessageMutation.isPending}
+                      className="px-4 py-2 rounded-lg bg-js text-dark font-medium 
+                               hover:bg-js/90 transition-colors text-sm
+                               disabled:opacity-50 flex items-center gap-2"
+                    >
+                      {editMessageMutation.isPending ? (
+                        <>
+                          <FaSpinner className="animate-spin" />
+                          Zapisywanie...
+                        </>
+                      ) : (
+                        <>
+                          <FaEdit />
+                          Zapisz zmiany
+                        </>
+                      )}
+                    </motion.button>
+                  </div>
+                </form>
+              </motion.div>
             ) : (
               <motion.div
                 className={`
@@ -371,7 +437,7 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
         </div>
 
         <form
-          onSubmit={handleSubmit((data) => sendMessageMutation.mutate(data.message))}
+          onSubmit={handleSubmitMessage((data) => sendMessageMutation.mutate(data.message))}
           className="p-4 border-t border-js/10"
         >
           <div className="flex gap-2">
@@ -384,7 +450,7 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
               <FaSmile />
             </motion.button>
             <input
-              {...register("message", { required: true })}
+              {...registerMessage("message", { required: true })}
               placeholder="Napisz wiadomość..."
               className="flex-1 bg-dark/50 rounded-lg px-4 py-2 text-gray-200 border border-js/10 focus:outline-none focus:border-js"
             />
