@@ -1,8 +1,14 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { Message } from '../../../../../../types/messages.types';
 import toast from 'react-hot-toast';
 
-export const useMessageActions = (message: Message) => {
+type MessageActionsProps = {
+  onEdit: (message: Message) => void;
+  onDelete: (message: Message) => void;
+  onReport: (message: Message) => void;
+};
+
+export const useMessageActions = (message: Message, actions: MessageActionsProps) => {
   const [showActions, setShowActions] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -12,17 +18,26 @@ export const useMessageActions = (message: Message) => {
     setShowActions(false);
   };
 
-  const handleCopy = () => {
+  const handleCopy = useCallback(() => {
     navigator.clipboard.writeText(message.content);
     toast.success('Skopiowano wiadomość');
     setShowActions(false);
-  };
+  }, [message.content]);
 
-  const handleReport = () => {
-    console.log('Zgłoszono wiadomość:', message._id);
-    toast.success('Wiadomość została zgłoszona');
+  const handleReport = useCallback(() => {
+    actions.onReport(message);
     setShowActions(false);
-  };
+  }, [message, actions.onReport]);
+
+  const handleEdit = useCallback(() => {
+    actions.onEdit(message);
+    setShowActions(false);
+  }, [message, actions.onEdit]);
+
+  const handleDelete = useCallback(() => {
+    actions.onDelete(message);
+    setShowActions(false);
+  }, [message, actions.onDelete]);
 
   const toggleActions = () => setShowActions(!showActions);
   const closeActions = () => setShowActions(false);
@@ -34,6 +49,8 @@ export const useMessageActions = (message: Message) => {
     handleReaction,
     handleCopy,
     handleReport,
+    handleEdit,
+    handleDelete,
     toggleActions,
     closeActions
   };

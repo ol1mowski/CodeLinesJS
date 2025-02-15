@@ -8,8 +8,9 @@ import { Message } from "../../../../../types/messages.types";
 import { useChatMessages } from "./hooks/useChatMessages";
 import { useMessageActions } from "./hooks/useMessageActions";
 import { useClickOutside } from "./hooks/useClickOutside";
-import { useMessageEditing } from "./hooks/useMessageEditing";
 import { messageValidators } from "./utils/messageValidators";
+import { useReportMessage } from './hooks/useReportMessage';
+import { ReportMessageModal } from './components/ReportMessageModal';
 
 type GroupChatProps = {
   groupId: string;
@@ -27,7 +28,6 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
     messagesEndRef,
     registerEdit,
     registerMessage,
-    handleSubmitMessage,
     handleEdit,
     handleDelete,
     openDeleteModal,
@@ -38,8 +38,15 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
     scrollToBottom,
     handleSubmitEdit,
     handleSendMessage,
-    resetMessageForm
   } = useChatMessages(groupId);
+
+  const { 
+    messageToReport,
+    isReportModalOpen,
+    openReportModal,
+    closeReportModal,
+    handleReport
+  } = useReportMessage();
 
   useClickOutside(() => {
     const allMessages = document.querySelectorAll('.message-bubble');
@@ -67,7 +74,11 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
       handleReport,
       toggleActions,
       closeActions 
-    } = useMessageActions(message);
+    } = useMessageActions(message, {
+      onEdit: handleEdit,
+      onDelete: openDeleteModal,
+      onReport: openReportModal
+    });
 
     return (
       <motion.div
@@ -262,7 +273,7 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
                       <motion.button
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        onClick={handleReport}
+                        onClick={() => handleReport(message)}
                         className="w-full p-2.5 rounded-lg hover:bg-red-500/10 text-gray-200 text-left text-sm flex items-center gap-2"
                       >
                         <FaFlag className="text-red-500" />
@@ -438,6 +449,15 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {messageToReport && (
+        <ReportMessageModal
+          message={messageToReport}
+          isOpen={isReportModalOpen}
+          onClose={closeReportModal}
+          onSubmit={handleReport}
+        />
+      )}
     </>
   );
 });

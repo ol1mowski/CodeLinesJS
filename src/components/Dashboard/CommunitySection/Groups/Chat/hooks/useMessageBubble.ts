@@ -7,7 +7,8 @@ import toast from 'react-hot-toast';
 export const useMessageBubble = (
   message: Message,
   onEdit: (message: Message) => void,
-  onDelete: (message: Message) => void
+  onDelete: (message: Message) => void,
+  onReport: (message: Message) => void
 ) => {
   const { showActions, menuRef, buttonRef, toggleActions, closeActions } = useMessageActionsMenu();
   const { handleReaction, reactions } = useMessageReactions(message._id, closeActions);
@@ -19,10 +20,9 @@ export const useMessageBubble = (
   }, [message.content, closeActions]);
 
   const handleReport = useCallback(() => {
-    console.log('Zgłoszono wiadomość:', message._id);
-    toast.success('Wiadomość została zgłoszona');
+    onReport(message);
     closeActions();
-  }, [message._id, closeActions]);
+  }, [message, onReport, closeActions]);
 
   const handleEditClick = useCallback(() => {
     onEdit(message);
