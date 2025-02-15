@@ -111,7 +111,24 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
 
   const MessageBubble = ({ message, isOwnMessage }: { message: Message; isOwnMessage: boolean }) => {
     const [showActions, setShowActions] = useState(false);
-    const [showReactions, setShowReactions] = useState(false);
+    const menuRef = useRef<HTMLDivElement>(null);
+    const buttonRef = useRef<HTMLButtonElement>(null);
+
+    useEffect(() => {
+      const handleClickOutside = (event: MouseEvent) => {
+        if (
+          menuRef.current && 
+          buttonRef.current && 
+          !menuRef.current.contains(event.target as Node) && 
+          !buttonRef.current.contains(event.target as Node)
+        ) {
+          setShowActions(false);
+        }
+      };
+
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
     const handleReaction = (reaction: string) => {
       console.log('Dodano reakcję:', reaction, 'do wiadomości:', message._id);
@@ -186,6 +203,7 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
             </motion.div>
 
             <button
+              ref={buttonRef}
               className={`
                 message-actions-trigger
                 absolute top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 
@@ -200,6 +218,7 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
             <AnimatePresence>
               {showActions && (
                 <motion.div
+                  ref={menuRef}
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
