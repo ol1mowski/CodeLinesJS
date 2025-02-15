@@ -14,12 +14,17 @@ export const useMessageMutations = (groupId: string) => {
   });
 
   const editMessageMutation = useMutation({
-    mutationFn: ({ messageId, content }: { messageId: string; content: string }) =>
-      editGroupMessage(groupId, messageId, content),
+    mutationFn: ({ messageId, content }: { messageId: string; content: string }) => {
+      return editGroupMessage(groupId, messageId, content);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['groupMessages', groupId] });
+      toast.success('Wiadomość została zaktualizowana');
     },
-    onError: () => toast.error('Nie udało się edytować wiadomości')
+    onError: (error) => {
+      console.error('Edit error:', error);
+      toast.error('Nie udało się edytować wiadomości');
+    }
   });
 
   const deleteMessageMutation = useMutation({

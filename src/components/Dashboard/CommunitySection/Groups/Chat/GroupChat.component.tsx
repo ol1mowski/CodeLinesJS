@@ -8,6 +8,8 @@ import { Message } from "../../../../../types/messages.types";
 import { useChatMessages } from "./hooks/useChatMessages";
 import { useMessageActions } from "./hooks/useMessageActions";
 import { useClickOutside } from "./hooks/useClickOutside";
+import { useMessageEditing } from "./hooks/useMessageEditing";
+import { messageValidators } from "./utils/messageValidators";
 
 type GroupChatProps = {
   groupId: string;
@@ -33,7 +35,8 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
     cancelEditing,
     sendMessageMutation,
     editMessageMutation,
-    scrollToBottom
+    scrollToBottom,
+    handleSubmitEdit
   } = useChatMessages(groupId);
 
   useClickOutside(() => {
@@ -114,10 +117,10 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
                 `}
               >
                 <form
-                  onSubmit={handleSubmitMessage((data) => {
+                  onSubmit={handleSubmitEdit((formData) => {
                     editMessageMutation.mutate({
                       messageId: message._id,
-                      content: data.editedMessage
+                      content: formData.editedMessage
                     });
                     cancelEditing();
                   })}
@@ -129,7 +132,7 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
                   </div>
                   
                   <textarea
-                    {...registerEdit("editedMessage", { required: true })}
+                    {...registerEdit("editedMessage", messageValidators.required)}
                     className="w-full bg-dark/50 rounded-lg px-3 py-2 text-gray-200 
                              border border-js/10 focus:outline-none focus:border-js
                              min-h-[80px] resize-none"
