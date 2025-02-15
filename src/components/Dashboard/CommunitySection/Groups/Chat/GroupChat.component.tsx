@@ -24,7 +24,7 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
   const queryClient = useQueryClient();
-  const { register: registerMessage, handleSubmit: handleSubmitMessage } = useForm<{ message: string }>();
+  const { register: registerMessage, handleSubmit: handleSubmitMessage, reset: resetMessage } = useForm<{ message: string }>();
   const { register: registerEdit, handleSubmit: handleSubmitEdit, setValue: setEditValue, reset: resetEdit } = useForm<{ editedMessage: string }>();
   const [messageToDelete, setMessageToDelete] = useState<Message | null>(null);
   const [editMessage, setEditMessage] = useState<{ id: string; content: string } | null>(null);
@@ -105,6 +105,10 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
     setEditingMessageId(message._id);
     setEditMessage({ id: message._id, content: message.content });
     setEditValue("editedMessage", message.content);
+  };
+
+  const handleDelete = async (messageId: string) => {
+    deleteMessageMutation.mutate(messageId);
   };
 
   const MessageBubble = ({ message, isOwnMessage }: { message: Message; isOwnMessage: boolean }) => {
@@ -306,11 +310,12 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
                   exit={{ opacity: 0, scale: 0.95 }}
                   className={`
                     message-actions-menu
-                    fixed sm:absolute top-0 left-1/2 sm:left-auto -translate-x-1/2 sm:translate-x-0
-                    z-50 bg-dark/95 backdrop-blur-sm rounded-lg shadow-lg border border-js/10 p-3
-                    w-[90vw] sm:w-64 
-                    ${isOwnMessage ? 'sm:right-full sm:mr-2' : 'sm:left-full sm:ml-2'}
-                    ${isOwnMessage ? 'sm:origin-right' : 'sm:origin-left'}
+                    absolute z-50 bg-dark/95 backdrop-blur-sm rounded-lg shadow-lg 
+                    border border-js/10 p-3 w-64
+                    ${isOwnMessage 
+                      ? 'right-full mr-2 -top-1/2' 
+                      : 'left-full ml-2 -top-1/2'
+                    }
                   `}
                 >
                   <div className="space-y-2">
