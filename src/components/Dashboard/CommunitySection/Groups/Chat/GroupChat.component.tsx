@@ -36,7 +36,9 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
     sendMessageMutation,
     editMessageMutation,
     scrollToBottom,
-    handleSubmitEdit
+    handleSubmitEdit,
+    handleSendMessage,
+    resetMessageForm
   } = useChatMessages(groupId);
 
   useClickOutside(() => {
@@ -346,7 +348,7 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
         </div>
 
         <form
-          onSubmit={handleSubmitMessage((data) => sendMessageMutation.mutate(data.message))}
+          onSubmit={handleSendMessage}
           className="p-4 border-t border-js/10"
         >
           <div className="flex gap-2">

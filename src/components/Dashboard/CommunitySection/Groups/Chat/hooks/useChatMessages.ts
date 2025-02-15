@@ -11,7 +11,11 @@ export const useChatMessages = (groupId: string) => {
   const { sendMessageMutation, editMessageMutation, deleteMessageMutation } = useMessageMutations(groupId);
   const { editingMessageId, registerEdit, handleSubmitEdit, startEditing, cancelEditing } = useMessageEditing();
   const { messagesEndRef, scrollToBottom } = useScrollToBottom(messages);
-  const { register: registerMessage, handleSubmit: handleSubmitMessage } = useForm<{ message: string }>();
+  const { 
+    register: registerMessage, 
+    handleSubmit: handleSubmitMessage,
+    reset: resetMessageForm 
+  } = useForm<{ message: string }>();
   const [messageToDelete, setMessageToDelete] = useState<Message | null>(null);
 
   const handleEdit = (message: Message) => {
@@ -25,6 +29,15 @@ export const useChatMessages = (groupId: string) => {
   const closeDeleteModal = () => setMessageToDelete(null);
   const openDeleteModal = (message: Message) => setMessageToDelete(message);
 
+  const handleSendMessage = handleSubmitMessage((data) => {
+    sendMessageMutation.mutate(data.message, {
+      onSuccess: () => {
+        resetMessageForm();
+        scrollToBottom();
+      }
+    });
+  });
+
   return {
     messages,
     hasNextPage,
@@ -35,7 +48,7 @@ export const useChatMessages = (groupId: string) => {
     messagesEndRef,
     registerEdit,
     registerMessage,
-    handleSubmitMessage,
+    handleSendMessage,
     handleEdit,
     handleDelete,
     openDeleteModal,
@@ -44,6 +57,7 @@ export const useChatMessages = (groupId: string) => {
     sendMessageMutation,
     editMessageMutation,
     scrollToBottom,
-    handleSubmitEdit
+    handleSubmitEdit,
+    resetMessageForm
   };
 }; 
