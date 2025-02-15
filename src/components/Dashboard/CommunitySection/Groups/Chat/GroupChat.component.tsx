@@ -1,19 +1,13 @@
-import { memo, useRef, useEffect, useState, useCallback } from "react";
+import { memo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useForm } from "react-hook-form";
 import { FaPaperPlane, FaSpinner, FaEdit, FaTrash, FaSmile, FaEllipsisV, FaCopy, FaFlag, FaTimes, FaExclamationTriangle } from "react-icons/fa";
-import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../../../../../hooks/useAuth";
 import { format } from "date-fns";
 import { pl } from "date-fns/locale";
-import toast from "react-hot-toast";
 import { Message } from "../../../../../types/messages.types";
-import {
-  fetchGroupMessages,
-  sendGroupMessage,
-  editGroupMessage,
-  deleteGroupMessage
-} from "../../api/groupMessages";
+import { useChatMessages } from "./hooks/useChatMessages";
+import { useMessageActions } from "./hooks/useMessageActions";
+import { useClickOutside } from "./hooks/useClickOutside";
 
 type GroupChatProps = {
   groupId: string;
@@ -21,133 +15,54 @@ type GroupChatProps = {
 
 export const GroupChat = memo(({ groupId }: GroupChatProps) => {
   const { user } = useAuth();
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
-  const queryClient = useQueryClient();
-  const { register: registerMessage, handleSubmit: handleSubmitMessage, reset: resetMessage } = useForm<{ message: string }>();
-  const { register: registerEdit, handleSubmit: handleSubmitEdit, setValue: setEditValue, reset: resetEdit } = useForm<{ editedMessage: string }>();
-  const [messageToDelete, setMessageToDelete] = useState<Message | null>(null);
-  const [editMessage, setEditMessage] = useState<{ id: string; content: string } | null>(null);
-
   const {
-    data,
-    fetchNextPage,
+    messages,
     hasNextPage,
     isFetchingNextPage,
-    isLoading
-  } = useInfiniteQuery({
-    queryKey: ['groupMessages', groupId],
-    queryFn: ({ pageParam = 1 }) => fetchGroupMessages(groupId, pageParam),
-    getNextPageParam: (lastPage) => 
-      lastPage.data.pagination.hasNextPage ? lastPage.data.pagination.page + 1 : undefined,
-    initialPageParam: 1
-  });
+    fetchNextPage,
+    editingMessageId,
+    messageToDelete,
+    messagesEndRef,
+    registerEdit,
+    registerMessage,
+    handleSubmitMessage,
+    handleEdit,
+    handleDelete,
+    openDeleteModal,
+    closeDeleteModal,
+    cancelEditing,
+    sendMessageMutation,
+    editMessageMutation,
+    scrollToBottom
+  } = useChatMessages(groupId);
 
-  const sendMessageMutation = useMutation({
-    mutationFn: (content: string) => sendGroupMessage(groupId, content),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['groupMessages', groupId] });
-      resetMessage();
-    },
-    onError: () => toast.error('Nie udało się wysłać wiadomości')
-  });
-
-  const editMessageMutation = useMutation({
-    mutationFn: ({ messageId, content }: { messageId: string; content: string }) =>
-      editGroupMessage(groupId, messageId, content),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['groupMessages', groupId] });
-      setEditingMessageId(null);
-    },
-    onError: () => toast.error('Nie udało się edytować wiadomości')
-  });
-
-  const deleteMessageMutation = useMutation({
-    mutationFn: (messageId: string) => deleteGroupMessage(groupId, messageId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['groupMessages', groupId] });
-      toast.success('Wiadomość została usunięta');
-    },
-    onError: () => toast.error('Nie udało się usunąć wiadomości')
-  });
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  useClickOutside(() => {
+    const allMessages = document.querySelectorAll('.message-bubble');
+    allMessages.forEach(message => {
+      const messageComponent = message as any;
+      if (messageComponent.showActions) {
+        messageComponent.showActions = false;
+      }
+    });
+  }, ['message-actions-menu', 'message-actions-trigger']);
 
   useEffect(() => {
-    if (data?.pages[data.pages.length - 1]?.data.messages) {
+    if (messages.length > 0) {
       scrollToBottom();
     }
-  }, [data]);
-
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (!target.closest('.message-actions-menu') && !target.closest('.message-actions-trigger')) {
-        const allMessages = document.querySelectorAll('.message-bubble');
-        allMessages.forEach(message => {
-          const messageComponent = message as any;
-          if (messageComponent.showActions) {
-            messageComponent.showActions = false;
-          }
-        });
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  const messages = data?.pages.flatMap(page => page.data.messages) ?? [];
-
-  const handleEdit = (message: Message) => {
-    setEditingMessageId(message._id);
-    setEditMessage({ id: message._id, content: message.content });
-    setEditValue("editedMessage", message.content);
-  };
-
-  const handleDelete = async (messageId: string) => {
-    deleteMessageMutation.mutate(messageId);
-  };
+  }, [messages, scrollToBottom]);
 
   const MessageBubble = ({ message, isOwnMessage }: { message: Message; isOwnMessage: boolean }) => {
-    const [showActions, setShowActions] = useState(false);
-    const menuRef = useRef<HTMLDivElement>(null);
-    const buttonRef = useRef<HTMLButtonElement>(null);
-    
-    useEffect(() => {
-      const handleClickOutside = (event: MouseEvent) => {
-        if (
-          menuRef.current && 
-          buttonRef.current && 
-          !menuRef.current.contains(event.target as Node) && 
-          !buttonRef.current.contains(event.target as Node)
-        ) {
-          setShowActions(false);
-        }
-      };
-
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
-
-    const handleReaction = (reaction: string) => {
-      console.log('Dodano reakcję:', reaction, 'do wiadomości:', message._id);
-      setShowActions(false);
-    };
-
-    const handleCopy = () => {
-      navigator.clipboard.writeText(message.content);
-      toast.success('Skopiowano wiadomość');
-      setShowActions(false);
-    };
-
-    const handleReport = () => {
-      console.log('Zgłoszono wiadomość:', message._id);
-      toast.success('Wiadomość została zgłoszona');
-      setShowActions(false);
-    };
+    const { 
+      showActions, 
+      menuRef, 
+      buttonRef, 
+      handleReaction, 
+      handleCopy, 
+      handleReport,
+      toggleActions,
+      closeActions 
+    } = useMessageActions(message);
 
     return (
       <motion.div
@@ -199,14 +114,12 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
                 `}
               >
                 <form
-                  onSubmit={handleSubmitEdit((data) => {
+                  onSubmit={handleSubmitMessage((data) => {
                     editMessageMutation.mutate({
                       messageId: message._id,
                       content: data.editedMessage
                     });
-                    setEditingMessageId(null);
-                    setEditMessage(null);
-                    resetEdit();
+                    cancelEditing();
                   })}
                   className="space-y-3"
                 >
@@ -223,9 +136,7 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
                     autoFocus
                     onKeyDown={(e) => {
                       if (e.key === 'Escape') {
-                        setEditingMessageId(null);
-                        setEditMessage(null);
-                        resetEdit();
+                        cancelEditing();
                       }
                     }}
                   />
@@ -235,11 +146,7 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
                       type="button"
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      onClick={() => {
-                        setEditingMessageId(null);
-                        setEditMessage(null);
-                        resetEdit();
-                      }}
+                      onClick={cancelEditing}
                       className="px-4 py-2 rounded-lg bg-dark/50 text-gray-400 
                                hover:text-white transition-colors text-sm"
                     >
@@ -290,13 +197,13 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
 
             <button
               ref={buttonRef}
+              onClick={toggleActions}
               className={`
                 message-actions-trigger
                 absolute top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 
                 transition-opacity p-2 rounded-full hover:bg-dark/50
                 ${isOwnMessage ? 'left-0 -translate-x-full ml-2' : 'right-0 translate-x-full mr-2'}
               `}
-              onClick={() => setShowActions(!showActions)}
             >
               <FaEllipsisV className="text-gray-400 hover:text-js" />
             </button>
@@ -312,10 +219,7 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
                     message-actions-menu
                     absolute z-50 bg-dark/95 backdrop-blur-sm rounded-lg shadow-lg 
                     border border-js/10 p-3 w-64
-                    ${isOwnMessage 
-                      ? 'right-full mr-2 -top-1/2' 
-                      : 'left-full ml-2 -top-1/2'
-                    }
+                    ${isOwnMessage ? 'right-full mr-2 -top-1/2' : 'left-full ml-2 -top-1/2'}
                   `}
                 >
                   <div className="space-y-2">
@@ -376,10 +280,7 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
                         <motion.button
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
-                          onClick={() => {
-                            setMessageToDelete(message);
-                            setShowActions(false);
-                          }}
+                          onClick={() => openDeleteModal(message)}
                           className="w-full p-2.5 rounded-lg hover:bg-red-500/10 text-gray-200 text-left text-sm flex items-center gap-2"
                         >
                           <FaTrash className="text-red-500" />
@@ -392,7 +293,7 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
                   <motion.button
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
-                    onClick={() => setShowActions(false)}
+                    onClick={closeActions}
                     className="absolute -bottom-12 left-1/2 -translate-x-1/2 sm:hidden
                              p-2 rounded-full bg-dark/90 text-gray-400 hover:text-js border border-js/10"
                   >
@@ -509,7 +410,7 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  onClick={() => setMessageToDelete(null)}
+                  onClick={closeDeleteModal}
                   className="px-4 py-2 rounded-lg bg-dark/50 text-gray-400 hover:text-white transition-colors"
                 >
                   Anuluj
@@ -519,7 +420,7 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
                   whileTap={{ scale: 0.98 }}
                   onClick={() => {
                     handleDelete(messageToDelete._id);
-                    setMessageToDelete(null);
+                    closeDeleteModal();
                   }}
                   className="px-6 py-2 rounded-lg bg-red-500 text-white font-medium hover:bg-red-600 
                            transition-colors flex items-center gap-2"
