@@ -1,19 +1,19 @@
-import { memo, useRef, useEffect, useState } from "react";
+import { memo, useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useForm } from "react-hook-form";
-import { FaPaperPlane, FaSpinner, FaEdit, FaTrash, FaSmile, FaEllipsisV, FaCopy, FaFlag, FaTimes } from "react-icons/fa";
-import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { FaPaperPlane, FaSpinner, FaEdit, FaTrash, FaSmile, FaEllipsisV, FaCopy, FaFlag, FaTimes, FaExclamationTriangle } from "react-icons/fa";
 import { useAuth } from "../../../../../hooks/useAuth";
 import { format } from "date-fns";
 import { pl } from "date-fns/locale";
-import toast from "react-hot-toast";
 import { Message } from "../../../../../types/messages.types";
-import {
-  fetchGroupMessages,
-  sendGroupMessage,
-  editGroupMessage,
-  deleteGroupMessage
-} from "../../api/groupMessages";
+import { useChatMessages } from "./hooks/useChatMessages";
+import { useMessageActions } from "./hooks/useMessageActions";
+import { useClickOutside } from "./hooks/useClickOutside";
+import { messageValidators } from "./utils/messageValidators";
+import { useReportMessage } from './hooks/useReportMessage';
+import { ReportMessageModal } from './components/ReportMessageModal';
+import { useMessageMutations } from './hooks/useMessageMutations';
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 
 type GroupChatProps = {
   groupId: string;
@@ -21,102 +21,84 @@ type GroupChatProps = {
 
 export const GroupChat = memo(({ groupId }: GroupChatProps) => {
   const { user } = useAuth();
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
-  const queryClient = useQueryClient();
-  const { register, handleSubmit, reset, setValue } = useForm<{ message: string }>();
-
   const {
-    data,
-    fetchNextPage,
+    messages,
     hasNextPage,
     isFetchingNextPage,
-    isLoading
-  } = useInfiniteQuery({
-    queryKey: ['groupMessages', groupId],
-    queryFn: ({ pageParam = 1 }) => fetchGroupMessages(groupId, pageParam),
-    getNextPageParam: (lastPage) => 
-      lastPage.data.pagination.hasNextPage ? lastPage.data.pagination.page + 1 : undefined,
-    initialPageParam: 1
-  });
+    fetchNextPage,
+    editingMessageId,
+    messageToDelete,
+    messagesEndRef,
+    registerEdit,
+    registerMessage,
+    handleEdit,
+    handleDelete,
+    openDeleteModal,
+    closeDeleteModal,
+    cancelEditing,
+    sendMessageMutation,
+    editMessageMutation,
+    scrollToBottom,
+    handleSubmitEdit,
+    handleSendMessage,
+  } = useChatMessages(groupId);
 
-  const sendMessageMutation = useMutation({
-    mutationFn: (content: string) => sendGroupMessage(groupId, content),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['groupMessages', groupId] });
-      reset();
-    },
-    onError: () => toast.error('Nie udało się wysłać wiadomości')
-  });
+  const { 
+    messageToReport,
+    isReportModalOpen,
+    openReportModal,
+    closeReportModal,
+    handleReport
+  } = useReportMessage();
 
-  const editMessageMutation = useMutation({
-    mutationFn: ({ messageId, content }: { messageId: string; content: string }) =>
-      editGroupMessage(groupId, messageId, content),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['groupMessages', groupId] });
-      setEditingMessageId(null);
-    },
-    onError: () => toast.error('Nie udało się edytować wiadomości')
-  });
+  const {
+    sendMessageMutation: messageMutationsSendMessageMutation,
+    editMessageMutation: messageMutationsEditMessageMutation,
+    deleteMessageMutation: messageMutationsDeleteMessageMutation
+  } = useMessageMutations(groupId);
 
-  const deleteMessageMutation = useMutation({
-    mutationFn: (messageId: string) => deleteGroupMessage(groupId, messageId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['groupMessages', groupId] });
-      toast.success('Wiadomość została usunięta');
-    },
-    onError: () => toast.error('Nie udało się usunąć wiadomości')
-  });
+  const { handleSubmit, reset } = useForm();
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  useClickOutside(() => {
+    const allMessages = document.querySelectorAll('.message-bubble');
+    allMessages.forEach(message => {
+      const messageComponent = message as any;
+      if (messageComponent.showActions) {
+        messageComponent.showActions = false;
+      }
+    });
+  }, ['message-actions-menu', 'message-actions-trigger']);
 
   useEffect(() => {
-    if (data?.pages[data.pages.length - 1]?.data.messages) {
+    if (messages.length > 0) {
       scrollToBottom();
     }
-  }, [data]);
-
-  const messages = data?.pages.flatMap(page => page.data.messages) ?? [];
-
-  const handleEdit = (message: Message) => {
-    setEditingMessageId(message._id);
-    setValue('message', message.content);
-  };
-
-  const handleDelete = async (messageId: string) => {
-    if (window.confirm('Czy na pewno chcesz usunąć tę wiadomość?')) {
-      deleteMessageMutation.mutate(messageId);
-    }
-  };
+  }, [messages, scrollToBottom]);
 
   const MessageBubble = ({ message, isOwnMessage }: { message: Message; isOwnMessage: boolean }) => {
-    const [showActions, setShowActions] = useState(false);
-    const [showReactions, setShowReactions] = useState(false);
-
-    const handleReaction = (reaction: string) => {
-      console.log('Dodano reakcję:', reaction, 'do wiadomości:', message._id);
-      setShowActions(false);
-    };
-
-    const handleCopy = () => {
-      navigator.clipboard.writeText(message.content);
-      toast.success('Skopiowano wiadomość');
-      setShowActions(false);
-    };
-
-    const handleReport = () => {
-      console.log('Zgłoszono wiadomość:', message._id);
-      toast.success('Wiadomość została zgłoszona');
-      setShowActions(false);
-    };
+    const { 
+      showActions, 
+      menuRef, 
+      buttonRef, 
+      handleReaction, 
+      handleCopy, 
+      handleReport,
+      toggleActions,
+      closeActions 
+    } = useMessageActions(message, {
+      onEdit: handleEdit,
+      onDelete: openDeleteModal,
+      onReport: openReportModal
+    });
 
     return (
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className={`group flex gap-3 ${isOwnMessage ? 'flex-row-reverse' : ''} mb-4 relative`}
+        className={`
+          group flex gap-3 ${isOwnMessage ? 'flex-row-reverse' : ''} 
+          mb-6 message-bubble relative
+        `}
       >
         <div className="flex-shrink-0 pt-1">
           {message.author.avatar ? (
@@ -134,8 +116,11 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
           )}
         </div>
 
-        <div className={`flex flex-col ${isOwnMessage ? 'items-end' : 'items-start'} max-w-[85%] sm:max-w-[70%]`}>
-          <div className="flex items-center gap-2 mb-1">
+        <div className={`
+          flex flex-col ${isOwnMessage ? 'items-end' : 'items-start'} 
+          max-w-[85%] sm:max-w-[70%]
+        `}>
+          <div className="flex items-center gap-2 mb-2">
             <span className="text-sm text-gray-400">
               {message.author.username}
             </span>
@@ -145,34 +130,123 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
           </div>
 
           <div className="relative group w-full">
-            <motion.div
+            {editingMessageId === message._id ? (
+              <motion.div
+                initial={{ opacity: 0, y: -5 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={`
+                  w-full bg-dark/80 rounded-xl p-3 border border-js/20
+                  ${isOwnMessage ? 'ml-auto' : ''}
+                  shadow-lg backdrop-blur-sm
+                `}
+              >
+                <form
+                  onSubmit={handleSubmitEdit((formData) => {
+                    editMessageMutation.mutate({
+                      messageId: message._id,
+                      content: formData.editedMessage
+                    });
+                    cancelEditing();
+                  })}
+                  className="space-y-3"
+                >
+                  <div className="flex items-center gap-2 text-xs text-gray-400 mb-1">
+                    <FaEdit className="text-js" />
+                    Edycja wiadomości
+                  </div>
+                  
+                  <textarea
+                    {...registerEdit("editedMessage", messageValidators.required)}
+                    className="w-full bg-dark/50 rounded-lg px-3 py-2 text-gray-200 
+                             border border-js/10 focus:outline-none focus:border-js
+                             min-h-[80px] resize-none"
+                    autoFocus
+                    onKeyDown={(e) => {
+                      if (e.key === 'Escape') {
+                        cancelEditing();
+                      }
+                    }}
+                  />
+                  
+                  <div className="flex justify-end gap-2">
+                    <motion.button
+                      type="button"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={cancelEditing}
+                      className="px-4 py-2 rounded-lg bg-dark/50 text-gray-400 
+                               hover:text-white transition-colors text-sm"
+                    >
+                      Anuluj (Esc)
+                    </motion.button>
+                    
+                    <motion.button
+                      type="submit"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      disabled={editMessageMutation.isPending}
+                      className="px-4 py-2 rounded-lg bg-js text-dark font-medium 
+                               hover:bg-js/90 transition-colors text-sm
+                               disabled:opacity-50 flex items-center gap-2"
+                    >
+                      {editMessageMutation.isPending ? (
+                        <>
+                          <FaSpinner className="animate-spin" />
+                          Zapisywanie...
+                        </>
+                      ) : (
+                        <>
+                          <FaEdit />
+                          Zapisz zmiany
+                        </>
+                      )}
+                    </motion.button>
+                  </div>
+                </form>
+              </motion.div>
+            ) : (
+              <motion.div
+                className={`
+                  px-4 py-3 rounded-2xl break-words relative
+                  ${isOwnMessage 
+                    ? 'bg-js text-dark ml-auto shadow-lg' 
+                    : 'bg-dark/50 text-gray-200 border border-js/10 shadow-md'
+                  }
+                  ${editingMessageId === message._id ? 'hidden' : 'block'}
+                `}
+              >
+                <p>{message.content}</p>
+                {message.isEdited && (
+                  <span className="text-xs opacity-70 ml-2">(edytowano)</span>
+                )}
+              </motion.div>
+            )}
+
+            <button
+              ref={buttonRef}
+              onClick={toggleActions}
               className={`
-                px-4 py-2 rounded-2xl break-words relative
-                ${isOwnMessage 
-                  ? 'bg-js text-dark ml-auto' 
-                  : 'bg-dark/50 text-gray-200'
-                }
-                ${editingMessageId === message._id ? 'hidden' : 'block'}
+                message-actions-trigger
+                absolute top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 
+                transition-opacity p-2 rounded-full hover:bg-dark/50
+                ${isOwnMessage ? 'left-0 -translate-x-full ml-2' : 'right-0 translate-x-full mr-2'}
               `}
             >
-              <p>{message.content}</p>
-              {message.isEdited && (
-                <span className="text-xs opacity-70 ml-2">(edytowano)</span>
-              )}
-            </motion.div>
+              <FaEllipsisV className="text-gray-400 hover:text-js" />
+            </button>
 
             <AnimatePresence>
               {showActions && (
                 <motion.div
+                  ref={menuRef}
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   className={`
-                    fixed sm:absolute top-0 left-1/2 sm:left-auto -translate-x-1/2 sm:translate-x-0
-                    z-50 bg-dark/95 backdrop-blur-sm rounded-lg shadow-lg border border-js/10 p-3
-                    w-[90vw] sm:w-64 
-                    ${isOwnMessage ? 'sm:right-full sm:mr-2' : 'sm:left-full sm:ml-2'}
-                    ${isOwnMessage ? 'sm:origin-right' : 'sm:origin-left'}
+                    message-actions-menu
+                    absolute z-50 bg-dark/95 backdrop-blur-sm rounded-lg shadow-lg 
+                    border border-js/10 p-3 w-64
+                    ${isOwnMessage ? 'right-full mr-2 -top-1/2' : 'left-full ml-2 -top-1/2'}
                   `}
                 >
                   <div className="space-y-2">
@@ -210,7 +284,7 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
                       <motion.button
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        onClick={handleReport}
+                        onClick={() => handleReport(message)}
                         className="w-full p-2.5 rounded-lg hover:bg-red-500/10 text-gray-200 text-left text-sm flex items-center gap-2"
                       >
                         <FaFlag className="text-red-500" />
@@ -233,12 +307,7 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
                         <motion.button
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
-                          onClick={() => {
-                            if (window.confirm('Czy na pewno chcesz usunąć tę wiadomość?')) {
-                              handleDelete(message._id);
-                            }
-                            setShowActions(false);
-                          }}
+                          onClick={() => openDeleteModal(message)}
                           className="w-full p-2.5 rounded-lg hover:bg-red-500/10 text-gray-200 text-left text-sm flex items-center gap-2"
                         >
                           <FaTrash className="text-red-500" />
@@ -251,7 +320,7 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
                   <motion.button
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
-                    onClick={() => setShowActions(false)}
+                    onClick={closeActions}
                     className="absolute -bottom-12 left-1/2 -translate-x-1/2 sm:hidden
                              p-2 rounded-full bg-dark/90 text-gray-400 hover:text-js border border-js/10"
                   >
@@ -260,107 +329,159 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
                 </motion.div>
               )}
             </AnimatePresence>
-
-            <button
-              onClick={() => setShowActions(!showActions)}
-              className={`
-                absolute top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity
-                ${isOwnMessage ? 'left-0 -translate-x-full ml-2' : 'right-0 translate-x-full mr-2'}
-              `}
-            >
-              <FaEllipsisV className="text-gray-400 hover:text-js" />
-            </button>
           </div>
-
-          {editingMessageId === message._id && (
-            <form
-              onSubmit={handleSubmit((data) => 
-                editMessageMutation.mutate({
-                  messageId: message._id,
-                  content: data.message
-                })
-              )}
-              className="w-full mt-1"
-            >
-              <input
-                {...register("message", { required: true })}
-                className="w-full bg-dark/50 rounded-lg px-3 py-1.5 text-gray-200 border border-js/10 focus:outline-none focus:border-js"
-                autoFocus
-              />
-            </form>
-          )}
         </div>
       </motion.div>
     );
   };
 
+  const handleEditMessage = (messageId: string, content: string) => {
+    if (content.trim()) {
+      editMessageMutation.mutate({ messageId, content });
+    } else {
+      toast.error('Wiadomość nie może być pusta');
+    }
+  };
+
+  const handleDeleteMessage = (messageId: string) => {
+    messageMutationsDeleteMessageMutation.mutate(messageId);
+  };
+
   return (
-    <div className="flex flex-col h-[calc(100vh-6rem)] bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10">
-      <div className="p-4 border-b border-js/10">
-        <h2 className="text-xl font-bold text-js">Czat grupy</h2>
-      </div>
+    <>
+      <div className="flex flex-col h-[calc(100vh-6rem)] bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10">
+        <div className="p-4 border-b border-js/10">
+          <h2 className="text-xl font-bold text-js">Czat grupy</h2>
+        </div>
 
-      <div className="flex-1 overflow-y-auto p-4">
-        {hasNextPage && (
-          <button
-            onClick={() => fetchNextPage()}
-            disabled={isFetchingNextPage}
-            className="w-full text-center text-js hover:text-js/80 disabled:opacity-50 mb-4"
-          >
-            {isFetchingNextPage ? (
-              <FaSpinner className="animate-spin mx-auto" />
-            ) : (
-              'Załaduj starsze wiadomości'
-            )}
-          </button>
-        )}
+        <div className="flex-1 overflow-y-auto p-4 pt-12">
+          {hasNextPage && (
+            <button
+              onClick={() => fetchNextPage()}
+              disabled={isFetchingNextPage}
+              className="w-full text-center text-js hover:text-js/80 disabled:opacity-50 mb-4"
+            >
+              {isFetchingNextPage ? (
+                <FaSpinner className="animate-spin mx-auto" />
+              ) : (
+                'Załaduj starsze wiadomości'
+              )}
+            </button>
+          )}
 
-        <div className="space-y-2">
-          {messages.map((message) => (
-            <MessageBubble
-              key={message._id}
-              message={message}
-              isOwnMessage={message.author._id === user?._id}
+          <div className="space-y-4 mt-4">
+            {messages.map((message) => (
+              <MessageBubble
+                key={message._id}
+                message={message}
+                isOwnMessage={message.author._id === user?._id}
+              />
+            ))}
+          </div>
+          <div ref={messagesEndRef} />
+        </div>
+
+        <form
+          onSubmit={handleSubmit(handleSendMessage)}
+          className="p-4 border-t border-js/10"
+        >
+          <div className="flex gap-2">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              type="button"
+              className="p-2 rounded-lg bg-js/10 text-js hover:bg-js/20 transition-colors"
+            >
+              <FaSmile />
+            </motion.button>
+            <input
+              {...registerMessage("message", { required: true })}
+              placeholder="Napisz wiadomość..."
+              className="flex-1 bg-dark/50 rounded-lg px-4 py-2 text-gray-200 border border-js/10 focus:outline-none focus:border-js"
             />
-          ))}
-        </div>
-        <div ref={messagesEndRef} />
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              type="submit"
+              disabled={sendMessageMutation.isPending}
+              className="px-4 py-2 bg-js text-dark rounded-lg hover:bg-js/90 transition-colors disabled:opacity-50"
+            >
+              {sendMessageMutation.isPending ? (
+                <FaSpinner className="animate-spin" />
+              ) : (
+                <FaPaperPlane />
+              )}
+            </motion.button>
+          </div>
+        </form>
       </div>
 
-      <form
-        onSubmit={handleSubmit((data) => sendMessageMutation.mutate(data.message))}
-        className="p-4 border-t border-js/10"
-      >
-        <div className="flex gap-2">
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            type="button"
-            className="p-2 rounded-lg bg-js/10 text-js hover:bg-js/20 transition-colors"
+      <AnimatePresence>
+        {messageToDelete && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
           >
-            <FaSmile />
-          </motion.button>
-          <input
-            {...register("message", { required: true })}
-            placeholder="Napisz wiadomość..."
-            className="flex-1 bg-dark/50 rounded-lg px-4 py-2 text-gray-200 border border-js/10 focus:outline-none focus:border-js"
-          />
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            type="submit"
-            disabled={sendMessageMutation.isPending}
-            className="px-4 py-2 bg-js text-dark rounded-lg hover:bg-js/90 transition-colors disabled:opacity-50"
-          >
-            {sendMessageMutation.isPending ? (
-              <FaSpinner className="animate-spin" />
-            ) : (
-              <FaPaperPlane />
-            )}
-          </motion.button>
-        </div>
-      </form>
-    </div>
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-dark/90 rounded-xl p-6 w-full max-w-md relative"
+            >
+              <div className="flex items-center gap-3 mb-6">
+                <FaExclamationTriangle className="text-red-500 text-3xl" />
+                <div>
+                  <h2 className="text-xl font-bold text-red-500">Usuń wiadomość</h2>
+                  <p className="text-gray-400 text-sm mt-1">Ta akcja jest nieodwracalna</p>
+                </div>
+              </div>
+
+              <div className="bg-red-500/10 rounded-lg p-4 mb-6">
+                <p className="text-gray-300 mb-2">Czy na pewno chcesz usunąć tę wiadomość?</p>
+                <div className="text-gray-400 text-sm bg-dark/30 rounded-lg p-3 mt-2">
+                  {messageToDelete.content}
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={closeDeleteModal}
+                  className="px-4 py-2 rounded-lg bg-dark/50 text-gray-400 hover:text-white transition-colors"
+                >
+                  Anuluj
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => {
+                    handleDeleteMessage(messageToDelete._id);
+                    closeDeleteModal();
+                  }}
+                  className="px-6 py-2 rounded-lg bg-red-500 text-white font-medium hover:bg-red-600 
+                           transition-colors flex items-center gap-2"
+                >
+                  <FaTrash className="text-sm" />
+                  Usuń wiadomość
+                </motion.button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {messageToReport && (
+        <ReportMessageModal
+          message={messageToReport}
+          isOpen={isReportModalOpen}
+          onClose={closeReportModal}
+          onSubmit={handleReport}
+        />
+      )}
+    </>
   );
 });
 

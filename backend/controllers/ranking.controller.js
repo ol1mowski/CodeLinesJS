@@ -12,8 +12,6 @@ export const getRanking = async (req, res, next) => {
     const userRankIndex = users.findIndex(user => user._id.toString() === userId);
     const userRank = userRankIndex !== -1 ? userRankIndex + 1 : null;
 
-    console.log(users[0].stats);
-
     const formattedUsers = users.map((user, index) => ({
       rank: index + 1,
       username: user.username,
