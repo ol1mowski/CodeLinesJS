@@ -1,4 +1,4 @@
-import { memo, useEffect, useState, useRef } from "react";
+import { memo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaPaperPlane, FaSpinner, FaEdit, FaTrash, FaSmile, FaEllipsisV, FaCopy, FaFlag, FaTimes, FaExclamationTriangle } from "react-icons/fa";
 import { useAuth } from "../../../../../hooks/useAuth";
@@ -6,14 +6,14 @@ import { format } from "date-fns";
 import { pl } from "date-fns/locale";
 import { Message } from "../../../../../types/messages.types";
 import { useChatMessages } from "./hooks/useChatMessages";
-import { useMessageActions } from "./hooks/useMessageActions";
 import { useClickOutside } from "./hooks/useClickOutside";
 import { messageValidators } from "./utils/messageValidators";
 import { useReportMessage } from './hooks/useReportMessage';
 import { ReportMessageModal } from './components/ReportMessageModal';
 import { useMessageMutations } from './hooks/useMessageMutations';
 import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
+import { useMessageBubble } from "./hooks/useMessageBubble";
+import { MessageReactions } from './components/MessageReactions';
 
 type GroupChatProps = {
   groupId: string;
@@ -32,7 +32,6 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
     registerEdit,
     registerMessage,
     handleEdit,
-    handleDelete,
     openDeleteModal,
     closeDeleteModal,
     cancelEditing,
@@ -48,16 +47,15 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
     isReportModalOpen,
     openReportModal,
     closeReportModal,
-    handleReport
-  } = useReportMessage();
+    handleReport,
+    isReporting
+  } = useReportMessage(groupId);
 
   const {
-    sendMessageMutation: messageMutationsSendMessageMutation,
-    editMessageMutation: messageMutationsEditMessageMutation,
     deleteMessageMutation: messageMutationsDeleteMessageMutation
   } = useMessageMutations(groupId);
 
-  const { handleSubmit, reset } = useForm();
+  const { handleSubmit } = useForm();
 
   useClickOutside(() => {
     const allMessages = document.querySelectorAll('.message-bubble');
@@ -75,21 +73,36 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
     }
   }, [messages, scrollToBottom]);
 
+  const AVAILABLE_REACTIONS = [
+    { emoji: '👍', name: 'Kciuk w górę' },
+    { emoji: '❤️', name: 'Serce' },
+    { emoji: '😂', name: 'Śmiech' },
+    { emoji: '😮', name: 'Zaskoczenie' },
+    { emoji: '😢', name: 'Smutek' },
+    { emoji: '😡', name: 'Złość' },
+    { emoji: '🎉', name: 'Świętowanie' },
+    { emoji: '👏', name: 'Oklaski' },
+    { emoji: '🤔', name: 'Zamyślenie' }
+  ];
+
   const MessageBubble = ({ message, isOwnMessage }: { message: Message; isOwnMessage: boolean }) => {
     const { 
       showActions, 
       menuRef, 
-      buttonRef, 
-      handleReaction, 
-      handleCopy, 
-      handleReport,
+      buttonRef,
       toggleActions,
-      closeActions 
-    } = useMessageActions(message, {
-      onEdit: handleEdit,
-      onDelete: openDeleteModal,
-      onReport: openReportModal
-    });
+      handleReaction,
+      isReacting,
+      handleCopy,
+      handleReport,
+    } = useMessageBubble(
+      message, 
+      groupId,
+      user,
+      handleEdit, 
+      openDeleteModal, 
+      openReportModal
+    );
 
     return (
       <motion.div
@@ -209,15 +222,25 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
                 className={`
                   px-4 py-3 rounded-2xl break-words relative
                   ${isOwnMessage 
-                    ? 'bg-js text-dark ml-auto shadow-lg' 
-                    : 'bg-dark/50 text-gray-200 border border-js/10 shadow-md'
+                    ? 'bg-js text-dark ml-auto' 
+                    : 'bg-dark/50 text-gray-200'
                   }
-                  ${editingMessageId === message._id ? 'hidden' : 'block'}
                 `}
               >
                 <p>{message.content}</p>
                 {message.isEdited && (
                   <span className="text-xs opacity-70 ml-2">(edytowano)</span>
+                )}
+                
+                {Array.isArray(message.reactions) && message.reactions.length > 0 && (
+                  <div className="mt-2">
+                    <MessageReactions
+                      reactions={message.reactions}
+                      onReactionClick={handleReaction}
+                      isReacting={isReacting}
+                      currentUserId={user?._id}
+                    />
+                  </div>
                 )}
               </motion.div>
             )}
@@ -254,17 +277,29 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
                     <div className="p-2 rounded-lg hover:bg-js/10">
                       <div className="text-xs text-gray-400 mb-2">Reakcje</div>
                       <div className="flex flex-wrap gap-2 justify-center">
-                        {['👍', '❤️', '😂', '😮', '😢', '😡', '🎉', '👏', '🤔'].map((emoji) => (
-                          <motion.button
-                            key={emoji}
-                            whileHover={{ scale: 1.2 }}
-                            whileTap={{ scale: 0.9 }}
-                            onClick={() => handleReaction(emoji)}
-                            className="text-xl hover:scale-110 transition-transform p-1"
-                          >
-                            {emoji}
-                          </motion.button>
-                        ))}
+                        {AVAILABLE_REACTIONS.map(({ emoji, name }) => {
+                          const hasReacted = Array.isArray(message.reactions) && message.reactions.some(
+                            r => r.emoji === emoji && r.userId === user?._id
+                          );
+
+                          return (
+                            <motion.button
+                              key={emoji}
+                              whileHover={{ scale: 1.2 }}
+                              whileTap={{ scale: 0.9 }}
+                              onClick={() => handleReaction(emoji)}
+                              disabled={isReacting}
+                              title={name}
+                              className={`
+                                text-xl p-1.5 rounded-lg transition-all
+                                ${isReacting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-js/10'}
+                                ${hasReacted ? 'bg-js/20' : ''}
+                              `}
+                            >
+                              {emoji}
+                            </motion.button>
+                          );
+                        })}
                       </div>
                     </div>
 
@@ -320,7 +355,7 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
                   <motion.button
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
-                    onClick={closeActions}
+                    onClick={toggleActions}
                     className="absolute -bottom-12 left-1/2 -translate-x-1/2 sm:hidden
                              p-2 rounded-full bg-dark/90 text-gray-400 hover:text-js border border-js/10"
                   >
@@ -333,14 +368,6 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
         </div>
       </motion.div>
     );
-  };
-
-  const handleEditMessage = (messageId: string, content: string) => {
-    if (content.trim()) {
-      editMessageMutation.mutate({ messageId, content });
-    } else {
-      toast.error('Wiadomość nie może być pusta');
-    }
   };
 
   const handleDeleteMessage = (messageId: string) => {
@@ -479,6 +506,7 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
           isOpen={isReportModalOpen}
           onClose={closeReportModal}
           onSubmit={handleReport}
+          isReporting={isReporting}
         />
       )}
     </>

@@ -10,6 +10,7 @@ export const useMessages = (groupId: string) => {
     initialPageParam: 1
   });
 
+
   const messages = messagesQuery.data?.pages.flatMap(page => page.data.messages) ?? [];
 
   return {

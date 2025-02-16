@@ -206,10 +206,13 @@ export const deleteMessage = async (req, res, next) => {
 export const addReaction = async (req, res, next) => {
   try {
     const { groupId, messageId } = req.params;
-    const { emoji } = req.body;
+    const { reaction } = req.body;
     const userId = req.user.userId;
 
-    if (!emoji) {
+    console.log(req.body);
+    
+
+    if (!reaction) {
       return res.status(400).json({
         status: 'error',
         message: 'Emoji jest wymagane'
@@ -233,7 +236,7 @@ export const addReaction = async (req, res, next) => {
     );
 
     message.reactions.push({
-      emoji,
+      emoji: reaction,
       userId
     });
 

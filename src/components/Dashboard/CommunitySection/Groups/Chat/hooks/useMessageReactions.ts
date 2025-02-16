@@ -1,17 +1,39 @@
 import { useCallback } from 'react';
-import toast from 'react-hot-toast';
+import { useReactionMutation } from './useReactionMutation';
+import { MessageReaction } from '../../../types/messages.types';
 
-export const useMessageReactions = (messageId: string, onClose: () => void) => {
-  const handleReaction = useCallback((reaction: string) => {
-    console.log('Dodano reakcję:', reaction, 'do wiadomości:', messageId);
-    toast.success('Dodano reakcję');
-    onClose();
-  }, [messageId, onClose]);
+export const useMessageReactions = (
+  messageId: string, 
+  groupId: string, 
+  currentUserId: string,
+  reactions: MessageReaction[] = [],
+  onReactionAdd?: () => void
+) => {
+  const reactionMutation = useReactionMutation(groupId);
 
-  const reactions = ['👍', '❤️', '😂', '😮', '😢', '😡', '🎉', '👏', '🤔'];
+  const handleReaction = useCallback((emoji: string) => {
+    const reactionsList = Array.isArray(reactions) ? reactions : [];
+    
+    const hasReacted = reactionsList.some(
+      r => r.userId === currentUserId && r.emoji === emoji
+    );
+
+    reactionMutation.mutate(
+      { 
+        messageId, 
+        reaction: emoji,
+        action: hasReacted ? 'remove' : 'add'
+      } as const,
+      {
+        onSuccess: () => {
+          onReactionAdd?.();
+        }
+      }
+    );
+  }, [messageId, reactions, currentUserId, reactionMutation, onReactionAdd]);
 
   return {
     handleReaction,
-    reactions
+    isReacting: reactionMutation.isPending
   };
 }; 

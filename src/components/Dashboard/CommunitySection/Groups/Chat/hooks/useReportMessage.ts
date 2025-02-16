@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { Message } from '../../../../../../types/messages.types';
-import toast from 'react-hot-toast';
+import { useReportMessageMutation } from './useReportMessageMutation';
 
 type ReportReason = 'spam' | 'abuse' | 'inappropriate' | 'other';
 
-export const useReportMessage = () => {
+export const useReportMessage = (groupId: string) => {
   const [messageToReport, setMessageToReport] = useState<Message | null>(null);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const reportMessageMutation = useReportMessageMutation(groupId);
 
   const openReportModal = (message: Message) => {
     setMessageToReport(message);
@@ -21,17 +22,15 @@ export const useReportMessage = () => {
   const handleReport = (reason: ReportReason, description: string) => {
     if (!messageToReport) return;
 
-    // Tutaj później dodamy prawdziwe API
-    console.log('Zgłoszenie wiadomości:', {
+    reportMessageMutation.mutate({
       messageId: messageToReport._id,
       reason,
-      description,
-      reportedAt: new Date().toISOString(),
-      reportedBy: 'currentUserId' // później weźmiemy z kontekstu auth
+      description
+    }, {
+      onSuccess: () => {
+        closeReportModal();
+      }
     });
-
-    toast.success('Wiadomość została zgłoszona');
-    closeReportModal();
   };
 
   return {
@@ -39,6 +38,7 @@ export const useReportMessage = () => {
     isReportModalOpen,
     openReportModal,
     closeReportModal,
-    handleReport
+    handleReport,
+    isReporting: reportMessageMutation.isPending
   };
 }; 

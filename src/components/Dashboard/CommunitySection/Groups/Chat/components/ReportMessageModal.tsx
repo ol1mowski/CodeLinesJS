@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Message } from '../../../../../../types/messages.types';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaTimes, FaExclamationTriangle } from 'react-icons/fa';
+import { FaTimes, FaExclamationTriangle, FaSpinner } from 'react-icons/fa';
 import { useForm } from 'react-hook-form';
 
 type ReportMessageModalProps = {
@@ -9,6 +9,7 @@ type ReportMessageModalProps = {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (reason: string, description: string) => void;
+  isReporting: boolean;
 };
 
 type ReportForm = {
@@ -23,7 +24,7 @@ const reportReasons = [
   { value: 'other', label: 'Inne' }
 ];
 
-export const ReportMessageModal = ({ message, isOpen, onClose, onSubmit }: ReportMessageModalProps) => {
+export const ReportMessageModal = ({ message, isOpen, onClose, onSubmit, isReporting }: ReportMessageModalProps) => {
   const {
     register,
     handleSubmit,
@@ -126,10 +127,21 @@ export const ReportMessageModal = ({ message, isOpen, onClose, onSubmit }: Repor
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-lg bg-red-500 text-white font-medium 
-                           hover:bg-red-600 transition-colors text-sm"
+                  disabled={isReporting}
+                  className={`
+                    px-4 py-2 rounded-lg bg-red-500 text-white font-medium 
+                    transition-colors text-sm flex items-center gap-2
+                    ${isReporting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-red-600'}
+                  `}
                 >
-                  Zgłoś wiadomość
+                  {isReporting ? (
+                    <>
+                      <FaSpinner className="animate-spin" />
+                      Zgłaszanie...
+                    </>
+                  ) : (
+                    'Zgłoś wiadomość'
+                  )}
                 </button>
               </div>
             </form>
