@@ -12,7 +12,6 @@ import { useReportMessage } from './hooks/useReportMessage';
 import { ReportMessageModal } from './components/ReportMessageModal';
 import { useMessageMutations } from './hooks/useMessageMutations';
 import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
 import { useMessageBubble } from "./hooks/useMessageBubble";
 
 type GroupChatProps = {
@@ -47,8 +46,9 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
     isReportModalOpen,
     openReportModal,
     closeReportModal,
-    handleReport
-  } = useReportMessage();
+    handleReport,
+    isReporting
+  } = useReportMessage(groupId);
 
   const {
     deleteMessageMutation: messageMutationsDeleteMessageMutation
@@ -463,6 +463,7 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
           isOpen={isReportModalOpen}
           onClose={closeReportModal}
           onSubmit={handleReport}
+          isReporting={isReporting}
         />
       )}
     </>
