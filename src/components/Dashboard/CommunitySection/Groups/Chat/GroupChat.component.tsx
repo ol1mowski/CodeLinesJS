@@ -1,4 +1,4 @@
-import { memo, useEffect, useState, useRef } from "react";
+import { memo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaPaperPlane, FaSpinner, FaEdit, FaTrash, FaSmile, FaEllipsisV, FaCopy, FaFlag, FaTimes, FaExclamationTriangle } from "react-icons/fa";
 import { useAuth } from "../../../../../hooks/useAuth";
@@ -6,7 +6,6 @@ import { format } from "date-fns";
 import { pl } from "date-fns/locale";
 import { Message } from "../../../../../types/messages.types";
 import { useChatMessages } from "./hooks/useChatMessages";
-import { useMessageActions } from "./hooks/useMessageActions";
 import { useClickOutside } from "./hooks/useClickOutside";
 import { messageValidators } from "./utils/messageValidators";
 import { useReportMessage } from './hooks/useReportMessage';
@@ -14,6 +13,7 @@ import { ReportMessageModal } from './components/ReportMessageModal';
 import { useMessageMutations } from './hooks/useMessageMutations';
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { useMessageBubble } from "./hooks/useMessageBubble";
 
 type GroupChatProps = {
   groupId: string;
@@ -32,7 +32,6 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
     registerEdit,
     registerMessage,
     handleEdit,
-    handleDelete,
     openDeleteModal,
     closeDeleteModal,
     cancelEditing,
@@ -52,12 +51,10 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
   } = useReportMessage();
 
   const {
-    sendMessageMutation: messageMutationsSendMessageMutation,
-    editMessageMutation: messageMutationsEditMessageMutation,
     deleteMessageMutation: messageMutationsDeleteMessageMutation
   } = useMessageMutations(groupId);
 
-  const { handleSubmit, reset } = useForm();
+  const { handleSubmit } = useForm();
 
   useClickOutside(() => {
     const allMessages = document.querySelectorAll('.message-bubble');
@@ -79,17 +76,12 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
     const { 
       showActions, 
       menuRef, 
-      buttonRef, 
-      handleReaction, 
-      handleCopy, 
-      handleReport,
+      buttonRef,
       toggleActions,
-      closeActions 
-    } = useMessageActions(message, {
-      onEdit: handleEdit,
-      onDelete: openDeleteModal,
-      onReport: openReportModal
-    });
+      handleReaction,
+      handleCopy,
+      handleReport,
+    } = useMessageBubble(message, handleEdit, openDeleteModal, openReportModal);
 
     return (
       <motion.div
@@ -320,7 +312,7 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
                   <motion.button
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
-                    onClick={closeActions}
+                    onClick={toggleActions}
                     className="absolute -bottom-12 left-1/2 -translate-x-1/2 sm:hidden
                              p-2 rounded-full bg-dark/90 text-gray-400 hover:text-js border border-js/10"
                   >
@@ -333,14 +325,6 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
         </div>
       </motion.div>
     );
-  };
-
-  const handleEditMessage = (messageId: string, content: string) => {
-    if (content.trim()) {
-      editMessageMutation.mutate({ messageId, content });
-    } else {
-      toast.error('Wiadomość nie może być pusta');
-    }
   };
 
   const handleDeleteMessage = (messageId: string) => {

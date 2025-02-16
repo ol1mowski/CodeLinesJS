@@ -7,11 +7,14 @@ export const useMessageActionsMenu = () => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+      
       if (
+        showActions &&
         menuRef.current && 
         buttonRef.current && 
-        !menuRef.current.contains(event.target as Node) && 
-        !buttonRef.current.contains(event.target as Node)
+        !menuRef.current.contains(target) && 
+        !buttonRef.current.contains(target)
       ) {
         setShowActions(false);
       }
@@ -19,7 +22,7 @@ export const useMessageActionsMenu = () => {
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  }, [showActions]);
 
   const toggleActions = () => setShowActions(!showActions);
   const closeActions = () => setShowActions(false);
