@@ -144,4 +144,35 @@ export const reportGroupMessage = async (
   } catch (error) {
     handleNetworkError(error);
   }
+};
+
+export const addMessageReaction = async (
+  groupId: string,
+  messageId: string,
+  reaction: string,
+  action: 'add' | 'remove' = 'add'
+): Promise<{ status: string; message: string }> => {
+  try {
+    const token = getToken();
+    const response = await fetch(
+      `${BASE_URL}/api/groups/${groupId}/messages/${messageId}/reactions`,
+      {
+        method: action === 'add' ? 'POST' : 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ reaction })
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || `Nie udało się ${action === 'add' ? 'dodać' : 'usunąć'} reakcji`);
+    }
+
+    return response.json();
+  } catch (error) {
+    handleNetworkError(error);
+  }
 }; 

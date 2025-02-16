@@ -1,17 +1,26 @@
 import { useCallback } from 'react';
-import { Message } from '../../../../../../types/messages.types';
+import { Message } from '../../../types/messages.types';
 import { useMessageActionsMenu } from './useMessageActionsMenu';
 import { useMessageReactions } from './useMessageReactions';
 import toast from 'react-hot-toast';
+import { User } from '../../../../../../types/auth.types';
 
 export const useMessageBubble = (
   message: Message,
+  groupId: string,
+  currentUser: { _id: string } | null,
   onEdit: (message: Message) => void,
   onDelete: (message: Message) => void,
   onReport: (message: Message) => void
 ) => {
   const { showActions, menuRef, buttonRef, toggleActions, closeActions } = useMessageActionsMenu();
-  const { handleReaction, reactions } = useMessageReactions(message._id, closeActions);
+  const { handleReaction, isReacting } = useMessageReactions(
+    message._id, 
+    groupId, 
+    currentUser?._id || '',
+    message.reactions,
+    closeActions
+  );
 
   const handleCopy = useCallback(() => {
     navigator.clipboard.writeText(message.content);
@@ -39,8 +48,8 @@ export const useMessageBubble = (
     menuRef,
     buttonRef,
     toggleActions,
-    reactions,
     handleReaction,
+    isReacting,
     handleCopy,
     handleReport,
     handleEditClick,

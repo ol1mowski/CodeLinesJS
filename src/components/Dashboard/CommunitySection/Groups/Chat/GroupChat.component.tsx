@@ -13,6 +13,7 @@ import { ReportMessageModal } from './components/ReportMessageModal';
 import { useMessageMutations } from './hooks/useMessageMutations';
 import { useForm } from "react-hook-form";
 import { useMessageBubble } from "./hooks/useMessageBubble";
+import { MessageReactions } from './components/MessageReactions';
 
 type GroupChatProps = {
   groupId: string;
@@ -72,6 +73,18 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
     }
   }, [messages, scrollToBottom]);
 
+  const AVAILABLE_REACTIONS = [
+    { emoji: '👍', name: 'Kciuk w górę' },
+    { emoji: '❤️', name: 'Serce' },
+    { emoji: '😂', name: 'Śmiech' },
+    { emoji: '😮', name: 'Zaskoczenie' },
+    { emoji: '😢', name: 'Smutek' },
+    { emoji: '😡', name: 'Złość' },
+    { emoji: '🎉', name: 'Świętowanie' },
+    { emoji: '👏', name: 'Oklaski' },
+    { emoji: '🤔', name: 'Zamyślenie' }
+  ];
+
   const MessageBubble = ({ message, isOwnMessage }: { message: Message; isOwnMessage: boolean }) => {
     const { 
       showActions, 
@@ -79,9 +92,17 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
       buttonRef,
       toggleActions,
       handleReaction,
+      isReacting,
       handleCopy,
       handleReport,
-    } = useMessageBubble(message, handleEdit, openDeleteModal, openReportModal);
+    } = useMessageBubble(
+      message, 
+      groupId,
+      user,
+      handleEdit, 
+      openDeleteModal, 
+      openReportModal
+    );
 
     return (
       <motion.div
@@ -201,15 +222,25 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
                 className={`
                   px-4 py-3 rounded-2xl break-words relative
                   ${isOwnMessage 
-                    ? 'bg-js text-dark ml-auto shadow-lg' 
-                    : 'bg-dark/50 text-gray-200 border border-js/10 shadow-md'
+                    ? 'bg-js text-dark ml-auto' 
+                    : 'bg-dark/50 text-gray-200'
                   }
-                  ${editingMessageId === message._id ? 'hidden' : 'block'}
                 `}
               >
                 <p>{message.content}</p>
                 {message.isEdited && (
                   <span className="text-xs opacity-70 ml-2">(edytowano)</span>
+                )}
+                
+                {Array.isArray(message.reactions) && message.reactions.length > 0 && (
+                  <div className="mt-2">
+                    <MessageReactions
+                      reactions={message.reactions}
+                      onReactionClick={handleReaction}
+                      isReacting={isReacting}
+                      currentUserId={user?._id}
+                    />
+                  </div>
                 )}
               </motion.div>
             )}
@@ -246,17 +277,29 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
                     <div className="p-2 rounded-lg hover:bg-js/10">
                       <div className="text-xs text-gray-400 mb-2">Reakcje</div>
                       <div className="flex flex-wrap gap-2 justify-center">
-                        {['👍', '❤️', '😂', '😮', '😢', '😡', '🎉', '👏', '🤔'].map((emoji) => (
-                          <motion.button
-                            key={emoji}
-                            whileHover={{ scale: 1.2 }}
-                            whileTap={{ scale: 0.9 }}
-                            onClick={() => handleReaction(emoji)}
-                            className="text-xl hover:scale-110 transition-transform p-1"
-                          >
-                            {emoji}
-                          </motion.button>
-                        ))}
+                        {AVAILABLE_REACTIONS.map(({ emoji, name }) => {
+                          const hasReacted = Array.isArray(message.reactions) && message.reactions.some(
+                            r => r.emoji === emoji && r.userId === user?._id
+                          );
+
+                          return (
+                            <motion.button
+                              key={emoji}
+                              whileHover={{ scale: 1.2 }}
+                              whileTap={{ scale: 0.9 }}
+                              onClick={() => handleReaction(emoji)}
+                              disabled={isReacting}
+                              title={name}
+                              className={`
+                                text-xl p-1.5 rounded-lg transition-all
+                                ${isReacting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-js/10'}
+                                ${hasReacted ? 'bg-js/20' : ''}
+                              `}
+                            >
+                              {emoji}
+                            </motion.button>
+                          );
+                        })}
                       </div>
                     </div>
 
