@@ -17,6 +17,7 @@ import { fileURLToPath } from 'url';
 import { initializeModels } from './models/index.js';
 import resourcesRoutes from './routes/resources.routes.js';
 import usersRoutes from './routes/users.routes.js';
+import gamesRoutes from './routes/games.routes.js';
 
 dotenv.config();
 
@@ -39,6 +40,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/auth", authRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/stats", statsRoutes);
+app.use("/api/games", gamesRoutes);
 app.use("/api/groups", groupsRoutes);
 app.use("/api/ranking", rankingRoutes);
 app.use("/api/posts", postsRoutes);
