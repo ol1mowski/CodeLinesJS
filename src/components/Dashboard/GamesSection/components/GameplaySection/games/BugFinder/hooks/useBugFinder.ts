@@ -25,10 +25,33 @@ export const useBugFinder = () => {
   const startTimer = useCallback(() => {
     if (!timerRef.current) {
       timerRef.current = setInterval(() => {
-        setGameState(prev => ({
-          ...prev,
-          timeElapsed: prev.timeElapsed + 1
-        }));
+        setGameState(prev => {
+          const currentChallenge = challenges[prev.currentLevel];
+          const isTimeUp = prev.timeElapsed + 1 >= currentChallenge.timeLimit;
+
+          if (isTimeUp) {
+            if (timerRef.current) {
+              clearInterval(timerRef.current);
+              timerRef.current = null;
+            }
+
+            return {
+              ...prev,
+              timeElapsed: currentChallenge.timeLimit,
+              lives: Math.max(0, prev.lives - 1),
+              isGameOver: prev.lives <= 1,
+              feedback: {
+                type: 'error',
+                message: `Czas minął! ${prev.lives > 1 ? `Pozostało żyć: ${prev.lives - 1}` : 'Koniec gry!'}`
+              }
+            };
+          }
+
+          return {
+            ...prev,
+            timeElapsed: prev.timeElapsed + 1
+          };
+        });
       }, 1000);
     }
   }, []);
@@ -137,6 +160,18 @@ export const useBugFinder = () => {
     startTimer();
     return () => stopTimer();
   }, [startTimer, stopTimer]);
+
+  useEffect(() => {
+    if (gameState.feedback.type === 'error' && gameState.timeElapsed >= currentChallenge.timeLimit) {
+      setTimeout(hideFeedback, FEEDBACK_DISPLAY_TIME);
+      
+      if (!gameState.isGameOver) {
+        setTimeout(() => {
+          resetLevel();
+        }, FEEDBACK_DISPLAY_TIME + 500);
+      }
+    }
+  }, [gameState.feedback.type, gameState.timeElapsed, currentChallenge.timeLimit, gameState.isGameOver, hideFeedback, resetLevel]);
 
   return {
     gameState,
