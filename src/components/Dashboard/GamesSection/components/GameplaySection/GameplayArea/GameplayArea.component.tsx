@@ -1,5 +1,7 @@
 import { memo } from 'react';
 import { motion } from 'framer-motion';
+import { useParams } from 'react-router-dom';
+import { BugFinder } from '../games/BugFinder/BugFinder.component';
 
 type GameplayAreaProps = {
   isPaused: boolean;
@@ -7,12 +9,20 @@ type GameplayAreaProps = {
 };
 
 export const GameplayArea = memo(({ isPaused }: GameplayAreaProps) => {
+  const { slug } = useParams<{ slug: string }>();
+
   return (
     <div className="relative aspect-video rounded-xl overflow-hidden border-2 border-js/20 bg-dark-800">
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="text-gray-400 font-mono">
-          Tutaj daj logike byczku
-        </div>
+      <div className="absolute inset-0">
+        {slug === 'code-breaker' ? (
+          <BugFinder />
+        ) : (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-gray-400 font-mono">
+              Gra niedostępna
+            </div>
+          </div>
+        )}
       </div>
 
       {isPaused && (
@@ -26,4 +36,6 @@ export const GameplayArea = memo(({ isPaused }: GameplayAreaProps) => {
       )}
     </div>
   );
-}); 
+});
+
+GameplayArea.displayName = 'GameplayArea'; 

@@ -50,12 +50,10 @@ export const router = createBrowserRouter([
       {
         path: "learn",
         element: <LearnSection />,
-        children: [
-          {
-            path: ":lessonSlug",
-            element: <LessonPage />
-          }
-        ]
+      },
+      {
+        path: "learn/lesson/:lessonSlug",
+        element: <LessonPage />
       },
       {
         path: "community",
