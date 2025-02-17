@@ -1,171 +1,189 @@
-import { memo, useCallback, useState } from "react";
-import { motion } from "framer-motion";
-import { FaUserCircle, FaHeart } from "react-icons/fa";
-import { formatDistanceToNow } from "date-fns";
-import { pl } from "date-fns/locale";
-import { useComments } from "../../../../hooks/useComments";
-import { Comment } from "../../../../types/post.types";
+import { memo } from "react";
+import { useForm } from "react-hook-form";
+import { motion, AnimatePresence } from "framer-motion";
+import { FaUserCircle } from "react-icons/fa";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { addComment } from "../api/posts";
+import toast from "react-hot-toast";
+
+type Comment = {
+  id: string;
+  content: string;
+  author: {
+    name: string;
+    avatar?: string;
+  };
+  createdAt: string;
+};
 
 type CommentsProps = {
   postId: string;
+  isOpen: boolean;
 };
 
-export const Comments = memo(({ postId }: CommentsProps) => {
-  const { comments, isLoading, addComment, likeComment } = useComments(postId);
-  const [newComment, setNewComment] = useState("");
+export const Comments = memo(({ postId, isOpen }: CommentsProps) => {
+  const queryClient = useQueryClient();
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<{ content: string }>();
 
-  const handleSubmit = useCallback(() => {
-    if (!newComment.trim()) return;
-    
-    addComment({ postId, content: newComment });
-    setNewComment("");
-  }, [postId, newComment, addComment]);
+  const commentMutation = useMutation({
+    mutationFn: ({ content }: { content: string }) => addComment(postId, content),
+    onSuccess: () => {
+      reset();
+      queryClient.invalidateQueries({ queryKey: ["comments", postId] });
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      toast.success("Komentarz został dodany");
+    },
+    onError: (error) => {
+      console.error("Błąd podczas dodawania komentarza:", error);
+      toast.error("Nie udało się dodać komentarza. Spróbuj ponownie później.");
+    }
+  });
 
-  if (isLoading) {
-    return <CommentsListSkeleton />;
-  }
+  const { data: comments, isLoading, error } = useQuery({
+    queryKey: ["comments", postId],
+    queryFn: async () => {
+      try {
+        const response = await fetch(`http://localhost:5001/api/posts/${postId}/comments`);
+        if (!response.ok) {
+          throw new Error("Nie udało się pobrać komentarzy");
+        }
+        return response.json();
+      } catch (error) {
+        toast.error("Nie udało się załadować komentarzy. Spróbuj odświeżyć stronę.");
+        throw error;
+      }
+    },
+    enabled: isOpen,
+    retry: 1,
+    onError: (error) => {
+      console.error("Błąd podczas pobierania komentarzy:", error);
+    }
+  });
+
+  const onSubmit = handleSubmit((data) => {
+    toast.promise(
+      commentMutation.mutateAsync(data),
+      {
+        loading: 'Wysyłanie komentarza...',
+        success: 'Komentarz został dodany!',
+        error: 'Nie udało się dodać komentarza'
+      }
+    );
+  });
+
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="mt-4 space-y-4"
-    >
-      <CommentForm
-        value={newComment}
-        onChange={setNewComment}
-        onSubmit={handleSubmit}
-      />
-
-      <CommentsList
-        comments={comments || []}
-        postId={postId}
-        onLike={likeComment}
-      />
-    </motion.div>
-  );
-});
-
-type CommentFormProps = {
-  value: string;
-  onChange: (value: string) => void;
-  onSubmit: () => void;
-};
-
-const CommentForm = memo(({ value, onChange, onSubmit }: CommentFormProps) => {
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    onChange(e.target.value);
-  }, [onChange]);
-
-  const handleSubmit = useCallback(() => {
-    onSubmit();
-  }, [onSubmit]);
-
-  return (
-    <div className="flex items-start gap-3">
-      <FaUserCircle className="w-8 h-8 text-gray-600" />
-      <div className="flex-1">
-        <textarea
-          value={value}
-          onChange={handleChange}
-          placeholder="Napisz komentarz..."
-          className="w-full bg-gray-900/50 rounded-lg p-3 text-gray-200 placeholder-gray-500 border border-gray-700/50 focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 transition-colors resize-none h-20"
-        />
-        <motion.button
-          onClick={handleSubmit}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          className="mt-2 px-4 py-1.5 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-sm font-medium hover:from-indigo-600 hover:to-purple-600 transition-colors"
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.2 }}
+          className="mt-4 space-y-4"
         >
-          Dodaj komentarz
-        </motion.button>
-      </div>
-    </div>
-  );
-});
+          <form onSubmit={onSubmit} className="flex gap-2">
+            <div className="flex-1">
+              <input
+                {...register("content", {
+                  required: "Treść komentarza jest wymagana",
+                  minLength: {
+                    value: 3,
+                    message: "Komentarz musi mieć minimum 3 znaki"
+                  }
+                })}
+                placeholder="Napisz komentarz..."
+                className={`w-full bg-dark/20 rounded-lg px-4 py-2 text-gray-300 
+                         focus:outline-none focus:ring-2 focus:ring-js/50 
+                         placeholder-gray-500 ${errors.content ? 'ring-2 ring-red-500' : ''}`}
+                disabled={commentMutation.isPending}
+              />
+              {errors.content && (
+                <span className="text-sm text-red-500 mt-1">
+                  {errors.content.message}
+                </span>
+              )}
+            </div>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              type="submit"
+              disabled={commentMutation.isPending}
+              className="px-4 py-2 bg-js/20 hover:bg-js/30 text-js rounded-lg 
+                       transition-colors disabled:opacity-50 disabled:cursor-not-allowed
+                       min-w-[100px]"
+            >
+              {commentMutation.isPending ? "Wysyłanie..." : "Wyślij"}
+            </motion.button>
+          </form>
 
-type CommentsListProps = {
-  comments: Comment[];
-  postId: string;
-  onLike: (params: { postId: string; commentId: string }) => void;
-};
+          {error ? (
+            <div className="text-center py-4">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-red-400"
+              >
+                Wystąpił błąd podczas ładowania komentarzy
+                <button
+                  onClick={() => queryClient.invalidateQueries({ queryKey: ["comments", postId] })}
+                  className="text-js ml-2 hover:underline"
+                >
+                  Spróbuj ponownie
+                </button>
+              </motion.div>
+            </div>
+          ) : isLoading ? (
+            <div className="animate-pulse space-y-4">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="flex gap-4">
+                  <div className="w-10 h-10 bg-gray-600 rounded-full" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 bg-gray-600 rounded w-1/4" />
+                    <div className="h-4 bg-gray-600 rounded w-3/4" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div key={Math.random()} className="space-y-4 max-h-[400px] overflow-y-auto">
+              {comments?.map((comment: Comment) => (
+                <motion.div
+                  key={comment._id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex gap-4"
 
-const CommentsList = memo(({ comments, postId, onLike }: CommentsListProps) => (
-  <div className="space-y-4">
-    {comments.map((comment) => (
-      <CommentItem
-        key={comment.id}
-        comment={comment}
-        postId={postId}
-        onLike={onLike}
-      />
-    ))}
-  </div>
-));
+                >
+                  {comment.author.avatar ? (
+                    <img
+                      src={comment.author.avatar}
+                      alt={comment.author.name}
+                      className="w-10 h-10 rounded-full"
+                    />
+                  ) : (
+                    <FaUserCircle className="w-10 h-10 text-gray-400" />
+                  )}
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-gray-300">
+                        {comment.author.name}
+                      </span>
+                      <span className="text-sm text-gray-500">
+                        {new Date(comment.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <p className="text-gray-400 mt-1">{comment.content}</p>
+                  </div>
+                </motion.div>
+              ))}
 
-type CommentItemProps = {
-  comment: Comment;
-  postId: string;
-  onLike: (params: { postId: string; commentId: string }) => void;
-};
-
-const CommentItem = memo(({ comment, postId, onLike }: CommentItemProps) => {
-  const handleLike = useCallback(() => {
-    onLike({ postId, commentId: comment.id });
-  }, [postId, comment.id, onLike]);
-
-  return (
-    <div className="flex items-start gap-3">
-      {comment.author.avatar ? (
-        <img
-          src={comment.author.avatar}
-          alt={comment.author.name}
-          className="w-8 h-8 rounded-full"
-        />
-      ) : (
-        <FaUserCircle className="w-8 h-8 text-gray-600" />
+            </div>
+          )}
+        </motion.div>
       )}
-      <div className="flex-1">
-        <div className="flex items-center gap-2">
-          <span className="font-medium text-gray-200">
-            {comment.author.name}
-          </span>
-          <span className="text-sm text-gray-500">
-            {formatDistanceToNow(comment.createdAt, { addSuffix: true, locale: pl })}
-          </span>
-        </div>
-        <p className="text-gray-300 mt-1">{comment.content}</p>
-        <motion.button
-          onClick={handleLike}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className={`mt-2 flex items-center gap-1 text-sm ${
-            comment.isLiked ? "text-pink-500" : "text-gray-400 hover:text-pink-500"
-          } transition-colors`}
-        >
-          <FaHeart className={comment.isLiked ? "fill-current" : "stroke-current"} />
-          <span>{comment.likesCount}</span>
-        </motion.button>
-      </div>
-    </div>
+    </AnimatePresence>
   );
 });
-
-const CommentsListSkeleton = () => (
-  <div className="mt-4 space-y-4 animate-pulse">
-    {[1, 2].map((i) => (
-      <div key={i} className="flex items-start gap-3">
-        <div className="w-8 h-8 rounded-full bg-gray-700/50" />
-        <div className="flex-1 space-y-2">
-          <div className="h-4 w-24 bg-gray-700/50 rounded" />
-          <div className="h-4 w-3/4 bg-gray-700/50 rounded" />
-        </div>
-      </div>
-    ))}
-  </div>
-);
 
 Comments.displayName = "Comments";
-CommentForm.displayName = "CommentForm";
-CommentsList.displayName = "CommentsList";
-CommentItem.displayName = "CommentItem"; 

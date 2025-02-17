@@ -1,83 +1,50 @@
+import { memo, useCallback } from "react";
 import { motion } from "framer-motion";
-import { memo } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { FaLock } from "react-icons/fa";
-import { SecuritySettings } from "../../../../../types/settings.types";
-import { FormInput } from "../../../../UI/Form/FormInput/FormInput.component";
-import { Button } from "../../../../UI/Button/Button.component";
-
-const securitySchema = z.object({
-  currentPassword: z.string().min(1, "Aktualne hasło jest wymagane"),
-  newPassword: z
-    .string()
-    .min(8, "Hasło musi mieć minimum 8 znaków")
-    .regex(/[A-Z]/, "Hasło musi zawierać wielką literę")
-    .regex(/[0-9]/, "Hasło musi zawierać cyfrę")
-    .regex(/[^A-Za-z0-9]/, "Hasło musi zawierać znak specjalny"),
-  confirmPassword: z.string().min(1, "Potwierdzenie hasła jest wymagane"),
-}).refine((data) => data.newPassword === data.confirmPassword, {
-  message: "Hasła muszą być takie same",
-  path: ["confirmPassword"],
-});
+import { PasswordFields } from "./components/PasswordFields/PasswordFields.component";
+import { useSecurityForm } from "./hooks/useSecurityForm";
+import { FormButtons } from "../ProfileForm/components/FormButtons/FormButtons.component";
+import { useSecurityToasts } from "./hooks/useSecurityToasts";
+import { FORM_ANIMATION } from "./constans/constants";
 
 export const SecurityForm = memo(() => {
   const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting }
-  } = useForm<SecuritySettings>({
-    resolver: zodResolver(securitySchema)
+    handleSuccess,
+    handleError,
+    handleCancel: handleCancelToast,
+    handleCancelError
+  } = useSecurityToasts();
+
+  const { form, onSubmit, isUpdating } = useSecurityForm({
+    onSuccess: () => {
+      handleSuccess();
+      form.reset();
+    },
+    onError: handleError
   });
 
-  const onSubmit = async (data: SecuritySettings) => {
-    console.log(data);
-  };
+  const handleCancel = useCallback(() => {
+    try {
+      form.reset();
+      handleCancelToast();
+    } catch (error) {
+      handleCancelError();
+    }
+  }, [form, handleCancelToast, handleCancelError]);
 
   return (
     <motion.form
-      onSubmit={handleSubmit(onSubmit)}
-      className="space-y-6 max-w-md"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
+      onSubmit={onSubmit}
+      className="w-full max-w-md sm:ml-0 sm:mr-auto space-y-8 px-4 sm:px-0"
+      {...FORM_ANIMATION}
     >
-      <FormInput
-        type="password"
-        label="Aktualne hasło"
-        placeholder="Wprowadź aktualne hasło"
-        icon={<FaLock />}
-        error={errors.currentPassword?.message}
-        {...register("currentPassword")}
+      <PasswordFields form={form} />
+      
+      <FormButtons 
+        onCancel={handleCancel}
+        isSubmitting={form.formState.isSubmitting || isUpdating}
+        submitText="Zmień hasło"
+        loadingText="Zmienianie hasła"
       />
-
-      <FormInput
-        type="password"
-        label="Nowe hasło"
-        placeholder="Wprowadź nowe hasło"
-        icon={<FaLock />}
-        error={errors.newPassword?.message}
-        {...register("newPassword")}
-      />
-
-      <FormInput
-        type="password"
-        label="Potwierdź nowe hasło"
-        placeholder="Potwierdź nowe hasło"
-        icon={<FaLock />}
-        error={errors.confirmPassword?.message}
-        {...register("confirmPassword")}
-      />
-
-      <div className="flex justify-end">
-        <Button
-          type="submit"
-          disabled={isSubmitting}
-          className="bg-gradient-to-r from-indigo-500 to-purple-500"
-        >
-          {isSubmitting ? "Zapisywanie..." : "Zmień hasło"}
-        </Button>
-      </div>
     </motion.form>
   );
 });

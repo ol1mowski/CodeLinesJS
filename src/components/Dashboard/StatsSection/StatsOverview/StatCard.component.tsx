@@ -1,13 +1,15 @@
 import { memo } from "react";
 import { motion } from "framer-motion";
 import { IconType } from "react-icons";
+import { statsSectionStyles as styles } from "../style/StatsSection.styles";
 
 type StatCardProps = {
   icon: IconType;
   label: string;
-  value: string;
+  value: number;
   subValue?: string;
   gradient: string;
+
 };
 
 const item = {
@@ -15,18 +17,18 @@ const item = {
   show: { opacity: 1, y: 0 }
 };
 
-export const StatCard = memo(({ icon: Icon, label, value, subValue, gradient }: StatCardProps) => (
+export const StatCard = memo(({ icon: Icon, label, value, subValue }: StatCardProps) => (
   <motion.div
     variants={item}
-    className="bg-gray-800/50 backdrop-blur-lg rounded-xl p-6 border border-gray-700/50 hover:border-indigo-500/50 transition-all"
+    className={`${styles.card.base} hover:border-js/30 transition-all`}
   >
     <div className="flex items-start gap-4">
-      <div className={`p-3 rounded-lg bg-gradient-to-br ${gradient}/20 group-hover:${gradient}/30 transition-colors`}>
-        <Icon className="w-6 h-6 text-white" />
+      <div className="p-3 rounded-lg bg-js/10">
+        <Icon className="w-6 h-6 text-js" />
       </div>
       <div>
         <p className="text-gray-400 text-sm mb-1">{label}</p>
-        <p className="text-2xl font-bold font-space text-white">{value}</p>
+        <p className="text-2xl font-bold font-space text-js">{value}</p>
         {subValue && (
           <p className="text-sm text-gray-500 mt-1">{subValue}</p>
         )}

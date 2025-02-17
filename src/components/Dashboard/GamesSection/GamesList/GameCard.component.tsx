@@ -1,91 +1,81 @@
 import { motion } from "framer-motion";
-
 import { memo } from "react";
-
-import { FaStar, FaUsers, FaTrophy } from "react-icons/fa";
+import { FaStar, FaUsers, FaTrophy, FaPlay } from "react-icons/fa";
 import { Game } from "../../../../types/games.types";
+import { useNavigate } from 'react-router-dom';
+
 
 type GameCardProps = {
   game: Game;
 };
 
-const difficultyColors = {
-  easy: "from-green-500/20 to-emerald-500/20 text-emerald-400",
-  medium: "from-blue-500/20 to-indigo-500/20 text-indigo-400",
-  hard: "from-red-500/20 to-rose-500/20 text-rose-400",
-};
-
 export const GameCard = memo(({ game }: GameCardProps) => {
+  const navigate = useNavigate();
+
+  const handlePlayClick = () => {
+    navigate(`/dashboard/play/${game.slug}`);
+  };
+
   return (
     <motion.div
-      whileHover={{ y: -5 }}
-      className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-xl border border-gray-700/50 overflow-hidden group h-full"
+      whileHover={{ scale: 1.02 }}
+      className="group bg-dark-800/50 border border-js/10 rounded-xl overflow-hidden hover:border-js/20 transition-all"
     >
-      <div className="aspect-video relative overflow-hidden">
-        <motion.img
-          src={game.thumbnailUrl}
-          alt={game.title}
-          className="w-full h-full object-cover"
-          whileHover={{ scale: 1.1 }}
-          transition={{ duration: 0.3 }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent" />
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="absolute bottom-3 left-3 flex items-center gap-2"
-        >
-          <span className={`px-3 py-1 rounded-full text-sm font-medium bg-gradient-to-r ${difficultyColors[game.difficulty]}`}>
-            {game.difficulty}
-          </span>
-          <span className="flex items-center gap-1 text-sm text-gray-300">
-            <FaStar className="text-yellow-400" />
-            {game.xpPoints} XP
-          </span>
-        </motion.div>
-      </div>
-      <div className="p-4">
-        <motion.h3
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.1 }}
-          className="text-xl font-bold font-space text-gray-100 mb-2"
-        >
-          {game.title}
-        </motion.h3>
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="text-gray-400 text-sm mb-4"
-        >
-          {game.description}
-        </motion.p>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <motion.span
-              whileHover={{ scale: 1.1 }}
-              className="flex items-center gap-1 text-sm text-gray-400"
-            >
-              <FaUsers className="text-indigo-400" />
-              {game.totalPlayers}
-            </motion.span>
-            <motion.span
-              whileHover={{ scale: 1.1 }}
-              className="flex items-center gap-1 text-sm text-gray-400"
-            >
-              <FaTrophy className="text-amber-400" />
-              {game.completedCount}
-            </motion.span>
+      <div className="relative aspect-video">
+        <div className="w-full h-full bg-gradient-to-br from-js/5 to-js/20 flex items-center justify-center">
+          <div className="bg-js/10 px-4 py-2 rounded-lg border border-js/20">
+            <span className="font-mono text-js/80 font-medium">
+              {game.slug}
+            </span>
           </div>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="px-4 py-2 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-medium hover:from-indigo-600 hover:to-purple-600 transition-colors"
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-t from-dark/90 to-transparent" />
+        
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={handlePlayClick}
+          className="absolute inset-0 m-auto w-12 h-12 bg-js text-dark rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+        >
+          <FaPlay className="w-5 h-5" />
+        </motion.button>
+      </div>
+
+      <div className="p-4">
+        <div className="flex items-start justify-between gap-2 mb-2">
+          <h3 className="text-lg font-bold text-js line-clamp-1">
+            {game.title}
+          </h3>
+          <span className="flex items-center gap-1 text-js bg-js/10 px-2 py-0.5 rounded-lg text-sm">
+            <FaTrophy className="w-3.5 h-3.5" />
+            {game.rewardPoints}
+          </span>
+        </div>
+
+        <p className="text-gray-400 text-sm mb-4 line-clamp-2">
+          {game.description}
+        </p>
+
+        <div className="flex items-center justify-between text-sm">
+          <div className="flex items-center gap-4 text-gray-400">
+            <span className="flex items-center gap-1">
+              <FaUsers className="w-4 h-4" />
+              {game.completions.count}
+            </span>
+            <span className="flex items-center gap-1">
+              <FaStar className="w-4 h-4" />
+              {game.rating.average.toFixed(1)}
+            </span>
+          </div>
+
+          <span className={`px-2 py-0.5 rounded-md text-xs font-medium
+            ${game.difficulty === 'easy' ? 'bg-green-500/10 text-green-400' :
+              game.difficulty === 'medium' ? 'bg-yellow-500/10 text-yellow-400' :
+              'bg-red-500/10 text-red-400'}`}
           >
-            {game.isCompleted ? "Zagraj ponownie" : "Rozpocznij"}
-          </motion.button>
+            {game.difficulty === 'easy' ? 'Łatwy' :
+             game.difficulty === 'medium' ? 'Średni' : 'Trudny'}
+          </span>
         </div>
       </div>
     </motion.div>

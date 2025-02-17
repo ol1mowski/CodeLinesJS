@@ -1,39 +1,36 @@
 import { memo } from "react";
-import { motion } from "framer-motion";
-
-import { UserStats } from "../../../../types/stats.types";
-import { ProgressChart } from "./ProgressChart.component";
-import { CategoriesChart } from "./CategoriesChart.component";
+import { DailyChart } from "./DailyChart.component";
+import { LoadingScreen } from "../../../UI/LoadingScreen/LoadingScreen.component";
 
 type StatsChartsProps = {
-  data: UserStats['chartData'] | undefined;
+  data?: {
+    daily: Array<{
+      date: string;
+      points: number;
+      challenges: number;
+    }>;
+  };
   isLoading: boolean;
 };
 
 export const StatsCharts = memo(({ data, isLoading }: StatsChartsProps) => {
-  if (isLoading || !data) return null;
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
+  if (!data) {
+    return null;
+  }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.3 }}
-      className="space-y-6"
-    >
-      <div className="bg-gray-800/50 backdrop-blur-lg rounded-xl p-6 border border-gray-700/50">
-        <h3 className="text-xl font-bold font-space text-white mb-6">
-          Postęp w Czasie
-        </h3>
-        <ProgressChart data={data.daily} />
+    <div className="flex flex-col gap-6 h-full">
+      <div className="bg-dark/50 rounded-lg p-6 flex-1">
+        <h3 className="text-xl font-bold text-js mb-6">Aktywność</h3>
+        <div className="h-[300px]">
+          <DailyChart data={data.daily} />
+        </div>
       </div>
-
-      <div className="bg-gray-800/50 backdrop-blur-lg rounded-xl p-6 border border-gray-700/50">
-        <h3 className="text-xl font-bold font-space text-white mb-6">
-          Kategorie Zadań
-        </h3>
-        <CategoriesChart data={data.categories} />
-      </div>
-    </motion.div>
+    </div>
   );
 });
 

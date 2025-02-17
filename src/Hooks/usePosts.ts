@@ -1,42 +1,10 @@
-import { useInfiniteQuery, useMutation, useQueryClient, QueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import { Post } from '../types/post.types';
 
 const POSTS_PER_PAGE = 5;
 const POSTS_QUERY_KEY = 'posts';
-
-const mockPosts: Post[] = Array.from({ length: 50 }, (_, i) => ({
-  id: (i + 1).toString(),
-  author: {
-    id: '1',
-    name: 'Jan Kowalski',
-    avatar: `https://i.pravatar.cc/150?u=${i + 1}`
-  },
-  content: `Post numer ${i + 1} o programowaniu! 🚀`,
-  createdAt: new Date(Date.now() - i * 3600000),
-  likesCount: Math.floor(Math.random() * 100),
-  commentsCount: Math.floor(Math.random() * 20),
-  isLiked: false
-}));
-
-const fetchPosts = async (page: number) => {
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  const start = page * POSTS_PER_PAGE;
-  const end = start + POSTS_PER_PAGE;
-  const posts = mockPosts.slice(start, end);
-  return {
-    posts,
-    nextPage: end < mockPosts.length ? page + 1 : undefined
-  };
-};
-
-export const prefetchPosts = async (queryClient: QueryClient) => {
-  await queryClient.prefetchInfiniteQuery({
-    queryKey: [POSTS_QUERY_KEY],
-    queryFn: ({ pageParam = 0 }) => fetchPosts(pageParam),
-    initialPageParam: 0,
-  });
-};
+const API_URL = 'http://localhost:5001/api';
 
 export const usePosts = () => {
   const queryClient = useQueryClient();
@@ -46,52 +14,87 @@ export const usePosts = () => {
     isLoading,
     isFetchingNextPage,
     hasNextPage,
-    fetchNextPage
+    fetchNextPage,
   } = useInfiniteQuery({
     queryKey: [POSTS_QUERY_KEY],
-    queryFn: ({ pageParam = 0 }) => fetchPosts(pageParam),
-    getNextPageParam: (lastPage) => lastPage.nextPage,
-    initialPageParam: 0,
+    queryFn: async ({ pageParam = 1 }) => {
+      const token = sessionStorage.getItem("token") || localStorage.getItem("token");
+      const response = await fetch(
+        `${API_URL}/posts?page=${pageParam}&limit=${POSTS_PER_PAGE}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+      if (!response.ok) {
+        throw new Error('Nie udało się pobrać postów');
+      }
+      return response.json();
+    },
+    getNextPageParam: (lastPage) => lastPage.hasNextPage ? lastPage.nextPage : undefined,
+    initialPageParam: 1,
   });
+
+
+  const prefetchNextPage = useCallback(async () => {
+    if (hasNextPage) {
+      await queryClient.prefetchInfiniteQuery({
+        queryKey: [POSTS_QUERY_KEY],
+        queryFn: async ({ pageParam = 1 }) => {
+          const response = await fetch(
+            `${API_URL}/posts?page=${pageParam}&limit=${POSTS_PER_PAGE}`
+          );
+          if (!response.ok) {
+            throw new Error('Nie udało się pobrać postów');
+          }
+          return response.json();
+        },
+        initialPageParam: 1,
+      });
+    }
+  }, [hasNextPage, queryClient]);
 
   const likeMutation = useMutation({
     mutationFn: async (postId: string) => {
-      await new Promise(resolve => setTimeout(resolve, 500));
-      return postId;
-    },
-    onSuccess: (postId) => {
-      queryClient.invalidateQueries({ 
-        queryKey: [POSTS_QUERY_KEY]
+      const response = await fetch(`${API_URL}/posts/${postId}/like`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
       });
-      
+      if (!response.ok) {
+        throw new Error('Nie udało się polubić posta');
+      }
+      return response.json();
+    },
+    onMutate: async (postId) => {
+      await queryClient.cancelQueries({ queryKey: [POSTS_QUERY_KEY] });
+      const previousPosts = queryClient.getQueryData([POSTS_QUERY_KEY]);
+
       queryClient.setQueryData([POSTS_QUERY_KEY], (oldData: any) => ({
         pages: oldData.pages.map((page: any) => ({
           ...page,
           posts: page.posts.map((post: Post) =>
             post.id === postId
-              ? {
-                  ...post,
-                  isLiked: !post.isLiked,
-                  likesCount: post.isLiked ? post.likesCount - 1 : post.likesCount + 1
-                }
+              ? { ...post, likes: { count: post.likes.count + 1, isLiked: true } }
               : post
-          )
+          ),
         })),
-        pageParams: oldData.pageParams
+        pageParams: oldData.pageParams,
       }));
-    }
+
+      return { previousPosts };
+    },
+    onError: (_, __, context) => {
+      if (context?.previousPosts) {
+        queryClient.setQueryData([POSTS_QUERY_KEY], context.previousPosts);
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: [POSTS_QUERY_KEY] });
+    },
   });
 
-  const prefetchNextPage = useCallback(() => {
-    if (hasNextPage) {
-      const nextPage = data?.pages.length ?? 0;
-      queryClient.prefetchInfiniteQuery({
-        queryKey: [POSTS_QUERY_KEY],
-        queryFn: ({ pageParam = nextPage }) => fetchPosts(pageParam),
-        initialPageParam: nextPage,
-      });
-    }
-  }, [queryClient, hasNextPage, data?.pages.length]);
 
   return {
     posts: data?.pages.flatMap(page => page.posts) ?? [],
