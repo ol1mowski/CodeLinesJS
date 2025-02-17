@@ -1,8 +1,8 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { challenges } from '../data/challenges';
-import { GameState, BugFinderActions, CodeChallenge } from '../types/bugFinder.types';
+import { GameState } from '../types/bugFinder.types';
 
-const FEEDBACK_DISPLAY_TIME = 3000; // 3 seconds
+const FEEDBACK_DISPLAY_TIME = 3000; 
 
 export const useBugFinder = () => {
   const [gameState, setGameState] = useState<GameState>({
@@ -67,7 +67,7 @@ export const useBugFinder = () => {
   const updateCode = useCallback((newCode: string) => {
     setGameState(prev => ({
       ...prev,
-      currentCode: newCode
+      currentCode: newCode.replace(/\u200B/g, '')
     }));
   }, []);
 
@@ -80,7 +80,29 @@ export const useBugFinder = () => {
 
   const checkSolution = useCallback(() => {
     const currentChallenge = challenges[gameState.currentLevel];
-    const isCorrect = gameState.currentCode.trim() === currentChallenge.correctCode.trim();
+    
+    if (gameState.lives === 0) {
+      setGameState(prev => ({
+        ...prev,
+        currentCode: currentChallenge.correctCode,
+        feedback: {
+          type: 'error',
+          message: 'Koniec gry! Oto poprawne rozwiązanie:'
+        }
+      }));
+      setTimeout(hideFeedback, FEEDBACK_DISPLAY_TIME);
+      return;
+    }
+
+    const normalizeCode = (code: string) => {
+      return code
+        .trim()
+        .replace(/\s+/g, ' ')
+        .replace(/[\u200B-\u200D\uFEFF]/g, '')
+        .replace(/\r\n/g, '\n');
+    };
+
+    const isCorrect = normalizeCode(gameState.currentCode) === normalizeCode(currentChallenge.correctCode);
 
     if (isCorrect) {
       const timeBonus = Math.max(0, currentChallenge.timeLimit - gameState.timeElapsed);
@@ -122,7 +144,9 @@ export const useBugFinder = () => {
         isGameOver: newLives === 0,
         feedback: {
           type: 'error',
-          message: `Niestety, rozwiązanie nie jest poprawne. ${newLives > 0 ? `Pozostało żyć: ${newLives}` : 'Koniec gry!'}`
+          message: newLives === 0 
+            ? 'Koniec gry! Kliknij ponownie, aby zobaczyć poprawne rozwiązanie.'
+            : `Niestety, rozwiązanie nie jest poprawne. Pozostało żyć: ${newLives}`
         }
       }));
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -12,6 +12,19 @@ SyntaxHighlighter.registerLanguage('javascript', js);
 
 export const BugFinderGame = memo(() => {
   const { gameState, currentChallenge, actions } = useBugFinder();
+  const editorRef = useRef<HTMLPreElement>(null);
+
+  useEffect(() => {
+    if (editorRef.current) {
+      editorRef.current.textContent = gameState.currentCode;
+    }
+  }, [gameState.currentCode]);
+
+  const handleCodeChange = () => {
+    if (editorRef.current) {
+      actions.updateCode(editorRef.current.textContent || '');
+    }
+  };
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -55,6 +68,7 @@ export const BugFinderGame = memo(() => {
 
       <div className="flex-1 overflow-hidden">
         <SyntaxHighlighter
+          ref={editorRef}
           language="javascript"
           style={vs2015}
           customStyle={{
@@ -68,21 +82,20 @@ export const BugFinderGame = memo(() => {
           showLineNumbers={true}
           lineNumberStyle={{ color: '#666' }}
           contentEditable={true}
+          onKeyUp={handleCodeChange}
+          onPaste={(e) => {
+            e.preventDefault();
+            const text = e.clipboardData.getData('text/plain');
+            document.execCommand('insertText', false, text);
+            handleCodeChange();
+          }}
           onKeyDown={(e) => {
             if (e.key === 'Tab') {
               e.preventDefault();
-              const target = e.target as HTMLElement;
-              const selection = window.getSelection();
-              if (selection) {
-                const range = selection.getRangeAt(0);
-                const tabNode = document.createTextNode('  ');
-                range.insertNode(tabNode);
-                range.setStartAfter(tabNode);
-                range.setEndAfter(tabNode);
-              }
+              document.execCommand('insertText', false, '  ');
+              handleCodeChange();
             }
           }}
-          onChange={(code) => actions.updateCode(code)}
         >
           {gameState.currentCode}
         </SyntaxHighlighter>
