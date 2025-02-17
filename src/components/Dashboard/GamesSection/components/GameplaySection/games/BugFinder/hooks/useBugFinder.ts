@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { challenges } from '../data/challenges';
-import { GameState, BugFinderActions } from '../types/bugFinder.types';
+import { GameState, BugFinderActions, CodeChallenge } from '../types/bugFinder.types';
 
 const FEEDBACK_DISPLAY_TIME = 3000; // 3 seconds
 
@@ -20,14 +20,15 @@ export const useBugFinder = () => {
     }
   });
 
-  const timerRef = useRef<NodeJS.Timer | null>(null);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const currentChallenge = challenges[gameState.currentLevel];
 
   const startTimer = useCallback(() => {
     if (!timerRef.current) {
       timerRef.current = setInterval(() => {
         setGameState(prev => {
-          const currentChallenge = challenges[prev.currentLevel];
-          const isTimeUp = prev.timeElapsed + 1 >= currentChallenge.timeLimit;
+          const challenge = challenges[prev.currentLevel];
+          const isTimeUp = prev.timeElapsed + 1 >= challenge.timeLimit;
 
           if (isTimeUp) {
             if (timerRef.current) {
@@ -37,7 +38,7 @@ export const useBugFinder = () => {
 
             return {
               ...prev,
-              timeElapsed: currentChallenge.timeLimit,
+              timeElapsed: challenge.timeLimit,
               lives: Math.max(0, prev.lives - 1),
               isGameOver: prev.lives <= 1,
               feedback: {
@@ -175,7 +176,7 @@ export const useBugFinder = () => {
 
   return {
     gameState,
-    currentChallenge: challenges[gameState.currentLevel],
+    currentChallenge,
     actions: {
       updateCode,
       checkSolution,

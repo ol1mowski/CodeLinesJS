@@ -1,3 +1,4 @@
+import React from 'react';
 import { memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
