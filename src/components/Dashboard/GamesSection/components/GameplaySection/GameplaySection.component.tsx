@@ -111,7 +111,6 @@ export const GameplaySection = memo(({ game }: GameplaySectionProps) => {
           </div>
         </div>
 
-        {/* Modalne okna potwierdzenia */}
         {(activeModal === 'quit' || activeModal === 'restart') && (
           <motion.div
             initial={{ opacity: 0 }}
@@ -159,7 +158,6 @@ export const GameplaySection = memo(({ game }: GameplaySectionProps) => {
           </motion.div>
         )}
 
-        {/* Modal pomocy */}
         {controls.isHelpVisible && (
           <motion.div
             initial={{ opacity: 0 }}

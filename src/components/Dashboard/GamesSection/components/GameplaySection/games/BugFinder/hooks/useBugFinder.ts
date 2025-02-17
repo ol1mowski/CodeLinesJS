@@ -11,7 +11,11 @@ export const useBugFinder = () => {
     isGameOver: false,
     currentCode: challenges[0].code,
     showHint: false,
-    currentHintIndex: 0
+    currentHintIndex: 0,
+    feedback: {
+      type: null,
+      message: ''
+    }
   });
 
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
@@ -52,16 +56,31 @@ export const useBugFinder = () => {
       setGameState(prev => ({
         ...prev,
         score: prev.score + levelScore,
-        currentLevel: prev.currentLevel + 1,
-        timeElapsed: 0,
-        currentCode: challenges[prev.currentLevel + 1]?.code || '',
-        isGameOver: prev.currentLevel + 1 >= challenges.length
+        feedback: {
+          type: 'success',
+          message: `Świetnie! Zdobywasz ${levelScore} punktów (w tym ${timeBonus} punktów za czas)`
+        }
       }));
+
+      setTimeout(() => {
+        setGameState(prev => ({
+          ...prev,
+          currentLevel: prev.currentLevel + 1,
+          timeElapsed: 0,
+          currentCode: challenges[prev.currentLevel + 1]?.code || '',
+          isGameOver: prev.currentLevel + 1 >= challenges.length,
+          feedback: { type: null, message: '' }
+        }));
+      }, 2000);
     } else {
       setGameState(prev => ({
         ...prev,
         lives: prev.lives - 1,
-        isGameOver: prev.lives <= 1
+        isGameOver: prev.lives <= 1,
+        feedback: {
+          type: 'error',
+          message: `Niestety, rozwiązanie nie jest poprawne. Pozostało żyć: ${prev.lives - 1}`
+        }
       }));
     }
   }, [gameState.currentLevel, gameState.currentCode, gameState.timeElapsed]);

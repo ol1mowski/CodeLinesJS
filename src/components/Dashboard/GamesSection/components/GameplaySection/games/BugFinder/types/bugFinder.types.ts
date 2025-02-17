@@ -11,6 +11,8 @@ export type CodeChallenge = {
   points: number;
 }
 
+export type FeedbackType = 'success' | 'error' | null;
+
 export type GameState = {
   currentLevel: number;
   timeElapsed: number;
@@ -20,6 +22,10 @@ export type GameState = {
   currentCode: string;
   showHint: boolean;
   currentHintIndex: number;
+  feedback: {
+    type: FeedbackType;
+    message: string;
+  };
 }
 
 export type BugFinderActions = {
