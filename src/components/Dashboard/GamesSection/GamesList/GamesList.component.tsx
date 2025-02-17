@@ -1,23 +1,36 @@
 import { motion } from "framer-motion";
 import { memo } from "react";
-import { useGames } from "../../../../hooks/useGames";
 import { GamesListSkeleton } from "./GamesListSkeleton.component";
 import { NoGamesFound } from "./NoGamesFound.component";
 import { GameCard } from "./GameCard.component";
+import { ActiveCategory, SortOption } from "../GamesSection.component";
+import { GameDifficulty } from "../../../../types/games.types";
+import { useGamesQuery } from "../hooks/useGamesQuery";
+
 
 type GamesListProps = {
-  activeCategory: string;
-  sortBy: string;
+  activeCategory: ActiveCategory;
+  sortBy: SortOption;
   searchQuery: string;
-  selectedDifficulty: string;
-};  
+  selectedDifficulty: GameDifficulty | "all";
+};
 
 export const GamesList = memo(({ activeCategory, sortBy, searchQuery, selectedDifficulty }: GamesListProps) => {
-  const { games, isLoading } = useGames();
+  const { data, isLoading, isError } = useGamesQuery();
 
   if (isLoading) return <GamesListSkeleton />;
+  
+  if (isError) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-red-400">Wystąpił błąd podczas ładowania gier. Spróbuj ponownie później.</p>
+      </div>
+    );
+  }
 
-  const filteredGames = games
+  if (!data?.games) return null;
+
+  const filteredGames = data.games
     .filter(game => 
       (activeCategory === "all" || game.category === activeCategory) &&
       (selectedDifficulty === "all" || game.difficulty === selectedDifficulty) &&
@@ -26,11 +39,16 @@ export const GamesList = memo(({ activeCategory, sortBy, searchQuery, selectedDi
     )
     .sort((a, b) => {
       switch (sortBy) {
-        case "newest": return b.rating - a.rating;
-        case "popular": return b.totalPlayers - a.totalPlayers;
-        case "difficulty": return b.difficulty.localeCompare(a.difficulty);
-        case "xp": return b.xpPoints - a.xpPoints;
-        default: return 0;
+        case "newest":
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        case "popular":
+          return b.completions.count - a.completions.count;
+        case "difficulty":
+          return b.difficulty.localeCompare(a.difficulty);
+        case "xp":
+          return b.rewardPoints - a.rewardPoints;
+        default:
+          return 0;
       }
     });
 
@@ -46,7 +64,7 @@ export const GamesList = memo(({ activeCategory, sortBy, searchQuery, selectedDi
       className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6"
     >
       {filteredGames.map((game) => (
-        <GameCard key={game.id} game={game} />
+        <GameCard key={game._id} game={game} />
       ))}
     </motion.div>
   );
