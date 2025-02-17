@@ -18,4 +18,13 @@ export type GameState = {
   lives: number;
   isGameOver: boolean;
   currentCode: string;
+  showHint: boolean;
+  currentHintIndex: number;
+}
+
+export type BugFinderActions = {
+  updateCode: (code: string) => void;
+  checkSolution: () => void;
+  showNextHint: () => void;
+  resetLevel: () => void;
 } 

@@ -1,10 +1,11 @@
 import { memo } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import js from 'react-syntax-highlighter/dist/esm/languages/hljs/javascript';
 import { vs2015 } from 'react-syntax-highlighter/dist/esm/styles/hljs';
-import { FaCheck, FaLightbulb, FaClock } from 'react-icons/fa';
+import { FaCheck, FaLightbulb, FaClock, FaRedo } from 'react-icons/fa';
 import { useBugFinder } from '../hooks/useBugFinder';
+import { challenges } from '../data/challenges';
 
 SyntaxHighlighter.registerLanguage('javascript', js);
 
@@ -34,10 +35,20 @@ export const BugFinderGame = memo(() => {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            onClick={actions.showNextHint}
             className="p-2 rounded-lg bg-js/10 text-js hover:bg-js/20 transition-colors"
             title="Pokaż podpowiedź"
           >
             <FaLightbulb className="w-4 h-4" />
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={actions.resetLevel}
+            className="p-2 rounded-lg bg-js/10 text-js hover:bg-js/20 transition-colors"
+            title="Reset poziomu"
+          >
+            <FaRedo className="w-4 h-4" />
           </motion.button>
         </div>
       </div>
@@ -90,6 +101,21 @@ export const BugFinderGame = memo(() => {
           <span>Sprawdź rozwiązanie</span>
         </motion.button>
       </div>
+
+      <AnimatePresence>
+        {gameState.showHint && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            className="absolute bottom-20 left-1/2 -translate-x-1/2 p-4 bg-dark-900/90 border border-js/20 rounded-lg shadow-xl"
+          >
+            <p className="text-gray-300">
+              {currentChallenge.hints[gameState.currentHintIndex]}
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 });

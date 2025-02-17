@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { challenges } from '../data/challenges';
-import { GameState } from '../types/bugFinder.types';
+import { GameState, BugFinderActions } from '../types/bugFinder.types';
 
 export const useBugFinder = () => {
   const [gameState, setGameState] = useState<GameState>({
@@ -9,7 +9,9 @@ export const useBugFinder = () => {
     score: 0,
     lives: 3,
     isGameOver: false,
-    currentCode: challenges[0].code
+    currentCode: challenges[0].code,
+    showHint: false,
+    currentHintIndex: 0
   });
 
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
@@ -64,6 +66,29 @@ export const useBugFinder = () => {
     }
   }, [gameState.currentLevel, gameState.currentCode, gameState.timeElapsed]);
 
+  const showNextHint = useCallback(() => {
+    const currentChallenge = challenges[gameState.currentLevel];
+    
+    if (gameState.currentHintIndex < currentChallenge.hints.length - 1) {
+      setGameState(prev => ({
+        ...prev,
+        currentHintIndex: prev.currentHintIndex + 1,
+        showHint: true
+      }));
+    }
+  }, [gameState.currentLevel, gameState.currentHintIndex]);
+
+  const resetLevel = useCallback(() => {
+    const currentChallenge = challenges[gameState.currentLevel];
+    
+    setGameState(prev => ({
+      ...prev,
+      currentCode: currentChallenge.code,
+      showHint: false,
+      currentHintIndex: 0
+    }));
+  }, [gameState.currentLevel]);
+
   useEffect(() => {
     startTimer();
     return () => stopTimer();
@@ -74,7 +99,9 @@ export const useBugFinder = () => {
     currentChallenge: challenges[gameState.currentLevel],
     actions: {
       updateCode,
-      checkSolution
+      checkSolution,
+      showNextHint,
+      resetLevel
     }
   };
 }; 
