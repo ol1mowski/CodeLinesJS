@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaQuestion, FaRedo } from 'react-icons/fa';
@@ -6,8 +6,11 @@ import { Game } from '../../../../../types/games.types';
 import { GameplayHeader } from './GameplayHeader/GameplayHeader.component';
 import { GameplayStats } from './GameplayStats/GameplayStats.component';
 import { GameplayArea } from './GameplayArea/GameplayArea.component';
+import { ConfirmationModal } from '../ConfirmationModal/ConfirmationModal.component';
 import { useGameplay } from '../../hooks/useGameplay';
 
+
+type ModalType = 'quit' | 'restart' | null;
 
 type GameplaySectionProps = {
   game: Game;
@@ -16,21 +19,35 @@ type GameplaySectionProps = {
 export const GameplaySection = memo(({ game }: GameplaySectionProps) => {
   const navigate = useNavigate();
   const { stats, controls, actions } = useGameplay();
+  const [activeModal, setActiveModal] = useState<ModalType>(null);
 
   const handleBackToMenu = () => {
-    if (controls.isPaused || window.confirm('Czy na pewno chcesz opuścić grę? Twój postęp zostanie utracony.')) {
+    if (controls.isPaused) {
       navigate('/dashboard/play');
+    } else {
+      setActiveModal('quit');
     }
   };
 
   const handleRestart = () => {
-    if (window.confirm('Czy na pewno chcesz zrestartować grę? Twój postęp zostanie utracony.')) {
-      actions.resetGame();
-    }
+    setActiveModal('restart');
   };
 
   const handleShowHelp = () => {
     actions.toggleHelp();
+  };
+
+  const handleConfirmQuit = () => {
+    navigate('/dashboard/play');
+  };
+
+  const handleConfirmRestart = () => {
+    actions.resetGame();
+    setActiveModal(null);
+  };
+
+  const handleCloseModal = () => {
+    setActiveModal(null);
   };
 
   return (
@@ -94,7 +111,29 @@ export const GameplaySection = memo(({ game }: GameplaySectionProps) => {
           </div>
         </div>
 
-        {/* Modal z pomocą */}
+        {/* Modalne okna potwierdzenia */}
+        {activeModal === 'quit' && (
+          <ConfirmationModal
+            title="Opuść grę"
+            message="Czy na pewno chcesz opuścić grę? Twój postęp zostanie utracony."
+            confirmText="Opuść grę"
+            cancelText="Kontynuuj grę"
+            onConfirm={handleConfirmQuit}
+            onCancel={handleCloseModal}
+          />
+        )}
+
+        {activeModal === 'restart' && (
+          <ConfirmationModal
+            title="Restart gry"
+            message="Czy na pewno chcesz zrestartować grę? Twój postęp zostanie utracony."
+            confirmText="Restart"
+            cancelText="Anuluj"
+            onConfirm={handleConfirmRestart}
+            onCancel={handleCloseModal}
+          />
+        )}
+
         {controls.isHelpVisible && (
           <motion.div
             initial={{ opacity: 0 }}
