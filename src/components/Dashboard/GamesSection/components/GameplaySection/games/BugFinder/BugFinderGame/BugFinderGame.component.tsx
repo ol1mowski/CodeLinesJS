@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -12,18 +12,16 @@ SyntaxHighlighter.registerLanguage('javascript', js);
 
 export const BugFinderGame = memo(() => {
   const { gameState, currentChallenge, actions } = useBugFinder();
-  const editorRef = useRef<HTMLPreElement>(null);
+  const [localCode, setLocalCode] = useState(gameState.currentCode);
 
   useEffect(() => {
-    if (editorRef.current) {
-      editorRef.current.textContent = gameState.currentCode;
-    }
+    setLocalCode(gameState.currentCode);
   }, [gameState.currentCode]);
 
-  const handleCodeChange = () => {
-    if (editorRef.current) {
-      actions.updateCode(editorRef.current.textContent || '');
-    }
+  const handleCodeChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newCode = e.target.value;
+    setLocalCode(newCode);
+    actions.updateCode(newCode);
   };
 
   const formatTime = (seconds: number) => {
@@ -66,39 +64,68 @@ export const BugFinderGame = memo(() => {
         </div>
       </div>
 
-      <div className="flex-1 overflow-hidden">
-        <SyntaxHighlighter
-          ref={editorRef}
-          language="javascript"
-          style={vs2015}
-          customStyle={{
-            margin: 0,
-            height: '100%',
-            background: 'transparent',
-            padding: '1rem',
-          }}
-          className="h-full"
-          wrapLines={true}
-          showLineNumbers={true}
-          lineNumberStyle={{ color: '#666' }}
-          contentEditable={true}
-          onKeyUp={handleCodeChange}
-          onPaste={(e) => {
-            e.preventDefault();
-            const text = e.clipboardData.getData('text/plain');
-            document.execCommand('insertText', false, text);
-            handleCodeChange();
+      <div className="flex-1 overflow-hidden relative">
+        <textarea
+          value={localCode}
+          onChange={handleCodeChange}
+          disabled={gameState.lives === 0}
+          className="absolute inset-0 w-full h-full font-mono bg-transparent p-4 resize-none outline-none text-base"
+          spellCheck={false}
+          style={{
+            fontFamily: 'Consolas, Monaco, "Andale Mono", monospace',
+            caretColor: '#f7df1e',
+            zIndex: 1,
+            color: 'transparent',
+            fontSize: '16px',
+            lineHeight: '1.5',
           }}
           onKeyDown={(e) => {
             if (e.key === 'Tab') {
               e.preventDefault();
-              document.execCommand('insertText', false, '  ');
-              handleCodeChange();
+              const start = e.currentTarget.selectionStart;
+              const end = e.currentTarget.selectionEnd;
+              const newCode = localCode.substring(0, start) + '  ' + localCode.substring(end);
+              setLocalCode(newCode);
+              actions.updateCode(newCode);
+              setTimeout(() => {
+                e.currentTarget.selectionStart = e.currentTarget.selectionEnd = start + 2;
+              }, 0);
             }
           }}
-        >
-          {gameState.currentCode}
-        </SyntaxHighlighter>
+        />
+        <div className="absolute inset-0 pointer-events-none overflow-auto">
+          <SyntaxHighlighter
+            language="javascript"
+            style={vs2015}
+            customStyle={{
+              margin: 0,
+              height: '100%',
+              background: 'transparent',
+              padding: '1rem',
+              fontSize: '16px',
+              lineHeight: '1.5',
+              fontFamily: 'Consolas, Monaco, "Andale Mono", monospace',
+            }}
+            className="h-full"
+            wrapLines={true}
+            showLineNumbers={true}
+            lineNumberStyle={{ 
+              color: '#666',
+              fontSize: '14px',
+              paddingRight: '1em',
+              fontFamily: 'Consolas, Monaco, "Andale Mono", monospace',
+            }}
+            codeTagProps={{
+              style: {
+                fontFamily: 'inherit',
+                fontSize: 'inherit',
+                lineHeight: 'inherit',
+              }
+            }}
+          >
+            {localCode}
+          </SyntaxHighlighter>
+        </div>
       </div>
 
       <div className="p-4 bg-dark-900/50 border-t border-js/10">
