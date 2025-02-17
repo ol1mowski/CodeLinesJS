@@ -12,7 +12,7 @@ export const GameplayRouter = memo(() => {
   const game = data.games.find(g => g.slug === slug);
 
   if (!game) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/dashboard/play" replace />;
   }
 
   return (

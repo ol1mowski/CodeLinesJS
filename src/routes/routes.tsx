@@ -94,14 +94,8 @@ export const router = createBrowserRouter([
         element: <SettingsSection />
       },
       {
-        path: "play",
-        element: <GamesSection />,
-        children: [
-          {
-            path: ":slug",
-            element: <GameplayRouter />
-          }
-        ]
+        path: "play/:slug",
+        element: <GameplayRouter />
       },
       {
         path: "code",

@@ -1,18 +1,37 @@
 import { memo } from 'react';
 import { motion } from 'framer-motion';
-import { Game } from '../../types/api.types';
+import { useNavigate } from 'react-router-dom';
+import { FaArrowLeft, FaQuestion, FaRedo } from 'react-icons/fa';
+import { Game } from '../../../../../types/games.types';
 import { GameplayHeader } from './GameplayHeader/GameplayHeader.component';
-import { GameplayControls } from './GameplayControls/GameplayControls.component';
 import { GameplayStats } from './GameplayStats/GameplayStats.component';
 import { GameplayArea } from './GameplayArea/GameplayArea.component';
 import { useGameplay } from '../../hooks/useGameplay';
+
 
 type GameplaySectionProps = {
   game: Game;
 };
 
 export const GameplaySection = memo(({ game }: GameplaySectionProps) => {
+  const navigate = useNavigate();
   const { stats, controls, actions } = useGameplay();
+
+  const handleBackToMenu = () => {
+    if (controls.isPaused || window.confirm('Czy na pewno chcesz opuścić grę? Twój postęp zostanie utracony.')) {
+      navigate('/dashboard/play');
+    }
+  };
+
+  const handleRestart = () => {
+    if (window.confirm('Czy na pewno chcesz zrestartować grę? Twój postęp zostanie utracony.')) {
+      actions.resetGame();
+    }
+  };
+
+  const handleShowHelp = () => {
+    actions.toggleHelp();
+  };
 
   return (
     <motion.div
@@ -22,6 +41,40 @@ export const GameplaySection = memo(({ game }: GameplaySectionProps) => {
       className="min-h-screen bg-dark-900 text-gray-100"
     >
       <div className="max-w-7xl mx-auto px-4 py-6">
+        <div className="flex items-center justify-between mb-6">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={handleBackToMenu}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-js/10 text-js hover:bg-js/20 transition-colors"
+          >
+            <FaArrowLeft className="w-4 h-4" />
+            <span>Powrót do menu</span>
+          </motion.button>
+
+          <div className="flex items-center gap-3">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleShowHelp}
+              className="p-2 rounded-lg bg-js/10 text-js hover:bg-js/20 transition-colors"
+              title="Pomoc"
+            >
+              <FaQuestion className="w-4 h-4" />
+            </motion.button>
+
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleRestart}
+              className="p-2 rounded-lg bg-js/10 text-js hover:bg-js/20 transition-colors"
+              title="Restart gry"
+            >
+              <FaRedo className="w-4 h-4" />
+            </motion.button>
+          </div>
+        </div>
+
         <GameplayHeader 
           title={game.title}
           isPaused={controls.isPaused}
@@ -29,29 +82,51 @@ export const GameplaySection = memo(({ game }: GameplaySectionProps) => {
         />
 
         <div className="mt-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Lewa kolumna ze statystykami */}
           <div className="lg:col-span-2">
             <GameplayStats stats={stats} />
           </div>
 
-          {/* Środkowa kolumna z głównym obszarem gry */}
-          <div className="lg:col-span-8">
+          <div className="lg:col-span-10">
             <GameplayArea 
               isPaused={controls.isPaused}
               isFullscreen={controls.isFullscreen}
             />
           </div>
-
-          {/* Prawa kolumna z kontrolkami */}
-          <div className="lg:col-span-2">
-            <GameplayControls
-              controls={controls}
-              onPauseToggle={actions.togglePause}
-              onFullscreenToggle={actions.toggleFullscreen}
-              onVolumeChange={actions.updateVolume}
-            />
-          </div>
         </div>
+
+        {/* Modal z pomocą */}
+        {controls.isHelpVisible && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-dark-900/80 flex items-center justify-center p-4 z-50"
+          >
+            <motion.div
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              className="bg-dark-800 rounded-xl p-6 max-w-2xl w-full"
+            >
+              <h2 className="text-2xl font-bold text-js mb-4">Jak grać?</h2>
+              <div className="prose prose-invert">
+                <p className="text-gray-300">{game.description}</p>
+                <h3 className="text-lg font-semibold text-js mt-4 mb-2">Sterowanie:</h3>
+                <ul className="text-gray-300 space-y-2">
+                  <li>Spacja - Pauza</li>
+                  <li>R - Restart gry</li>
+                  <li>ESC - Powrót do menu</li>
+                  <li>H - Pokaż/ukryj pomoc</li>
+                </ul>
+              </div>
+              <button
+                onClick={handleShowHelp}
+                className="mt-6 w-full px-4 py-2 rounded-lg bg-js text-dark font-medium hover:bg-js/90 transition-colors"
+              >
+                Zamknij
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
       </div>
     </motion.div>
   );

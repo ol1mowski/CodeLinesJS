@@ -12,7 +12,7 @@ export const useGameplay = () => {
   const [controls, setControls] = useState<GameplayControls>({
     isPaused: false,
     isFullscreen: false,
-    volume: 0.8,
+    isHelpVisible: false,
   });
 
   const togglePause = useCallback(() => {
@@ -21,6 +21,20 @@ export const useGameplay = () => {
 
   const toggleFullscreen = useCallback(() => {
     setControls(prev => ({ ...prev, isFullscreen: !prev.isFullscreen }));
+  }, []);
+
+  const toggleHelp = useCallback(() => {
+    setControls(prev => ({ ...prev, isHelpVisible: !prev.isHelpVisible }));
+  }, []);
+
+  const resetGame = useCallback(() => {
+    setStats({
+      timeElapsed: 0,
+      score: 0,
+      lives: 3,
+      currentLevel: 1,
+    });
+    setControls(prev => ({ ...prev, isPaused: false }));
   }, []);
 
   const updateVolume = useCallback((volume: number) => {
@@ -33,6 +47,8 @@ export const useGameplay = () => {
     actions: {
       togglePause,
       toggleFullscreen,
+      toggleHelp,
+      resetGame,
       updateVolume,
     },
   };
