@@ -94,13 +94,11 @@ export const router = createBrowserRouter([
         element: <SettingsSection />
       },
       {
-        path: "play/:slug",
-        element: <GameplayRouter />
+        path: "play",
+        element: <GamesSection />,
       },
-      {
-        path: "code",
-        element: <CodeEditor />
-      }
+      { path: "play/:slug", element: <GameplayRouter /> },
+      { path: "code", element: <CodeEditor /> },
     ]
   },
   {
