@@ -20,7 +20,7 @@ const gamesData = [
       users: []
     },
     rewardPoints: 100,
-    category: 'programming',
+    category: 'basics',
     estimatedTime: 15
   },
   {
@@ -38,7 +38,7 @@ const gamesData = [
       users: []
     },
     rewardPoints: 150,
-    category: 'memory',
+    category: 'challenges',
     estimatedTime: 20
   },
   {
@@ -56,7 +56,7 @@ const gamesData = [
       users: []
     },
     rewardPoints: 300,
-    category: 'programming',
+    category: 'algorithms',
     estimatedTime: 45
   }
 ];
