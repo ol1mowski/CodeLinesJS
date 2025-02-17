@@ -1,3 +1,5 @@
+import { CodeChallenge } from "../types/bugFinder.types";
+
 export const challenges: CodeChallenge[] = [
   {
     id: 1,

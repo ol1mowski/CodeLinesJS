@@ -14,7 +14,7 @@ export const GameplayArea = memo(({ isPaused }: GameplayAreaProps) => {
   return (
     <div className="relative aspect-video rounded-xl overflow-hidden border-2 border-js/20 bg-dark-800">
       <div className="absolute inset-0">
-        {slug === 'bug-finder' ? (
+        {slug === 'code-breaker' ? (
           <BugFinder />
         ) : (
           <div className="flex items-center justify-center h-full">

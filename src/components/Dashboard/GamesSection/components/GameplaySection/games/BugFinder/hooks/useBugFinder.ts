@@ -1,6 +1,8 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { challenges } from '../data/challenges';
 import { GameState, BugFinderActions } from '../types/bugFinder.types';
+
+const FEEDBACK_DISPLAY_TIME = 3000; // 3 seconds
 
 export const useBugFinder = () => {
   const [gameState, setGameState] = useState<GameState>({
@@ -18,30 +20,37 @@ export const useBugFinder = () => {
     }
   });
 
-  const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<NodeJS.Timer | null>(null);
 
   const startTimer = useCallback(() => {
-    const newTimer = setInterval(() => {
-      setGameState(prev => ({
-        ...prev,
-        timeElapsed: prev.timeElapsed + 1
-      }));
-    }, 1000);
-
-    setTimer(newTimer);
+    if (!timerRef.current) {
+      timerRef.current = setInterval(() => {
+        setGameState(prev => ({
+          ...prev,
+          timeElapsed: prev.timeElapsed + 1
+        }));
+      }, 1000);
+    }
   }, []);
 
   const stopTimer = useCallback(() => {
-    if (timer) {
-      clearInterval(timer);
-      setTimer(null);
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
     }
-  }, [timer]);
+  }, []);
 
   const updateCode = useCallback((newCode: string) => {
     setGameState(prev => ({
       ...prev,
       currentCode: newCode
+    }));
+  }, []);
+
+  const hideFeedback = useCallback(() => {
+    setGameState(prev => ({
+      ...prev,
+      feedback: { type: null, message: '' }
     }));
   }, []);
 
@@ -53,6 +62,7 @@ export const useBugFinder = () => {
       const timeBonus = Math.max(0, currentChallenge.timeLimit - gameState.timeElapsed);
       const levelScore = currentChallenge.points + timeBonus;
 
+      stopTimer();
       setGameState(prev => ({
         ...prev,
         score: prev.score + levelScore,
@@ -62,28 +72,39 @@ export const useBugFinder = () => {
         }
       }));
 
+      setTimeout(hideFeedback, FEEDBACK_DISPLAY_TIME);
+
       setTimeout(() => {
+        const nextLevel = gameState.currentLevel + 1;
+        const isGameFinished = nextLevel >= challenges.length;
+
         setGameState(prev => ({
           ...prev,
-          currentLevel: prev.currentLevel + 1,
+          currentLevel: nextLevel,
           timeElapsed: 0,
-          currentCode: challenges[prev.currentLevel + 1]?.code || '',
-          isGameOver: prev.currentLevel + 1 >= challenges.length,
-          feedback: { type: null, message: '' }
+          currentCode: isGameFinished ? '' : challenges[nextLevel].code,
+          isGameOver: isGameFinished
         }));
-      }, 2000);
+
+        if (!isGameFinished) {
+          startTimer();
+        }
+      }, FEEDBACK_DISPLAY_TIME + 500);
     } else {
+      const newLives = Math.max(0, gameState.lives - 1);
       setGameState(prev => ({
         ...prev,
-        lives: prev.lives - 1,
-        isGameOver: prev.lives <= 1,
+        lives: newLives,
+        isGameOver: newLives === 0,
         feedback: {
           type: 'error',
-          message: `Niestety, rozwiązanie nie jest poprawne. Pozostało żyć: ${prev.lives - 1}`
+          message: `Niestety, rozwiązanie nie jest poprawne. ${newLives > 0 ? `Pozostało żyć: ${newLives}` : 'Koniec gry!'}`
         }
       }));
+
+      setTimeout(hideFeedback, FEEDBACK_DISPLAY_TIME);
     }
-  }, [gameState.currentLevel, gameState.currentCode, gameState.timeElapsed]);
+  }, [gameState.currentLevel, gameState.currentCode, gameState.timeElapsed, gameState.lives, startTimer, stopTimer, hideFeedback]);
 
   const showNextHint = useCallback(() => {
     const currentChallenge = challenges[gameState.currentLevel];
@@ -98,15 +119,19 @@ export const useBugFinder = () => {
   }, [gameState.currentLevel, gameState.currentHintIndex]);
 
   const resetLevel = useCallback(() => {
+    stopTimer();
     const currentChallenge = challenges[gameState.currentLevel];
     
     setGameState(prev => ({
       ...prev,
       currentCode: currentChallenge.code,
       showHint: false,
-      currentHintIndex: 0
+      currentHintIndex: 0,
+      timeElapsed: 0
     }));
-  }, [gameState.currentLevel]);
+
+    startTimer();
+  }, [gameState.currentLevel, startTimer, stopTimer]);
 
   useEffect(() => {
     startTimer();
