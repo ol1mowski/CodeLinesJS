@@ -55,7 +55,7 @@ export const GameplaySection = memo(({ game }: GameplaySectionProps) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="min-h-screen bg-dark-900 text-gray-100"
+      className="min-h-screen bg-dark-800"
     >
       <div className="max-w-7xl mx-auto px-4 py-6">
         <div className="flex items-center justify-between mb-6">
@@ -112,57 +112,97 @@ export const GameplaySection = memo(({ game }: GameplaySectionProps) => {
         </div>
 
         {/* Modalne okna potwierdzenia */}
-        {activeModal === 'quit' && (
-          <ConfirmationModal
-            title="Opuść grę"
-            message="Czy na pewno chcesz opuścić grę? Twój postęp zostanie utracony."
-            confirmText="Opuść grę"
-            cancelText="Kontynuuj grę"
-            onConfirm={handleConfirmQuit}
-            onCancel={handleCloseModal}
-          />
+        {(activeModal === 'quit' || activeModal === 'restart') && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ 
+              duration: 0.15,
+              ease: "easeInOut"
+            }}
+            className="fixed inset-0 bg-black/70 backdrop-blur-[2px] flex items-center justify-center p-4 z-50"
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 10, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 10, scale: 0.98 }}
+              transition={{ 
+                duration: 0.2,
+                ease: "easeOut",
+                delay: 0.05
+              }}
+              className="relative max-w-md w-full"
+            >
+              {activeModal === 'quit' && (
+                <ConfirmationModal
+                  title="Opuść grę"
+                  message="Czy na pewno chcesz opuścić grę? Twój postęp zostanie utracony."
+                  confirmText="Opuść grę"
+                  cancelText="Kontynuuj grę"
+                  onConfirm={handleConfirmQuit}
+                  onCancel={handleCloseModal}
+                />
+              )}
+
+              {activeModal === 'restart' && (
+                <ConfirmationModal
+                  title="Restart gry"
+                  message="Czy na pewno chcesz zrestartować grę? Twój postęp zostanie utracony."
+                  confirmText="Restart"
+                  cancelText="Anuluj"
+                  onConfirm={handleConfirmRestart}
+                  onCancel={handleCloseModal}
+                />
+              )}
+            </motion.div>
+          </motion.div>
         )}
 
-        {activeModal === 'restart' && (
-          <ConfirmationModal
-            title="Restart gry"
-            message="Czy na pewno chcesz zrestartować grę? Twój postęp zostanie utracony."
-            confirmText="Restart"
-            cancelText="Anuluj"
-            onConfirm={handleConfirmRestart}
-            onCancel={handleCloseModal}
-          />
-        )}
-
+        {/* Modal pomocy */}
         {controls.isHelpVisible && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-dark-900/80 flex items-center justify-center p-4 z-50"
+            transition={{ 
+              duration: 0.15,
+              ease: "easeInOut"
+            }}
+            className="fixed inset-0 bg-black/70 backdrop-blur-[2px] flex items-center justify-center p-4 z-50"
           >
             <motion.div
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              className="bg-dark-800 rounded-xl p-6 max-w-2xl w-full"
+              initial={{ opacity: 0, y: 10, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 10, scale: 0.98 }}
+              transition={{ 
+                duration: 0.2,
+                ease: "easeOut",
+                delay: 0.05
+              }}
+              className="bg-dark-900 border border-js/10 rounded-xl p-6 max-w-2xl w-full shadow-2xl"
             >
-              <h2 className="text-2xl font-bold text-js mb-4">Jak grać?</h2>
-              <div className="prose prose-invert">
-                <p className="text-gray-300">{game.description}</p>
-                <h3 className="text-lg font-semibold text-js mt-4 mb-2">Sterowanie:</h3>
-                <ul className="text-gray-300 space-y-2">
-                  <li>Spacja - Pauza</li>
-                  <li>R - Restart gry</li>
-                  <li>ESC - Powrót do menu</li>
-                  <li>H - Pokaż/ukryj pomoc</li>
-                </ul>
+              <div className="relative">
+                <h2 className="text-2xl font-bold text-js mb-4">Jak grać?</h2>
+                <div className="prose prose-invert">
+                  <p className="text-gray-300">{game.description}</p>
+                  <h3 className="text-lg font-semibold text-js mt-4 mb-2">Sterowanie:</h3>
+                  <ul className="text-gray-300 space-y-2">
+                    <li>Spacja - Pauza</li>
+                    <li>R - Restart gry</li>
+                    <li>ESC - Powrót do menu</li>
+                    <li>H - Pokaż/ukryj pomoc</li>
+                  </ul>
+                </div>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleShowHelp}
+                  className="mt-6 w-full px-4 py-2 rounded-lg bg-js text-dark font-medium hover:bg-js/90 transition-colors"
+                >
+                  Zamknij
+                </motion.button>
               </div>
-              <button
-                onClick={handleShowHelp}
-                className="mt-6 w-full px-4 py-2 rounded-lg bg-js text-dark font-medium hover:bg-js/90 transition-colors"
-              >
-                Zamknij
-              </button>
             </motion.div>
           </motion.div>
         )}
