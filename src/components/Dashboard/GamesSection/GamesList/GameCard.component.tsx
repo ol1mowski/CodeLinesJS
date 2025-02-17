@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { memo } from "react";
 import { FaStar, FaUsers, FaTrophy, FaPlay } from "react-icons/fa";
 import { Game } from "../../../../types/games.types";
+import { useNavigate } from 'react-router-dom';
 
 
 type GameCardProps = {
@@ -9,6 +10,12 @@ type GameCardProps = {
 };
 
 export const GameCard = memo(({ game }: GameCardProps) => {
+  const navigate = useNavigate();
+
+  const handlePlayClick = () => {
+    navigate(`/dashboard/play/${game.slug}`);
+  };
+
   return (
     <motion.div
       whileHover={{ scale: 1.02 }}
@@ -27,6 +34,7 @@ export const GameCard = memo(({ game }: GameCardProps) => {
         <motion.button
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
+          onClick={handlePlayClick}
           className="absolute inset-0 m-auto w-12 h-12 bg-js text-dark rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
         >
           <FaPlay className="w-5 h-5" />

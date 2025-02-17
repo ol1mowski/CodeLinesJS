@@ -13,6 +13,7 @@ import { CodeEditor } from "../components/Dashboard/CodeEditor/CodeEditor.compon
 import { LessonPage } from "../components/Dashboard/LearnSection/Lesson/Lesson.page";
 import { CommunityProvider } from "../contexts/CommunityContext";
 import { GroupView } from "../components/Dashboard/CommunitySection/Groups/GroupView.component";
+import { GameplayRouter } from "../components/Dashboard/GamesSection/components/GameplayRouter/GameplayRouter.component";
 
 const Home = lazy(() => import("../pages/Home"));
 const Auth = lazy(() => import("../pages/Auth"));
@@ -49,10 +50,12 @@ export const router = createBrowserRouter([
       {
         path: "learn",
         element: <LearnSection />,
-      },
-      {
-        path: "learn/lesson/:lessonSlug",
-        element: <LessonPage />
+        children: [
+          {
+            path: ":lessonSlug",
+            element: <LessonPage />
+          }
+        ]
       },
       {
         path: "community",
@@ -92,7 +95,13 @@ export const router = createBrowserRouter([
       },
       {
         path: "play",
-        element: <GamesSection />
+        element: <GamesSection />,
+        children: [
+          {
+            path: ":slug",
+            element: <GameplayRouter />
+          }
+        ]
       },
       {
         path: "code",
