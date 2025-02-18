@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -7,28 +7,36 @@ import { vs2015 } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { FaCheck, FaLightbulb, FaClock, FaRedo, FaCheckCircle, FaTimesCircle, FaStar, FaHeart } from 'react-icons/fa';
 import { useBugFinder } from '../hooks/useBugFinder';
 import { challenges } from '../data/challenges';
+import { useClickOutside } from '../hooks/useClickOutside';
 
 SyntaxHighlighter.registerLanguage('javascript', js);
 
 export const BugFinderGame = memo(() => {
   const { gameState, currentChallenge, actions } = useBugFinder();
   const [localCode, setLocalCode] = useState(gameState.currentCode);
+  const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setLocalCode(gameState.currentCode);
   }, [gameState.currentCode]);
 
-  const handleCodeChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  useClickOutside(modalRef, () => {
+    if (gameState.feedback.type) {
+      actions.hideFeedback();
+    }
+  });
+
+  const handleCodeChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newCode = e.target.value;
     setLocalCode(newCode);
     actions.updateCode(newCode);
-  };
+  }, [actions]);
 
-  const formatTime = (seconds: number) => {
+  const formatTime = useCallback((seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
+  }, []);
 
   return (
     <div className="h-full flex flex-col">
@@ -163,6 +171,7 @@ export const BugFinderGame = memo(() => {
             className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
           >
             <motion.div
+              ref={modalRef}
               initial={{ opacity: 0, y: 20, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 20, scale: 0.95 }}
@@ -172,15 +181,27 @@ export const BugFinderGame = memo(() => {
                   : 'bg-red-900/90 border border-red-500/20'
               }`}
             >
-              <div className="flex items-center gap-2">
-                {gameState.feedback.type === 'success' ? (
-                  <FaCheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
-                ) : (
-                  <FaTimesCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center gap-2">
+                  {gameState.feedback.type === 'success' ? (
+                    <FaCheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
+                  ) : (
+                    <FaTimesCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
+                  )}
+                  <p className={`text-${gameState.feedback.type === 'success' ? 'green' : 'red'}-100`}>
+                    {gameState.feedback.message}
+                  </p>
+                </div>
+                {gameState.isGameOver && (
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={actions.finishGame}
+                    className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-js text-dark font-medium hover:bg-js/90 transition-colors"
+                  >
+                    <span>Zakończ grę</span>
+                  </motion.button>
                 )}
-                <p className={`text-${gameState.feedback.type === 'success' ? 'green' : 'red'}-100`}>
-                  {gameState.feedback.message}
-                </p>
               </div>
             </motion.div>
           </motion.div>

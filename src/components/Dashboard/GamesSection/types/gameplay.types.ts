@@ -8,6 +8,7 @@ export interface GameplayStats {
 export interface GameplayControls {
   isPaused: boolean;
   isFullscreen: boolean;
+  isHelpVisible: boolean;
   volume: number;
 }
 
