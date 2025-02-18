@@ -3,7 +3,8 @@ import { challenges } from '../data/challenges';
 import { GameState } from '../types/bugFinder.types';
 import { FaStar } from 'react-icons/fa';
 
-const FEEDBACK_DISPLAY_TIME = 3000; 
+const FEEDBACK_DISPLAY_TIME = 3000;
+const LEVEL_TRANSITION_DELAY = 2000;
 
 export const useBugFinder = () => {
   const [gameState, setGameState] = useState<GameState>({
@@ -40,11 +41,10 @@ export const useBugFinder = () => {
             return {
               ...prev,
               timeElapsed: challenge.timeLimit,
-              lives: Math.max(0, prev.lives - 1),
-              isGameOver: prev.lives <= 1,
+              isGameOver: true,
               feedback: {
                 type: 'error',
-                message: `Czas minął! ${prev.lives > 1 ? `Pozostało żyć: ${prev.lives - 1}` : 'Koniec gry!'}`
+                message: 'Koniec czasu! Nie udało się rozwiązać zadania w wyznaczonym czasie.'
               }
             };
           }
@@ -82,13 +82,13 @@ export const useBugFinder = () => {
   const checkSolution = useCallback(() => {
     const currentChallenge = challenges[gameState.currentLevel];
     
-    if (gameState.lives === 0) {
+    if (gameState.isGameOver) {
       setGameState(prev => ({
         ...prev,
         currentCode: currentChallenge.correctCode,
         feedback: {
           type: 'error',
-          message: 'Koniec gry! Oto poprawne rozwiązanie:'
+          message: 'Gra zakończona. Oto poprawne rozwiązanie:'
         }
       }));
       setTimeout(hideFeedback, FEEDBACK_DISPLAY_TIME);
@@ -119,26 +119,32 @@ export const useBugFinder = () => {
         }
       }));
 
-      setTimeout(hideFeedback, FEEDBACK_DISPLAY_TIME);
-
       setTimeout(() => {
         const nextLevel = gameState.currentLevel + 1;
         const isGameFinished = nextLevel >= challenges.length;
 
-        setGameState(prev => ({
-          ...prev,
-          currentLevel: nextLevel,
-          timeElapsed: 0,
-          currentCode: isGameFinished ? '' : challenges[nextLevel].code,
-          isGameOver: isGameFinished
-        }));
-
-        if (!isGameFinished) {
+        if (isGameFinished) {
+          setGameState(prev => ({
+            ...prev,
+            isGameOver: true,
+            feedback: {
+              type: 'success',
+              message: 'Gratulacje! Ukończyłeś wszystkie poziomy!'
+            }
+          }));
+        } else {
+          setGameState(prev => ({
+            ...prev,
+            currentLevel: nextLevel,
+            timeElapsed: 0,
+            currentCode: challenges[nextLevel].code,
+            feedback: { type: null, message: '' }
+          }));
           startTimer();
         }
-      }, FEEDBACK_DISPLAY_TIME + 500);
+      }, LEVEL_TRANSITION_DELAY);
     } else {
-      const newLives = Math.max(0, gameState.lives - 1);
+      const newLives = gameState.lives - 1;
       setGameState(prev => ({
         ...prev,
         lives: newLives,
@@ -146,14 +152,18 @@ export const useBugFinder = () => {
         feedback: {
           type: 'error',
           message: newLives === 0 
-            ? 'Koniec gry! Kliknij ponownie, aby zobaczyć poprawne rozwiązanie.'
+            ? 'Koniec gry! Nie pozostało więcej żyć. Kliknij ponownie, aby zobaczyć poprawne rozwiązanie.'
             : `Niestety, rozwiązanie nie jest poprawne. Pozostało żyć: ${newLives}`
         }
       }));
 
+      if (newLives === 0) {
+        stopTimer();
+      }
+
       setTimeout(hideFeedback, FEEDBACK_DISPLAY_TIME);
     }
-  }, [gameState.currentLevel, gameState.currentCode, gameState.timeElapsed, gameState.lives, startTimer, stopTimer, hideFeedback]);
+  }, [gameState.currentLevel, gameState.currentCode, gameState.timeElapsed, gameState.lives, gameState.isGameOver, startTimer, stopTimer, hideFeedback]);
 
   const showNextHint = useCallback(() => {
     const currentChallenge = challenges[gameState.currentLevel];
