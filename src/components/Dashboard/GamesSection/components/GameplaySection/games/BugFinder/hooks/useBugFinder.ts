@@ -94,8 +94,8 @@ export const useBugFinder = () => {
     stopTimer();
     setGameState(prev => ({
       ...prev,
-      isGameOver: true,
       showGameSummary: true,
+      isGameOver: true,
       feedback: {
         type: null,
         message: ''
@@ -214,19 +214,16 @@ export const useBugFinder = () => {
   }, [gameState.currentLevel, gameState.currentHintIndex]);
 
   const resetLevel = useCallback(() => {
-    stopTimer();
     const currentChallenge = challenges[gameState.currentLevel];
-    
     setGameState(prev => ({
       ...prev,
       currentCode: currentChallenge.code,
+      timeElapsed: 0,
       showHint: false,
       currentHintIndex: 0,
-      timeElapsed: 0
+      feedback: { type: null, message: '' }
     }));
-
-    startTimer();
-  }, [gameState.currentLevel, startTimer, stopTimer]);
+  }, [gameState.currentLevel]);
 
   useEffect(() => {
     startTimer();
@@ -244,6 +241,7 @@ export const useBugFinder = () => {
       }
     }
   }, [gameState.feedback.type, gameState.timeElapsed, currentChallenge.timeLimit, gameState.isGameOver, hideFeedback, resetLevel]);
+
 
   return {
     gameState,

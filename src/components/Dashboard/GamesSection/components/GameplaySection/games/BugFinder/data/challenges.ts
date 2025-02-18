@@ -4,11 +4,11 @@ export const challenges: CodeChallenge[] = [
   {
     id: 1,
     code: `function calculateSum(numbers) {
-  let sum;
+  let sum = 0;
   for (let i = 0; i <= numbers.length; i++) {
     sum += numbers[i];
   }
-  return sum
+  return sum;
 }`,
     correctCode: `function calculateSum(numbers) {
   let sum = 0;
@@ -18,15 +18,13 @@ export const challenges: CodeChallenge[] = [
   return sum;
 }`,
     hints: [
-      "Sprawdź inicjalizację zmiennej sum",
-      "Przyjrzyj się warunkowi w pętli for",
-      "Nie zapomnij o średniku na końcu return"
+      "Sprawdź warunek w pętli for",
+      "Zastanów się nad zakresem indeksów tablicy"
     ],
-    errors: [
-      { line: 2, message: "Zmienna sum nie jest zainicjalizowana" },
-      { line: 3, message: "Błędny warunek w pętli (wykracza poza tablicę)" },
-      { line: 5, message: "Brak średnika na końcu wyrażenia" }
-    ],
+    errors: [{
+      line: 3,
+      message: "Błąd w warunku pętli - wykracza poza zakres tablicy"
+    }],
     timeLimit: 120,
     points: 100
   },

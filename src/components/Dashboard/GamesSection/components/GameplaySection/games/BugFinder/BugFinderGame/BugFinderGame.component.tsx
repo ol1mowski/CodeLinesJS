@@ -1,53 +1,40 @@
-import React, { useEffect, useState, useCallback, useRef, useMemo } from 'react';
+import React, { useCallback, useRef, useMemo, useState, useEffect } from 'react';
 import { memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
-import js from 'react-syntax-highlighter/dist/esm/languages/hljs/javascript';
-import { vs2015 } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { FaCheck, FaLightbulb, FaClock, FaRedo, FaCheckCircle, FaTimesCircle, FaStar, FaHeart, FaArrowRight } from 'react-icons/fa';
 import { useBugFinder } from '../hooks/useBugFinder';
 import { challenges } from '../data/challenges';
 import { useClickOutside } from '../hooks/useClickOutside';
+import { CodeEditor } from './CodeEditor.component';
 
-SyntaxHighlighter.registerLanguage('javascript', js);
 
 export const BugFinderGame = memo(() => {
   const { gameState, currentChallenge, actions } = useBugFinder();
-  const [localCode, setLocalCode] = useState(gameState.currentCode);
   const modalRef = useRef<HTMLDivElement>(null);
-  const editorRef = useRef<HTMLTextAreaElement>(null);
+  const [localCode, setLocalCode] = useState(gameState.currentCode);
 
   useEffect(() => {
+    console.log('=== BugFinderGame Debug ===');
+    console.log('1. Local code:', localCode);
+    console.log('2. Game state code:', gameState.currentCode);
+    console.log('3. Current challenge:', currentChallenge);
+    console.log('4. Container dimensions:', {
+      height: document.querySelector('.flex-1.overflow-hidden')?.clientHeight,
+      width: document.querySelector('.flex-1.overflow-hidden')?.clientWidth
+    });
     setLocalCode(gameState.currentCode);
-  }, [gameState.currentCode]);
+  }, [localCode, gameState.currentCode, currentChallenge]);
+
+  const handleCodeChange = useCallback((code: string) => {
+    setLocalCode(code);
+    actions.updateCode(code);
+  }, [actions]);
 
   useClickOutside(modalRef, () => {
     if (gameState.feedback.type) {
       actions.hideFeedback();
     }
-  });
-
-  const handleCodeChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const newCode = e.target.value;
-    setLocalCode(newCode);
-    actions.updateCode(newCode);
-  }, [actions]);
-
-  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Tab') {
-      e.preventDefault();
-      const start = e.currentTarget.selectionStart;
-      const end = e.currentTarget.selectionEnd;
-      const newCode = localCode.substring(0, start) + '  ' + localCode.substring(end);
-      setLocalCode(newCode);
-      actions.updateCode(newCode);
-      requestAnimationFrame(() => {
-        if (editorRef.current) {
-          editorRef.current.selectionStart = editorRef.current.selectionEnd = start + 2;
-        }
-      });
-    }
-  }, [localCode, actions]);
+  })
 
   const formatTime = useCallback((seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -60,7 +47,10 @@ export const BugFinderGame = memo(() => {
       return {
         text: 'Zakończ grę',
         icon: <FaArrowRight className="w-4 h-4" />,
-        action: actions.finishGame
+        action: () => {
+          actions.hideFeedback();
+          actions.finishGame();
+        }
       };
     }
     return {
@@ -112,6 +102,15 @@ export const BugFinderGame = memo(() => {
         </div>
       </div>
 
+      <div className="flex-1 overflow-hidden border border-js/10 rounded-lg my-4">
+        <div className="h-full">
+          <CodeEditor
+            code={localCode}
+            onChange={handleCodeChange}
+            disabled={gameState.isGameOver}
+          />
+        </div>
+      </div>
 
       <div className="mt-auto p-4 border-t border-js/10">
         <motion.button
@@ -159,7 +158,10 @@ export const BugFinderGame = memo(() => {
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    onClick={actions.finishGame}
+                    onClick={() => {
+                      actions.hideFeedback();
+                      actions.finishGame();
+                    }}
                     className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-js text-dark font-medium hover:bg-js/90 transition-colors"
                   >
                     <span>Zakończ grę</span>
