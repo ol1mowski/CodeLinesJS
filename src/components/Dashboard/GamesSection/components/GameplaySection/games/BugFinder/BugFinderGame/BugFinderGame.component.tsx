@@ -73,66 +73,72 @@ export const BugFinderGame = memo(() => {
       </div>
 
       <div className="flex-1 overflow-hidden relative">
-        <textarea
-          value={localCode}
-          onChange={handleCodeChange}
-          disabled={gameState.lives === 0}
-          className="absolute inset-0 w-full h-full font-mono bg-transparent p-4 resize-none outline-none text-base"
-          spellCheck={false}
-          style={{
-            fontFamily: 'Consolas, Monaco, "Andale Mono", monospace',
-            caretColor: '#f7df1e',
-            zIndex: 1,
-            color: 'transparent',
-            fontSize: '16px',
-            lineHeight: '1.5',
-          }}
-          onKeyDown={(e) => {
-            if (e.key === 'Tab') {
-              e.preventDefault();
-              const start = e.currentTarget.selectionStart;
-              const end = e.currentTarget.selectionEnd;
-              const newCode = localCode.substring(0, start) + '  ' + localCode.substring(end);
-              setLocalCode(newCode);
-              actions.updateCode(newCode);
-              setTimeout(() => {
-                e.currentTarget.selectionStart = e.currentTarget.selectionEnd = start + 2;
-              }, 0);
-            }
-          }}
-        />
-        <div className="absolute inset-0 pointer-events-none overflow-auto">
-          <SyntaxHighlighter
-            language="javascript"
-            style={vs2015}
-            customStyle={{
-              margin: 0,
-              height: '100%',
-              background: 'transparent',
-              padding: '1rem',
-              fontSize: '16px',
-              lineHeight: '1.5',
-              fontFamily: 'Consolas, Monaco, "Andale Mono", monospace',
-            }}
-            className="h-full"
-            wrapLines={true}
-            showLineNumbers={true}
-            lineNumberStyle={{ 
-              color: '#666',
-              fontSize: '14px',
-              paddingRight: '1em',
-              fontFamily: 'Consolas, Monaco, "Andale Mono", monospace',
-            }}
-            codeTagProps={{
-              style: {
-                fontFamily: 'inherit',
-                fontSize: 'inherit',
-                lineHeight: 'inherit',
-              }
-            }}
-          >
-            {localCode}
-          </SyntaxHighlighter>
+        <div className="absolute inset-0 flex">
+          <div className="w-12 flex-shrink-0 bg-dark-900/50 border-r border-js/10 pt-4">
+            {Array.from({ length: localCode.split('\n').length }).map((_, i) => (
+              <div
+                key={i}
+                className="h-6 text-right pr-2 text-sm font-mono text-gray-500"
+              >
+                {i + 1}
+              </div>
+            ))}
+          </div>
+
+          <div className="relative flex-1">
+            <textarea
+              value={localCode}
+              onChange={handleCodeChange}
+              disabled={gameState.isGameOver}
+              spellCheck={false}
+              className="absolute inset-0 w-full h-full resize-none outline-none bg-transparent text-gray-300 p-4 font-mono text-lg"
+              style={{
+                fontFamily: 'Consolas, Monaco, "Andale Mono", monospace',
+                lineHeight: '1.5',
+                tabSize: 2,
+                caretColor: '#f7df1e',
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Tab') {
+                  e.preventDefault();
+                  const start = e.currentTarget.selectionStart;
+                  const end = e.currentTarget.selectionEnd;
+                  const newCode = localCode.substring(0, start) + '  ' + localCode.substring(end);
+                  setLocalCode(newCode);
+                  actions.updateCode(newCode);
+                  requestAnimationFrame(() => {
+                    e.currentTarget.selectionStart = e.currentTarget.selectionEnd = start + 2;
+                  });
+                }
+              }}
+            />
+            
+            <pre 
+              aria-hidden="true"
+              className="absolute inset-0 pointer-events-none p-4 font-mono text-lg"
+              style={{
+                fontFamily: 'Consolas, Monaco, "Andale Mono", monospace',
+                lineHeight: '1.5',
+                tabSize: 2,
+              }}
+            >
+              <code className="relative block">
+                <SyntaxHighlighter
+                  language="javascript"
+                  style={vs2015}
+                  customStyle={{
+                    background: 'transparent',
+                    padding: 0,
+                    margin: 0,
+                    fontSize: 'inherit',
+                    lineHeight: 'inherit',
+                  }}
+                >
+                  {localCode}
+                </SyntaxHighlighter>
+              </code>
+            </pre>
+          </div>
         </div>
       </div>
 
@@ -151,23 +157,32 @@ export const BugFinderGame = memo(() => {
       <AnimatePresence>
         {gameState.feedback.type && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            className={`absolute bottom-20 left-1/2 -translate-x-1/2 p-4 rounded-lg shadow-xl border ${
-              gameState.feedback.type === 'success' 
-                ? 'bg-green-900/90 border-green-500/20 text-green-100' 
-                : 'bg-red-900/90 border-red-500/20 text-red-100'
-            }`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
           >
-            <div className="flex items-center gap-2">
-              {gameState.feedback.type === 'success' ? (
-                <FaCheckCircle className="w-5 h-5 text-green-400" />
-              ) : (
-                <FaTimesCircle className="w-5 h-5 text-red-400" />
-              )}
-              <p>{gameState.feedback.message}</p>
-            </div>
+            <motion.div
+              initial={{ opacity: 0, y: 20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 20, scale: 0.95 }}
+              className={`p-4 rounded-lg shadow-xl max-w-md w-full ${
+                gameState.feedback.type === 'success' 
+                  ? 'bg-green-900/90 border border-green-500/20' 
+                  : 'bg-red-900/90 border border-red-500/20'
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                {gameState.feedback.type === 'success' ? (
+                  <FaCheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
+                ) : (
+                  <FaTimesCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
+                )}
+                <p className={`text-${gameState.feedback.type === 'success' ? 'green' : 'red'}-100`}>
+                  {gameState.feedback.message}
+                </p>
+              </div>
+            </motion.div>
           </motion.div>
         )}
 
