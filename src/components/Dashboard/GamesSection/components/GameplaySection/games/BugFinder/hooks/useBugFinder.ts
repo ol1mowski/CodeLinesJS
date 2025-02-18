@@ -6,6 +6,15 @@ import { FaStar } from 'react-icons/fa';
 const FEEDBACK_DISPLAY_TIME = 3000;
 const LEVEL_TRANSITION_DELAY = 2000;
 
+export type BugFinderActions = {
+  updateCode: (code: string) => void;
+  checkSolution: () => void;
+  showNextHint: () => void;
+  resetLevel: () => void;
+  hideFeedback: () => void;
+  finishGame: () => void;
+}
+
 export const useBugFinder = () => {
   const [gameState, setGameState] = useState<GameState>({
     currentLevel: 0,
@@ -78,6 +87,15 @@ export const useBugFinder = () => {
       feedback: { type: null, message: '' }
     }));
   }, []);
+
+  const finishGame = useCallback(() => {
+    stopTimer();
+    setGameState(prev => ({
+      ...prev,
+      isGameOver: true,
+      showGameSummary: true
+    }));
+  }, [stopTimer]);
 
   const checkSolution = useCallback(() => {
     const currentChallenge = challenges[gameState.currentLevel];
@@ -216,7 +234,9 @@ export const useBugFinder = () => {
       updateCode,
       checkSolution,
       showNextHint,
-      resetLevel
+      resetLevel,
+      hideFeedback,
+      finishGame
     }
   };
 }; 

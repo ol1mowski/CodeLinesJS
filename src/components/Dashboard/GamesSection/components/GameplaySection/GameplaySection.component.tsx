@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaQuestion, FaRedo } from 'react-icons/fa';
 import { Game } from '../../../../../types/games.types';
 import { GameplayHeader } from './GameplayHeader/GameplayHeader.component';
-import { GameplayStats } from './GameplayStats/GameplayStats.component';
 import { GameplayArea } from './GameplayArea/GameplayArea.component';
 import { ConfirmationModal } from '../ConfirmationModal/ConfirmationModal.component';
 import { useGameplay } from '../../hooks/useGameplay';
