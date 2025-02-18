@@ -1,42 +1,80 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useCallback, useRef, useMemo, useState, useEffect } from 'react';
 import { memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
-import js from 'react-syntax-highlighter/dist/esm/languages/hljs/javascript';
-import { vs2015 } from 'react-syntax-highlighter/dist/esm/styles/hljs';
-import { FaCheck, FaLightbulb, FaClock, FaRedo, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
+import { FaCheck, FaLightbulb, FaClock, FaRedo, FaCheckCircle, FaTimesCircle, FaStar, FaHeart, FaArrowRight } from 'react-icons/fa';
 import { useBugFinder } from '../hooks/useBugFinder';
 import { challenges } from '../data/challenges';
+import { useClickOutside } from '../hooks/useClickOutside';
+import { CodeEditor } from './CodeEditor.component';
 
-SyntaxHighlighter.registerLanguage('javascript', js);
 
 export const BugFinderGame = memo(() => {
   const { gameState, currentChallenge, actions } = useBugFinder();
+  const modalRef = useRef<HTMLDivElement>(null);
   const [localCode, setLocalCode] = useState(gameState.currentCode);
 
   useEffect(() => {
+    console.log('=== BugFinderGame Debug ===');
+    console.log('1. Local code:', localCode);
+    console.log('2. Game state code:', gameState.currentCode);
+    console.log('3. Current challenge:', currentChallenge);
+    console.log('4. Container dimensions:', {
+      height: document.querySelector('.flex-1.overflow-hidden')?.clientHeight,
+      width: document.querySelector('.flex-1.overflow-hidden')?.clientWidth
+    });
     setLocalCode(gameState.currentCode);
-  }, [gameState.currentCode]);
+  }, [localCode, gameState.currentCode, currentChallenge]);
 
-  const handleCodeChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const newCode = e.target.value;
-    setLocalCode(newCode);
-    actions.updateCode(newCode);
-  };
+  const handleCodeChange = useCallback((code: string) => {
+    setLocalCode(code);
+    actions.updateCode(code);
+  }, [actions]);
 
-  const formatTime = (seconds: number) => {
+  useClickOutside(modalRef, () => {
+    if (gameState.feedback.type) {
+      actions.hideFeedback();
+    }
+  })
+
+  const formatTime = useCallback((seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
+  }, []);
+
+  const buttonConfig = useMemo(() => {
+    if (gameState.isGameOver) {
+      return {
+        text: 'Zakończ grę',
+        icon: <FaArrowRight className="w-4 h-4" />,
+        action: () => {
+          actions.hideFeedback();
+          actions.finishGame();
+        }
+      };
+    }
+    return {
+      text: 'Sprawdź rozwiązanie',
+      icon: <FaCheck className="w-4 h-4" />,
+      action: actions.checkSolution
+    };
+  }, [gameState.isGameOver, actions]);
 
   return (
     <div className="h-full flex flex-col">
       <div className="flex items-center justify-between p-4 bg-dark-900/50 border-b border-js/10">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-6">
           <span className="flex items-center gap-2 text-gray-300">
             <FaClock className="w-4 h-4 text-js" />
             {formatTime(gameState.timeElapsed)} / {formatTime(currentChallenge.timeLimit)}
+          </span>
+          <span className="flex items-center gap-2 text-gray-300">
+            <FaStar className="w-4 h-4 text-js" />
+            {gameState.score} pkt
+          </span>
+          <span className="flex items-center gap-2 text-gray-300">
+            <FaHeart className="w-4 h-4 text-js" />
+            {gameState.lives}
           </span>
           <span className="text-gray-300">
             Poziom {gameState.currentLevel + 1}/{challenges.length}
@@ -64,102 +102,73 @@ export const BugFinderGame = memo(() => {
         </div>
       </div>
 
-      <div className="flex-1 overflow-hidden relative">
-        <textarea
-          value={localCode}
-          onChange={handleCodeChange}
-          disabled={gameState.lives === 0}
-          className="absolute inset-0 w-full h-full font-mono bg-transparent p-4 resize-none outline-none text-base"
-          spellCheck={false}
-          style={{
-            fontFamily: 'Consolas, Monaco, "Andale Mono", monospace',
-            caretColor: '#f7df1e',
-            zIndex: 1,
-            color: 'transparent',
-            fontSize: '16px',
-            lineHeight: '1.5',
-          }}
-          onKeyDown={(e) => {
-            if (e.key === 'Tab') {
-              e.preventDefault();
-              const start = e.currentTarget.selectionStart;
-              const end = e.currentTarget.selectionEnd;
-              const newCode = localCode.substring(0, start) + '  ' + localCode.substring(end);
-              setLocalCode(newCode);
-              actions.updateCode(newCode);
-              setTimeout(() => {
-                e.currentTarget.selectionStart = e.currentTarget.selectionEnd = start + 2;
-              }, 0);
-            }
-          }}
-        />
-        <div className="absolute inset-0 pointer-events-none overflow-auto">
-          <SyntaxHighlighter
-            language="javascript"
-            style={vs2015}
-            customStyle={{
-              margin: 0,
-              height: '100%',
-              background: 'transparent',
-              padding: '1rem',
-              fontSize: '16px',
-              lineHeight: '1.5',
-              fontFamily: 'Consolas, Monaco, "Andale Mono", monospace',
-            }}
-            className="h-full"
-            wrapLines={true}
-            showLineNumbers={true}
-            lineNumberStyle={{ 
-              color: '#666',
-              fontSize: '14px',
-              paddingRight: '1em',
-              fontFamily: 'Consolas, Monaco, "Andale Mono", monospace',
-            }}
-            codeTagProps={{
-              style: {
-                fontFamily: 'inherit',
-                fontSize: 'inherit',
-                lineHeight: 'inherit',
-              }
-            }}
-          >
-            {localCode}
-          </SyntaxHighlighter>
+      <div className="flex-1 overflow-hidden border border-js/10 rounded-lg my-4">
+        <div className="h-full">
+          <CodeEditor
+            code={localCode}
+            onChange={handleCodeChange}
+            disabled={gameState.isGameOver}
+          />
         </div>
       </div>
 
-      <div className="p-4 bg-dark-900/50 border-t border-js/10">
+      <div className="mt-auto p-4 border-t border-js/10">
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          onClick={actions.checkSolution}
+          onClick={buttonConfig.action}
           className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-js text-dark font-medium hover:bg-js/90 transition-colors"
         >
-          <FaCheck className="w-4 h-4" />
-          <span>Sprawdź rozwiązanie</span>
+          {buttonConfig.icon}
+          <span>{buttonConfig.text}</span>
         </motion.button>
       </div>
 
       <AnimatePresence>
         {gameState.feedback.type && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            className={`absolute bottom-20 left-1/2 -translate-x-1/2 p-4 rounded-lg shadow-xl border ${
-              gameState.feedback.type === 'success' 
-                ? 'bg-green-900/90 border-green-500/20 text-green-100' 
-                : 'bg-red-900/90 border-red-500/20 text-red-100'
-            }`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
           >
-            <div className="flex items-center gap-2">
-              {gameState.feedback.type === 'success' ? (
-                <FaCheckCircle className="w-5 h-5 text-green-400" />
-              ) : (
-                <FaTimesCircle className="w-5 h-5 text-red-400" />
-              )}
-              <p>{gameState.feedback.message}</p>
-            </div>
+            <motion.div
+              ref={modalRef}
+              initial={{ opacity: 0, y: 20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 20, scale: 0.95 }}
+              className={`p-4 rounded-lg shadow-xl max-w-md w-full ${
+                gameState.feedback.type === 'success' 
+                  ? 'bg-green-900/90 border border-green-500/20' 
+                  : 'bg-red-900/90 border border-red-500/20'
+              }`}
+            >
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center gap-2">
+                  {gameState.feedback.type === 'success' ? (
+                    <FaCheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
+                  ) : (
+                    <FaTimesCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
+                  )}
+                  <p className={`text-${gameState.feedback.type === 'success' ? 'green' : 'red'}-100`}>
+                    {gameState.feedback.message}
+                  </p>
+                </div>
+                {gameState.isGameOver && (
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => {
+                      actions.hideFeedback();
+                      actions.finishGame();
+                    }}
+                    className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-js text-dark font-medium hover:bg-js/90 transition-colors"
+                  >
+                    <span>Zakończ grę</span>
+                  </motion.button>
+                )}
+              </div>
+            </motion.div>
           </motion.div>
         )}
 

@@ -19,6 +19,7 @@ export type GameState = {
   score: number;
   lives: number;
   isGameOver: boolean;
+  showGameSummary: boolean;
   currentCode: string;
   showHint: boolean;
   currentHintIndex: number;
