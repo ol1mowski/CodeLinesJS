@@ -99,10 +99,6 @@ export const GameplaySection = memo(({ game }: GameplaySectionProps) => {
         />
 
         <div className="mt-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
-          <div className="lg:col-span-2">
-            <GameplayStats stats={stats} />
-          </div>
-
           <div className="lg:col-span-10">
             <GameplayArea 
               isPaused={controls.isPaused}

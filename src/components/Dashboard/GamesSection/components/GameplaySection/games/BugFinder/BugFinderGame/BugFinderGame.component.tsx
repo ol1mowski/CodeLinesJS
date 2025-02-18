@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import js from 'react-syntax-highlighter/dist/esm/languages/hljs/javascript';
 import { vs2015 } from 'react-syntax-highlighter/dist/esm/styles/hljs';
-import { FaCheck, FaLightbulb, FaClock, FaRedo, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
+import { FaCheck, FaLightbulb, FaClock, FaRedo, FaCheckCircle, FaTimesCircle, FaStar, FaHeart } from 'react-icons/fa';
 import { useBugFinder } from '../hooks/useBugFinder';
 import { challenges } from '../data/challenges';
 
@@ -33,10 +33,18 @@ export const BugFinderGame = memo(() => {
   return (
     <div className="h-full flex flex-col">
       <div className="flex items-center justify-between p-4 bg-dark-900/50 border-b border-js/10">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-6">
           <span className="flex items-center gap-2 text-gray-300">
             <FaClock className="w-4 h-4 text-js" />
             {formatTime(gameState.timeElapsed)} / {formatTime(currentChallenge.timeLimit)}
+          </span>
+          <span className="flex items-center gap-2 text-gray-300">
+            <FaStar className="w-4 h-4 text-js" />
+            {gameState.score} pkt
+          </span>
+          <span className="flex items-center gap-2 text-gray-300">
+            <FaHeart className="w-4 h-4 text-js" />
+            {gameState.lives}
           </span>
           <span className="text-gray-300">
             Poziom {gameState.currentLevel + 1}/{challenges.length}

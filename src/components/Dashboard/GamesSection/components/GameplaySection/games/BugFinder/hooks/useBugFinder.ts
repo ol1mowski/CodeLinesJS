@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { challenges } from '../data/challenges';
 import { GameState } from '../types/bugFinder.types';
+import { FaStar } from 'react-icons/fa';
 
 const FEEDBACK_DISPLAY_TIME = 3000; 
 
