@@ -8,44 +8,44 @@ import { useBugFinder } from './hooks/useBugFinder';
 
 export const BugFinder = memo(() => {
   const [isGameStarted, setIsGameStarted] = useState(false);
-  const navigate = useNavigate();
   const { gameState, actions } = useBugFinder();
+  const navigate = useNavigate();
 
   const handleStartGame = useCallback(() => {
     setIsGameStarted(true);
   }, []);
 
   const handleRestart = useCallback(() => {
-    actions.resetLevel();
-    setIsGameStarted(false);
+    actions.resetGame();
+    setIsGameStarted(true);
   }, [actions]);
 
   const handleExit = useCallback(() => {
-    navigate('/dashboard/play');
+    navigate('/');
   }, [navigate]);
 
   return (
-    <motion.div
+    <motion.div 
+      className="min-h-screen bg-dark-800"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="w-full h-full"
     >
-      {!isGameStarted && !gameState.isGameOver && (
-        <BugFinderIntro onStartGame={handleStartGame} />
-      )}
-      
-      {isGameStarted && !gameState.isGameOver && (
-        <BugFinderGame />
-      )}
-
-      {gameState.isGameOver && (
-        <BugFinderSummary 
-          gameState={gameState}
-          onRestart={handleRestart}
-          onExit={handleExit}
-        />
-      )}
+      <div className="w-full max-w-7xl mx-auto p-4">
+        {!isGameStarted && !gameState.showGameSummary && (
+          <BugFinderIntro onStartGame={handleStartGame} />
+        )}
+        {isGameStarted && !gameState.showGameSummary && (
+          <BugFinderGame />
+        )}
+        {gameState.showGameSummary && (
+          <BugFinderSummary 
+            gameState={gameState}
+            onRestart={handleRestart}
+            onExit={handleExit}
+          />
+        )}
+      </div>
     </motion.div>
   );
 });

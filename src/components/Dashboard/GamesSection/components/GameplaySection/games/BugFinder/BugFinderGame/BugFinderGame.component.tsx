@@ -1,10 +1,10 @@
-import { useEffect, useState, useCallback, useRef } from 'react';
+import React, { useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import { memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import js from 'react-syntax-highlighter/dist/esm/languages/hljs/javascript';
 import { vs2015 } from 'react-syntax-highlighter/dist/esm/styles/hljs';
-import { FaCheck, FaLightbulb, FaClock, FaRedo, FaCheckCircle, FaTimesCircle, FaStar, FaHeart } from 'react-icons/fa';
+import { FaCheck, FaLightbulb, FaClock, FaRedo, FaCheckCircle, FaTimesCircle, FaStar, FaHeart, FaArrowRight } from 'react-icons/fa';
 import { useBugFinder } from '../hooks/useBugFinder';
 import { challenges } from '../data/challenges';
 import { useClickOutside } from '../hooks/useClickOutside';
@@ -15,6 +15,7 @@ export const BugFinderGame = memo(() => {
   const { gameState, currentChallenge, actions } = useBugFinder();
   const [localCode, setLocalCode] = useState(gameState.currentCode);
   const modalRef = useRef<HTMLDivElement>(null);
+  const editorRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     setLocalCode(gameState.currentCode);
@@ -32,11 +33,42 @@ export const BugFinderGame = memo(() => {
     actions.updateCode(newCode);
   }, [actions]);
 
+  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      const start = e.currentTarget.selectionStart;
+      const end = e.currentTarget.selectionEnd;
+      const newCode = localCode.substring(0, start) + '  ' + localCode.substring(end);
+      setLocalCode(newCode);
+      actions.updateCode(newCode);
+      requestAnimationFrame(() => {
+        if (editorRef.current) {
+          editorRef.current.selectionStart = editorRef.current.selectionEnd = start + 2;
+        }
+      });
+    }
+  }, [localCode, actions]);
+
   const formatTime = useCallback((seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   }, []);
+
+  const buttonConfig = useMemo(() => {
+    if (gameState.isGameOver) {
+      return {
+        text: 'Zakończ grę',
+        icon: <FaArrowRight className="w-4 h-4" />,
+        action: actions.finishGame
+      };
+    }
+    return {
+      text: 'Sprawdź rozwiązanie',
+      icon: <FaCheck className="w-4 h-4" />,
+      action: actions.checkSolution
+    };
+  }, [gameState.isGameOver, actions]);
 
   return (
     <div className="h-full flex flex-col">
@@ -80,85 +112,16 @@ export const BugFinderGame = memo(() => {
         </div>
       </div>
 
-      <div className="flex-1 overflow-hidden relative">
-        <div className="absolute inset-0 flex">
-          <div className="w-12 flex-shrink-0 bg-dark-900/50 border-r border-js/10 pt-4">
-            {Array.from({ length: localCode.split('\n').length }).map((_, i) => (
-              <div
-                key={i}
-                className="h-6 text-right pr-2 text-sm font-mono text-gray-500"
-              >
-                {i + 1}
-              </div>
-            ))}
-          </div>
 
-          <div className="relative flex-1">
-            <textarea
-              value={localCode}
-              onChange={handleCodeChange}
-              disabled={gameState.isGameOver}
-              spellCheck={false}
-              className="absolute inset-0 w-full h-full resize-none outline-none bg-transparent text-gray-300 p-4 font-mono text-lg"
-              style={{
-                fontFamily: 'Consolas, Monaco, "Andale Mono", monospace',
-                lineHeight: '1.5',
-                tabSize: 2,
-                caretColor: '#f7df1e',
-              }}
-              onKeyDown={(e) => {
-                if (e.key === 'Tab') {
-                  e.preventDefault();
-                  const start = e.currentTarget.selectionStart;
-                  const end = e.currentTarget.selectionEnd;
-                  const newCode = localCode.substring(0, start) + '  ' + localCode.substring(end);
-                  setLocalCode(newCode);
-                  actions.updateCode(newCode);
-                  requestAnimationFrame(() => {
-                    e.currentTarget.selectionStart = e.currentTarget.selectionEnd = start + 2;
-                  });
-                }
-              }}
-            />
-            
-            <pre 
-              aria-hidden="true"
-              className="absolute inset-0 pointer-events-none p-4 font-mono text-lg"
-              style={{
-                fontFamily: 'Consolas, Monaco, "Andale Mono", monospace',
-                lineHeight: '1.5',
-                tabSize: 2,
-              }}
-            >
-              <code className="relative block">
-                <SyntaxHighlighter
-                  language="javascript"
-                  style={vs2015}
-                  customStyle={{
-                    background: 'transparent',
-                    padding: 0,
-                    margin: 0,
-                    fontSize: 'inherit',
-                    lineHeight: 'inherit',
-                  }}
-                >
-                  {localCode}
-                </SyntaxHighlighter>
-              </code>
-            </pre>
-          </div>
-        </div>
-      </div>
-
-      <div className="p-4 bg-dark-900/50 border-t border-js/10">
+      <div className="mt-auto p-4 border-t border-js/10">
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          onClick={actions.checkSolution}
+          onClick={buttonConfig.action}
           className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-js text-dark font-medium hover:bg-js/90 transition-colors"
         >
-          <FaCheck className="w-4 h-4" />
-          <span>Sprawdź rozwiązanie</span>
+          {buttonConfig.icon}
+          <span>{buttonConfig.text}</span>
         </motion.button>
       </div>
 

@@ -55,9 +55,9 @@ export const GameplaySection = memo(({ game }: GameplaySectionProps) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="min-h-screen bg-dark-800"
+      className="min-h-screen bg-dark-800 flex items-center justify-center"
     >
-      <div className="max-w-7xl mx-auto px-4 py-6">
+      <div className="max-w-7xl w-full mx-auto px-4 py-6">
         <div className="flex items-center justify-between mb-6">
           <motion.button
             whileHover={{ scale: 1.05 }}
@@ -99,7 +99,7 @@ export const GameplaySection = memo(({ game }: GameplaySectionProps) => {
         />
 
         <div className="mt-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
-          <div className="lg:col-span-10">
+          <div className="lg:col-span-12">
             <GameplayArea 
               isPaused={controls.isPaused}
               isFullscreen={controls.isFullscreen}

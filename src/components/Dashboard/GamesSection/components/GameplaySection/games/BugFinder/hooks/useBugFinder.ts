@@ -13,6 +13,7 @@ export type BugFinderActions = {
   resetLevel: () => void;
   hideFeedback: () => void;
   finishGame: () => void;
+  resetGame: () => void;
 }
 
 export const useBugFinder = () => {
@@ -22,6 +23,7 @@ export const useBugFinder = () => {
     score: 0,
     lives: 3,
     isGameOver: false,
+    showGameSummary: false,
     currentCode: challenges[0].code,
     showHint: false,
     currentHintIndex: 0,
@@ -93,26 +95,42 @@ export const useBugFinder = () => {
     setGameState(prev => ({
       ...prev,
       isGameOver: true,
-      showGameSummary: true
+      showGameSummary: true,
+      feedback: {
+        type: null,
+        message: ''
+      }
     }));
   }, [stopTimer]);
 
+  const resetGame = useCallback(() => {
+    stopTimer();
+    setGameState({
+      currentLevel: 0,
+      timeElapsed: 0,
+      score: 0,
+      lives: 3,
+      isGameOver: false,
+      showGameSummary: false,
+      currentCode: challenges[0].code,
+      showHint: false,
+      currentHintIndex: 0,
+      feedback: {
+        type: null,
+        message: ''
+      }
+    });
+    startTimer();
+  }, [stopTimer, startTimer]);
+
   const checkSolution = useCallback(() => {
-    const currentChallenge = challenges[gameState.currentLevel];
-    
     if (gameState.isGameOver) {
-      setGameState(prev => ({
-        ...prev,
-        currentCode: currentChallenge.correctCode,
-        feedback: {
-          type: 'error',
-          message: 'Gra zakończona. Oto poprawne rozwiązanie:'
-        }
-      }));
-      setTimeout(hideFeedback, FEEDBACK_DISPLAY_TIME);
+      finishGame();
       return;
     }
 
+    const currentChallenge = challenges[gameState.currentLevel];
+    
     const normalizeCode = (code: string) => {
       return code
         .trim()
@@ -181,7 +199,7 @@ export const useBugFinder = () => {
 
       setTimeout(hideFeedback, FEEDBACK_DISPLAY_TIME);
     }
-  }, [gameState.currentLevel, gameState.currentCode, gameState.timeElapsed, gameState.lives, gameState.isGameOver, startTimer, stopTimer, hideFeedback]);
+  }, [gameState.isGameOver, finishGame, gameState.currentLevel, gameState.currentCode, gameState.timeElapsed, gameState.lives, startTimer, stopTimer, hideFeedback]);
 
   const showNextHint = useCallback(() => {
     const currentChallenge = challenges[gameState.currentLevel];
@@ -236,7 +254,8 @@ export const useBugFinder = () => {
       showNextHint,
       resetLevel,
       hideFeedback,
-      finishGame
+      finishGame,
+      resetGame
     }
   };
 }; 
