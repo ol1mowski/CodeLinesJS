@@ -75,6 +75,12 @@ export const RegexRaider = memo(({ isPaused = false }: { isPaused?: boolean }) =
     startTimer();
   }, [resetTimer, startTimer]);
 
+  const handleGameOver = useCallback(() => {
+    setIsGameOver(true);
+    setFinalTime(timeElapsed);
+    stopTimer();
+  }, [timeElapsed, stopTimer]);
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -93,6 +99,7 @@ export const RegexRaider = memo(({ isPaused = false }: { isPaused?: boolean }) =
             onScoreUpdate={handleScoreUpdate}
             onLevelComplete={handleLevelComplete}
             currentLevel={gameStats.currentLevel}
+            onGameOver={handleGameOver}
           />
         ) : (
           <RegexRaiderSummary

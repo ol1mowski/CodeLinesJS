@@ -2,6 +2,7 @@ import { Game } from '../types/games.type';
 import { ScopeExplorer } from '../components/GameplaySection/GameplayArea/ScopeExplorer/ScopeExplorer.component';
 import { JSTypoHunter } from '../components/GameplaySection/GameplayArea/JSTypoHunter/JSTypoHunter.component';
 import { AsyncQuest } from '../components/GameplaySection/GameplayArea/AsyncQuest/AsyncQuest.component';
+import { RegexRaider } from '../components/GameplaySection/GameplayArea/RegexRaider/RegexRaider.component';
 
 export const games: Game[] = [
   {
@@ -27,5 +28,13 @@ export const games: Game[] = [
     component: AsyncQuest,
     difficulty: 'hard',
     category: 'async'
+  },
+  {
+    id: 'regex-raider',
+    name: 'Regex Raider',
+    description: 'Opanuj wyrażenia regularne w praktyce',
+    component: RegexRaider,
+    difficulty: 'medium',
+    category: 'regex'
   }
 ]; 

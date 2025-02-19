@@ -1,22 +1,23 @@
 import React, { memo, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { RegexChallenge } from '../../../../../types/regexRaider.types';
 import { regexChallenges } from '../../../../../data/regexChallenges.data';
+import { RegexRaiderHint } from '../RegexRaiderHint/RegexRaiderHint.component';
 
 type RegexRaiderGameProps = {
   onScoreUpdate: (points: number) => void;
   onLevelComplete: () => void;
   currentLevel: number;
+  onGameOver: () => void;
 };
 
 export const RegexRaiderGame = memo(({ 
   onScoreUpdate,
   onLevelComplete,
-  currentLevel
+  currentLevel,
+  onGameOver
 }: RegexRaiderGameProps) => {
   const [userRegex, setUserRegex] = useState('');
   const [matches, setMatches] = useState<string[]>([]);
-  const [showHint, setShowHint] = useState(false);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
 
   const currentChallenge = regexChallenges[currentLevel - 1];
@@ -30,7 +31,6 @@ export const RegexRaiderGame = memo(({
       const regex = new RegExp(value, 'g');
       const found = currentChallenge.text.match(regex) || [];
       setMatches(found);
-      setShowHint(false);
     } catch (error) {
       setMatches([]);
     }
@@ -39,11 +39,11 @@ export const RegexRaiderGame = memo(({
   const handleSubmit = useCallback(() => {
     try {
       const userMatches = currentChallenge.text.match(new RegExp(userRegex, 'g')) || [];
-      const correctMatches = currentChallenge.text.match(new RegExp(currentChallenge.correctRegex, 'g')) || [];
+      const correctMatches: string[] = currentChallenge.text.match(new RegExp(currentChallenge.correctRegex, 'g')) || [];
 
       const isMatch = 
         userMatches.length === correctMatches.length && 
-        userMatches.every(match => correctMatches.includes(match));
+        userMatches.every((match: string) => correctMatches.includes(match));
 
       setIsCorrect(isMatch);
 
@@ -56,13 +56,17 @@ export const RegexRaiderGame = memo(({
           setIsCorrect(null);
         }, 1500);
       } else {
-        setShowHint(true);
+        setTimeout(() => {
+          onGameOver();
+        }, 1500);
       }
     } catch (error) {
       setIsCorrect(false);
-      setShowHint(true);
+      setTimeout(() => {
+        onGameOver();
+      }, 1500);
     }
-  }, [userRegex, currentChallenge, onScoreUpdate, onLevelComplete]);
+  }, [userRegex, currentChallenge, onScoreUpdate, onLevelComplete, onGameOver]);
 
   return (
     <motion.div
@@ -124,9 +128,17 @@ export const RegexRaiderGame = memo(({
             <p className={`text-sm ${isCorrect ? 'text-green-400' : 'text-red-400'}`}>
               {isCorrect 
                 ? 'Świetnie! Wyrażenie regularne jest poprawne!' 
-                : 'Spróbuj jeszcze raz. Wyrażenie nie znajduje wszystkich wymaganych dopasowań.'}
+                : 'Wyrażenie nie znajduje wszystkich wymaganych dopasowań.'}
             </p>
           </motion.div>
+        )}
+
+        {isCorrect === false && (
+          <RegexRaiderHint
+            pattern={currentChallenge.correctRegex}
+            explanation="Niepoprawne wyrażenie regularne. Gra zostanie zakończona..."
+            example={`Poprawne wyrażenie: ${currentChallenge.correctRegex}`}
+          />
         )}
       </div>
     </motion.div>
