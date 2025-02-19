@@ -4,6 +4,7 @@ import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import js from 'react-syntax-highlighter/dist/esm/languages/hljs/javascript';
 import { vs2015 } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { ScopeChallenge } from '../../../../../types/scopeExplorer.types';
+import { getCategoryIcon, getCategoryLabel, getDifficultyColor, getDifficultyLabel } from './ScopeExplorerGame.utils';
 
 SyntaxHighlighter.registerLanguage('javascript', js);
 
@@ -38,12 +39,28 @@ export const ScopeExplorerGame = memo(({
     }
   }, [currentChallenge, onScoreUpdate, onLevelComplete]);
 
+  const CategoryIcon = getCategoryIcon(currentChallenge.category);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className="w-full space-y-6"
     >
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-lg bg-js/10">
+            <CategoryIcon className="w-4 h-4 text-js" />
+          </div>
+          <div className="text-sm text-gray-400">
+            {getCategoryLabel(currentChallenge.category)}
+          </div>
+        </div>
+        <div className={`px-3 py-1 rounded-lg text-sm ${getDifficultyColor(currentChallenge.difficulty)}`}>
+          {getDifficultyLabel(currentChallenge.difficulty)}
+        </div>
+      </div>
+
       <div className="bg-dark-800/50 border border-js/10 rounded-lg overflow-hidden">
         <SyntaxHighlighter
           language="javascript"
