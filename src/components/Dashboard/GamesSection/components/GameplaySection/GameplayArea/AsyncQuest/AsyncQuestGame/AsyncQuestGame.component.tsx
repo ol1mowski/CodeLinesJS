@@ -6,6 +6,8 @@ import { vs2015 } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { AsyncChallenge } from '../../../../../types/asyncQuest.types';
 import { AsyncQuestProgress } from '../AsyncQuestProgress/AsyncQuestProgress.component';
 import { getCategoryIcon, getCategoryLabel, getDifficultyColor, getDifficultyLabel } from './AsyncQuestGame.utils';
+import { useCodeExecution } from '../hooks/useCodeExecution';
+import { validateAsyncCode } from '../utils/codeValidation';
 
 SyntaxHighlighter.registerLanguage('javascript', js);
 
@@ -27,61 +29,64 @@ export const AsyncQuestGame = memo(({
   onGameOver
 }: AsyncQuestGameProps) => {
   const [userCode, setUserCode] = useState(currentChallenge.code);
-  const [isRunning, setIsRunning] = useState(false);
-  const [output, setOutput] = useState<string[]>([]);
   const [showExplanation, setShowExplanation] = useState(false);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [wrongAttempts, setWrongAttempts] = useState(0);
   const [showHint, setShowHint] = useState(false);
 
+  const { executeCode, isRunning, output, clearOutput } = useCodeExecution();
+
   const handleCodeRun = useCallback(async () => {
-    setIsRunning(true);
-    setOutput([]);
-
-    try {
-      // Symulujemy wykonanie kodu
-      const consoleOutput: string[] = [];
-      const mockConsole = {
-        log: (msg: string) => consoleOutput.push(msg)
-      };
-
-      // Bezpieczna ewaluacja kodu (w produkcji należałoby użyć sandboxa)
-      const correct = userCode.trim() === currentChallenge.correct.trim();
-      
-      setOutput(consoleOutput);
-      setIsCorrect(correct);
-      setShowExplanation(true);
-
-      if (correct) {
-        onScoreUpdate(currentChallenge.points, currentChallenge.category);
-        setTimeout(() => {
-          onLevelComplete();
-          setUserCode(currentChallenge.code);
-          setShowExplanation(false);
-          setIsCorrect(null);
-          setWrongAttempts(0);
-          setShowHint(false);
-          setOutput([]);
-        }, 1500);
-      } else {
-        setWrongAttempts(prev => {
-          const newAttempts = prev + 1;
-          if (newAttempts >= 2) {
-            setShowHint(true);
-          }
-          return newAttempts;
-        });
-        setTimeout(() => {
-          onGameOver();
-        }, 2000);
-      }
-    } catch (error) {
-      setOutput([`Error: ${error.message}`]);
+    clearOutput();
+    
+    // Najpierw sprawdzamy poprawność składni
+    const isValid = validateAsyncCode(userCode, currentChallenge.correct);
+    
+    if (!isValid) {
       setIsCorrect(false);
-    } finally {
-      setIsRunning(false);
+      setShowExplanation(true);
+      setWrongAttempts(prev => {
+        const newAttempts = prev + 1;
+        if (newAttempts >= 2) {
+          setShowHint(true);
+        }
+        return newAttempts;
+      });
+      return;
     }
-  }, [currentChallenge, userCode, onScoreUpdate, onLevelComplete, onGameOver]);
+
+    // Wykonujemy kod
+    const result = await executeCode(userCode);
+
+    if (result.success) {
+      setIsCorrect(true);
+      setShowExplanation(true);
+      onScoreUpdate(currentChallenge.points, currentChallenge.category);
+      
+      setTimeout(() => {
+        onLevelComplete();
+        setUserCode(currentChallenge.code);
+        setShowExplanation(false);
+        setIsCorrect(null);
+        setWrongAttempts(0);
+        setShowHint(false);
+        clearOutput();
+      }, 1500);
+    } else {
+      setIsCorrect(false);
+      setShowExplanation(true);
+      setWrongAttempts(prev => {
+        const newAttempts = prev + 1;
+        if (newAttempts >= 2) {
+          setShowHint(true);
+          setTimeout(() => {
+            onGameOver();
+          }, 2000);
+        }
+        return newAttempts;
+      });
+    }
+  }, [currentChallenge, userCode, executeCode, clearOutput, onScoreUpdate, onLevelComplete, onGameOver]);
 
   const CategoryIcon = getCategoryIcon(currentChallenge.category);
 
