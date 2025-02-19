@@ -1,8 +1,9 @@
-import React, { memo, useState, useCallback } from 'react';
+import React, { memo, useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GameStats } from '../../../../types/scopeExplorer.types';
 import { scopeChallenges } from '../../../../data/scopeChallenges.data';
 import { useGameTimer } from '../JSTypoHunter/hooks/useGameTimer';
+import { ScopeExplorerStats } from './ScopeExplorerStats/ScopeExplorerStats.component';
 
 type ScopeExplorerProps = {
   isPaused: boolean;
@@ -29,13 +30,21 @@ export const ScopeExplorer = memo(({ isPaused }: ScopeExplorerProps) => {
     isPaused,
   });
 
+  useEffect(() => {
+    setGameStats(prev => ({
+      ...prev,
+      timeElapsed
+    }));
+  }, [timeElapsed]);
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className="w-full space-y-6"
     >
-      {/* Tu dodamy komponenty statystyk i gry */}
+      <ScopeExplorerStats stats={gameStats} />
+      {/* Tu dodamy główny komponent gry */}
     </motion.div>
   );
 });

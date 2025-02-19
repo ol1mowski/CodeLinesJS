@@ -2,6 +2,7 @@ import React, { memo } from 'react';
 import { motion } from 'framer-motion';
 import { useParams } from 'react-router-dom';
 import { JSTypoHunter } from './JSTypoHunter/JSTypoHunter.component';
+import { ScopeExplorer } from './ScopeExplorer/ScopeExplorer.component';
 
 type GameplayAreaProps = {
   isPaused: boolean;
@@ -15,6 +16,8 @@ export const GameplayArea = memo(({ isPaused, isFullscreen }: GameplayAreaProps)
     switch (slug) {
       case 'js-typo-hunter':
         return <JSTypoHunter isPaused={isPaused} />;
+      case 'scope-explorer':
+        return <ScopeExplorer isPaused={isPaused} />;
       default:
         return (
           <div className="flex items-center justify-center h-full">
