@@ -5,6 +5,7 @@ import js from 'react-syntax-highlighter/dist/esm/languages/hljs/javascript';
 import { vs2015 } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { CodeChallenge } from '../../../../../types/jsTypoHunter.types';
 import { JSTypoHunterFeedback } from '../JSTypoHunterFeedback/JSTypoHunterFeedback.component';
+import { JSTypoHunterHint } from '../JSTypoHunterHint/JSTypoHunterHint.component';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 
 SyntaxHighlighter.registerLanguage('javascript', js);
@@ -23,6 +24,7 @@ export const JSTypoHunterGame = memo(({
   const [selectedText, setSelectedText] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [userInput, setUserInput] = useState('');
+  const [showHint, setShowHint] = useState(false);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error' | null, message: string }>({
     type: null,
     message: ''
@@ -44,18 +46,20 @@ export const JSTypoHunterGame = memo(({
     if (selectedText === currentChallenge.error && userInput === currentChallenge.correct) {
       setFeedback({
         type: 'success',
-        message: 'Świetnie! Znalazłeś i poprawiłeś błąd!'
+        message: currentChallenge.explanation || 'Świetnie! Znalazłeś i poprawiłeś błąd!'
       });
       onScoreUpdate(10);
       setTimeout(() => {
         onLevelComplete();
         setFeedback({ type: null, message: '' });
+        setShowHint(false);
       }, 1500);
     } else {
       setFeedback({
         type: 'error',
         message: 'Spróbuj ponownie!'
       });
+      setShowHint(true);
       setTimeout(() => {
         setFeedback({ type: null, message: '' });
       }, 1500);
@@ -109,6 +113,11 @@ export const JSTypoHunterGame = memo(({
           {currentChallenge.code}
         </SyntaxHighlighter>
       </div>
+
+      <JSTypoHunterHint 
+        hint={currentChallenge.hint || ''} 
+        isVisible={showHint} 
+      />
 
       {isEditing && (
         <motion.div
