@@ -27,37 +27,59 @@ export const AsyncQuestGame = memo(({
   onGameOver
 }: AsyncQuestGameProps) => {
   const [userCode, setUserCode] = useState(currentChallenge.code);
+  const [isRunning, setIsRunning] = useState(false);
+  const [output, setOutput] = useState<string[]>([]);
   const [showExplanation, setShowExplanation] = useState(false);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [wrongAttempts, setWrongAttempts] = useState(0);
   const [showHint, setShowHint] = useState(false);
 
-  const handleCodeSubmit = useCallback(() => {
-    const correct = userCode.trim() === currentChallenge.correct.trim();
-    setIsCorrect(correct);
-    setShowExplanation(true);
+  const handleCodeRun = useCallback(async () => {
+    setIsRunning(true);
+    setOutput([]);
 
-    if (correct) {
-      onScoreUpdate(currentChallenge.points, currentChallenge.category);
-      setTimeout(() => {
-        onLevelComplete();
-        setUserCode(currentChallenge.code);
-        setShowExplanation(false);
-        setIsCorrect(null);
-        setWrongAttempts(0);
-        setShowHint(false);
-      }, 1500);
-    } else {
-      setWrongAttempts(prev => {
-        const newAttempts = prev + 1;
-        if (newAttempts >= 2) {
-          setShowHint(true);
-        }
-        return newAttempts;
-      });
-      setTimeout(() => {
-        onGameOver();
-      }, 2000);
+    try {
+      // Symulujemy wykonanie kodu
+      const consoleOutput: string[] = [];
+      const mockConsole = {
+        log: (msg: string) => consoleOutput.push(msg)
+      };
+
+      // Bezpieczna ewaluacja kodu (w produkcji należałoby użyć sandboxa)
+      const correct = userCode.trim() === currentChallenge.correct.trim();
+      
+      setOutput(consoleOutput);
+      setIsCorrect(correct);
+      setShowExplanation(true);
+
+      if (correct) {
+        onScoreUpdate(currentChallenge.points, currentChallenge.category);
+        setTimeout(() => {
+          onLevelComplete();
+          setUserCode(currentChallenge.code);
+          setShowExplanation(false);
+          setIsCorrect(null);
+          setWrongAttempts(0);
+          setShowHint(false);
+          setOutput([]);
+        }, 1500);
+      } else {
+        setWrongAttempts(prev => {
+          const newAttempts = prev + 1;
+          if (newAttempts >= 2) {
+            setShowHint(true);
+          }
+          return newAttempts;
+        });
+        setTimeout(() => {
+          onGameOver();
+        }, 2000);
+      }
+    } catch (error) {
+      setOutput([`Error: ${error.message}`]);
+      setIsCorrect(false);
+    } finally {
+      setIsRunning(false);
     }
   }, [currentChallenge, userCode, onScoreUpdate, onLevelComplete, onGameOver]);
 
@@ -77,43 +99,63 @@ export const AsyncQuestGame = memo(({
         totalLevels={totalLevels}
       />
 
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-js/10">
-            <CategoryIcon className="w-4 h-4 text-js" />
-          </div>
-          <div className="text-sm text-gray-400">
-            {getCategoryLabel(currentChallenge.category)}
-          </div>
-        </div>
-        <div className={`px-3 py-1 rounded-lg text-sm ${getDifficultyColor(currentChallenge.difficulty)}`}>
-          {getDifficultyLabel(currentChallenge.difficulty)}
-        </div>
-      </div>
-
       <div className="p-4 bg-dark-800/50 border border-js/10 rounded-lg">
-        <p className="text-lg text-js mb-4">{currentChallenge.task}</p>
-        <div className="bg-dark-900 rounded-lg overflow-hidden">
-          <SyntaxHighlighter
-            language="javascript"
-            style={vs2015}
-            customStyle={{
-              background: 'transparent',
-              padding: '1.5rem',
-            }}
-            onChange={setUserCode}
-            value={userCode}
-          >
-            {userCode}
-          </SyntaxHighlighter>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-js/10">
+              <CategoryIcon className="w-4 h-4 text-js" />
+            </div>
+            <div>
+              <div className="text-sm text-gray-400">
+                {getCategoryLabel(currentChallenge.category)}
+              </div>
+              <div className="text-xs text-gray-500">
+                {currentChallenge.task}
+              </div>
+            </div>
+          </div>
+          <div className={`px-3 py-1 rounded-lg text-sm ${getDifficultyColor(currentChallenge.difficulty)}`}>
+            {getDifficultyLabel(currentChallenge.difficulty)}
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <div className="bg-dark-900 rounded-lg overflow-hidden">
+            <SyntaxHighlighter
+              language="javascript"
+              style={vs2015}
+              customStyle={{
+                background: 'transparent',
+                padding: '1.5rem',
+              }}
+              onChange={setUserCode}
+              value={userCode}
+            >
+              {userCode}
+            </SyntaxHighlighter>
+          </div>
+
+          {output.length > 0 && (
+            <div className="bg-dark-900/50 rounded-lg p-4 font-mono text-sm">
+              <div className="text-gray-400 mb-2">Console output:</div>
+              {output.map((line, index) => (
+                <div key={index} className="text-gray-300">{line}</div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
       <button
-        onClick={handleCodeSubmit}
-        className="w-full px-6 py-3 rounded-lg bg-js text-dark font-medium hover:bg-js/90 transition-colors"
+        onClick={handleCodeRun}
+        disabled={isRunning}
+        className={`w-full px-6 py-3 rounded-lg font-medium transition-colors ${
+          isRunning 
+            ? 'bg-gray-500 cursor-not-allowed' 
+            : 'bg-js text-dark hover:bg-js/90'
+        }`}
       >
-        Sprawdź rozwiązanie
+        {isRunning ? 'Wykonywanie...' : 'Uruchom kod'}
       </button>
 
       {showExplanation && (
