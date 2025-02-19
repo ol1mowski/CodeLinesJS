@@ -5,11 +5,4 @@ export interface GameplayStats {
   currentLevel: number;
 }
 
-export interface GameplayControls {
-  isPaused: boolean;
-  isFullscreen: boolean;
-  isHelpVisible: boolean;
-  volume: number;
-}
-
 export type GameDifficulty = 'easy' | 'medium' | 'hard'; 
