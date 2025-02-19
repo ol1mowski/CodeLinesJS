@@ -5,6 +5,7 @@ import js from 'react-syntax-highlighter/dist/esm/languages/hljs/javascript';
 import { vs2015 } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { CodeChallenge } from '../../../../../types/jsTypoHunter.types';
 import { JSTypoHunterFeedback } from '../JSTypoHunterFeedback/JSTypoHunterFeedback.component';
+import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 
 SyntaxHighlighter.registerLanguage('javascript', js);
 
@@ -64,6 +65,18 @@ export const JSTypoHunterGame = memo(({
     setUserInput('');
   }, [selectedText, userInput, currentChallenge, onScoreUpdate, onLevelComplete]);
 
+  const handleCancel = useCallback(() => {
+    setIsEditing(false);
+    setSelectedText('');
+    setUserInput('');
+  }, []);
+
+  useKeyboardShortcuts({
+    onEscape: handleCancel,
+    onEnter: isEditing ? handleSubmit : undefined,
+    disabled: !isEditing
+  });
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -72,6 +85,13 @@ export const JSTypoHunterGame = memo(({
     >
       <JSTypoHunterFeedback type={feedback.type} message={feedback.message} />
       
+      <div className="mb-4 text-gray-400 text-sm">
+        <p>Znajdź i zaznacz błąd w kodzie, a następnie popraw go.</p>
+        <p className="mt-1 text-gray-500">
+          Wskazówka: Możesz użyć <span className="text-js">Enter</span> aby zatwierdzić i <span className="text-js">Esc</span> aby anulować.
+        </p>
+      </div>
+
       <div 
         className="rounded-lg overflow-hidden cursor-pointer"
         onClick={handleCodeClick}
@@ -104,23 +124,34 @@ export const JSTypoHunterGame = memo(({
               type="text"
               value={userInput}
               onChange={(e) => setUserInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  handleSubmit();
+                }
+              }}
               className="w-full px-3 py-2 bg-dark-900/50 border border-js/20 rounded-lg text-gray-200 focus:outline-none focus:border-js/40"
               autoFocus
             />
           </div>
-          <div className="flex justify-end gap-3">
-            <button
-              onClick={() => setIsEditing(false)}
-              className="px-4 py-2 rounded-lg bg-dark-700 text-gray-300 hover:bg-dark-600 transition-colors"
-            >
-              Anuluj
-            </button>
-            <button
-              onClick={handleSubmit}
-              className="px-4 py-2 rounded-lg bg-js text-dark-900 font-medium hover:bg-js/90 transition-colors"
-            >
-              Sprawdź
-            </button>
+          <div className="flex justify-between items-center">
+            <div className="text-sm text-gray-500">
+              Naciśnij Enter aby zatwierdzić lub Esc aby anulować
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={handleCancel}
+                className="px-4 py-2 rounded-lg bg-dark-700 text-gray-300 hover:bg-dark-600 transition-colors"
+              >
+                Anuluj
+              </button>
+              <button
+                onClick={handleSubmit}
+                className="px-4 py-2 rounded-lg bg-js text-dark-900 font-medium hover:bg-js/90 transition-colors"
+              >
+                Sprawdź
+              </button>
+            </div>
           </div>
         </motion.div>
       )}
