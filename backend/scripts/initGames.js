@@ -6,60 +6,102 @@ dotenv.config();
 
 const gamesData = [
   {
-    title: "Code Breaker",
-    slug: "code-breaker",
-    description: "Rozwiąż serię zagadek programistycznych, wykorzystując podstawy JavaScript",
+    title: "JS Typo Hunter",
+    slug: "js-typo-hunter",
+    description:
+      "Znajdź i popraw błędy składniowe w kodzie JavaScript, zdobywając punkty za każdą poprawną poprawkę.",
     difficulty: "easy",
     rating: {
-      average: 4.5,
-      count: 120,
-      total: 540
+      average: 4.6,
+      count: 150,
+      total: 690,
     },
     completions: {
-      count: 89,
-      users: []
+      count: 95,
+      users: [],
     },
-    rewardPoints: 100,
-    category: 'basics',
-    estimatedTime: 15
+    rewardPoints: 120,
+    category: "syntax",
+    estimatedTime: 15,
   },
   {
-    title: "Memory Master",
-    slug: "memory-master",
-    description: "Trenuj swoją pamięć poprzez zapamiętywanie i odtwarzanie sekwencji",
+    title: "Scope Explorer",
+    slug: "scope-explorer",
+    description:
+      "Rozwikłaj zagadki związane z zakresem zmiennych w JavaScript i przewiduj poprawne wartości.",
     difficulty: "medium",
     rating: {
-      average: 4.2,
-      count: 85,
-      total: 357
+      average: 4.4,
+      count: 110,
+      total: 484,
     },
     completions: {
-      count: 45,
-      users: []
+      count: 60,
+      users: [],
     },
-    rewardPoints: 150,
-    category: 'challenges',
-    estimatedTime: 20
+    rewardPoints: 180,
+    category: "variables",
+    estimatedTime: 20,
   },
   {
-    title: "Algorithm Challenge",
-    slug: "algorithm-challenge",
-    description: "Rozwiąż złożone problemy algorytmiczne na czas",
+    title: "Async Quest",
+    slug: "async-quest",
+    description:
+      "Zarządzaj operacjami asynchronicznymi w fabularnej grze, używając `Promise`, `async/await` i `setTimeout`.",
+    difficulty: "medium",
+    rating: {
+      average: 4.7,
+      count: 130,
+      total: 611,
+    },
+    completions: {
+      count: 85,
+      users: [],
+    },
+    rewardPoints: 200,
+    category: "async",
+    estimatedTime: 25,
+  },
+  {
+    title: "JS Debugger",
+    slug: "js-debugger",
+    description:
+      "Znajduj i naprawiaj błędy w kodzie JavaScript, korzystając z `console.log`, `try/catch` i narzędzi debugowania.",
+    difficulty: "hard",
+    rating: {
+      average: 4.5,
+      count: 90,
+      total: 405,
+    },
+    completions: {
+      count: 50,
+      users: [],
+    },
+    rewardPoints: 250,
+    category: "debugging",
+    estimatedTime: 30,
+  },
+  {
+    title: "Regex Raider",
+    slug: "regex-raider",
+    description:
+      "Napisz poprawne wyrażenia regularne, aby znaleźć ukryte wzorce w dynamicznych tekstach.",
     difficulty: "hard",
     rating: {
       average: 4.8,
-      count: 65,
-      total: 312
+      count: 75,
+      total: 360,
     },
     completions: {
-      count: 28,
-      users: []
+      count: 40,
+      users: [],
     },
     rewardPoints: 300,
-    category: 'algorithms',
-    estimatedTime: 45
-  }
+    category: "regex",
+    estimatedTime: 35,
+  },
 ];
+
 
 const initializeGames = async () => {
   try {

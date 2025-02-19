@@ -1,28 +1,35 @@
-import { memo } from 'react';
+import React, { memo } from 'react';
 import { motion } from 'framer-motion';
 import { useParams } from 'react-router-dom';
-import { BugFinder } from '../games/BugFinder/BugFinder.component';
+import { JSTypoHunter } from './JSTypoHunter/JSTypoHunter.component';
 
 type GameplayAreaProps = {
   isPaused: boolean;
   isFullscreen: boolean;
 };
 
-export const GameplayArea = memo(({ isPaused }: GameplayAreaProps) => {
+export const GameplayArea = memo(({ isPaused, isFullscreen }: GameplayAreaProps) => {
   const { slug } = useParams<{ slug: string }>();
 
-  return (
-    <div className="relative aspect-video rounded-xl overflow-hidden border-2 border-js/20 bg-dark-800">
-      <div className="absolute inset-0">
-        {slug === 'code-breaker' ? (
-          <BugFinder />
-        ) : (
+  const renderGame = () => {
+    switch (slug) {
+      case 'js-typo-hunter':
+        return <JSTypoHunter isPaused={isPaused} />;
+      default:
+        return (
           <div className="flex items-center justify-center h-full">
             <div className="text-gray-400 font-mono">
               Gra niedostępna
             </div>
           </div>
-        )}
+        );
+    }
+  };
+
+  return (
+    <div className="relative aspect-video rounded-xl overflow-hidden border-2 border-js/20 bg-dark-800">
+      <div className="absolute inset-0">
+        {renderGame()}
       </div>
 
       {isPaused && (
