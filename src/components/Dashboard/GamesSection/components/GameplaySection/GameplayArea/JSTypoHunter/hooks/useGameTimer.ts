@@ -24,10 +24,10 @@ export const useGameTimer = ({ maxTime, onTimeEnd, isPaused }: UseGameTimerProps
   }, []);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: number;
 
     if (isRunning && !isPaused) {
-      interval = setInterval(() => {
+      interval = window.setInterval(() => {
         setTimeElapsed(prev => {
           const newTime = prev + 1;
           if (newTime >= maxTime) {
@@ -42,7 +42,7 @@ export const useGameTimer = ({ maxTime, onTimeEnd, isPaused }: UseGameTimerProps
 
     return () => {
       if (interval) {
-        clearInterval(interval);
+        window.clearInterval(interval);
       }
     };
   }, [isRunning, isPaused, maxTime, onTimeEnd, stopTimer]);
