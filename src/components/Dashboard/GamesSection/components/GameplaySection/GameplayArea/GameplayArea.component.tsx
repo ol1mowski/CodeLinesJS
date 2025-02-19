@@ -19,7 +19,7 @@ export const GameplayArea = memo(() => {
   
   return (
     <div className="w-full h-full">
-      <GameComponent isPaused={false} />
+      <GameComponent />
     </div>
   );
 });
