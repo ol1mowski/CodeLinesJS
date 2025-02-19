@@ -3,10 +3,20 @@ import { useEffect, useCallback } from 'react';
 type KeyboardShortcutsProps = {
   onEscape?: () => void;
   onEnter?: () => void;
+  onNumber1?: () => void;
+  onNumber2?: () => void;
+  onNumber3?: () => void;
   disabled?: boolean;
 };
 
-export const useKeyboardShortcuts = ({ onEscape, onEnter, disabled = false }: KeyboardShortcutsProps) => {
+export const useKeyboardShortcuts = ({ 
+  onEscape, 
+  onEnter,
+  onNumber1,
+  onNumber2,
+  onNumber3,
+  disabled = false 
+}: KeyboardShortcutsProps) => {
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
     if (disabled) return;
 
@@ -17,8 +27,17 @@ export const useKeyboardShortcuts = ({ onEscape, onEnter, disabled = false }: Ke
       case 'Enter':
         onEnter?.();
         break;
+      case '1':
+        onNumber1?.();
+        break;
+      case '2':
+        onNumber2?.();
+        break;
+      case '3':
+        onNumber3?.();
+        break;
     }
-  }, [onEscape, onEnter, disabled]);
+  }, [onEscape, onEnter, onNumber1, onNumber2, onNumber3, disabled]);
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);

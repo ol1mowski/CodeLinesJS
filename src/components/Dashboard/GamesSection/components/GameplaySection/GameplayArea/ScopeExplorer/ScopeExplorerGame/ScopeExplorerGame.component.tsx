@@ -5,6 +5,7 @@ import js from 'react-syntax-highlighter/dist/esm/languages/hljs/javascript';
 import { vs2015 } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { ScopeChallenge } from '../../../../../types/scopeExplorer.types';
 import { getCategoryIcon, getCategoryLabel, getDifficultyColor, getDifficultyLabel } from './ScopeExplorerGame.utils';
+import { useKeyboardShortcuts } from '../../JSTypoHunter/hooks/useKeyboardShortcuts';
 
 SyntaxHighlighter.registerLanguage('javascript', js);
 
@@ -38,6 +39,19 @@ export const ScopeExplorerGame = memo(({
       }, 1500);
     }
   }, [currentChallenge, onScoreUpdate, onLevelComplete]);
+
+  const handleKeyboardSelect = useCallback((index: number) => {
+    if (!showExplanation && index < currentChallenge.options.length) {
+      handleAnswerSelect(currentChallenge.options[index]);
+    }
+  }, [showExplanation, currentChallenge.options, handleAnswerSelect]);
+
+  useKeyboardShortcuts({
+    onNumber1: () => handleKeyboardSelect(0),
+    onNumber2: () => handleKeyboardSelect(1),
+    onNumber3: () => handleKeyboardSelect(2),
+    disabled: showExplanation
+  });
 
   const CategoryIcon = getCategoryIcon(currentChallenge.category);
 
@@ -77,7 +91,7 @@ export const ScopeExplorerGame = memo(({
       </div>
 
       <div className="grid grid-cols-3 gap-4">
-        {currentChallenge.options.map((option) => (
+        {currentChallenge.options.map((option, index) => (
           <motion.button
             key={option}
             whileHover={{ scale: 1.02 }}
@@ -85,7 +99,7 @@ export const ScopeExplorerGame = memo(({
             onClick={() => handleAnswerSelect(option)}
             disabled={showExplanation}
             className={`
-              p-4 rounded-lg font-mono text-lg transition-colors
+              relative p-4 rounded-lg font-mono text-lg transition-colors
               ${selectedAnswer === option
                 ? isCorrect
                   ? 'bg-green-500/20 border-green-500/30 text-green-400'
@@ -94,9 +108,16 @@ export const ScopeExplorerGame = memo(({
               }
             `}
           >
+            <span className="absolute top-2 left-2 text-xs text-gray-500">
+              {index + 1}
+            </span>
             {option}
           </motion.button>
         ))}
+      </div>
+
+      <div className="text-sm text-gray-500 text-center">
+        Użyj klawiszy numerycznych (1-3) aby wybrać odpowiedź
       </div>
 
       {showExplanation && (
