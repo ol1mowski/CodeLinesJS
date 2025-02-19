@@ -5,6 +5,7 @@ import { scopeChallenges } from '../../../../data/scopeChallenges.data';
 import { useGameTimer } from '../JSTypoHunter/hooks/useGameTimer';
 import { ScopeExplorerStats } from './ScopeExplorerStats/ScopeExplorerStats.component';
 import { ScopeExplorerGame } from './ScopeExplorerGame/ScopeExplorerGame.component';
+import { ScopeExplorerSummary } from './ScopeExplorerSummary/ScopeExplorerSummary.component';
 
 type ScopeExplorerProps = {
   isPaused: boolean;
@@ -87,25 +88,13 @@ export const ScopeExplorer = memo(({ isPaused }: ScopeExplorerProps) => {
             totalLevels={gameStats.totalLevels}
           />
         ) : (
-          <motion.div
+          <ScopeExplorerSummary
             key="game-over"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="p-6 bg-dark-800/50 border border-js/10 rounded-lg text-center"
-          >
-            <h2 className="text-2xl font-bold text-js mb-4">
-              {gameStats.currentLevel > scopeChallenges.length ? 'Gratulacje!' : 'Koniec gry!'}
-            </h2>
-            <p className="text-gray-400 mb-6">
-              Twój wynik: {gameStats.score} punktów
-            </p>
-            <button
-              onClick={handleRestart}
-              className="px-6 py-3 rounded-lg bg-js text-dark font-medium hover:bg-js/90 transition-colors"
-            >
-              Zagraj ponownie
-            </button>
-          </motion.div>
+            score={gameStats.score}
+            timeElapsed={gameStats.timeElapsed}
+            challenges={scopeChallenges}
+            onRestart={handleRestart}
+          />
         )}
       </AnimatePresence>
     </motion.div>
