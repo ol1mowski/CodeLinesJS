@@ -33,7 +33,6 @@ export const AsyncQuestGame = memo(({
   const [userCode, setUserCode] = useState(currentChallenge.code);
   const [showExplanation, setShowExplanation] = useState(false);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
-  const [wrongAttempts, setWrongAttempts] = useState(0);
   const [showHint, setShowHint] = useState(false);
   const [errorHint, setErrorHint] = useState<{
     message: string;
@@ -43,29 +42,36 @@ export const AsyncQuestGame = memo(({
 
   const { executeCode, isRunning, output, clearOutput } = useCodeExecution();
 
+  const handleCodeChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setUserCode(event.target.value);
+    setShowExplanation(false);
+    setIsCorrect(null);
+    setErrorHint(null);
+    clearOutput();
+  };
+
   const handleCodeRun = useCallback(async () => {
+    console.log('Kod użytkownika przed walidacją:', userCode);
+    console.log('Kod wzorcowy:', currentChallenge.correct);
+    
     clearOutput();
     setErrorHint(null);
     
-    // Najpierw sprawdzamy poprawność składni
     const isValid = validateAsyncCode(userCode, currentChallenge.correct);
+    console.log('Wynik walidacji:', isValid);
     
     if (!isValid) {
       const hint = getErrorHint(userCode, currentChallenge.category);
+      console.log('Znaleziony błąd:', hint);
       setErrorHint(hint);
       setIsCorrect(false);
       setShowExplanation(true);
-      setWrongAttempts(prev => {
-        const newAttempts = prev + 1;
-        if (newAttempts >= 2) {
-          setShowHint(true);
-        }
-        return newAttempts;
-      });
+      setTimeout(() => {
+        onGameOver();
+      }, 1500);
       return;
     }
 
-    // Wykonujemy kod
     const result = await executeCode(userCode);
 
     if (result.success) {
@@ -74,29 +80,25 @@ export const AsyncQuestGame = memo(({
       onScoreUpdate(currentChallenge.points, currentChallenge.category);
       
       setTimeout(() => {
-        onLevelComplete();
-        setUserCode(currentChallenge.code);
-        setShowExplanation(false);
-        setIsCorrect(null);
-        setWrongAttempts(0);
-        setShowHint(false);
-        clearOutput();
+        if (currentLevel === totalLevels) {
+          onGameOver();
+        } else {
+          onLevelComplete();
+          setUserCode(currentChallenge.code);
+          setShowExplanation(false);
+          setIsCorrect(null);
+          setShowHint(false);
+          clearOutput();
+        }
       }, 1500);
     } else {
       setIsCorrect(false);
       setShowExplanation(true);
-      setWrongAttempts(prev => {
-        const newAttempts = prev + 1;
-        if (newAttempts >= 2) {
-          setShowHint(true);
-          setTimeout(() => {
-            onGameOver();
-          }, 2000);
-        }
-        return newAttempts;
-      });
+      setTimeout(() => {
+        onGameOver();
+      }, 1500);
     }
-  }, [currentChallenge, userCode, executeCode, clearOutput, onScoreUpdate, onLevelComplete, onGameOver]);
+  }, [currentChallenge, userCode, executeCode, clearOutput, onScoreUpdate, onLevelComplete, onGameOver, currentLevel, totalLevels]);
 
   const CategoryIcon = getCategoryIcon(currentChallenge.category);
 
@@ -135,16 +137,23 @@ export const AsyncQuestGame = memo(({
         </div>
 
         <div className="space-y-4">
-          <div className="bg-dark-900 rounded-lg overflow-hidden">
+          <div className="relative bg-dark-900 rounded-lg overflow-hidden">
+            <textarea
+              value={userCode}
+              onChange={handleCodeChange}
+              className="absolute inset-0 w-full h-full opacity-0 resize-none z-10 font-mono p-4"
+              spellCheck="false"
+            />
             <SyntaxHighlighter
               language="javascript"
               style={vs2015}
               customStyle={{
                 background: 'transparent',
                 padding: '1.5rem',
+                minHeight: '200px',
               }}
-              onChange={setUserCode}
-              value={userCode}
+              wrapLines={true}
+              showLineNumbers={true}
             >
               {userCode}
             </SyntaxHighlighter>

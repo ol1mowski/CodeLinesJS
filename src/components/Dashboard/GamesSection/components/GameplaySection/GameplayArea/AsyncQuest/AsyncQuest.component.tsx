@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GameStats } from '../../../../types/asyncQuest.types';
 import { asyncChallenges } from '../../../../data/asyncChallenges.data';
@@ -7,11 +7,7 @@ import { AsyncQuestStats } from './AsyncQuestStats/AsyncQuestStats.component';
 import { AsyncQuestSummary } from './AsyncQuestSummary/AsyncQuestSummary.component';
 import { AsyncQuestGame } from './AsyncQuestGame/AsyncQuestGame.component';
 
-type AsyncQuestProps = {
-  isPaused: boolean;
-};
-
-export const AsyncQuest = memo(({ isPaused }: AsyncQuestProps) => {
+export const AsyncQuest = memo(({ isPaused }: { isPaused: boolean }) => {
   const [gameStats, setGameStats] = useState<GameStats>({
     currentLevel: 1,
     totalLevels: asyncChallenges.length,
@@ -29,28 +25,53 @@ export const AsyncQuest = memo(({ isPaused }: AsyncQuestProps) => {
   const [isGameOver, setIsGameOver] = useState(false);
   const [finalTime, setFinalTime] = useState(0);
 
-  const { timeElapsed, resetTimer } = useGameTimer({
+  const { timeElapsed, resetTimer, startTimer, stopTimer } = useGameTimer({
     maxTime: gameStats.maxTime,
     onTimeEnd: () => {
       setIsGameOver(true);
       setFinalTime(timeElapsed);
-      resetTimer();
+      stopTimer();
     },
     isPaused,
   });
 
-  const handleScoreUpdate = (score: number) => {
-    setGameStats(prevStats => ({ ...prevStats, score }));
+  useEffect(() => {
+    if (!isGameOver && !isPaused) {
+      setGameStats(prev => ({ ...prev, timeElapsed }));
+    }
+  }, [timeElapsed, isGameOver, isPaused]);
+
+  useEffect(() => {
+    if (!isGameOver && !isPaused) {
+      startTimer();
+    }
+  }, [isGameOver, isPaused, startTimer]);
+
+  const handleScoreUpdate = (points: number, category: 'promises' | 'async-await' | 'callbacks') => {
+    setGameStats(prev => ({
+      ...prev,
+      score: prev.score + points,
+      correctAnswers: prev.correctAnswers + 1,
+      categoryStats: {
+        ...prev.categoryStats,
+        [category]: {
+          ...prev.categoryStats[category],
+          total: prev.categoryStats[category].total + 1,
+          correct: prev.categoryStats[category].correct + 1,
+          points: prev.categoryStats[category].points + points
+        }
+      }
+    }));
   };
 
   const handleLevelComplete = () => {
-    setGameStats(prevStats => ({ ...prevStats, currentLevel: prevStats.currentLevel + 1 }));
+    setGameStats(prev => ({ ...prev, currentLevel: prev.currentLevel + 1 }));
   };
 
   const handleGameOver = () => {
     setIsGameOver(true);
     setFinalTime(timeElapsed);
-    resetTimer();
+    stopTimer();
   };
 
   const handleRestart = () => {
@@ -69,6 +90,7 @@ export const AsyncQuest = memo(({ isPaused }: AsyncQuestProps) => {
     });
     setIsGameOver(false);
     resetTimer();
+    startTimer();
   };
 
   return (

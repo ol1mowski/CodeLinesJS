@@ -1,25 +1,26 @@
 import React, { memo } from 'react';
-import { motion } from 'framer-motion';
-import { JSTypoHunter } from './JSTypoHunter/JSTypoHunter.component';
-import { ScopeExplorer } from './ScopeExplorer/ScopeExplorer.component';
+import { useParams } from 'react-router-dom';
+import { games } from '../../../data/games.data';
 
-type GameplayAreaProps = {
-  selectedGame: 'jsTypoHunter' | 'scopeExplorer';
-  isPaused: boolean;
-};
+export const GameplayArea = memo(() => {
+  const { slug } = useParams<{ slug: string }>();
+  
+  const game = games.find(g => g.id === slug);
+  
+  if (!game) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <div className="text-gray-400">Gra nie została znaleziona</div>
+      </div>
+    );
+  }
 
-export const GameplayArea = memo(({ selectedGame, isPaused }: GameplayAreaProps) => {
+  const GameComponent = game.component;
+  
   return (
-    <motion.div
-      layout
-      className="w-full min-h-[600px] h-auto overflow-y-auto"
-    >
-      {selectedGame === 'jsTypoHunter' ? (
-        <JSTypoHunter isPaused={isPaused} />
-      ) : (
-        <ScopeExplorer isPaused={isPaused} />
-      )}
-    </motion.div>
+    <div className="w-full h-full">
+      <GameComponent isPaused={false} />
+    </div>
   );
 });
 

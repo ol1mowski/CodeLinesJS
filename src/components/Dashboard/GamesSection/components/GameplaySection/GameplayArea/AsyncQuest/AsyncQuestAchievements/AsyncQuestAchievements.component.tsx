@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { Achievement } from '../../../../../types/achievements.types';
 import { AsyncQuestAchievement } from '../AsyncQuestAchievement/AsyncQuestAchievement.component';
 

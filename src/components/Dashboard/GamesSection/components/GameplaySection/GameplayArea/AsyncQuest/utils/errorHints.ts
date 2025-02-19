@@ -5,7 +5,6 @@ type ErrorHint = {
 };
 
 export const getErrorHint = (code: string, category: 'promises' | 'async-await' | 'callbacks'): ErrorHint => {
-  // Sprawdzamy typ błędu na podstawie kodu i kategorii
   if (category === 'async-await') {
     if (!code.includes('async')) {
       return {
