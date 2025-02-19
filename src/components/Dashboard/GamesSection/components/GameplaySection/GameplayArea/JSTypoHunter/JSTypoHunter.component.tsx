@@ -6,7 +6,11 @@ import { JSTypoHunterGame } from './JSTypoHunterGame/JSTypoHunterGame.component'
 import { challenges } from '../../../../data/challenges.data';
 import { useGameTimer } from './hooks/useGameTimer';
 
-export const JSTypoHunter = memo(() => {
+type JSTypoHunterProps = {
+  isPaused: boolean;
+};
+
+export const JSTypoHunter = memo(({ isPaused }: JSTypoHunterProps) => {
   const [gameStats, setGameStats] = useState<GameStats>({
     currentLevel: 1,
     totalLevels: challenges.length,
@@ -16,7 +20,6 @@ export const JSTypoHunter = memo(() => {
   });
 
   const [isGameOver, setIsGameOver] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
 
   const handleTimeEnd = useCallback(() => {
     setIsGameOver(true);

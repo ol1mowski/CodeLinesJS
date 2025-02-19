@@ -7,11 +7,9 @@ export const updateProgress = async (req, res, next) => {
     const { lessonId } = req.body;
     const userId = req.user.userId;
 
-    // Znajdź lekcję
     const lesson = await Lesson.findOne({ slug: lessonId });
     if (!lesson) throw new ValidationError("Lekcja nie znaleziona");
 
-    // Znajdź użytkownika i ścieżkę nauki
     const [user, learningPath] = await Promise.all([
       User.findById(userId),
       LearningPath.findOne({ lessons: { $in: [lesson._id] } }),
@@ -21,19 +19,16 @@ export const updateProgress = async (req, res, next) => {
     if (!learningPath)
       throw new ValidationError("Ścieżka nauki nie znaleziona");
 
-    // ✅ Zapewnij, że user.learningPaths istnieje
     if (!user.learningPaths) {
       user.learningPaths = [];
     }
 
-    // Znajdź indeks ścieżki użytkownika
     let userPathIndex = user.learningPaths.findIndex(
       (path) => path.pathId.toString() === learningPath._id.toString()
     );
 
     let userPath = user.learningPaths[userPathIndex];
 
-    // Jeśli użytkownik nie ma tej ścieżki, dodaj ją
     if (!userPath) {
       userPath = {
         pathId: learningPath._id,
@@ -52,7 +47,6 @@ export const updateProgress = async (req, res, next) => {
       userPathIndex = user.learningPaths.length - 1;
     }
 
-    // Sprawdź, czy lekcja została już ukończona
     const isLessonCompleted = userPath.progress.completed.some(
       (id) => id.toString() === lesson._id.toString()
     );
@@ -62,16 +56,13 @@ export const updateProgress = async (req, res, next) => {
       userPath.progress.lastLesson = lesson._id;
       userPath.progress.lastActivity = new Date();
 
-      // Jeśli wszystkie lekcje są ukończone, oznacz ścieżkę jako "completed"
       if (userPath.progress.completed.length === learningPath.totalLessons) {
         userPath.status = "completed";
         userPath.progress.completedAt = new Date();
       }
 
-      // ✅ Oznacz zmiany w learningPaths
       user.markModified("learningPaths");
 
-      // Aktualizacja statystyk użytkownika
       const oldLastActive = user.stats.lastActive
         ? new Date(user.stats.lastActive).toDateString()
         : null;
@@ -89,11 +80,10 @@ export const updateProgress = async (req, res, next) => {
         );
       }
 
-      // ✅ Zapisz zmiany do bazy danych
+
       await user.save();
     }
 
-    // Zwrot odpowiedzi do klienta
     res.json({
       message: "Postęp zaktualizowany pomyślnie",
       stats: {
