@@ -4,14 +4,22 @@ import { CategoryProgress } from '../CategoryProgress/CategoryProgress.component
 
 type ScopeExplorerStatsProps = {
   stats: GameStats;
+  isGameOver?: boolean;
+  finalTime?: number;
 };
 
-export const ScopeExplorerStats = memo(({ stats }: ScopeExplorerStatsProps) => {
+export const ScopeExplorerStats = memo(({ 
+  stats, 
+  isGameOver = false, 
+  finalTime = 0 
+}: ScopeExplorerStatsProps) => {
   const formatTime = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
+
+  const displayTime = isGameOver ? finalTime : stats.timeElapsed;
 
   return (
     <div className="grid grid-cols-4 gap-4">
@@ -23,7 +31,7 @@ export const ScopeExplorerStats = memo(({ stats }: ScopeExplorerStatsProps) => {
         <div className="p-4 bg-dark-800/50 rounded-lg">
           <div className="text-sm text-gray-400 mb-1">Czas</div>
           <div className="text-2xl font-bold text-js">
-            {formatTime(stats.timeElapsed)}
+            {formatTime(displayTime)}
           </div>
         </div>
       </div>

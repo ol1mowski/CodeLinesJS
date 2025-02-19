@@ -27,10 +27,15 @@ export const ScopeExplorer = memo(({ isPaused }: ScopeExplorerProps) => {
   });
 
   const [isGameOver, setIsGameOver] = useState(false);
+  const [finalTime, setFinalTime] = useState(0);
 
   const { timeElapsed, resetTimer } = useGameTimer({
     maxTime: gameStats.maxTime,
-    onTimeEnd: () => setIsGameOver(true),
+    onTimeEnd: () => {
+      setIsGameOver(true);
+      setFinalTime(timeElapsed);
+      resetTimer();
+    },
     isPaused,
   });
 
@@ -41,8 +46,9 @@ export const ScopeExplorer = memo(({ isPaused }: ScopeExplorerProps) => {
 
   const handleGameOver = useCallback(() => {
     setIsGameOver(true);
+    setFinalTime(timeElapsed);
     resetTimer();
-  }, [resetTimer]);
+  }, [resetTimer, timeElapsed]);
 
   useEffect(() => {
     setGameStats(prev => ({
@@ -88,6 +94,7 @@ export const ScopeExplorer = memo(({ isPaused }: ScopeExplorerProps) => {
     const nextLevel = gameStats.currentLevel + 1;
     if (nextLevel > scopeChallenges.length) {
       setIsGameOver(true);
+      setFinalTime(timeElapsed);
       resetTimer();
       return;
     }
@@ -96,7 +103,7 @@ export const ScopeExplorer = memo(({ isPaused }: ScopeExplorerProps) => {
       ...prev,
       currentLevel: nextLevel
     }));
-  }, [gameStats.currentLevel, resetTimer]);
+  }, [gameStats.currentLevel, resetTimer, timeElapsed]);
 
   const handleRestart = useCallback(() => {
     const initialCategoryStats = {
@@ -120,7 +127,9 @@ export const ScopeExplorer = memo(({ isPaused }: ScopeExplorerProps) => {
       categoryStats: initialCategoryStats
     });
     setIsGameOver(false);
-  }, []);
+    setFinalTime(0);
+    resetTimer();
+  }, [resetTimer]);
 
   return (
     <motion.div
@@ -128,7 +137,11 @@ export const ScopeExplorer = memo(({ isPaused }: ScopeExplorerProps) => {
       animate={{ opacity: 1 }}
       className="w-full h-full flex flex-col"
     >
-      <ScopeExplorerStats stats={gameStats} />
+      <ScopeExplorerStats 
+        stats={gameStats} 
+        isGameOver={isGameOver}
+        finalTime={finalTime}
+      />
       <AnimatePresence mode="wait">
         <div className="flex-1 overflow-y-auto py-6">
           {!isGameOver ? (
@@ -159,7 +172,7 @@ export const ScopeExplorer = memo(({ isPaused }: ScopeExplorerProps) => {
             >
               <ScopeExplorerSummary
                 score={gameStats.score}
-                timeElapsed={gameStats.timeElapsed}
+                timeElapsed={finalTime}
                 challenges={scopeChallenges}
                 correctAnswers={gameStats.correctAnswers}
                 categoryStats={gameStats.categoryStats}
