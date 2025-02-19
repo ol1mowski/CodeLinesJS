@@ -1,4 +1,4 @@
-import { memo, useState } from 'react';
+import React, { memo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { GameStats } from '../../../../types/jsTypoHunter.types';
 import { JSTypoHunterStats } from './JSTypoHunterStats/JSTypoHunterStats.component';
