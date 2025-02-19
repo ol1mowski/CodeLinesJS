@@ -26,6 +26,10 @@ export const ScopeExplorer = memo(({ isPaused }: ScopeExplorerProps) => {
     setIsGameOver(true);
   }, []);
 
+  const handleGameOver = useCallback(() => {
+    setIsGameOver(true);
+  }, []);
+
   const { timeElapsed, resetTimer } = useGameTimer({
     maxTime: gameStats.maxTime,
     onTimeEnd: handleTimeEnd,
@@ -86,6 +90,7 @@ export const ScopeExplorer = memo(({ isPaused }: ScopeExplorerProps) => {
             onLevelComplete={handleLevelComplete}
             currentLevel={gameStats.currentLevel}
             totalLevels={gameStats.totalLevels}
+            onGameOver={handleGameOver}
           />
         ) : (
           <ScopeExplorerSummary

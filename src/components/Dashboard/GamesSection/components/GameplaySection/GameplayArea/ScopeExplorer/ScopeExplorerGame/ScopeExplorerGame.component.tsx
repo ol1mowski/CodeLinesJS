@@ -16,6 +16,7 @@ type ScopeExplorerGameProps = {
   onLevelComplete: () => void;
   currentLevel: number;
   totalLevels: number;
+  onGameOver: () => void;
 };
 
 export const ScopeExplorerGame = memo(({ 
@@ -23,7 +24,8 @@ export const ScopeExplorerGame = memo(({
   onScoreUpdate,
   onLevelComplete,
   currentLevel,
-  totalLevels
+  totalLevels,
+  onGameOver
 }: ScopeExplorerGameProps) => {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showExplanation, setShowExplanation] = useState(false);
@@ -50,13 +52,16 @@ export const ScopeExplorerGame = memo(({
     } else {
       setWrongAttempts(prev => {
         const newAttempts = prev + 1;
-        if (newAttempts >= 2) { // Pokaż podpowiedź po 2 błędnych próbach
+        if (newAttempts >= 2) {
           setShowHint(true);
         }
         return newAttempts;
       });
+      setTimeout(() => {
+        onGameOver();
+      }, 2000);
     }
-  }, [currentChallenge, onScoreUpdate, onLevelComplete]);
+  }, [currentChallenge, onScoreUpdate, onLevelComplete, onGameOver]);
 
   const handleKeyboardSelect = useCallback((index: number) => {
     if (!showExplanation && index < currentChallenge.options.length) {
