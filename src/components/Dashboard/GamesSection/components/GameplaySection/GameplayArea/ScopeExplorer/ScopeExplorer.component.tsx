@@ -83,6 +83,8 @@ export const ScopeExplorer = memo(({ isPaused }: ScopeExplorerProps) => {
             currentChallenge={scopeChallenges[gameStats.currentLevel - 1]}
             onScoreUpdate={handleScoreUpdate}
             onLevelComplete={handleLevelComplete}
+            currentLevel={gameStats.currentLevel}
+            totalLevels={gameStats.totalLevels}
           />
         ) : (
           <motion.div

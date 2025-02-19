@@ -6,6 +6,7 @@ import { vs2015 } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { ScopeChallenge } from '../../../../../types/scopeExplorer.types';
 import { getCategoryIcon, getCategoryLabel, getDifficultyColor, getDifficultyLabel } from './ScopeExplorerGame.utils';
 import { useKeyboardShortcuts } from '../../JSTypoHunter/hooks/useKeyboardShortcuts';
+import { ScopeExplorerProgress } from '../ScopeExplorerProgress/ScopeExplorerProgress.component';
 
 SyntaxHighlighter.registerLanguage('javascript', js);
 
@@ -13,30 +14,47 @@ type ScopeExplorerGameProps = {
   currentChallenge: ScopeChallenge;
   onScoreUpdate: (points: number) => void;
   onLevelComplete: () => void;
+  currentLevel: number;
+  totalLevels: number;
 };
 
 export const ScopeExplorerGame = memo(({ 
   currentChallenge,
   onScoreUpdate,
-  onLevelComplete 
+  onLevelComplete,
+  currentLevel,
+  totalLevels
 }: ScopeExplorerGameProps) => {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showExplanation, setShowExplanation] = useState(false);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [wrongAttempts, setWrongAttempts] = useState(0);
+  const [showHint, setShowHint] = useState(false);
 
   const handleAnswerSelect = useCallback((answer: string) => {
     setSelectedAnswer(answer);
-    setIsCorrect(answer === currentChallenge.correct);
+    const correct = answer === currentChallenge.correct;
+    setIsCorrect(correct);
     setShowExplanation(true);
 
-    if (answer === currentChallenge.correct) {
+    if (correct) {
       onScoreUpdate(currentChallenge.points || 10);
       setTimeout(() => {
         onLevelComplete();
         setSelectedAnswer(null);
         setShowExplanation(false);
         setIsCorrect(null);
+        setWrongAttempts(0);
+        setShowHint(false);
       }, 1500);
+    } else {
+      setWrongAttempts(prev => {
+        const newAttempts = prev + 1;
+        if (newAttempts >= 2) { // Pokaż podpowiedź po 2 błędnych próbach
+          setShowHint(true);
+        }
+        return newAttempts;
+      });
     }
   }, [currentChallenge, onScoreUpdate, onLevelComplete]);
 
@@ -61,6 +79,11 @@ export const ScopeExplorerGame = memo(({
       animate={{ opacity: 1, y: 0 }}
       className="w-full space-y-6"
     >
+      <ScopeExplorerProgress 
+        currentLevel={currentLevel}
+        totalLevels={totalLevels}
+      />
+
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-lg bg-js/10">
@@ -133,6 +156,18 @@ export const ScopeExplorerGame = memo(({
           <p className={`text-sm ${isCorrect ? 'text-green-400' : 'text-red-400'}`}>
             {isCorrect ? 'Świetnie! ' : 'Spróbuj jeszcze raz. '}
             {currentChallenge.explanation}
+          </p>
+        </motion.div>
+      )}
+
+      {showHint && !isCorrect && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="p-3 bg-js/10 border border-js/20 rounded-lg"
+        >
+          <p className="text-sm text-js">
+            <span className="font-medium">Podpowiedź:</span> Zwróć uwagę na zakres zmiennych i ich dostępność w różnych kontekstach.
           </p>
         </motion.div>
       )}
