@@ -1,4 +1,4 @@
-import React, { memo, useState, useCallback } from 'react';
+import React, { memo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GameStats } from '../../../../types/asyncQuest.types';
 import { asyncChallenges } from '../../../../data/asyncChallenges.data';
