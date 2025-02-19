@@ -151,5 +151,87 @@ example();`,
     points: 20,
     category: 'scope',
     difficulty: 'medium'
+  },
+  {
+    id: 11,
+    code: `const obj = {
+  name: 'John',
+  greet: function() {
+    setTimeout(function() {
+      console.log('Hello ' + this.name);
+    }, 0);
+  }
+};
+obj.greet();`,
+    options: ["Hello John", "Hello undefined", "TypeError"],
+    correct: "Hello undefined",
+    explanation: "W zwykłej funkcji this jest określane w momencie wywołania. W setTimeout funkcja jest wywoływana w kontekście globalnym.",
+    points: 25,
+    category: 'scope',
+    difficulty: 'hard'
+  },
+  {
+    id: 12,
+    code: `const obj = {
+  name: 'John',
+  greet: function() {
+    setTimeout(() => {
+      console.log('Hello ' + this.name);
+    }, 0);
+  }
+};
+obj.greet();`,
+    options: ["Hello John", "Hello undefined", "TypeError"],
+    correct: "Hello John",
+    explanation: "Arrow function dziedziczy this z otaczającego scope'u, więc zachowuje kontekst metody greet.",
+    points: 20,
+    category: 'scope',
+    difficulty: 'medium'
+  },
+  {
+    id: 13,
+    code: `let x = 1;
+const f = () => {
+  console.log(x);
+  let x = 2;
+};
+f();`,
+    options: ["1", "2", "ReferenceError"],
+    correct: "ReferenceError",
+    explanation: "Temporal Dead Zone - próba dostępu do zmiennej x przed jej deklaracją w tym samym scope powoduje błąd.",
+    points: 20,
+    category: 'hoisting',
+    difficulty: 'medium'
+  },
+  {
+    id: 14,
+    code: `const add = (a) => {
+  return (b) => {
+    return (c) => {
+      return a + b + c;
+    };
+  };
+};
+console.log(add(1)(2)(3));`,
+    options: ["6", "undefined", "TypeError"],
+    correct: "6",
+    explanation: "Currying i closure - każda funkcja zachowuje dostęp do zmiennych z zewnętrznych scope'ów.",
+    points: 25,
+    category: 'closure',
+    difficulty: 'hard'
+  },
+  {
+    id: 15,
+    code: `function Person(name) {
+  this.name = name;
+}
+const person = Person('John');
+console.log(person?.name);`,
+    options: ["John", "undefined", "TypeError"],
+    correct: "undefined",
+    explanation: "Bez new, this w konstruktorze wskazuje na obiekt globalny. Person nie zwraca wartości, więc person jest undefined.",
+    points: 20,
+    category: 'scope',
+    difficulty: 'medium'
   }
 ]; 
