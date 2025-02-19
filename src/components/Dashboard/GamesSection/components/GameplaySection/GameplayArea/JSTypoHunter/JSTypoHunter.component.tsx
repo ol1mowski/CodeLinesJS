@@ -112,7 +112,7 @@ export const JSTypoHunter = memo(({ isPaused }: JSTypoHunterProps) => {
             </p>
             <button
               onClick={handleRestart}
-              className="px-6 py-3 rounded-lg bg-js text-dark-900 font-medium hover:bg-js/90 transition-colors"
+              className="px-6 py-3 rounded-lg bg-js text-dark font-medium hover:bg-js/90 transition-colors"
             >
               Zagraj ponownie
             </button>

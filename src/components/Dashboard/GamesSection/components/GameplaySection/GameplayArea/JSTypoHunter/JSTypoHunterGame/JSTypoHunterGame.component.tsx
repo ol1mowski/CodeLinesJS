@@ -66,7 +66,16 @@ export const JSTypoHunterGame = memo(({
   }, []);
 
   const handleSubmit = useCallback(() => {
-    if (selectedText === currentChallenge.error && userInput === currentChallenge.correct) {
+    let correctedCode = currentChallenge.code;
+    
+    if (selectedText && userInput) {
+      correctedCode = correctedCode.replace(selectedText, userInput);
+    }
+
+    const expectedCode = currentChallenge.code.replace(currentChallenge.error, currentChallenge.correct);
+    const isCorrect = correctedCode.replace(/\s+/g, '') === expectedCode.replace(/\s+/g, '');
+
+    if (isCorrect) {
       setFeedback({
         type: 'success',
         message: currentChallenge.explanation || 'Świetnie! Znalazłeś i poprawiłeś błąd!'
