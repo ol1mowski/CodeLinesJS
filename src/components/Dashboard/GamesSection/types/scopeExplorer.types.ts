@@ -5,6 +5,8 @@ export type ScopeChallenge = {
   correct: string;
   explanation?: string;
   points?: number;
+  category: 'scope' | 'closure' | 'hoisting';
+  difficulty: 'easy' | 'medium' | 'hard';
 };
 
 export type GameStats = {
