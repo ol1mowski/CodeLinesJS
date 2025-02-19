@@ -7,6 +7,7 @@ import { CodeChallenge } from '../../../../../types/jsTypoHunter.types';
 import { JSTypoHunterFeedback } from '../JSTypoHunterFeedback/JSTypoHunterFeedback.component';
 import { JSTypoHunterHint } from '../JSTypoHunterHint/JSTypoHunterHint.component';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
+import { FaCode, FaLightbulb, FaPuzzlePiece } from 'react-icons/fa';
 
 SyntaxHighlighter.registerLanguage('javascript', js);
 
@@ -14,6 +15,28 @@ type JSTypoHunterGameProps = {
   currentChallenge: CodeChallenge;
   onScoreUpdate: (newScore: number) => void;
   onLevelComplete: () => void;
+};
+
+const getCategoryIcon = (category: 'syntax' | 'naming' | 'logic') => {
+  switch (category) {
+    case 'syntax':
+      return FaCode;
+    case 'naming':
+      return FaPuzzlePiece;
+    case 'logic':
+      return FaLightbulb;
+  }
+};
+
+const getDifficultyColor = (difficulty: 'easy' | 'medium' | 'hard') => {
+  switch (difficulty) {
+    case 'easy':
+      return 'text-green-400 bg-green-500/10';
+    case 'medium':
+      return 'text-yellow-400 bg-yellow-500/10';
+    case 'hard':
+      return 'text-red-400 bg-red-500/10';
+  }
 };
 
 export const JSTypoHunterGame = memo(({ 
@@ -81,6 +104,8 @@ export const JSTypoHunterGame = memo(({
     disabled: !isEditing
   });
 
+  const CategoryIcon = getCategoryIcon(currentChallenge.category);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -89,9 +114,27 @@ export const JSTypoHunterGame = memo(({
     >
       <JSTypoHunterFeedback type={feedback.type} message={feedback.message} />
       
-      <div className="mb-4 text-gray-400 text-sm">
-        <p>Znajdź i zaznacz błąd w kodzie, a następnie popraw go.</p>
-        <p className="mt-1 text-gray-500">
+      <div className="mb-4">
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-js/10">
+              <CategoryIcon className="w-4 h-4 text-js" />
+            </div>
+            <div className="text-sm text-gray-400">
+              {currentChallenge.category === 'syntax' ? 'Błąd składni' :
+               currentChallenge.category === 'naming' ? 'Błąd nazewnictwa' :
+               'Błąd logiki'}
+            </div>
+          </div>
+          <div className={`px-3 py-1 rounded-lg text-sm ${getDifficultyColor(currentChallenge.difficulty)}`}>
+            {currentChallenge.difficulty === 'easy' ? 'Łatwy' :
+             currentChallenge.difficulty === 'medium' ? 'Średni' : 'Trudny'}
+          </div>
+        </div>
+        <p className="text-gray-400 text-sm">
+          Znajdź i zaznacz błąd w kodzie, a następnie popraw go.
+        </p>
+        <p className="mt-1 text-gray-500 text-sm">
           Wskazówka: Możesz użyć <span className="text-js">Enter</span> aby zatwierdzić i <span className="text-js">Esc</span> aby anulować.
         </p>
       </div>
