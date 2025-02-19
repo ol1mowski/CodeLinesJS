@@ -4,6 +4,7 @@ import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import js from 'react-syntax-highlighter/dist/esm/languages/hljs/javascript';
 import { vs2015 } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { CodeChallenge } from '../../../../../types/jsTypoHunter.types';
+import { JSTypoHunterFeedback } from '../JSTypoHunterFeedback/JSTypoHunterFeedback.component';
 
 SyntaxHighlighter.registerLanguage('javascript', js);
 
@@ -21,6 +22,10 @@ export const JSTypoHunterGame = memo(({
   const [selectedText, setSelectedText] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [userInput, setUserInput] = useState('');
+  const [feedback, setFeedback] = useState<{ type: 'success' | 'error' | null, message: string }>({
+    type: null,
+    message: ''
+  });
 
   const handleCodeClick = useCallback((e: React.MouseEvent) => {
     const selection = window.getSelection();
@@ -36,8 +41,23 @@ export const JSTypoHunterGame = memo(({
 
   const handleSubmit = useCallback(() => {
     if (selectedText === currentChallenge.error && userInput === currentChallenge.correct) {
+      setFeedback({
+        type: 'success',
+        message: 'Świetnie! Znalazłeś i poprawiłeś błąd!'
+      });
       onScoreUpdate(10);
-      onLevelComplete();
+      setTimeout(() => {
+        onLevelComplete();
+        setFeedback({ type: null, message: '' });
+      }, 1500);
+    } else {
+      setFeedback({
+        type: 'error',
+        message: 'Spróbuj ponownie!'
+      });
+      setTimeout(() => {
+        setFeedback({ type: null, message: '' });
+      }, 1500);
     }
     setIsEditing(false);
     setSelectedText('');
@@ -50,6 +70,8 @@ export const JSTypoHunterGame = memo(({
       animate={{ opacity: 1, y: 0 }}
       className="relative"
     >
+      <JSTypoHunterFeedback type={feedback.type} message={feedback.message} />
+      
       <div 
         className="rounded-lg overflow-hidden cursor-pointer"
         onClick={handleCodeClick}
