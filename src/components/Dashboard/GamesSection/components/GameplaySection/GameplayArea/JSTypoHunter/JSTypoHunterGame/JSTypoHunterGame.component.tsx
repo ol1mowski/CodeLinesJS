@@ -114,7 +114,7 @@ export const JSTypoHunterGame = memo(({
     >
       <JSTypoHunterFeedback type={feedback.type} message={feedback.message} />
       
-      <div className="mb-4">
+      <div className="mb-4 p-5">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-lg bg-js/10">
@@ -199,7 +199,7 @@ export const JSTypoHunterGame = memo(({
               </button>
               <button
                 onClick={handleSubmit}
-                className="px-4 py-2 rounded-lg bg-js text-dark-900 font-medium hover:bg-js/90 transition-colors"
+                className="px-4 py-2 rounded-lg bg-js text-dark font-medium hover:bg-js/90 transition-colors"
               >
                 Sprawdź
               </button>

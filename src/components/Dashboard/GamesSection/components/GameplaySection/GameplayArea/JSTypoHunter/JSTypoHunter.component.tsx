@@ -33,7 +33,6 @@ export const JSTypoHunter = memo(({ isPaused }: JSTypoHunterProps) => {
   });
 
   const [isGameOver, setIsGameOver] = useState(false);
-  const [isLevelTransition, setIsLevelTransition] = useState(false);
 
   const handleTimeEnd = useCallback(() => {
     setIsGameOver(true);
@@ -57,7 +56,6 @@ export const JSTypoHunter = memo(({ isPaused }: JSTypoHunterProps) => {
   }, [gameStats.currentLevel]);
 
   const handleLevelComplete = useCallback(() => {
-    setIsLevelTransition(true);
     setTimeout(() => {
       const nextLevel = gameStats.currentLevel + 1;
       if (nextLevel > challenges.length) {
@@ -68,7 +66,6 @@ export const JSTypoHunter = memo(({ isPaused }: JSTypoHunterProps) => {
           currentLevel: nextLevel
         }));
       }
-      setIsLevelTransition(false);
     }, 1000);
   }, [gameStats.currentLevel]);
 
