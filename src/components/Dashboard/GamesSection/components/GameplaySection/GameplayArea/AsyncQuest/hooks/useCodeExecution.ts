@@ -11,25 +11,25 @@ export const useCodeExecution = () => {
   const [output, setOutput] = useState<string[]>([]);
 
   const executeCode = useCallback(async (code: string): Promise<ExecutionResult> => {
+    console.log('Rozpoczęcie wykonywania kodu:', code);
     setIsRunning(true);
     setOutput([]);
 
     try {
-      // Tworzymy bezpieczne środowisko wykonania
       const mockConsole = {
         log: (...args: any[]) => {
+          console.log('Output z kodu:', args);
           setOutput(prev => [...prev, args.map(arg => String(arg)).join(' ')]);
         },
         error: (...args: any[]) => {
+          console.error('Błąd w kodzie:', args);
           setOutput(prev => [...prev, `Error: ${args.map(arg => String(arg)).join(' ')}`]);
         }
       };
 
-      // Tworzymy mock dla fetch i innych API asynchronicznych
       const mockFetch = () => Promise.resolve({ json: () => Promise.resolve({ data: 'mock data' }) });
       const mockTimeout = (cb: Function, ms: number) => setTimeout(cb, Math.min(ms, 1000));
 
-      // Tworzymy kontekst wykonania
       const context = {
         console: mockConsole,
         fetch: mockFetch,
@@ -37,22 +37,21 @@ export const useCodeExecution = () => {
         Promise,
       };
 
-      // Przygotowujemy kod do wykonania
       const wrappedCode = `
         with (context) {
           ${code}
         }
       `;
 
-      // Wykonujemy kod w bezpiecznym środowisku
       const result = await new Function('context', wrappedCode)(context);
+      console.log('Wynik wykonania kodu:', result);
 
       return {
         success: true,
         output: output,
-        result
       };
     } catch (error) {
+      console.error('Błąd podczas wykonywania kodu:', error);
       return {
         success: false,
         output: output,

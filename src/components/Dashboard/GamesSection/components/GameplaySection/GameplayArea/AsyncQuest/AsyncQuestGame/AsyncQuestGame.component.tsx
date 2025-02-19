@@ -1,4 +1,4 @@
-import React, { memo, useState, useCallback } from 'react';
+import React, { memo, useState, useCallback, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import js from 'react-syntax-highlighter/dist/esm/languages/hljs/javascript';
@@ -39,15 +39,22 @@ export const AsyncQuestGame = memo(({
     explanation: string;
     example?: string;
   } | null>(null);
+  const [cursorPosition, setCursorPosition] = useState<number | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const { executeCode, isRunning, output, clearOutput } = useCodeExecution();
 
   const handleCodeChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setUserCode(event.target.value);
+    setCursorPosition(event.target.selectionStart);
     setShowExplanation(false);
     setIsCorrect(null);
     setErrorHint(null);
     clearOutput();
+  };
+
+  const handleSelect = (event: React.SyntheticEvent<HTMLTextAreaElement>) => {
+    setCursorPosition((event.target as HTMLTextAreaElement).selectionStart);
   };
 
   const handleCodeRun = useCallback(async () => {
@@ -102,6 +109,13 @@ export const AsyncQuestGame = memo(({
 
   const CategoryIcon = getCategoryIcon(currentChallenge.category);
 
+  useEffect(() => {
+    if (textareaRef.current && cursorPosition !== null) {
+      textareaRef.current.selectionStart = cursorPosition;
+      textareaRef.current.selectionEnd = cursorPosition;
+    }
+  }, [cursorPosition]);
+
   return (
     <motion.div
       key={currentLevel}
@@ -139,10 +153,13 @@ export const AsyncQuestGame = memo(({
         <div className="space-y-4">
           <div className="relative bg-dark-900 rounded-lg overflow-hidden">
             <textarea
+              ref={textareaRef}
               value={userCode}
               onChange={handleCodeChange}
-              className="absolute inset-0 w-full h-full opacity-0 resize-none z-10 font-mono p-4"
+              onSelect={handleSelect}
+              className="absolute inset-0 w-full h-full opacity-0 resize-none z-10 font-mono p-4 caret-js"
               spellCheck="false"
+              style={{ caretColor: '#f7df1e' }}
             />
             <SyntaxHighlighter
               language="javascript"
@@ -151,9 +168,29 @@ export const AsyncQuestGame = memo(({
                 background: 'transparent',
                 padding: '1.5rem',
                 minHeight: '200px',
+                position: 'relative',
+                caretColor: '#f7df1e',
               }}
               wrapLines={true}
               showLineNumbers={true}
+              lineProps={(lineNumber) => {
+                const lineStartPosition = userCode.split('\n')
+                  .slice(0, lineNumber - 1)
+                  .join('\n').length + (lineNumber > 1 ? 1 : 0);
+                const lineEndPosition = lineStartPosition + userCode.split('\n')[lineNumber - 1].length;
+                const isCursorLine = cursorPosition !== null && 
+                  cursorPosition >= lineStartPosition && 
+                  cursorPosition <= lineEndPosition;
+                
+                return {
+                  style: {
+                    display: 'block',
+                    backgroundColor: isCursorLine ? 'rgba(255, 255, 255, 0.05)' : 'transparent',
+                    position: 'relative',
+                  },
+                };
+              }}
+              className="syntax-highlighter-with-cursor"
             >
               {userCode}
             </SyntaxHighlighter>
@@ -213,4 +250,4 @@ export const AsyncQuestGame = memo(({
   );
 });
 
-AsyncQuestGame.displayName = 'AsyncQuestGame'; 
+AsyncQuestGame.displayName = 'AsyncQuestGame';
