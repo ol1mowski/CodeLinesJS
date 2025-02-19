@@ -3,6 +3,10 @@ export type CodeChallenge = {
   code: string;
   error: string;
   correct: string;
+  hint?: string;
+  explanation?: string;
+  category: 'syntax' | 'naming' | 'logic';
+  difficulty: 'easy' | 'medium' | 'hard';
 }
 
 export type GameState = {
