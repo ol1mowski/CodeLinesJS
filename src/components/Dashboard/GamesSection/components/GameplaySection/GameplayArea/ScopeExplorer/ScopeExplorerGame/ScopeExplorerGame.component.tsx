@@ -12,7 +12,7 @@ SyntaxHighlighter.registerLanguage('javascript', js);
 
 type ScopeExplorerGameProps = {
   currentChallenge: ScopeChallenge;
-  onScoreUpdate: (points: number) => void;
+  onScoreUpdate: (points: number, category: 'scope' | 'closure' | 'hoisting') => void;
   onLevelComplete: () => void;
   currentLevel: number;
   totalLevels: number;
@@ -40,7 +40,7 @@ export const ScopeExplorerGame = memo(({
     setShowExplanation(true);
 
     if (correct) {
-      onScoreUpdate(currentChallenge.points || 10);
+      onScoreUpdate(currentChallenge.points || 10, currentChallenge.category);
       setTimeout(() => {
         onLevelComplete();
         setSelectedAnswer(null);
@@ -80,8 +80,11 @@ export const ScopeExplorerGame = memo(({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+      key={currentLevel}
+      initial={{ opacity: 0, x: 50 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -50 }}
+      transition={{ duration: 0.3 }}
       className="w-full space-y-6"
     >
       <ScopeExplorerProgress 

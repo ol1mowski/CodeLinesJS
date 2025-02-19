@@ -13,6 +13,8 @@ type ScopeExplorerSummaryProps = {
   score: number;
   timeElapsed: number;
   challenges: ScopeChallenge[];
+  correctAnswers: number;
+  categoryStats: Record<'scope' | 'closure' | 'hoisting', CategoryStats>;
   onRestart: () => void;
 };
 
@@ -20,6 +22,8 @@ export const ScopeExplorerSummary = memo(({
   score, 
   timeElapsed, 
   challenges,
+  correctAnswers,
+  categoryStats,
   onRestart 
 }: ScopeExplorerSummaryProps) => {
   const stats = useMemo(() => {
@@ -63,7 +67,7 @@ export const ScopeExplorerSummary = memo(({
       className="p-6 bg-dark-800/50 border border-js/10 rounded-lg"
     >
       <h2 className="text-2xl font-bold text-js mb-6 text-center">
-        Gratulacje!
+        {correctAnswers === challenges.length ? 'Gratulacje!' : 'Koniec gry!'}
       </h2>
 
       <div className="grid grid-cols-2 gap-4 mb-6">
@@ -72,6 +76,9 @@ export const ScopeExplorerSummary = memo(({
           <div>
             <div className="text-sm text-gray-400">Wynik końcowy</div>
             <div className="text-lg font-bold text-js">{score} punktów</div>
+            <div className="text-xs text-gray-500">
+              Poprawne odpowiedzi: {correctAnswers}/{challenges.length}
+            </div>
           </div>
         </div>
 
@@ -86,7 +93,7 @@ export const ScopeExplorerSummary = memo(({
 
       <div className="space-y-4 mb-6">
         <h3 className="text-lg font-semibold text-js">Statystyki kategorii:</h3>
-        {Object.entries(stats).map(([category, stat]) => {
+        {Object.entries(categoryStats).map(([category, stat]) => {
           const Icon = getCategoryIcon(category);
           return (
             <div key={category} className="flex items-center justify-between p-3 bg-dark-900/50 rounded-lg">
