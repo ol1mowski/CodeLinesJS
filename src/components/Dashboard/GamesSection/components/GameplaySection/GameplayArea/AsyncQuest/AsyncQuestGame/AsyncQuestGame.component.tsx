@@ -8,6 +8,8 @@ import { AsyncQuestProgress } from '../AsyncQuestProgress/AsyncQuestProgress.com
 import { getCategoryIcon, getCategoryLabel, getDifficultyColor, getDifficultyLabel } from './AsyncQuestGame.utils';
 import { useCodeExecution } from '../hooks/useCodeExecution';
 import { validateAsyncCode } from '../utils/codeValidation';
+import { AsyncQuestHint } from '../AsyncQuestHint/AsyncQuestHint.component';
+import { getErrorHint } from '../utils/errorHints';
 
 SyntaxHighlighter.registerLanguage('javascript', js);
 
@@ -33,16 +35,24 @@ export const AsyncQuestGame = memo(({
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [wrongAttempts, setWrongAttempts] = useState(0);
   const [showHint, setShowHint] = useState(false);
+  const [errorHint, setErrorHint] = useState<{
+    message: string;
+    explanation: string;
+    example?: string;
+  } | null>(null);
 
   const { executeCode, isRunning, output, clearOutput } = useCodeExecution();
 
   const handleCodeRun = useCallback(async () => {
     clearOutput();
+    setErrorHint(null);
     
     // Najpierw sprawdzamy poprawność składni
     const isValid = validateAsyncCode(userCode, currentChallenge.correct);
     
     if (!isValid) {
+      const hint = getErrorHint(userCode, currentChallenge.category);
+      setErrorHint(hint);
       setIsCorrect(false);
       setShowExplanation(true);
       setWrongAttempts(prev => {
@@ -140,13 +150,19 @@ export const AsyncQuestGame = memo(({
             </SyntaxHighlighter>
           </div>
 
-          {output.length > 0 && (
-            <div className="bg-dark-900/50 rounded-lg p-4 font-mono text-sm">
-              <div className="text-gray-400 mb-2">Console output:</div>
-              {output.map((line, index) => (
-                <div key={index} className="text-gray-300">{line}</div>
-              ))}
-            </div>
+          {showExplanation && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="space-y-4"
+            >
+              <AsyncQuestHint
+                type={isCorrect ? 'hint' : 'error'}
+                message={isCorrect ? 'Świetnie! Rozwiązanie jest poprawne.' : currentChallenge.error}
+                explanation={isCorrect ? undefined : errorHint?.explanation}
+                code={isCorrect ? undefined : errorHint?.example}
+              />
+            </motion.div>
           )}
         </div>
       </div>
@@ -163,32 +179,25 @@ export const AsyncQuestGame = memo(({
         {isRunning ? 'Wykonywanie...' : 'Uruchom kod'}
       </button>
 
-      {showExplanation && (
+      {showHint && !isCorrect && errorHint && (
+        <AsyncQuestHint
+          type="hint"
+          message={errorHint.message}
+          code={errorHint.example}
+          explanation={errorHint.explanation}
+        />
+      )}
+
+      {output.length > 0 && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className={`p-4 rounded-lg ${
-            isCorrect 
-              ? 'bg-green-500/20 border border-green-500/30' 
-              : 'bg-red-500/20 border border-red-500/30'
-          }`}
+          className="bg-dark-900/50 rounded-lg p-4 font-mono text-sm"
         >
-          <p className={`text-sm ${isCorrect ? 'text-green-400' : 'text-red-400'}`}>
-            {isCorrect ? 'Świetnie! ' : 'Spróbuj jeszcze raz. '}
-            {currentChallenge.error}
-          </p>
-        </motion.div>
-      )}
-
-      {showHint && !isCorrect && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="p-3 bg-js/10 border border-js/20 rounded-lg"
-        >
-          <p className="text-sm text-js">
-            <span className="font-medium">Podpowiedź:</span> Zwróć uwagę na poprawną składnię asynchronicznych operacji.
-          </p>
+          <div className="text-gray-400 mb-2">Console output:</div>
+          {output.map((line, index) => (
+            <div key={index} className="text-gray-300">{line}</div>
+          ))}
         </motion.div>
       )}
     </motion.div>
