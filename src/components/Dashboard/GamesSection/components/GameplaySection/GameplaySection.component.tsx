@@ -1,16 +1,15 @@
-import React from 'react';
-import { memo, useState } from 'react';
-import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
-import { FaArrowLeft, FaQuestion, FaRedo } from 'react-icons/fa';
-import { Game } from '../../../../../types/games.types';
-import { GameplayHeader } from './GameplayHeader/GameplayHeader.component';
-import { GameplayArea } from './GameplayArea/GameplayArea.component';
-import { ConfirmationModal } from '../ConfirmationModal/ConfirmationModal.component';
-import { useGameplay } from '../../hooks/useGameplay';
+import React from "react";
+import { memo, useState } from "react";
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { FaArrowLeft, FaQuestion, FaRedo } from "react-icons/fa";
+import { Game } from "../../../../../types/games.types";
+import { GameplayHeader } from "./GameplayHeader/GameplayHeader.component";
+import { GameplayArea } from "./GameplayArea/GameplayArea.component";
+import { ConfirmationModal } from "../ConfirmationModal/ConfirmationModal.component";
+import { useGameplay } from "../../hooks/useGameplay";
 
-
-type ModalType = 'quit' | 'restart' | null;
+type ModalType = "quit" | "restart" | null;
 
 type GameplaySectionProps = {
   game: Game;
@@ -23,14 +22,14 @@ export const GameplaySection = memo(({ game }: GameplaySectionProps) => {
 
   const handleBackToMenu = () => {
     if (controls.isPaused) {
-      navigate('/dashboard/play');
+      navigate("/dashboard/play");
     } else {
-      setActiveModal('quit');
+      setActiveModal("quit");
     }
   };
 
   const handleRestart = () => {
-    setActiveModal('restart');
+    setActiveModal("restart");
   };
 
   const handleShowHelp = () => {
@@ -38,7 +37,7 @@ export const GameplaySection = memo(({ game }: GameplaySectionProps) => {
   };
 
   const handleConfirmQuit = () => {
-    navigate('/dashboard/play');
+    navigate("/dashboard/play");
   };
 
   const handleConfirmRestart = () => {
@@ -92,7 +91,7 @@ export const GameplaySection = memo(({ game }: GameplaySectionProps) => {
           </div>
         </div>
 
-        <GameplayHeader 
+        <GameplayHeader
           title={game.title}
           isPaused={controls.isPaused}
           onPauseToggle={actions.togglePause}
@@ -100,21 +99,18 @@ export const GameplaySection = memo(({ game }: GameplaySectionProps) => {
 
         <div className="mt-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
           <div className="lg:col-span-12">
-            <GameplayArea 
-              isPaused={controls.isPaused}
-              isFullscreen={controls.isFullscreen}
-            />
+            <GameplayArea />
           </div>
         </div>
 
-        {(activeModal === 'quit' || activeModal === 'restart') && (
+        {(activeModal === "quit" || activeModal === "restart") && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ 
+            transition={{
               duration: 0.15,
-              ease: "easeInOut"
+              ease: "easeInOut",
             }}
             className="fixed inset-0 bg-black/70 backdrop-blur-[2px] flex items-center justify-center p-4 z-50"
           >
@@ -122,14 +118,14 @@ export const GameplaySection = memo(({ game }: GameplaySectionProps) => {
               initial={{ opacity: 0, y: 10, scale: 0.98 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 10, scale: 0.98 }}
-              transition={{ 
+              transition={{
                 duration: 0.2,
                 ease: "easeOut",
-                delay: 0.05
+                delay: 0.05,
               }}
               className="relative max-w-md w-full"
             >
-              {activeModal === 'quit' && (
+              {activeModal === "quit" && (
                 <ConfirmationModal
                   title="Opuść grę"
                   message="Czy na pewno chcesz opuścić grę? Twój postęp zostanie utracony."
@@ -140,7 +136,7 @@ export const GameplaySection = memo(({ game }: GameplaySectionProps) => {
                 />
               )}
 
-              {activeModal === 'restart' && (
+              {activeModal === "restart" && (
                 <ConfirmationModal
                   title="Restart gry"
                   message="Czy na pewno chcesz zrestartować grę? Twój postęp zostanie utracony."
@@ -159,9 +155,9 @@ export const GameplaySection = memo(({ game }: GameplaySectionProps) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ 
+            transition={{
               duration: 0.15,
-              ease: "easeInOut"
+              ease: "easeInOut",
             }}
             className="fixed inset-0 bg-black/70 backdrop-blur-[2px] flex items-center justify-center p-4 z-50"
           >
@@ -169,10 +165,10 @@ export const GameplaySection = memo(({ game }: GameplaySectionProps) => {
               initial={{ opacity: 0, y: 10, scale: 0.98 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 10, scale: 0.98 }}
-              transition={{ 
+              transition={{
                 duration: 0.2,
                 ease: "easeOut",
-                delay: 0.05
+                delay: 0.05,
               }}
               className="bg-dark-900 border border-js/10 rounded-xl p-6 max-w-2xl w-full shadow-2xl"
             >
@@ -180,7 +176,9 @@ export const GameplaySection = memo(({ game }: GameplaySectionProps) => {
                 <h2 className="text-2xl font-bold text-js mb-4">Jak grać?</h2>
                 <div className="prose prose-invert">
                   <p className="text-gray-300">{game.description}</p>
-                  <h3 className="text-lg font-semibold text-js mt-4 mb-2">Sterowanie:</h3>
+                  <h3 className="text-lg font-semibold text-js mt-4 mb-2">
+                    Sterowanie:
+                  </h3>
                   <ul className="text-gray-300 space-y-2">
                     <li>Spacja - Pauza</li>
                     <li>R - Restart gry</li>
@@ -205,4 +203,4 @@ export const GameplaySection = memo(({ game }: GameplaySectionProps) => {
   );
 });
 
-GameplaySection.displayName = 'GameplaySection'; 
+GameplaySection.displayName = "GameplaySection";
