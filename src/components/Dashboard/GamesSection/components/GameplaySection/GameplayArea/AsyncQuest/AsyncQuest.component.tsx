@@ -7,7 +7,7 @@ import { AsyncQuestStats } from './AsyncQuestStats/AsyncQuestStats.component';
 import { AsyncQuestSummary } from './AsyncQuestSummary/AsyncQuestSummary.component';
 import { AsyncQuestGame } from './AsyncQuestGame/AsyncQuestGame.component';
 
-export const AsyncQuest = memo(({ isPaused }: { isPaused: boolean }) => {
+export const AsyncQuest = memo(({ isPaused = false }: { isPaused?: boolean }) => {
   const [gameStats, setGameStats] = useState<GameStats>({
     currentLevel: 1,
     totalLevels: asyncChallenges.length,

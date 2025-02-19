@@ -7,11 +7,7 @@ import { ScopeExplorerStats } from './ScopeExplorerStats/ScopeExplorerStats.comp
 import { ScopeExplorerGame } from './ScopeExplorerGame/ScopeExplorerGame.component';
 import { ScopeExplorerSummary } from './ScopeExplorerSummary/ScopeExplorerSummary.component';
 
-type ScopeExplorerProps = {
-  isPaused: boolean;
-};
-
-export const ScopeExplorer = memo(({ isPaused }: ScopeExplorerProps) => {
+export const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean }) => {
   const [gameStats, setGameStats] = useState<GameStats>({
     currentLevel: 1,
     totalLevels: scopeChallenges.length,

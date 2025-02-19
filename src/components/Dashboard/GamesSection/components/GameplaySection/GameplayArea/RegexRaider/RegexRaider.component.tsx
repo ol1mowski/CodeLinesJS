@@ -7,7 +7,7 @@ import { RegexRaiderGame } from './RegexRaiderGame/RegexRaiderGame.component';
 import { regexChallenges } from '../../../../data/regexChallenges.data';
 import { RegexRaiderSummary } from './RegexRaiderSummary/RegexRaiderSummary.component';
 
-export const RegexRaider = memo(({ isPaused }: { isPaused: boolean }) => {
+export const RegexRaider = memo(({ isPaused = false }: { isPaused?: boolean }) => {
   const [gameStats, setGameStats] = useState<GameStats>({
     currentLevel: 1,
     totalLevels: regexChallenges.length,

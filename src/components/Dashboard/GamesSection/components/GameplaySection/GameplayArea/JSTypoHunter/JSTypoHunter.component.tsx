@@ -23,7 +23,7 @@ type JSTypoHunterProps = {
   isPaused: boolean;
 };
 
-export const JSTypoHunter = memo(({ isPaused }: JSTypoHunterProps) => {
+export const JSTypoHunter = memo(({ isPaused = false }: { isPaused?: boolean }) => {
   const [gameStats, setGameStats] = useState<GameStats>({
     currentLevel: 1,
     totalLevels: challenges.length,
