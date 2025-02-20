@@ -30,26 +30,15 @@ const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean }) => {
   const [isGameOver, setIsGameOver] = useState(false);
   const [finalTime, setFinalTime] = useState(0);
 
-  const { timeElapsed, resetTimer } = useGameTimer({
-    maxTime: gameStats.maxTime,
+  const { timeElapsed, resetTimer, startTimer, stopTimer } = useGameTimer({
+    maxTime: gameContent?.estimatedTime ? gameContent.estimatedTime * 60 : 300,
     onTimeEnd: () => {
       setIsGameOver(true);
       setFinalTime(timeElapsed);
-      resetTimer();
+      stopTimer();
     },
     isPaused,
   });
-
-  const handleTimeEnd = useCallback(() => {
-    setIsGameOver(true);
-    resetTimer();
-  }, [resetTimer]);
-
-  const handleGameOver = useCallback(() => {
-    setIsGameOver(true);
-    setFinalTime(timeElapsed);
-    resetTimer();
-  }, [resetTimer, timeElapsed]);
 
   useEffect(() => {
     setGameStats(prev => ({
@@ -123,19 +112,26 @@ const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean }) => {
       totalLevels: gameContent?.gameData.length || 0,
       score: 0,
       timeElapsed: 0,
-      maxTime: 300,
+      maxTime: gameContent?.estimatedTime ? gameContent.estimatedTime * 60 : 300,
       correctAnswers: 0,
       categoryStats: initialCategoryStats
     });
     setIsGameOver(false);
     setFinalTime(0);
     resetTimer();
-  }, [resetTimer, gameContent]);
+    startTimer();
+  }, [resetTimer, startTimer, gameContent]);
 
   const handleStartGame = () => {
     setIsGameStarted(true);
-    resetTimer();
+    startTimer();
   };
+
+  const handleGameOver = useCallback(() => {
+    setIsGameOver(true);
+    setFinalTime(timeElapsed);
+    stopTimer();
+  }, [timeElapsed, stopTimer]);
 
   if (isLoading) return <div>Ładowanie...</div>;
   if (error) return <div>Błąd: {error.message}</div>;

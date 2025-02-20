@@ -70,7 +70,14 @@ export const JSTypoHunterGame = memo(({
   const handleSubmit = useCallback(() => {
     if (!selectedText || !userInput) return;
 
-    const isCorrect = userInput === currentChallenge.correctAnswer;
+    let correctedCode = currentChallenge.code;
+    
+    if (selectedText && userInput) {
+      correctedCode = correctedCode.replace(selectedText, userInput);
+    }
+
+    const expectedCode = currentChallenge.code.replace(currentChallenge.error, currentChallenge.correct);
+    const isCorrect = correctedCode.replace(/\s+/g, '') === expectedCode.replace(/\s+/g, '');
 
     if (isCorrect) {
       setFeedback({ type: 'success', message: 'Świetnie! Poprawna odpowiedź!' });
