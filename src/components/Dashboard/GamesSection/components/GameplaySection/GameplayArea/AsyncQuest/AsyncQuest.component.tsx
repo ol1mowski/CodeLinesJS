@@ -18,7 +18,7 @@ const AsyncQuest = memo(({ isPaused = false }: { isPaused?: boolean }) => {
     totalLevels: 0,
     score: 0,
     timeElapsed: 0,
-    maxTime: 300,
+    maxTime: gameContent?.estimatedTime ? gameContent.estimatedTime * 60 : 300,
     correctAnswers: 0,
     categoryStats: {
       promises: { total: 0, correct: 0, points: 0 },
@@ -31,7 +31,7 @@ const AsyncQuest = memo(({ isPaused = false }: { isPaused?: boolean }) => {
   const [finalTime, setFinalTime] = useState(0);
 
   const { timeElapsed, resetTimer, startTimer, stopTimer } = useGameTimer({
-    maxTime: gameStats.maxTime,
+    maxTime: gameContent?.estimatedTime ? gameContent.estimatedTime * 60 : 300,
     onTimeEnd: () => {
       setIsGameOver(true);
       setFinalTime(timeElapsed);
@@ -79,7 +79,14 @@ const AsyncQuest = memo(({ isPaused = false }: { isPaused?: boolean }) => {
   };
 
   const handleLevelComplete = () => {
-    setGameStats(prev => ({ ...prev, currentLevel: prev.currentLevel + 1 }));
+    const nextLevel = gameStats.currentLevel + 1;
+    if (nextLevel > gameStats.totalLevels) {
+      setIsGameOver(true);
+      setFinalTime(timeElapsed);
+      stopTimer();
+    } else {
+      setGameStats(prev => ({ ...prev, currentLevel: nextLevel }));
+    }
   };
 
   const handleGameOver = () => {
@@ -89,18 +96,28 @@ const AsyncQuest = memo(({ isPaused = false }: { isPaused?: boolean }) => {
   };
 
   const handleRestart = () => {
+    // Inicjalizujemy początkowe statystyki kategorii
+    const initialCategoryStats = {
+      promises: { total: 0, correct: 0, points: 0 },
+      'async-await': { total: 0, correct: 0, points: 0 },
+      callbacks: { total: 0, correct: 0, points: 0 }
+    };
+
+    // Aktualizujemy total dla każdej kategorii na podstawie gameContent
+    gameContent?.gameData.forEach(challenge => {
+      if (challenge.category) {
+        initialCategoryStats[challenge.category].total++;
+      }
+    });
+
     setGameStats({
       currentLevel: 1,
-      totalLevels: gameStats.totalLevels,
+      totalLevels: gameContent?.gameData.length || 0,
       score: 0,
       timeElapsed: 0,
-      maxTime: 300,
+      maxTime: gameContent?.estimatedTime ? gameContent.estimatedTime * 60 : 300,
       correctAnswers: 0,
-      categoryStats: {
-        promises: { total: 0, correct: 0, points: 0 },
-        'async-await': { total: 0, correct: 0, points: 0 },
-        callbacks: { total: 0, correct: 0, points: 0 }
-      }
+      categoryStats: initialCategoryStats // Używamy zainicjalizowanych statystyk
     });
     setIsGameOver(false);
     resetTimer();
