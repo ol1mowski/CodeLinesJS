@@ -1,8 +1,9 @@
-import React, { memo } from 'react';
+import React, { memo, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FaStar, FaClock } from 'react-icons/fa';
 import { AsyncChallenge } from '../../../../../types/asyncQuest.types';
 import { CategoryProgress } from '../CategoryProgress/CategoryProgress.component';
+import { useUpdatePoints } from '../../../../../hooks/useUpdatePoints';
 
 type AsyncQuestSummaryProps = {
   score: number;
@@ -25,6 +26,12 @@ export const AsyncQuestSummary = memo(({
   categoryStats,
   onRestart 
 }: AsyncQuestSummaryProps) => {
+  const { updatePoints } = useUpdatePoints();
+
+  useEffect(() => {
+    updatePoints(score);
+  }, [score, updatePoints]);
+
   const formatTime = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;

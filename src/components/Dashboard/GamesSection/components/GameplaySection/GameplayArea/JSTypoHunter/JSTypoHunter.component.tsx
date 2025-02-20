@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { GameStats } from '../../../../types/jsTypoHunter.types';
 import { JSTypoHunterStats } from './JSTypoHunterStats/JSTypoHunterStats.component';
 import { JSTypoHunterGame } from './JSTypoHunterGame/JSTypoHunterGame.component';
-import { challenges } from '../../../../data/challenges.data';
 import { useGameTimer } from './hooks/useGameTimer';
 import { useGamesQuery } from '../../../../hooks/useGamesQuery';
 
@@ -49,8 +48,8 @@ export const JSTypoHunter = memo(({ isPaused = false }: { isPaused?: boolean }) 
   });
 
   const handleScoreUpdate = useCallback((points: number) => {
-    const currentChallenge = challenges[gameStats.currentLevel - 1];
-    const difficultyPoints = getDifficultyPoints(currentChallenge.difficulty);
+    const currentChallenge = gameContent?.gameData[gameStats.currentLevel - 1];
+    const difficultyPoints = getDifficultyPoints(currentChallenge?.difficulty || 'easy');
     const totalPoints = points + difficultyPoints;
 
     setGameStats(prev => ({
@@ -62,7 +61,7 @@ export const JSTypoHunter = memo(({ isPaused = false }: { isPaused?: boolean }) 
   const handleLevelComplete = useCallback(() => {
     setTimeout(() => {
       const nextLevel = gameStats.currentLevel + 1;
-      if (nextLevel > challenges.length) {
+      if (nextLevel > (gameContent?.gameData.length || 0)) {
         setIsGameOver(true);
       } else {
         setGameStats(prev => ({
@@ -76,7 +75,7 @@ export const JSTypoHunter = memo(({ isPaused = false }: { isPaused?: boolean }) 
   const handleRestart = useCallback(() => {
     setGameStats({
       currentLevel: 1,
-      totalLevels: challenges.length,
+      totalLevels: gameContent?.gameData.length || 0,
       score: 0,
       timeElapsed: 0,
       maxTime: 300
@@ -122,7 +121,7 @@ export const JSTypoHunter = memo(({ isPaused = false }: { isPaused?: boolean }) 
             className="p-6 bg-dark-800/50 border border-js/10 rounded-lg text-center"
           >
             <h2 className="text-2xl font-bold text-js mb-4">
-              {gameStats.currentLevel > challenges.length ? 'Gratulacje!' : 'Koniec gry!'}
+              {gameStats.currentLevel > (gameContent?.gameData.length || 0) ? 'Gratulacje!' : 'Koniec gry!'}
             </h2>
             <p className="text-gray-400 mb-6">
               Twój wynik: {gameStats.score} punktów
@@ -143,7 +142,7 @@ export const JSTypoHunter = memo(({ isPaused = false }: { isPaused?: boolean }) 
             transition={{ duration: 0.3 }}
           >
             <JSTypoHunterGame 
-              currentChallenge={challenges[gameStats.currentLevel - 1]}
+              currentChallenge={gameContent?.gameData[gameStats.currentLevel - 1]}
               onScoreUpdate={handleScoreUpdate}
               onLevelComplete={handleLevelComplete}
             />
