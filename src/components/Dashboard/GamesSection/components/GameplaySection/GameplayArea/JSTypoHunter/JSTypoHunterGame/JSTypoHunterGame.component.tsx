@@ -13,8 +13,9 @@ SyntaxHighlighter.registerLanguage('javascript', js);
 
 type JSTypoHunterGameProps = {
   currentChallenge: CodeChallenge;
-  onScoreUpdate: (newScore: number) => void;
+  onScoreUpdate: (points: number) => void;
   onLevelComplete: () => void;
+  onIncorrectAnswer: () => void;
 };
 
 const getCategoryIcon = (category: 'syntax' | 'naming' | 'logic') => {
@@ -42,7 +43,8 @@ const getDifficultyColor = (difficulty: 'easy' | 'medium' | 'hard') => {
 export const JSTypoHunterGame = memo(({ 
   currentChallenge,
   onScoreUpdate,
-  onLevelComplete 
+  onLevelComplete,
+  onIncorrectAnswer
 }: JSTypoHunterGameProps) => {
   const [selectedText, setSelectedText] = useState('');
   const [isEditing, setIsEditing] = useState(false);
@@ -66,40 +68,27 @@ export const JSTypoHunterGame = memo(({
   }, []);
 
   const handleSubmit = useCallback(() => {
-    let correctedCode = currentChallenge.code;
-    
-    if (selectedText && userInput) {
-      correctedCode = correctedCode.replace(selectedText, userInput);
-    }
+    if (!selectedText || !userInput) return;
 
-    const expectedCode = currentChallenge.code.replace(currentChallenge.error, currentChallenge.correct);
-    const isCorrect = correctedCode.replace(/\s+/g, '') === expectedCode.replace(/\s+/g, '');
+    const isCorrect = userInput === currentChallenge.correctAnswer;
 
     if (isCorrect) {
-      setFeedback({
-        type: 'success',
-        message: currentChallenge.explanation || 'Świetnie! Znalazłeś i poprawiłeś błąd!'
-      });
+      setFeedback({ type: 'success', message: 'Świetnie! Poprawna odpowiedź!' });
       onScoreUpdate(10);
       setTimeout(() => {
         onLevelComplete();
+        setSelectedText('');
+        setUserInput('');
+        setIsEditing(false);
         setFeedback({ type: null, message: '' });
-        setShowHint(false);
       }, 1500);
     } else {
-      setFeedback({
-        type: 'error',
-        message: 'Spróbuj ponownie!'
-      });
-      setShowHint(true);
+      setFeedback({ type: 'error', message: 'Niestety, to nie jest prawidłowa odpowiedź.' });
       setTimeout(() => {
-        setFeedback({ type: null, message: '' });
+        onIncorrectAnswer();
       }, 1500);
     }
-    setIsEditing(false);
-    setSelectedText('');
-    setUserInput('');
-  }, [selectedText, userInput, currentChallenge, onScoreUpdate, onLevelComplete]);
+  }, [selectedText, userInput, currentChallenge, onScoreUpdate, onLevelComplete, onIncorrectAnswer]);
 
   const handleCancel = useCallback(() => {
     setIsEditing(false);
