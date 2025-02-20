@@ -4,13 +4,18 @@ import { GameStats } from '../../../../types/regexRaider.types';
 import { useGameTimer } from '../JSTypoHunter/hooks/useGameTimer';
 import { RegexRaiderStats } from './RegexRaiderStats/RegexRaiderStats.component';
 import { RegexRaiderGame } from './RegexRaiderGame/RegexRaiderGame.component';
-import { regexChallenges } from '../../../../data/regexChallenges.data';
 import { RegexRaiderSummary } from './RegexRaiderSummary/RegexRaiderSummary.component';
+import { useGamesQuery } from '../../../../hooks/useGamesQuery';
+import { useParams } from 'react-router-dom';
 
 export const RegexRaider = memo(({ isPaused = false }: { isPaused?: boolean }) => {
+  const { slug } = useParams();
+  const { data, isLoading, error } = useGamesQuery();
+  const gameContent = data?.games.find(game => game.slug === 'regex-raider');
+
   const [gameStats, setGameStats] = useState<GameStats>({
     currentLevel: 1,
-    totalLevels: regexChallenges.length,
+    totalLevels: 0,
     score: 0,
     timeElapsed: 0,
     maxTime: 300,
@@ -31,15 +36,24 @@ export const RegexRaider = memo(({ isPaused = false }: { isPaused?: boolean }) =
   });
 
   useEffect(() => {
+    if (gameContent) {
+      setGameStats(prev => ({
+        ...prev,
+        totalLevels: gameContent.gameData.length
+      }));
+    }
+  }, [gameContent]);
+
+  useEffect(() => {
     startTimer();
     return () => stopTimer();
   }, [startTimer, stopTimer]);
 
   useEffect(() => {
-    if (!isGameOver && !isPaused) {
+    if (!isGameOver) {
       setGameStats(prev => ({ ...prev, timeElapsed }));
     }
-  }, [timeElapsed, isGameOver, isPaused]);
+  }, [timeElapsed, isGameOver]);
 
   const handleScoreUpdate = useCallback((points: number) => {
     setGameStats(prev => ({
@@ -64,7 +78,7 @@ export const RegexRaider = memo(({ isPaused = false }: { isPaused?: boolean }) =
   const handleRestart = useCallback(() => {
     setGameStats({
       currentLevel: 1,
-      totalLevels: regexChallenges.length,
+      totalLevels: gameStats.totalLevels,
       score: 0,
       timeElapsed: 0,
       maxTime: 300,
@@ -80,6 +94,18 @@ export const RegexRaider = memo(({ isPaused = false }: { isPaused?: boolean }) =
     setFinalTime(timeElapsed);
     stopTimer();
   }, [timeElapsed, stopTimer]);
+
+  if (isLoading) {
+    return <div>Ładowanie...</div>;
+  }
+
+  if (error) {
+    return <div>Błąd: {error.message}</div>;
+  }
+
+  if (!gameContent) {
+    return null;
+  }
 
   return (
     <motion.div

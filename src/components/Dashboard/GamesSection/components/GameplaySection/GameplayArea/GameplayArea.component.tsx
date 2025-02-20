@@ -1,6 +1,7 @@
 import React, { memo } from 'react';
 import { useParams } from 'react-router-dom';
 import { games } from '../../../data/games.data';
+import { GameContentProvider } from '../../../contexts/GameContentContext';
 
 export const GameplayArea = memo(() => {
   const { slug } = useParams<{ slug: string }>();
@@ -18,9 +19,11 @@ export const GameplayArea = memo(() => {
   const GameComponent = game.component;
   
   return (
-    <div className="w-full h-full">
-      <GameComponent />
-    </div>
+    <GameContentProvider>
+      <div className="w-full h-full">
+        <GameComponent />
+      </div>
+    </GameContentProvider>
   );
 });
 

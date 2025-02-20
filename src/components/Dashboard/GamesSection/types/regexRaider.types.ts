@@ -12,4 +12,7 @@ export type RegexChallenge = {
   text: string;
   task: string;
   correctRegex: string;
-}; 
+};
+
+// Dodajemy typ dla danych z API
+export type RegexRaiderGameData = RegexChallenge; 
