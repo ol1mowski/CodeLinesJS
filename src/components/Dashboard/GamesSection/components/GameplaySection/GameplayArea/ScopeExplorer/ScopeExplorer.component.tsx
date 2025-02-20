@@ -7,7 +7,7 @@ import { ScopeExplorerGame } from './ScopeExplorerGame/ScopeExplorerGame.compone
 import { ScopeExplorerSummary } from './ScopeExplorerSummary/ScopeExplorerSummary.component';
 import { useGamesQuery } from '../../../../hooks/useGamesQuery';
 
-export const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean }) => {
+const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean }) => {
   const { data, isLoading, error } = useGamesQuery();
   const gameContent = data?.games.find(game => game.slug === 'scope-explorer');
 
@@ -188,5 +188,7 @@ export const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean })
     </motion.div>
   );
 });
+
+export default ScopeExplorer;
 
 ScopeExplorer.displayName = 'ScopeExplorer'; 

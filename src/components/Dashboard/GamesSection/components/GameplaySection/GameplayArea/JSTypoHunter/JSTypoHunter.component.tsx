@@ -23,7 +23,7 @@ type JSTypoHunterProps = {
   isPaused: boolean;
 };
 
-export const JSTypoHunter = memo(({ isPaused = false }: { isPaused?: boolean }) => {
+const JSTypoHunter = memo(({ isPaused = false }: { isPaused?: boolean }) => {
   const { data, isLoading, error } = useGamesQuery();
   const gameContent = data?.games.find(game => game.slug === 'js-typo-hunter');
 
@@ -154,3 +154,5 @@ export const JSTypoHunter = memo(({ isPaused = false }: { isPaused?: boolean }) 
 });
 
 JSTypoHunter.displayName = 'JSTypoHunter'; 
+
+export default JSTypoHunter;

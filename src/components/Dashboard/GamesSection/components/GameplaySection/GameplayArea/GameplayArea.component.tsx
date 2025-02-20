@@ -1,14 +1,18 @@
-import React, { memo } from 'react';
+import React, { lazy, Suspense, memo } from 'react';
 import { useParams } from 'react-router-dom';
-import { games } from '../../../data/games.data';
 import { GameContentProvider } from '../../../contexts/GameContentContext';
+
+const gameComponents = {
+  'scope-explorer': lazy(() => import('./ScopeExplorer/ScopeExplorer.component')),
+  'js-typo-hunter': lazy(() => import('./JSTypoHunter/JSTypoHunter.component')),
+  'async-quest': lazy(() => import('./AsyncQuest/AsyncQuest.component')),
+  'regex-raider': lazy(() => import('./RegexRaider/RegexRaider.component'))
+};
 
 export const GameplayArea = memo(() => {
   const { slug } = useParams<{ slug: string }>();
   
-  const game = games.find(g => g.id === slug);
-  
-  if (!game) {
+  if (!slug || !gameComponents[slug as keyof typeof gameComponents]) {
     return (
       <div className="w-full h-full flex items-center justify-center">
         <div className="text-gray-400">Gra nie została znaleziona</div>
@@ -16,12 +20,14 @@ export const GameplayArea = memo(() => {
     );
   }
 
-  const GameComponent = game.component;
+  const GameComponent = gameComponents[slug as keyof typeof gameComponents];
   
   return (
     <GameContentProvider>
       <div className="w-full h-full">
-        <GameComponent />
+        <Suspense fallback={<div>Ładowanie gry...</div>}>
+          <GameComponent />
+        </Suspense>
       </div>
     </GameContentProvider>
   );

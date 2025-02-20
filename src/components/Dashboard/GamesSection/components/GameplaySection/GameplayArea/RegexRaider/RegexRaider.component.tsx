@@ -8,7 +8,7 @@ import { RegexRaiderSummary } from './RegexRaiderSummary/RegexRaiderSummary.comp
 import { useGamesQuery } from '../../../../hooks/useGamesQuery';
 import { useParams } from 'react-router-dom';
 
-export const RegexRaider = memo(({ isPaused = false }: { isPaused?: boolean }) => {
+const RegexRaider = memo(({ isPaused = false }: { isPaused?: boolean }) => {
   const { slug } = useParams();
   const { data, isLoading, error } = useGamesQuery();
   const gameContent = data?.games.find(game => game.slug === 'regex-raider');
@@ -143,3 +143,5 @@ export const RegexRaider = memo(({ isPaused = false }: { isPaused?: boolean }) =
 });
 
 RegexRaider.displayName = 'RegexRaider'; 
+
+export default RegexRaider;

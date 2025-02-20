@@ -7,7 +7,7 @@ import { AsyncQuestSummary } from './AsyncQuestSummary/AsyncQuestSummary.compone
 import { AsyncQuestGame } from './AsyncQuestGame/AsyncQuestGame.component';
 import { useGamesQuery } from '../../../../hooks/useGamesQuery';
 
-export const AsyncQuest = memo(({ isPaused = false }: { isPaused?: boolean }) => {
+const AsyncQuest = memo(({ isPaused = false }: { isPaused?: boolean }) => {
   const { data, isLoading, error } = useGamesQuery();
   const gameContent = data?.games.find(game => game.slug === 'async-quest');
 
@@ -165,3 +165,5 @@ export const AsyncQuest = memo(({ isPaused = false }: { isPaused?: boolean }) =>
 });
 
 AsyncQuest.displayName = 'AsyncQuest'; 
+
+export default AsyncQuest;
