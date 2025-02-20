@@ -94,7 +94,8 @@ const JSTypoHunter = memo(({ isPaused = false }: { isPaused?: boolean }) => {
     });
     setIsGameOver(false);
     resetTimer();
-  }, [resetTimer, gameContent]);
+    startTimer();
+  }, [resetTimer, startTimer, gameContent]);
 
   const handleStartGame = () => {
     setIsGameStarted(true);
