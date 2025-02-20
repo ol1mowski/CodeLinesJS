@@ -1,16 +1,21 @@
 import React, { memo, useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GameStats } from '../../../../types/scopeExplorer.types';
-import { scopeChallenges } from '../../../../data/scopeChallenges.data';
 import { useGameTimer } from '../JSTypoHunter/hooks/useGameTimer';
 import { ScopeExplorerStats } from './ScopeExplorerStats/ScopeExplorerStats.component';
 import { ScopeExplorerGame } from './ScopeExplorerGame/ScopeExplorerGame.component';
 import { ScopeExplorerSummary } from './ScopeExplorerSummary/ScopeExplorerSummary.component';
+import { useGamesQuery } from '../../../../hooks/useGamesQuery';
+import { GameIntro } from '../GameIntro/GameIntro.component';
 
-export const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean }) => {
+const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean }) => {
+  const { data, isLoading, error } = useGamesQuery();
+  const gameContent = data?.games.find(game => game.slug === 'scope-explorer');
+  const [isGameStarted, setIsGameStarted] = useState(false);
+
   const [gameStats, setGameStats] = useState<GameStats>({
     currentLevel: 1,
-    totalLevels: scopeChallenges.length,
+    totalLevels: 0,
     score: 0,
     timeElapsed: 0,
     maxTime: 300,
@@ -25,26 +30,15 @@ export const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean })
   const [isGameOver, setIsGameOver] = useState(false);
   const [finalTime, setFinalTime] = useState(0);
 
-  const { timeElapsed, resetTimer } = useGameTimer({
-    maxTime: gameStats.maxTime,
+  const { timeElapsed, resetTimer, startTimer, stopTimer } = useGameTimer({
+    maxTime: gameContent?.estimatedTime ? gameContent.estimatedTime * 60 : 300,
     onTimeEnd: () => {
       setIsGameOver(true);
       setFinalTime(timeElapsed);
-      resetTimer();
+      stopTimer();
     },
     isPaused,
   });
-
-  const handleTimeEnd = useCallback(() => {
-    setIsGameOver(true);
-    resetTimer();
-  }, [resetTimer]);
-
-  const handleGameOver = useCallback(() => {
-    setIsGameOver(true);
-    setFinalTime(timeElapsed);
-    resetTimer();
-  }, [resetTimer, timeElapsed]);
 
   useEffect(() => {
     setGameStats(prev => ({
@@ -60,7 +54,7 @@ export const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean })
       hoisting: { total: 0, correct: 0, points: 0 }
     };
 
-    scopeChallenges.forEach(challenge => {
+    gameContent?.gameData.forEach(challenge => {
       initialCategoryStats[challenge.category].total++;
       initialCategoryStats[challenge.category].points += challenge.points || 0;
     });
@@ -69,7 +63,7 @@ export const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean })
       ...prev,
       categoryStats: initialCategoryStats
     }));
-  }, []);
+  }, [gameContent]);
 
   const handleScoreUpdate = useCallback((points: number, category: 'scope' | 'closure' | 'hoisting') => {
     setGameStats(prev => ({
@@ -88,7 +82,7 @@ export const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean })
 
   const handleLevelComplete = useCallback(() => {
     const nextLevel = gameStats.currentLevel + 1;
-    if (nextLevel > scopeChallenges.length) {
+    if (nextLevel > (gameContent?.gameData.length || 0)) {
       setIsGameOver(true);
       setFinalTime(timeElapsed);
       resetTimer();
@@ -99,7 +93,7 @@ export const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean })
       ...prev,
       currentLevel: nextLevel
     }));
-  }, [gameStats.currentLevel, resetTimer, timeElapsed]);
+  }, [gameStats.currentLevel, resetTimer, timeElapsed, gameContent]);
 
   const handleRestart = useCallback(() => {
     const initialCategoryStats = {
@@ -108,24 +102,44 @@ export const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean })
       hoisting: { total: 0, correct: 0, points: 0 }
     };
 
-    scopeChallenges.forEach(challenge => {
+    gameContent?.gameData.forEach(challenge => {
       initialCategoryStats[challenge.category].total++;
       initialCategoryStats[challenge.category].points += challenge.points || 0;
     });
 
     setGameStats({
       currentLevel: 1,
-      totalLevels: scopeChallenges.length,
+      totalLevels: gameContent?.gameData.length || 0,
       score: 0,
       timeElapsed: 0,
-      maxTime: 300,
+      maxTime: gameContent?.estimatedTime ? gameContent.estimatedTime * 60 : 300,
       correctAnswers: 0,
       categoryStats: initialCategoryStats
     });
     setIsGameOver(false);
     setFinalTime(0);
     resetTimer();
-  }, [resetTimer]);
+    startTimer();
+  }, [resetTimer, startTimer, gameContent]);
+
+  const handleStartGame = () => {
+    setIsGameStarted(true);
+    startTimer();
+  };
+
+  const handleGameOver = useCallback(() => {
+    setIsGameOver(true);
+    setFinalTime(timeElapsed);
+    stopTimer();
+  }, [timeElapsed, stopTimer]);
+
+  if (isLoading) return <div>Ładowanie...</div>;
+  if (error) return <div>Błąd: {error.message}</div>;
+  if (!gameContent) return null;
+
+  if (!isGameStarted) {
+    return <GameIntro gameContent={gameContent} onStart={handleStartGame} />;
+  }
 
   return (
     <motion.div
@@ -150,7 +164,7 @@ export const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean })
               className="w-full"
             >
               <ScopeExplorerGame
-                currentChallenge={scopeChallenges[gameStats.currentLevel - 1]}
+                currentChallenge={gameContent.gameData[gameStats.currentLevel - 1]}
                 onScoreUpdate={handleScoreUpdate}
                 onLevelComplete={handleLevelComplete}
                 currentLevel={gameStats.currentLevel}
@@ -169,7 +183,7 @@ export const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean })
               <ScopeExplorerSummary
                 score={gameStats.score}
                 timeElapsed={finalTime}
-                challenges={scopeChallenges}
+                challenges={gameContent.gameData}
                 correctAnswers={gameStats.correctAnswers}
                 categoryStats={gameStats.categoryStats}
                 onRestart={handleRestart}
@@ -181,5 +195,7 @@ export const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean })
     </motion.div>
   );
 });
+
+export default ScopeExplorer;
 
 ScopeExplorer.displayName = 'ScopeExplorer'; 

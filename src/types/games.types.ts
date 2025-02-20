@@ -1,9 +1,18 @@
 export type GameDifficulty = "easy" | "medium" | "hard";
 
 export type Game = {
-  id: string;
-  rating: number;
+  _id: string;
+  slug: string;
+  id: number;
+  rating: {
+    average: number;
+    count: number;
+  };
+  completions: {
+    count: number;
+  };
   title: string;
+  rewardPoints: number;
   description: string;
   category: string;
   difficulty: GameDifficulty;

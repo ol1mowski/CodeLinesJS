@@ -1,7 +1,8 @@
-import React, { memo, useMemo } from 'react';
+import React, { memo, useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FaClock, FaStar, FaCode, FaCube, FaArrowUp } from 'react-icons/fa';
 import { ScopeChallenge } from '../../../../../types/scopeExplorer.types';
+import { useUpdatePoints } from '../../../../../hooks/useUpdatePoints';
 
 type CategoryStats = {
   total: number;
@@ -26,6 +27,12 @@ export const ScopeExplorerSummary = memo(({
   categoryStats,
   onRestart 
 }: ScopeExplorerSummaryProps) => {
+  const { updatePoints } = useUpdatePoints();
+
+  useEffect(() => {
+    updatePoints(score);
+  }, [score, updatePoints]);
+
   const stats = useMemo(() => {
     const categoryStats: Record<string, CategoryStats> = {
       scope: { total: 0, points: 0, correct: 0 },

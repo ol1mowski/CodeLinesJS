@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { GameplayStats, GameplayControls } from '../types/gameplay.types';
+import { GameplayStats } from '../types/gameplay.types';
 
 export const useGameplay = () => {
   const [stats, setStats] = useState<GameplayStats>({
@@ -9,7 +9,7 @@ export const useGameplay = () => {
     currentLevel: 1,
   });
 
-  const [controls, setControls] = useState<GameplayControls>({
+  const [controls, setControls] = useState({
     isPaused: false,
     isFullscreen: false,
   });

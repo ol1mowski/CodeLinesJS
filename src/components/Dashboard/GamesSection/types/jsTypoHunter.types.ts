@@ -23,4 +23,5 @@ export type GameStats = {
   score: number;
   timeElapsed: number;
   maxTime: number;
+  correctAnswers: number;
 } 

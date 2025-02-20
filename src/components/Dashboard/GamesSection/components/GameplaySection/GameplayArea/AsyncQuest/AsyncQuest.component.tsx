@@ -1,19 +1,24 @@
 import React, { memo, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GameStats } from '../../../../types/asyncQuest.types';
-import { asyncChallenges } from '../../../../data/asyncChallenges.data';
 import { useGameTimer } from '../JSTypoHunter/hooks/useGameTimer';
 import { AsyncQuestStats } from './AsyncQuestStats/AsyncQuestStats.component';
 import { AsyncQuestSummary } from './AsyncQuestSummary/AsyncQuestSummary.component';
 import { AsyncQuestGame } from './AsyncQuestGame/AsyncQuestGame.component';
+import { useGamesQuery } from '../../../../hooks/useGamesQuery';
+import { GameIntro } from '../GameIntro/GameIntro.component';
 
-export const AsyncQuest = memo(({ isPaused = false }: { isPaused?: boolean }) => {
+const AsyncQuest = memo(({ isPaused = false }: { isPaused?: boolean }) => {
+  const { data, isLoading, error } = useGamesQuery();
+  const gameContent = data?.games.find(game => game.slug === 'async-quest');
+  const [isGameStarted, setIsGameStarted] = useState(false);
+
   const [gameStats, setGameStats] = useState<GameStats>({
     currentLevel: 1,
-    totalLevels: asyncChallenges.length,
+    totalLevels: 0,
     score: 0,
     timeElapsed: 0,
-    maxTime: 300,
+    maxTime: gameContent?.estimatedTime ? gameContent.estimatedTime * 60 : 300,
     correctAnswers: 0,
     categoryStats: {
       promises: { total: 0, correct: 0, points: 0 },
@@ -26,7 +31,7 @@ export const AsyncQuest = memo(({ isPaused = false }: { isPaused?: boolean }) =>
   const [finalTime, setFinalTime] = useState(0);
 
   const { timeElapsed, resetTimer, startTimer, stopTimer } = useGameTimer({
-    maxTime: gameStats.maxTime,
+    maxTime: gameContent?.estimatedTime ? gameContent.estimatedTime * 60 : 300,
     onTimeEnd: () => {
       setIsGameOver(true);
       setFinalTime(timeElapsed);
@@ -34,6 +39,15 @@ export const AsyncQuest = memo(({ isPaused = false }: { isPaused?: boolean }) =>
     },
     isPaused,
   });
+
+  useEffect(() => {
+    if (gameContent) {
+      setGameStats(prev => ({
+        ...prev,
+        totalLevels: gameContent.gameData.length
+      }));
+    }
+  }, [gameContent]);
 
   useEffect(() => {
     if (!isGameOver && !isPaused) {
@@ -65,7 +79,14 @@ export const AsyncQuest = memo(({ isPaused = false }: { isPaused?: boolean }) =>
   };
 
   const handleLevelComplete = () => {
-    setGameStats(prev => ({ ...prev, currentLevel: prev.currentLevel + 1 }));
+    const nextLevel = gameStats.currentLevel + 1;
+    if (nextLevel > gameStats.totalLevels) {
+      setIsGameOver(true);
+      setFinalTime(timeElapsed);
+      stopTimer();
+    } else {
+      setGameStats(prev => ({ ...prev, currentLevel: nextLevel }));
+    }
   };
 
   const handleGameOver = () => {
@@ -75,23 +96,46 @@ export const AsyncQuest = memo(({ isPaused = false }: { isPaused?: boolean }) =>
   };
 
   const handleRestart = () => {
+    // Inicjalizujemy początkowe statystyki kategorii
+    const initialCategoryStats = {
+      promises: { total: 0, correct: 0, points: 0 },
+      'async-await': { total: 0, correct: 0, points: 0 },
+      callbacks: { total: 0, correct: 0, points: 0 }
+    };
+
+    // Aktualizujemy total dla każdej kategorii na podstawie gameContent
+    gameContent?.gameData.forEach(challenge => {
+      if (challenge.category) {
+        initialCategoryStats[challenge.category].total++;
+      }
+    });
+
     setGameStats({
       currentLevel: 1,
-      totalLevels: asyncChallenges.length,
+      totalLevels: gameContent?.gameData.length || 0,
       score: 0,
       timeElapsed: 0,
-      maxTime: 300,
+      maxTime: gameContent?.estimatedTime ? gameContent.estimatedTime * 60 : 300,
       correctAnswers: 0,
-      categoryStats: {
-        promises: { total: 0, correct: 0, points: 0 },
-        'async-await': { total: 0, correct: 0, points: 0 },
-        callbacks: { total: 0, correct: 0, points: 0 }
-      }
+      categoryStats: initialCategoryStats // Używamy zainicjalizowanych statystyk
     });
     setIsGameOver(false);
     resetTimer();
     startTimer();
   };
+
+  const handleStartGame = () => {
+    setIsGameStarted(true);
+    startTimer();
+  };
+
+  if (isLoading) return <div>Ładowanie...</div>;
+  if (error) return <div>Błąd: {error.message}</div>;
+  if (!gameContent) return null;
+
+  if (!isGameStarted) {
+    return <GameIntro gameContent={gameContent} onStart={handleStartGame} />;
+  }
 
   return (
     <motion.div
@@ -116,7 +160,7 @@ export const AsyncQuest = memo(({ isPaused = false }: { isPaused?: boolean }) =>
               className="w-full"
             >
               <AsyncQuestGame
-                currentChallenge={asyncChallenges[gameStats.currentLevel - 1]}
+                currentChallenge={gameContent.gameData[gameStats.currentLevel - 1]}
                 onScoreUpdate={handleScoreUpdate}
                 onLevelComplete={handleLevelComplete}
                 currentLevel={gameStats.currentLevel}
@@ -135,7 +179,7 @@ export const AsyncQuest = memo(({ isPaused = false }: { isPaused?: boolean }) =>
               <AsyncQuestSummary
                 score={gameStats.score}
                 timeElapsed={finalTime}
-                challenges={asyncChallenges}
+                challenges={gameContent.gameData}
                 correctAnswers={gameStats.correctAnswers}
                 categoryStats={gameStats.categoryStats}
                 onRestart={handleRestart}
@@ -149,3 +193,5 @@ export const AsyncQuest = memo(({ isPaused = false }: { isPaused?: boolean }) =>
 });
 
 AsyncQuest.displayName = 'AsyncQuest'; 
+
+export default AsyncQuest;
