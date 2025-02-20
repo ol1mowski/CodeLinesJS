@@ -54,6 +54,10 @@ const gameSchema = new mongoose.Schema({
     required: true,
     min: 0
   },
+  gameData: {
+    type: Array,
+    required: true
+  },
   isActive: {
     type: Boolean,
     default: true
