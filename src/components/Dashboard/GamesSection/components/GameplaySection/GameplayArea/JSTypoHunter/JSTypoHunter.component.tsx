@@ -5,6 +5,7 @@ import { JSTypoHunterStats } from './JSTypoHunterStats/JSTypoHunterStats.compone
 import { JSTypoHunterGame } from './JSTypoHunterGame/JSTypoHunterGame.component';
 import { challenges } from '../../../../data/challenges.data';
 import { useGameTimer } from './hooks/useGameTimer';
+import { useGamesQuery } from '../../../../hooks/useGamesQuery';
 
 const getDifficultyPoints = (difficulty: 'easy' | 'medium' | 'hard'): number => {
   switch (difficulty) {
@@ -24,9 +25,12 @@ type JSTypoHunterProps = {
 };
 
 export const JSTypoHunter = memo(({ isPaused = false }: { isPaused?: boolean }) => {
+  const { data, isLoading, error } = useGamesQuery();
+  const gameContent = data?.games.find(game => game.slug === 'js-typo-hunter');
+
   const [gameStats, setGameStats] = useState<GameStats>({
     currentLevel: 1,
-    totalLevels: challenges.length,
+    totalLevels: 0,
     score: 0,
     timeElapsed: 0,
     maxTime: 300
@@ -87,6 +91,19 @@ export const JSTypoHunter = memo(({ isPaused = false }: { isPaused?: boolean }) 
       timeElapsed
     }));
   }, [timeElapsed]);
+
+  useEffect(() => {
+    if (gameContent) {
+      setGameStats(prev => ({
+        ...prev,
+        totalLevels: gameContent.gameData.length
+      }));
+    }
+  }, [gameContent]);
+
+  if (isLoading) return <div>Ładowanie...</div>;
+  if (error) return <div>Błąd: {error.message}</div>;
+  if (!gameContent) return null;
 
   return (
     <motion.div

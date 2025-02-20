@@ -1,16 +1,19 @@
 import React, { memo, useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GameStats } from '../../../../types/scopeExplorer.types';
-import { scopeChallenges } from '../../../../data/scopeChallenges.data';
 import { useGameTimer } from '../JSTypoHunter/hooks/useGameTimer';
 import { ScopeExplorerStats } from './ScopeExplorerStats/ScopeExplorerStats.component';
 import { ScopeExplorerGame } from './ScopeExplorerGame/ScopeExplorerGame.component';
 import { ScopeExplorerSummary } from './ScopeExplorerSummary/ScopeExplorerSummary.component';
+import { useGamesQuery } from '../../../../hooks/useGamesQuery';
 
 export const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean }) => {
+  const { data, isLoading, error } = useGamesQuery();
+  const gameContent = data?.games.find(game => game.slug === 'scope-explorer');
+
   const [gameStats, setGameStats] = useState<GameStats>({
     currentLevel: 1,
-    totalLevels: scopeChallenges.length,
+    totalLevels: 0,
     score: 0,
     timeElapsed: 0,
     maxTime: 300,
@@ -60,7 +63,7 @@ export const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean })
       hoisting: { total: 0, correct: 0, points: 0 }
     };
 
-    scopeChallenges.forEach(challenge => {
+    gameContent?.gameData.forEach(challenge => {
       initialCategoryStats[challenge.category].total++;
       initialCategoryStats[challenge.category].points += challenge.points || 0;
     });
@@ -69,7 +72,7 @@ export const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean })
       ...prev,
       categoryStats: initialCategoryStats
     }));
-  }, []);
+  }, [gameContent]);
 
   const handleScoreUpdate = useCallback((points: number, category: 'scope' | 'closure' | 'hoisting') => {
     setGameStats(prev => ({
@@ -88,7 +91,7 @@ export const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean })
 
   const handleLevelComplete = useCallback(() => {
     const nextLevel = gameStats.currentLevel + 1;
-    if (nextLevel > scopeChallenges.length) {
+    if (nextLevel > (gameContent?.gameData.length || 0)) {
       setIsGameOver(true);
       setFinalTime(timeElapsed);
       resetTimer();
@@ -99,7 +102,7 @@ export const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean })
       ...prev,
       currentLevel: nextLevel
     }));
-  }, [gameStats.currentLevel, resetTimer, timeElapsed]);
+  }, [gameStats.currentLevel, resetTimer, timeElapsed, gameContent]);
 
   const handleRestart = useCallback(() => {
     const initialCategoryStats = {
@@ -108,14 +111,14 @@ export const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean })
       hoisting: { total: 0, correct: 0, points: 0 }
     };
 
-    scopeChallenges.forEach(challenge => {
+    gameContent?.gameData.forEach(challenge => {
       initialCategoryStats[challenge.category].total++;
       initialCategoryStats[challenge.category].points += challenge.points || 0;
     });
 
     setGameStats({
       currentLevel: 1,
-      totalLevels: scopeChallenges.length,
+      totalLevels: gameContent?.gameData.length || 0,
       score: 0,
       timeElapsed: 0,
       maxTime: 300,
@@ -125,7 +128,11 @@ export const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean })
     setIsGameOver(false);
     setFinalTime(0);
     resetTimer();
-  }, [resetTimer]);
+  }, [resetTimer, gameContent]);
+
+  if (isLoading) return <div>Ładowanie...</div>;
+  if (error) return <div>Błąd: {error.message}</div>;
+  if (!gameContent) return null;
 
   return (
     <motion.div
@@ -150,7 +157,7 @@ export const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean })
               className="w-full"
             >
               <ScopeExplorerGame
-                currentChallenge={scopeChallenges[gameStats.currentLevel - 1]}
+                currentChallenge={gameContent.gameData[gameStats.currentLevel - 1]}
                 onScoreUpdate={handleScoreUpdate}
                 onLevelComplete={handleLevelComplete}
                 currentLevel={gameStats.currentLevel}
@@ -169,7 +176,7 @@ export const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean })
               <ScopeExplorerSummary
                 score={gameStats.score}
                 timeElapsed={finalTime}
-                challenges={scopeChallenges}
+                challenges={gameContent.gameData}
                 correctAnswers={gameStats.correctAnswers}
                 categoryStats={gameStats.categoryStats}
                 onRestart={handleRestart}
