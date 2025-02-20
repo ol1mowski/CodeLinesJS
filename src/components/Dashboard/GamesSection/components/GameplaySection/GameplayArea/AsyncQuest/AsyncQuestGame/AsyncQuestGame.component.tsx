@@ -1,4 +1,4 @@
-import React, { memo, useState, useCallback, useRef } from "react";
+import React, { memo, useState, useCallback, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import Editor from "@monaco-editor/react";
 import { AsyncChallenge } from "../../../../../types/asyncQuest.types";
@@ -40,12 +40,27 @@ export const AsyncQuestGame = memo(
     } | null>(null);
     const [isEditorReady, setIsEditorReady] = useState(false);
     const editorRef = useRef<any>(null);
+    const editorContainerRef = useRef<HTMLDivElement>(null);
 
     const { executeCode, isRunning, output, clearOutput } = useCodeExecution();
+
+    // Automatyczne przewijanie do edytora
+    useEffect(() => {
+      if (editorContainerRef.current) {
+        editorContainerRef.current.scrollIntoView({ 
+          behavior: 'smooth',
+          block: 'center'
+        });
+      }
+    }, []);
 
     const handleEditorDidMount = (editor: any) => {
       editorRef.current = editor;
       setIsEditorReady(true);
+      // Automatyczny focus na edytor
+      setTimeout(() => {
+        editor.focus();
+      }, 100);
     };
 
     const handleEditorChange = useCallback((value: string | undefined) => {
@@ -121,105 +136,78 @@ export const AsyncQuestGame = memo(
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="space-y-6 p-4"
+        className="max-w-6xl mx-auto p-4 space-y-6"
       >
-        <AsyncQuestProgress
-          currentLevel={currentLevel}
-          totalLevels={totalLevels}
-          difficulty={currentChallenge.difficulty}
-          points={currentChallenge.points}
-        />
-
-        <div className="bg-dark-800/50 rounded-xl p-6 space-y-6">
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-js">
-                {currentChallenge.title}
-              </h2>
-              <span className={`px-3 py-1 rounded-lg text-sm ${
-                currentChallenge.difficulty === 'easy' ? 'bg-green-500/20 text-green-400' :
-                currentChallenge.difficulty === 'medium' ? 'bg-yellow-500/20 text-yellow-400' :
-                'bg-red-500/20 text-red-400'
-              }`}>
-                {currentChallenge.difficulty === 'easy' ? 'Łatwy' :
-                 currentChallenge.difficulty === 'medium' ? 'Średni' : 
-                 'Trudny'}
-              </span>
-            </div>
-            
-            <div className="bg-dark-900/50 rounded-lg p-4 space-y-3">
-              <p className="text-gray-300">{currentChallenge.description}</p>
-              <div className="text-sm text-gray-400">
-                <strong className="text-js">Zadanie:</strong> {currentChallenge.task}
-              </div>
-            </div>
-
-            <div className="relative rounded-lg overflow-hidden border border-js/10">
-              <Editor
-                height="300px"
-                defaultLanguage="javascript"
-                value={code}
-                onChange={handleEditorChange}
-                onMount={handleEditorDidMount}
-                options={editorOptions}
-                className="w-full"
-              />
-            </div>
-
-            {showExplanation && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="space-y-4"
-              >
-                <AsyncQuestHint
-                  type={isCorrect ? "hint" : "error"}
-                  message={
-                    isCorrect
-                      ? "Świetnie! Rozwiązanie jest poprawne."
-                      : currentChallenge.error
-                  }
-                  explanation={isCorrect ? undefined : errorHint?.explanation}
-                  code={isCorrect ? undefined : errorHint?.example}
-                />
-              </motion.div>
-            )}
+        {/* Sekcja z opisem zadania */}
+        <div className="bg-dark-800/50 rounded-xl p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-2xl font-bold text-js">
+              {currentChallenge.title}
+            </h2>
+            <AsyncQuestProgress
+              currentLevel={currentLevel}
+              totalLevels={totalLevels}
+              difficulty={currentChallenge.difficulty}
+              points={currentChallenge.points}
+            />
+          </div>
+          <p className="text-gray-300 mb-4">{currentChallenge.description}</p>
+          <div className="text-sm text-gray-400">
+            <strong className="text-js">Zadanie:</strong> {currentChallenge.task}
           </div>
         </div>
 
-        <button
-          onClick={handleCodeRun}
-          disabled={isRunning || !isEditorReady}
-          className={`w-full px-6 py-3 rounded-lg font-medium transition-colors ${
-            isRunning || !isEditorReady
-              ? "bg-gray-500 cursor-not-allowed"
-              : "bg-js text-dark hover:bg-js/90"
-          }`}
+        {/* Sekcja z edytorem */}
+        <div 
+          ref={editorContainerRef}
+          className="bg-dark-800/50 rounded-xl p-6"
         >
-          {isRunning ? "Wykonywanie..." : "Uruchom kod"}
-        </button>
+          <div className="h-[500px] relative rounded-lg overflow-hidden border border-js/10">
+            <Editor
+              height="100%"
+              defaultLanguage="javascript"
+              value={code}
+              onChange={handleEditorChange}
+              onMount={handleEditorDidMount}
+              options={{
+                ...editorOptions,
+                fontSize: 16,
+                lineHeight: 26,
+              }}
+              className="w-full"
+            />
+          </div>
 
-        {showHint && !isCorrect && errorHint && (
-          <AsyncQuestHint
-            type="hint"
-            message={errorHint.message}
-            code={errorHint.example}
-            explanation={errorHint.explanation}
-          />
-        )}
+          <button
+            onClick={handleCodeRun}
+            disabled={isRunning || !isEditorReady}
+            className={`mt-4 w-full px-6 py-3 rounded-lg font-medium transition-colors ${
+              isRunning || !isEditorReady
+                ? "bg-gray-500 cursor-not-allowed"
+                : "bg-js text-dark hover:bg-js/90"
+            }`}
+          >
+            {isRunning ? "Wykonywanie..." : "Uruchom kod (Ctrl + Enter)"}
+          </button>
+        </div>
 
-        {output.length > 0 && (
+        {/* Sekcja z podpowiedziami/błędami */}
+        {showExplanation && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-dark-900/50 rounded-lg p-4 font-mono text-sm"
+            className="bg-dark-800/50 rounded-xl p-6"
           >
-            <div className="text-gray-400 mb-2">Konsola:</div>
-            {output.map((line, index) => (
-              <div key={index} className="text-gray-300">
-                {line}
-              </div>
-            ))}
+            <AsyncQuestHint
+              type={isCorrect ? "hint" : "error"}
+              message={
+                isCorrect
+                  ? "Świetnie! Rozwiązanie jest poprawne."
+                  : currentChallenge.error
+              }
+              explanation={isCorrect ? undefined : errorHint?.explanation}
+              code={isCorrect ? undefined : errorHint?.example}
+            />
           </motion.div>
         )}
       </motion.div>
