@@ -1,5 +1,7 @@
 export type AsyncChallenge = {
   id: number;
+  title: string;
+  description: string;
   task: string;
   code: string;
   error: string;

@@ -1,4 +1,4 @@
-import React, { memo, useState, useCallback, useRef, useEffect } from "react";
+import { memo, useState, useCallback, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import Editor from "@monaco-editor/react";
 import { AsyncChallenge } from "../../../../../types/asyncQuest.types";
@@ -32,7 +32,6 @@ export const AsyncQuestGame = memo(
     const [code, setCode] = useState(currentChallenge.code);
     const [showExplanation, setShowExplanation] = useState(false);
     const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
-    const [showHint, setShowHint] = useState(false);
     const [errorHint, setErrorHint] = useState<{
       message: string;
       explanation: string;
@@ -41,10 +40,10 @@ export const AsyncQuestGame = memo(
     const [isEditorReady, setIsEditorReady] = useState(false);
     const editorRef = useRef<any>(null);
     const editorContainerRef = useRef<HTMLDivElement>(null);
+    const feedbackRef = useRef<HTMLDivElement>(null);
 
-    const { executeCode, isRunning, output, clearOutput } = useCodeExecution();
+    const { executeCode, isRunning, clearOutput } = useCodeExecution();
 
-    // Automatyczne przewijanie do edytora
     useEffect(() => {
       if (editorContainerRef.current) {
         editorContainerRef.current.scrollIntoView({ 
@@ -57,7 +56,6 @@ export const AsyncQuestGame = memo(
     const handleEditorDidMount = (editor: any) => {
       editorRef.current = editor;
       setIsEditorReady(true);
-      // Automatyczny focus na edytor
       setTimeout(() => {
         editor.focus();
       }, 100);
@@ -71,6 +69,15 @@ export const AsyncQuestGame = memo(
         clearOutput();
       }
     }, [clearOutput]);
+
+    const scrollToFeedback = useCallback(() => {
+      if (feedbackRef.current) {
+        feedbackRef.current.scrollIntoView({ 
+          behavior: 'smooth',
+          block: 'center'
+        });
+      }
+    }, []);
 
     const handleCodeRun = useCallback(async () => {
       if (!code) return;
@@ -89,6 +96,10 @@ export const AsyncQuestGame = memo(
           onScoreUpdate(currentChallenge.points, currentChallenge.category);
           
           setTimeout(() => {
+            scrollToFeedback();
+          }, 100);
+          
+          setTimeout(() => {
             onLevelComplete();
           }, 1500);
         } else {
@@ -96,6 +107,10 @@ export const AsyncQuestGame = memo(
           setShowExplanation(true);
           const hint = getErrorHint(code, currentChallenge.category);
           setErrorHint(hint);
+          
+          setTimeout(() => {
+            scrollToFeedback();
+          }, 100);
           
           setTimeout(() => {
             onGameOver();
@@ -108,10 +123,14 @@ export const AsyncQuestGame = memo(
         setErrorHint(hint);
         
         setTimeout(() => {
+          scrollToFeedback();
+        }, 100);
+        
+        setTimeout(() => {
           onGameOver();
         }, 2000);
       }
-    }, [code, currentChallenge, executeCode, onScoreUpdate, onLevelComplete, onGameOver, clearOutput]);
+    }, [code, currentChallenge, executeCode, onScoreUpdate, onLevelComplete, onGameOver, clearOutput, scrollToFeedback]);
 
     const editorOptions = {
       minimap: { enabled: false },
@@ -138,7 +157,6 @@ export const AsyncQuestGame = memo(
         animate={{ opacity: 1 }}
         className="max-w-6xl mx-auto p-4 space-y-6"
       >
-        {/* Sekcja z opisem zadania */}
         <div className="bg-dark-800/50 rounded-xl p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-2xl font-bold text-js">
@@ -147,8 +165,6 @@ export const AsyncQuestGame = memo(
             <AsyncQuestProgress
               currentLevel={currentLevel}
               totalLevels={totalLevels}
-              difficulty={currentChallenge.difficulty}
-              points={currentChallenge.points}
             />
           </div>
           <p className="text-gray-300 mb-4">{currentChallenge.description}</p>
@@ -157,7 +173,6 @@ export const AsyncQuestGame = memo(
           </div>
         </div>
 
-        {/* Sekcja z edytorem */}
         <div 
           ref={editorContainerRef}
           className="bg-dark-800/50 rounded-xl p-6"
@@ -191,9 +206,9 @@ export const AsyncQuestGame = memo(
           </button>
         </div>
 
-        {/* Sekcja z podpowiedziami/błędami */}
         {showExplanation && (
           <motion.div
+            ref={feedbackRef}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             className="bg-dark-800/50 rounded-xl p-6"
