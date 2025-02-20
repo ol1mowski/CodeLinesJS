@@ -6,10 +6,12 @@ import { AsyncQuestStats } from './AsyncQuestStats/AsyncQuestStats.component';
 import { AsyncQuestSummary } from './AsyncQuestSummary/AsyncQuestSummary.component';
 import { AsyncQuestGame } from './AsyncQuestGame/AsyncQuestGame.component';
 import { useGamesQuery } from '../../../../hooks/useGamesQuery';
+import { GameIntro } from '../GameIntro/GameIntro.component';
 
 const AsyncQuest = memo(({ isPaused = false }: { isPaused?: boolean }) => {
   const { data, isLoading, error } = useGamesQuery();
   const gameContent = data?.games.find(game => game.slug === 'async-quest');
+  const [isGameStarted, setIsGameStarted] = useState(false);
 
   const [gameStats, setGameStats] = useState<GameStats>({
     currentLevel: 1,
@@ -105,9 +107,18 @@ const AsyncQuest = memo(({ isPaused = false }: { isPaused?: boolean }) => {
     startTimer();
   };
 
+  const handleStartGame = () => {
+    setIsGameStarted(true);
+    startTimer();
+  };
+
   if (isLoading) return <div>Ładowanie...</div>;
   if (error) return <div>Błąd: {error.message}</div>;
   if (!gameContent) return null;
+
+  if (!isGameStarted) {
+    return <GameIntro gameContent={gameContent} onStart={handleStartGame} />;
+  }
 
   return (
     <motion.div

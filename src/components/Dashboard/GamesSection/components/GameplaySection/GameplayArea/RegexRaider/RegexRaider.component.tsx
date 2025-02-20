@@ -7,11 +7,13 @@ import { RegexRaiderGame } from './RegexRaiderGame/RegexRaiderGame.component';
 import { RegexRaiderSummary } from './RegexRaiderSummary/RegexRaiderSummary.component';
 import { useGamesQuery } from '../../../../hooks/useGamesQuery';
 import { useParams } from 'react-router-dom';
+import { GameIntro } from '../GameIntro/GameIntro.component';
 
 const RegexRaider = memo(({ isPaused = false }: { isPaused?: boolean }) => {
   const { slug } = useParams();
   const { data, isLoading, error } = useGamesQuery();
   const gameContent = data?.games.find(game => game.slug === 'regex-raider');
+  const [isGameStarted, setIsGameStarted] = useState(false);
 
   const [gameStats, setGameStats] = useState<GameStats>({
     currentLevel: 1,
@@ -95,6 +97,11 @@ const RegexRaider = memo(({ isPaused = false }: { isPaused?: boolean }) => {
     stopTimer();
   }, [timeElapsed, stopTimer]);
 
+  const handleStartGame = () => {
+    setIsGameStarted(true);
+    startTimer();
+  };
+
   if (isLoading) {
     return <div>Ładowanie...</div>;
   }
@@ -105,6 +112,10 @@ const RegexRaider = memo(({ isPaused = false }: { isPaused?: boolean }) => {
 
   if (!gameContent) {
     return null;
+  }
+
+  if (!isGameStarted) {
+    return <GameIntro gameContent={gameContent} onStart={handleStartGame} />;
   }
 
   return (

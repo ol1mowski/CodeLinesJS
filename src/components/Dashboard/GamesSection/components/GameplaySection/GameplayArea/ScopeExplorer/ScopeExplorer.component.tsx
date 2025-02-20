@@ -6,10 +6,12 @@ import { ScopeExplorerStats } from './ScopeExplorerStats/ScopeExplorerStats.comp
 import { ScopeExplorerGame } from './ScopeExplorerGame/ScopeExplorerGame.component';
 import { ScopeExplorerSummary } from './ScopeExplorerSummary/ScopeExplorerSummary.component';
 import { useGamesQuery } from '../../../../hooks/useGamesQuery';
+import { GameIntro } from '../GameIntro/GameIntro.component';
 
 const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean }) => {
   const { data, isLoading, error } = useGamesQuery();
   const gameContent = data?.games.find(game => game.slug === 'scope-explorer');
+  const [isGameStarted, setIsGameStarted] = useState(false);
 
   const [gameStats, setGameStats] = useState<GameStats>({
     currentLevel: 1,
@@ -130,9 +132,18 @@ const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean }) => {
     resetTimer();
   }, [resetTimer, gameContent]);
 
+  const handleStartGame = () => {
+    setIsGameStarted(true);
+    resetTimer();
+  };
+
   if (isLoading) return <div>Ładowanie...</div>;
   if (error) return <div>Błąd: {error.message}</div>;
   if (!gameContent) return null;
+
+  if (!isGameStarted) {
+    return <GameIntro gameContent={gameContent} onStart={handleStartGame} />;
+  }
 
   return (
     <motion.div

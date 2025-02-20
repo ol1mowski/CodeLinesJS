@@ -5,6 +5,7 @@ import { JSTypoHunterStats } from './JSTypoHunterStats/JSTypoHunterStats.compone
 import { JSTypoHunterGame } from './JSTypoHunterGame/JSTypoHunterGame.component';
 import { useGameTimer } from './hooks/useGameTimer';
 import { useGamesQuery } from '../../../../hooks/useGamesQuery';
+import { GameIntro } from '../GameIntro/GameIntro.component';
 
 const getDifficultyPoints = (difficulty: 'easy' | 'medium' | 'hard'): number => {
   switch (difficulty) {
@@ -26,6 +27,7 @@ type JSTypoHunterProps = {
 const JSTypoHunter = memo(({ isPaused = false }: { isPaused?: boolean }) => {
   const { data, isLoading, error } = useGamesQuery();
   const gameContent = data?.games.find(game => game.slug === 'js-typo-hunter');
+  const [isGameStarted, setIsGameStarted] = useState(false);
 
   const [gameStats, setGameStats] = useState<GameStats>({
     currentLevel: 1,
@@ -41,7 +43,7 @@ const JSTypoHunter = memo(({ isPaused = false }: { isPaused?: boolean }) => {
     setIsGameOver(true);
   }, []);
 
-  const { timeElapsed, resetTimer } = useGameTimer({
+  const { timeElapsed, resetTimer, startTimer } = useGameTimer({
     maxTime: gameStats.maxTime,
     onTimeEnd: handleTimeEnd,
     isPaused,
@@ -84,6 +86,11 @@ const JSTypoHunter = memo(({ isPaused = false }: { isPaused?: boolean }) => {
     resetTimer();
   }, [resetTimer]);
 
+  const handleStartGame = () => {
+    setIsGameStarted(true);
+    startTimer();
+  };
+
   useEffect(() => {
     setGameStats(prev => ({
       ...prev,
@@ -103,6 +110,10 @@ const JSTypoHunter = memo(({ isPaused = false }: { isPaused?: boolean }) => {
   if (isLoading) return <div>Ładowanie...</div>;
   if (error) return <div>Błąd: {error.message}</div>;
   if (!gameContent) return null;
+
+  if (!isGameStarted) {
+    return <GameIntro gameContent={gameContent} onStart={handleStartGame} />;
+  }
 
   return (
     <motion.div

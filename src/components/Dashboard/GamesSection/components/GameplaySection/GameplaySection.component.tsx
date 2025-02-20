@@ -10,7 +10,6 @@ import { ConfirmationModal } from "../ConfirmationModal/ConfirmationModal.compon
 import { useGameplay } from "../../hooks/useGameplay";
 
 type ModalType = "quit" | "restart" | null;
-
 type GameplaySectionProps = {
   game: Game;
 };
