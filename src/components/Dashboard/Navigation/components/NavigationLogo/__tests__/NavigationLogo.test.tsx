@@ -3,17 +3,17 @@ import { render, screen } from '@testing-library/react';
 import { NavigationLogo } from '../NavigationLogo.component';
 
 describe('NavigationLogo', () => {
-  it('renderuje się poprawnie gdy jest rozwinięte', () => {
+  it('render correctly when expanded', () => {
     render(<NavigationLogo isExpanded={true} />);
     expect(screen.getByText('CodeLinesJS')).toBeInTheDocument();
   });
 
-  it('nie wyświetla tekstu gdy jest zwinięte', () => {
+  it('does not display text when collapsed', () => {
     render(<NavigationLogo isExpanded={false} />);
     expect(screen.queryByText('CodeLinesJS')).not.toBeInTheDocument();
   });
 
-  it('zawsze wyświetla ikonę', () => {
+  it('always displays icon', () => {
     const { container } = render(<NavigationLogo isExpanded={false} />);
     expect(container.querySelector('.text-js')).toBeInTheDocument();
   });

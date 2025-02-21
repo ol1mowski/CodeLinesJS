@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { DashboardNavigation } from '../DashboardNavigation.component';
-import { useNavigation } from '../../../../Hooks/useNavigation';
+import { useNavigation } from '../../../../hooks/useNavigation';
 import { useAuth } from '../../../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 
@@ -9,11 +9,11 @@ vi.mock('react-router-dom', () => ({
   useNavigate: vi.fn(),
 }));
 
-vi.mock('../../../../Hooks/useNavigation', () => ({
+vi.mock('../../../../hooks/useNavigation', () => ({
   useNavigation: vi.fn(),
 }));
 
-vi.mock('../../../../Hooks/useAuth', () => ({
+vi.mock('../../../../hooks/useAuth', () => ({
   useAuth: vi.fn(),
 }));
 
@@ -38,12 +38,12 @@ describe('DashboardNavigation', () => {
     });
   });
 
-  it('renderuje się poprawnie', () => {
+  it('render correctly', () => {
     render(<DashboardNavigation />);
     expect(screen.getByRole('navigation')).toBeInTheDocument();
   });
 
-  it('przełącza stan rozwinięcia', () => {
+  it('toggle expansion state', () => {
     render(<DashboardNavigation />);
     const toggleButton = screen.getByRole('button', { name: '→' });
     
@@ -51,7 +51,7 @@ describe('DashboardNavigation', () => {
     expect(mockSetIsExpanded).toHaveBeenCalledWith(!false);
   });
 
-  it('obsługuje wylogowanie', () => {
+  it('handle logout', () => {
     render(<DashboardNavigation />);
     const logoutButton = screen.getByTestId('nav-button-wyloguj-się');
     
@@ -59,7 +59,7 @@ describe('DashboardNavigation', () => {
     expect(mockLogout).toHaveBeenCalled();
   });
 
-  it('obsługuje wylogowanie w stanie zwiniętym', () => {
+  it('handle logout in collapsed state', () => {
     (useNavigation as any).mockReturnValue({
       isExpanded: false,
       setIsExpanded: mockSetIsExpanded,
