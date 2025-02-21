@@ -7,13 +7,14 @@ import { StatsBlock } from "./StatsBlock/StatsBlock.component";
 import { DashboardState } from "./components/DashboardState.component";
 import { useDashboardData } from "./hooks/useDashboardData";
 import { useDashboardAnimation } from "./hooks/useDashboardAnimation";
+import { Loader } from "../SettingsSection/components/UI/Loader/Loader.component";
 
 export const DashboardContent = memo(() => {
   const { data, isLoading, error } = useDashboardData();
   const animations = useDashboardAnimation();
 
   if (isLoading) {
-    return <DashboardState type="loading" />;
+    return <Loader />;
   }
 
   if (error) {
