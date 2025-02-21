@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-export const useGameBlockAnimation = () => {
+export const useBlockAnimation = () => {
   return useMemo(() => ({
     container: {
       hidden: { opacity: 0, y: 20 },

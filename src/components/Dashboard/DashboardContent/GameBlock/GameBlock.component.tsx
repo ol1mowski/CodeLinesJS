@@ -2,15 +2,15 @@ import { memo } from "react";
 import { motion } from "framer-motion";
 import { FaGamepad } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { gameBlockStyles as styles } from "./style/GameBlock.styles";
-import { useGameBlockAnimation } from "./hooks/useGameBlockAnimation";
+import { blockStyles as styles } from "../style/block.styles";
+import { useBlockAnimation } from "../hooks/useBlockAnimation";
 
 export const GameBlock = memo(() => {
   const navigate = useNavigate();
-  const animations = useGameBlockAnimation();
+  const animations = useBlockAnimation();
 
   const handleStartGame = () => {
-    navigate('/game');
+    navigate('/dashboard/play');
   };
 
   return (

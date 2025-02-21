@@ -1,4 +1,4 @@
-export const gameBlockStyles = {
+export const blockStyles = {
   container: "bg-dark/50 backdrop-blur-sm rounded-xl border border-js/10 p-6",
   header: {
     wrapper: "flex justify-between items-center mb-6",
