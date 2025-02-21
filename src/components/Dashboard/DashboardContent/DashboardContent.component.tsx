@@ -26,7 +26,7 @@ export const DashboardContent = memo(() => {
 
   return (
     <motion.div
-      className="p-8 w-full"
+      className="p-1 md:p-12 w-full"
       variants={animations.container}
       initial="hidden"
       animate="visible"

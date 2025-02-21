@@ -30,7 +30,7 @@ export const notificationsStyles = {
     }
   },
   button: {
-    wrapper: "relative",
+    wrapper: "hidden md:block relative",
     base: `
       relative p-2 rounded-lg
       hover:bg-js/5 transition-colors duration-200

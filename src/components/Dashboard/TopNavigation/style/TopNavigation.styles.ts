@@ -1,17 +1,19 @@
 export const topNavigationStyles = {
   container: `
-    w-[calc(100%-256px)]
-    ml-[256px]
+    w-1/2
+    mt-5
+    md:w-[calc(100%-256px)]
     pb-2
     bg-dark/50 backdrop-blur-sm
     border-b border-js/10 
-    fixed top-4 right-0
+    fixed top-0
+    md:top-4 right-0
     h-14
     z-[100]
     rounded-lg mx-4
   `,
   content: `
-    h-full px-6 
+    h-full
     flex justify-between items-center
     max-w-[1000px]
     mx-auto
