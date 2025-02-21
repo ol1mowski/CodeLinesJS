@@ -1,90 +1,60 @@
-import { motion } from "framer-motion";
 import { memo } from "react";
-import { FaTrophy, FaStar, FaChartLine } from "react-icons/fa";
-import { dashboardContentStyles as styles } from "../DashboardContent.styles";
+import { FaStar, FaChartLine, FaMedal } from "react-icons/fa";
+import { DashboardStats } from "../types/dashboard.types";
+import { statsBlockStyles as styles } from "./style/StatsBlock.styles";
+import { useDateFormat } from "./hooks/useDateFormat";
 
 type StatItemProps = {
-  icon: typeof FaTrophy;
+  icon: React.ReactNode;
   label: string;
-  value: string | number;
-  gradient: string;
+  value: number | string;
 };
 
-const StatItem = memo(({ icon: Icon, label, value, gradient }: StatItemProps) => (
-  <div className="flex items-center gap-4">
-    <div className={`
-      w-12 h-12 rounded-lg
-      ${gradient}
-      flex items-center justify-center
-      shadow-lg shadow-indigo-500/10
-    `}>
-      <Icon className="text-xl text-white" />
-    </div>
-    <div>
-      <p className={styles.text.secondary}>{label}</p>
-      <p className={`${styles.text.primary} text-xl font-bold`}>{value}</p>
+const StatItem = memo(({ icon, label, value }: StatItemProps) => (
+  <div className={styles.stats.item.wrapper}>
+    <div className={styles.stats.item.icon}>{icon}</div>
+    <div className={styles.stats.item.content.wrapper}>
+      <p className={styles.stats.item.content.label}>{label}</p>
+      <p className={styles.stats.item.content.value}>{value}</p>
     </div>
   </div>
 ));
 
 StatItem.displayName = "StatItem";
 
-export const StatsBlock = memo(() => {
-  // DUMMY DATA
-  const stats = {
-    completedChallenges: 15,
-    totalPoints: 2500,
-    ranking: 42
-  };
+type StatsBlockProps = {
+  stats: DashboardStats;
+}
+
+export const StatsBlock = memo(({ stats }: StatsBlockProps) => {
+  const formatDate = useDateFormat();
 
   return (
-    <div className="space-y-6">
-      <div className={styles.card.header}>
-        <h2 className={styles.card.title}>Statystyki</h2>
+    <div className={styles.container}>
+      <div className={styles.stats.grid}>
+
+        <StatItem
+          icon={<FaMedal />}
+          label="Poziom"
+          value={stats.level}
+        />
+
+        <StatItem
+          icon={<FaStar />}
+          label="Punkty"
+          value={stats.points}
+        />
+
+        <StatItem
+          icon={<FaChartLine />}
+          label="Seria"
+          value={`${stats.streak} dni`}
+        />
       </div>
 
-      <motion.div 
-        className="grid gap-6"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2 }}
-      >
-        <StatItem
-          icon={FaTrophy}
-          label="Ukończone wyzwania"
-          value={stats.completedChallenges}
-          gradient="bg-gradient-to-r from-amber-500 to-orange-500"
-        />
-
-        <StatItem
-          icon={FaStar}
-          label="Zdobyte punkty"
-          value={stats.totalPoints}
-          gradient="bg-gradient-to-r from-blue-500 to-indigo-500"
-        />
-
-        <StatItem
-          icon={FaChartLine}
-          label="Ranking"
-          value={`#${stats.ranking}`}
-          gradient="bg-gradient-to-r from-indigo-500 to-purple-500"
-        />
-
-        <div className="pt-4 mt-4 border-t border-gray-700/50">
-          <motion.div
-            className="text-center"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-          >
-            <p className={styles.text.secondary}>
-              Jesteś w top
-              <span className="text-indigo-400 font-bold mx-1">10%</span>
-              najlepszych graczy!
-            </p>
-          </motion.div>
-        </div>
-      </motion.div>
+      <p className={styles.lastActive}>
+        Ostatnia aktywność: {formatDate(stats.lastActive)}
+      </p>
     </div>
   );
 });
