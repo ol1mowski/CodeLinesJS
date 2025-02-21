@@ -27,7 +27,7 @@ export const DashboardContent = memo(() => {
 
   return (
     <motion.div
-      className="p-1 md:p-12 w-full"
+      className="p-1 md:p-12 w-full overflow-y-auto"
       variants={animations.container}
       initial="hidden"
       animate="visible"

@@ -53,7 +53,7 @@ export const DashboardNavigation = () => {
       initial="collapsed"
       animate={isExpanded ? "expanded" : "collapsed"}
       variants={navVariants}
-      className="fixed left-0 top-0 h-screen bg-gradient-to-b from-dark via-dark-medium to-dark backdrop-blur-lg border-r border-js/10 flex flex-col py-6 z-40 shadow-xl shadow-black/10"
+      className="fixed left-0 top-0 bg-gradient-to-b from-dark via-dark-medium to-dark backdrop-blur-lg border-r border-js/10 flex flex-col py-6 z-40 shadow-xl shadow-black/10 h-full"
     >
       <NavigationLogo isExpanded={isExpanded} />
 
