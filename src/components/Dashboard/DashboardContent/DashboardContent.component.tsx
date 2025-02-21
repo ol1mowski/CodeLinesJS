@@ -43,10 +43,7 @@ export const DashboardContent = memo(() => {
           variants={animations.item}
           className={styles.card.community}
         >
-          <CommunityBlock 
-            notifications={data.notifications} 
-            unreadCount={data.unreadCount}
-          />
+          <CommunityBlock />
         </motion.div>
 
         <motion.div

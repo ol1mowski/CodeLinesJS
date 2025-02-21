@@ -1,6 +1,6 @@
-import { useAuthState } from './auth/useAuthState';
-import { useAuthActions } from './auth/useAuthActions';
-import { useAuthCheck } from './auth/useAuthCheck';
+import { useAuthState } from "./auth/useAuthState";
+import { useAuthActions } from "./auth/useAuthActions";
+import { useAuthCheck } from "./auth/useAuthCheck";
 
 type User = {
   id: string;
@@ -14,8 +14,12 @@ type AuthState = {
   token: string | null;
   loading: boolean;
   error: string | null;
-  login: (email: string, password: string, rememberMe?: boolean) => Promise<void>;
-}
+  login: (
+    email: string,
+    password: string,
+    rememberMe?: boolean
+  ) => Promise<void>;
+};
 
 export const useAuth = (): AuthState => {
   const state = useAuthState();
@@ -25,7 +29,6 @@ export const useAuth = (): AuthState => {
   return {
     ...actions,
     ...state,
-    token: localStorage.getItem('token') || sessionStorage.getItem('token'),
+    token: localStorage.getItem("token") || sessionStorage.getItem("token"),
   };
-}; 
-
+};

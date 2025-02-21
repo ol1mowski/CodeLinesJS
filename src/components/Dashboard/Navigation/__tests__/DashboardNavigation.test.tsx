@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { DashboardNavigation } from '../DashboardNavigation.component';
 import { useNavigation } from '../../../../Hooks/useNavigation';
-import { useAuth } from '../../../../Hooks/useAuth';
+import { useAuth } from '../../../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 
 vi.mock('react-router-dom', () => ({

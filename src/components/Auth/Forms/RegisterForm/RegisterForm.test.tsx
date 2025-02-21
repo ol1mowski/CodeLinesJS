@@ -2,7 +2,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { BrowserRouter } from 'react-router-dom';
 import RegisterForm from './RegisterForm.component';
-import { useAuth } from '../../../../Hooks/useAuth';
+import { useAuth } from '../../../../hooks/useAuth';
 
 // Mock useAuth hook
 vi.mock('../../../../Hooks/useAuth', () => ({

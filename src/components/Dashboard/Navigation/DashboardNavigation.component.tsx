@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { FaSignOutAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../../Hooks/useAuth";
+import { useAuth } from "../../../hooks/useAuth";
 import { useNavigation } from "../../../Hooks/useNavigation";
 import { NavigationLogo } from "./components/NavigationLogo";
 import { NavigationButton } from "./components/NavigationButton";
