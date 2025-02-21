@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { TopNavigation } from '../TopNavigation.component';
 import { useUserProfile } from '../hooks/useUserProfile';
@@ -16,8 +16,12 @@ vi.mock('../NotificationsSection/NotificationsButton.component', () => ({
 }));
 
 describe('TopNavigation', () => {
-  it('wyświetla loading state', () => {
-    vi.mocked(useUserProfile).mockReturnValue({
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('displays the loading state', () => {
+    (useUserProfile as jest.Mock).mockReturnValue({
       data: undefined,
       isLoading: true,
       error: null,
@@ -28,8 +32,8 @@ describe('TopNavigation', () => {
     expect(screen.getByText('Ładowanie...')).toBeInTheDocument();
   });
 
-  it('wyświetla domyślną nazwę użytkownika gdy brak danych', () => {
-    vi.mocked(useUserProfile).mockReturnValue({
+  it('displays the default username when there is no data', () => {
+    (useUserProfile as jest.Mock).mockReturnValue({
       data: null,
       isLoading: false,
       error: null,
@@ -40,8 +44,8 @@ describe('TopNavigation', () => {
     expect(screen.getByText('Użytkowniku')).toBeInTheDocument();
   });
 
-  it('wyświetla nazwę użytkownika gdy dane są dostępne', () => {
-    vi.mocked(useUserProfile).mockReturnValue({
+  it('displays the username when the data is available', () => {
+    (useUserProfile as jest.Mock).mockReturnValue({
       data: { username: 'TestUser' },
       isLoading: false,
       error: null,
@@ -51,4 +55,4 @@ describe('TopNavigation', () => {
     render(<TopNavigation />);
     expect(screen.getByText('TestUser')).toBeInTheDocument();
   });
-}); 
+});

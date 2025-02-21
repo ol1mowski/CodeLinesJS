@@ -1,21 +1,26 @@
-import { describe, it, expect, vi } from 'vitest';
+import React from 'react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { NotificationsButton } from '../NotificationsButton.component';
-import { useDashboardData } from '../../DashboardContent/hooks/useDashboardData';
+import { useDashboardData } from '../../../DashboardContent/hooks/useDashboardData';
 
-vi.mock('../../DashboardContent/hooks/useDashboardData', () => ({
+vi.mock('../../../DashboardContent/hooks/useDashboardData', () => ({
   useDashboardData: vi.fn()
 }));
 
 vi.mock('../NotificationsDropdown.component', () => ({
   NotificationsDropdown: ({ onClose }: { onClose: () => void }) => (
-    <div data-testid="notifications-dropdown" onClick={onClose} />
+    <div data-testid="notifications-dropdown" onClick={onClose}>Dropdown</div>
   )
 }));
 
 describe('NotificationsButton', () => {
-  it('wyświetla badge z liczbą nieprzeczytanych powiadomień', () => {
-    vi.mocked(useDashboardData).mockReturnValue({
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('displays the badge with the number of unread notifications', () => {
+    (useDashboardData as jest.Mock).mockReturnValue({
       data: { unreadCount: 5 },
       isLoading: false
     });
@@ -24,8 +29,8 @@ describe('NotificationsButton', () => {
     expect(screen.getByText('5')).toBeInTheDocument();
   });
 
-  it('wyświetla "9+" gdy jest więcej niż 9 nieprzeczytanych powiadomień', () => {
-    vi.mocked(useDashboardData).mockReturnValue({
+  it('displays "9+" when there are more than 9 unread notifications', () => {
+    (useDashboardData as jest.Mock).mockReturnValue({
       data: { unreadCount: 10 },
       isLoading: false
     });
@@ -34,8 +39,8 @@ describe('NotificationsButton', () => {
     expect(screen.getByText('9+')).toBeInTheDocument();
   });
 
-  it('nie wyświetla badge gdy brak nieprzeczytanych powiadomień', () => {
-    vi.mocked(useDashboardData).mockReturnValue({
+  it('does not display the badge when there are no unread notifications', () => {
+    (useDashboardData as jest.Mock).mockReturnValue({
       data: { unreadCount: 0 },
       isLoading: false
     });
@@ -44,8 +49,8 @@ describe('NotificationsButton', () => {
     expect(screen.queryByText('0')).not.toBeInTheDocument();
   });
 
-  it('otwiera i zamyka dropdown po kliknięciu', () => {
-    vi.mocked(useDashboardData).mockReturnValue({
+  it('opens and closes the dropdown on click', async () => {
+    (useDashboardData as jest.Mock).mockReturnValue({
       data: { unreadCount: 0 },
       isLoading: false
     });
@@ -55,9 +60,9 @@ describe('NotificationsButton', () => {
     const button = screen.getByRole('button');
     
     fireEvent.click(button);
-    expect(screen.getByTestId('notifications-dropdown')).toBeInTheDocument();
+    expect(await screen.findByTestId('notifications-dropdown')).toBeInTheDocument();
     
     fireEvent.click(button);
     expect(screen.queryByTestId('notifications-dropdown')).not.toBeInTheDocument();
   });
-}); 
+});
