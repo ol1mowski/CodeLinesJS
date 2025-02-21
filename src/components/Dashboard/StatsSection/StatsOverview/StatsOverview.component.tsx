@@ -73,4 +73,4 @@ export const StatsOverview = memo(({ stats, isLoading }: StatsOverviewProps) => 
   );
 });
 
-StatsOverview.displayName = "StatsOverview"; 
+StatsOverview.displayName = "StatsOverview";  
