@@ -11,18 +11,18 @@ describe('NavigationButton', () => {
     onClick: vi.fn(),
   };
 
-  it('renderuje się poprawnie z podstawowymi propsami', () => {
+  it('render correctly with basic props', () => {
     render(<NavigationButton {...defaultProps} />);
     expect(screen.getByRole('button')).toBeInTheDocument();
     expect(screen.getByText('Test Button')).toBeInTheDocument();
   });
 
-  it('nie wyświetla etykiety gdy isExpanded jest false', () => {
+  it('does not display label when isExpanded is false', () => {
     render(<NavigationButton {...defaultProps} isExpanded={false} />);
     expect(screen.queryByText('Test Button')).not.toBeInTheDocument();
   });
 
-  it('wywołuje onClick po kliknięciu', () => {
+  it('onclick before click', () => {
     const onClick = vi.fn();
     render(<NavigationButton {...defaultProps} onClick={onClick} />);
     
@@ -30,7 +30,7 @@ describe('NavigationButton', () => {
     expect(onClick).toHaveBeenCalled();
   });
 
-  it('stosuje odpowiednie style dla wariantu danger', () => {
+  it('apply styles for danger variant', () => {
     render(<NavigationButton {...defaultProps} variant="danger" />);
     const button = screen.getByRole('button');
     expect(button).toHaveClass('text-red-400');
