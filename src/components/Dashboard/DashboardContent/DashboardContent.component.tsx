@@ -57,7 +57,7 @@ export const DashboardContent = memo(() => {
           variants={animations.item}
           className={styles.card.stats}
         >
-          <StatsBlock stats={data.stats} />
+          <StatsBlock stats={data.data} />
         </motion.div>
       </div>
     </motion.div>

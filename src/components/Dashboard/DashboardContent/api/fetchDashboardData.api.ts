@@ -1,10 +1,10 @@
 import { API_URL } from "../../../../config/api.config";
-import { DashboardData } from "../../../../types/dashboard.types";
+import { DashboardData } from "../types/dashboard.types";
 
 export const fetchDashboardData = async (token: string): Promise<DashboardData> => {
   if (!token) throw new Error("Brak autoryzacji");
 
-  const response = await fetch(`${API_URL}/dashboard`, {
+  const response = await fetch(`${API_URL}/users/stats`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,

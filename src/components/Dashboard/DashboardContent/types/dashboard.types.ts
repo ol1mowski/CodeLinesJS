@@ -1,17 +1,17 @@
-export interface DashboardStats {
+export type DashboardStats = {
   level: number;
   points: number;
   streak: number;
   lastActive: string;
 }
 
-export interface DashboardProfile {
+export type DashboardProfile = {
   username: string;
   avatar?: string;
   theme: 'light' | 'dark';
 }
 
-export interface DashboardNotification {
+export type DashboardNotification = {
   _id: string;
   message: string;
   type: 'challenge' | 'achievement' | 'system' | 'social';
@@ -22,8 +22,8 @@ export interface DashboardNotification {
   time: string;
 }
 
-export interface DashboardData {
-  stats: DashboardStats;
+export type DashboardData = {
+  data: DashboardStats;
   profile: DashboardProfile;
   notifications: DashboardNotification[];
   unreadCount: number;

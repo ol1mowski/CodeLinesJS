@@ -1,20 +1,44 @@
 import { User } from '../models/user.model.js';
 import { AuthError, ValidationError } from '../utils/errors.js';
+import { LearningPath } from '../models/learningPath.model.js';
 
 export const getStats = async (req, res, next) => {
   try {
     const userId = req.user?.userId;
     if (!userId) throw new AuthError('Brak autoryzacji');
 
-    const user = await User.findById(userId)
-      .select('stats username')
-      .lean();
+    const [user, learningPaths] = await Promise.all([
+      User.findById(userId)
+        .select('stats username')
+        .lean(),
+      LearningPath.find({ 'lessons': { $exists: true, $not: { $size: 0 } } })
+        .lean()
+    ]);
 
     if (!user) throw new ValidationError('Nie znaleziono użytkownika');
 
-    const stats = user.stats || {};  
-
+    const stats = user.stats || {};
     const pointsToNextLevel = stats.pointsToNextLevel || calculatePointsToNextLevel(stats.level || 1);
+
+    // Oblicz postęp w ścieżkach nauki
+    const learningPathsProgress = learningPaths.map(path => {
+      const userPath = stats.learningPaths?.find(
+        up => up.pathId.toString() === path._id.toString()
+      );
+
+      return {
+        pathId: path._id,
+        title: path.title,
+        progress: {
+          completed: userPath?.progress?.completedLessons?.length || 0,
+          total: path.totalLessons,
+          percentage: path.totalLessons > 0 
+            ? Math.round((userPath?.progress?.completedLessons?.length || 0) / path.totalLessons * 100)
+            : 0,
+          status: userPath?.status || 'locked'
+        }
+      };
+    });
 
     res.json({
       status: 'success',
@@ -37,6 +61,17 @@ export const getStats = async (req, res, next) => {
         unlockedFeatures: stats.unlockedFeatures || [],
         chartData: {
           daily: stats.chartData?.daily || [],
+          progress: stats.chartData?.progress || []
+        },
+        learningPaths: learningPathsProgress,
+        summary: {
+          totalPaths: learningPaths.length,
+          completedPaths: learningPathsProgress.filter(p => p.progress.status === 'completed').length,
+          inProgress: learningPathsProgress.filter(p => p.progress.status === 'active').length,
+          averageCompletion: Math.round(
+            learningPathsProgress.reduce((acc, curr) => acc + curr.progress.percentage, 0) / 
+            learningPathsProgress.length
+          )
         }
       }
     });
