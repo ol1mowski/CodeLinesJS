@@ -58,7 +58,7 @@ export const StatsOverview = memo(({ stats, isLoading }: StatsOverviewProps) => 
     >
       <LevelProgress
         level={displayData.level}
-        experience={displayData.xp}
+        experience={displayData.points}
         nextLevel={displayData.pointsToNextLevel}
       />
 
