@@ -11,8 +11,6 @@ import postsRoutes from './routes/posts.routes.js';
 import settingsRoutes from './routes/settings.routes.js';
 import learningPathsRoutes from './routes/learningPaths.routes.js';
 import lessonsRoutes from './routes/lessons.routes.js';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import { initializeModels } from './models/index.js';
 import resourcesRoutes from './routes/resources.routes.js';
 import usersRoutes from './routes/users.routes.js';
@@ -23,9 +21,6 @@ dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 5001;
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 app.use(cors({
   origin: 'http://localhost:5173',
@@ -48,7 +43,6 @@ app.use("/api/settings", settingsRoutes);
 app.use("/api/learning-paths", learningPathsRoutes);
 app.use("/api/lessons", lessonsRoutes);
 app.use("/api/resources", resourcesRoutes);
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/users', usersRoutes);
 app.use(errorHandler);
 

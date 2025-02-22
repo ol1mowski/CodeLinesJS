@@ -2,15 +2,13 @@ import { memo, useCallback, useEffect } from "react";
 import { useProfile } from "../../hooks/useProfile";
 import { Loader } from "../../components/UI/Loader/Loader.component";
 import { useProfileFormLogic } from "../../hooks/useProfileFormLogic";
-import { useAvatarHandling } from "../../hooks/useAvatarHandling";
 import { ProfileFormContent } from "./components/ProfileFormContent/ProfileFormContent.component";
 import { useToast } from "../../contexts/ToastContext";
 
 export const ProfileForm = memo(() => {
   const { showToast } = useToast();
-  const { profile, isLoading, updateProfile, updateAvatar, avatarUrl } = useProfile();
-  const { previewAvatar, handleChangeAvatar } = useAvatarHandling(updateAvatar);
-  const { form, onSubmit } = useProfileFormLogic(profile || null, avatarUrl);
+  const { profile, isLoading, updateProfile } = useProfile();
+  const { form, onSubmit } = useProfileFormLogic(profile || null);
   
   const { register, formState: { errors, isSubmitting }, reset, setValue } = form;
 
@@ -39,11 +37,7 @@ export const ProfileForm = memo(() => {
 
   return (
     <ProfileFormContent
-      avatarUrl={avatarUrl}
-      previewAvatar={previewAvatar}
-      handleChangeAvatar={handleChangeAvatar}
       handleCancel={handleCancel}
-      isUploading={updateAvatar.isPending}
       register={register}
       errors={errors}
       defaultBio={profile?.profile?.bio}

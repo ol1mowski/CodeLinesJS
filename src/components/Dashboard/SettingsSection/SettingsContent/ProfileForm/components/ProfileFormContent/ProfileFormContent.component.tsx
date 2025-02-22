@@ -1,6 +1,5 @@
 import { memo } from 'react';
 import { motion } from 'framer-motion';
-import { Avatar } from '../Avatar/Avatar.component';
 import { UserInfoFields } from '../UserInfoFields/UserInfoFields.component';
 import { BioField } from '../BioField/BioField.component';
 import { FormButtons } from '../FormButtons/FormButtons.component';
@@ -21,11 +20,7 @@ type ProfileFormContentProps = {
 };
 
 export const ProfileFormContent = memo(({
-  avatarUrl,
-  previewAvatar,
-  handleChangeAvatar,
   handleCancel,
-  isUploading,
   register,
   errors,
   defaultBio,
@@ -41,20 +36,6 @@ export const ProfileFormContent = memo(({
   >
     <div className={styles.container}>
       <div className={styles.header}>
-        <div className={styles.avatarSection}>
-          <Avatar
-            src={avatarUrl || ''}
-            alt="Avatar"
-            onChangeAvatar={handleChangeAvatar}
-            isUploading={isUploading}
-            preview={previewAvatar}
-            onReset={handleCancel}
-            className="w-32 h-32 sm:w-40 sm:h-40 md:w-full md:h-auto 
-              aspect-square rounded-full object-cover
-              border-2 border-js/10 hover:border-js/30
-              transition-colors duration-200"
-          />
-        </div>
 
         <div className={styles.infoSection}>
           <UserInfoFields
