@@ -6,7 +6,7 @@ import { fetchStats } from '../api/fetchStats.api';
 export const useStats = () => {
   const { token, isAuthenticated } = useAuth();
 
-  const { data: stats, isLoading, error } = useQuery<UserStats>({
+  const { data: stats, isLoading, error } = useQuery<UserStats, Error>({
     queryKey: ['stats'],
     queryFn: () => fetchStats(token!),
     enabled: isAuthenticated && !!token,

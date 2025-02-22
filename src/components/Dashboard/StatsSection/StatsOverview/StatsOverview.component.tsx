@@ -7,12 +7,14 @@ import { BadgesGrid } from "./BadgesGrid/BadgesGrid.component";
 import { ErrorState } from "./components/ErrorState.component";
 import { useStatsCards } from "./hooks/useStatsCards.hook";
 import { UserStats } from "../../../../types/stats.types";
-import { useUserStats } from "../hooks/useUserStats";
+
 
 type StatsOverviewProps = {
   stats: UserStats;
   isLoading: boolean;
+  error: Error | null;
 };
+
 
 const container = {
   hidden: { opacity: 0 },
@@ -24,10 +26,9 @@ const container = {
   }
 };
 
-export const StatsOverview = memo(({ stats, isLoading }: StatsOverviewProps) => {
-  const { data: statsData, error } = useUserStats();
+export const StatsOverview = memo(({ stats, isLoading, error }: StatsOverviewProps) => {
 
-  const statsCards = useStatsCards(statsData);
+  const statsCards = useStatsCards(stats);
 
   if (isLoading) {
     return <LoadingScreen />;
@@ -37,17 +38,13 @@ export const StatsOverview = memo(({ stats, isLoading }: StatsOverviewProps) => 
     return <ErrorState message={`Wystąpił błąd podczas ładowania statystyk: ${error.message}`} />;
   }
 
-  const displayData = stats.data;
-
-  if (!displayData) {
+  if (!stats) {
     return (
       <div className="p-4 bg-dark/50 rounded-lg">
         <p className="text-gray-400">Brak dostępnych statystyk</p>
       </div>
     );
-  }  
-
-  
+  }    
 
   return (
     <motion.div
@@ -57,9 +54,9 @@ export const StatsOverview = memo(({ stats, isLoading }: StatsOverviewProps) => 
       className="space-y-6"
     >
       <LevelProgress
-        level={displayData.level}
-        experience={displayData.points}
-        nextLevel={displayData.pointsToNextLevel}
+        level={stats.data.level}
+        experience={stats.data.points}
+        nextLevel={stats.data.pointsToNextLevel}
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -68,7 +65,7 @@ export const StatsOverview = memo(({ stats, isLoading }: StatsOverviewProps) => 
         ))}
       </div>
 
-      <BadgesGrid badges={displayData.badges} />
+      <BadgesGrid badges={stats.data.badges} />
     </motion.div>
   );
 });
