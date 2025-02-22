@@ -18,8 +18,13 @@ export const usePosts = () => {
   } = useInfiniteQuery({
     queryKey: [POSTS_QUERY_KEY],
     queryFn: async ({ pageParam = 1 }) => {
+      const token = sessionStorage.getItem("token") || localStorage.getItem("token");
       const response = await fetch(
-        `${API_URL}/posts?page=${pageParam}&limit=${POSTS_PER_PAGE}`
+        `${API_URL}/posts?page=${pageParam}&limit=${POSTS_PER_PAGE}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
       );
       if (!response.ok) {
         throw new Error('Nie udało się pobrać postów');
@@ -29,6 +34,7 @@ export const usePosts = () => {
     getNextPageParam: (lastPage) => lastPage.hasNextPage ? lastPage.nextPage : undefined,
     initialPageParam: 1,
   });
+
 
   const prefetchNextPage = useCallback(async () => {
     if (hasNextPage) {
@@ -70,7 +76,7 @@ export const usePosts = () => {
           ...page,
           posts: page.posts.map((post: Post) =>
             post.id === postId
-              ? { ...post, likes: [...post.likes, 'optimistic-like'] }
+              ? { ...post, likes: { count: post.likes.count + 1, isLiked: true } }
               : post
           ),
         })),
@@ -88,6 +94,7 @@ export const usePosts = () => {
       queryClient.invalidateQueries({ queryKey: [POSTS_QUERY_KEY] });
     },
   });
+
 
   return {
     posts: data?.pages.flatMap(page => page.posts) ?? [],

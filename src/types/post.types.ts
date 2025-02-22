@@ -1,13 +1,19 @@
 export type Post = {
   id: string;
+  _id: string;
   author: {
     id: string;
+    username: string;
     name: string;
     avatar?: string;
   };
   content: string;
+  comments: Comment[];
   createdAt: Date;
-  likes: string[];
+  likes: {
+    count: number;
+    isLiked: boolean;
+  };
   commentsCount: number;
 };
 

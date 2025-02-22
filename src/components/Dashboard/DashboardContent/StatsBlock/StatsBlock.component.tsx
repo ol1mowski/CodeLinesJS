@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { FaStar, FaChartLine, FaMedal } from "react-icons/fa";
-import { DashboardStats } from "../../../../types/dashboard.types";
+import { DashboardStats } from "../types/dashboard.types";
 import { statsBlockStyles as styles } from "./style/StatsBlock.styles";
 import { useDateFormat } from "./hooks/useDateFormat";
 

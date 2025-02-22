@@ -24,18 +24,18 @@ describe('NavigationSection', () => {
     isLastSection: false
   };
 
-  it('renderuje się poprawnie z podstawowymi propsami', () => {
+  it('render correctly with basic props', () => {
     render(<NavigationSection {...defaultProps} />);
     expect(screen.getByText('Test Section')).toBeInTheDocument();
     expect(screen.getByText('Home')).toBeInTheDocument();
   });
 
-  it('nie wyświetla tytułu sekcji gdy isExpanded jest false', () => {
+  it('does not display section title when isExpanded is false', () => {
     render(<NavigationSection {...defaultProps} isExpanded={false} />);
     expect(screen.queryByText('Test Section')).not.toBeInTheDocument();
   });
 
-  it('wywołuje onItemClick z odpowiednim itemem', () => {
+  it('calls onItemClick with the correct item', () => {
     const onItemClick = vi.fn();
     render(<NavigationSection {...defaultProps} onItemClick={onItemClick} />);
     

@@ -38,16 +38,23 @@ export type LessonProgress = {
 }
 
 export type Lesson = {
-    _id: string;
+    id: string;
     slug: string;
-    sections: LessonSection[];
     title: string;
     description: string;
     duration: number;
     difficulty: 'beginner' | 'intermediate' | 'advanced';
     category: string;
     points: number;
-    requiredLevel: number;
-    isLocked: boolean;
-    isCompleted: boolean;
+    sections: LessonSection[];
+    quiz?: QuizQuestion[];
+    requiredLevel?: number;
+    content: {
+        sections: LessonSection[];
+        quiz?: QuizQuestion[];
+    };
+    isLocked?: boolean;
+    isCompleted?: boolean;
+    pathId?: string;
+
 }

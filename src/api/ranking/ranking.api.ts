@@ -1,15 +1,20 @@
-import { RankingUser, RankingPeriod, RankingStats } from '../../types/ranking.types';
+import { RankingUser, RankingStats } from '../../types/ranking.types';
 
 const BASE_URL = 'http://localhost:5001';
 
-interface RankingResponse {
+type RankingResponse = {
   users: RankingUser[];
   stats: RankingStats;
 }
 
 export const rankingApi = {
-  getRanking: async (period: RankingPeriod): Promise<RankingResponse> => {
-    const response = await fetch(`${BASE_URL}/api/ranking?period=${period}`);
+  getRanking: async (): Promise<RankingResponse> => {
+    const token = sessionStorage.getItem('token') || localStorage.getItem('token');
+    const response = await fetch(`${BASE_URL}/api/ranking`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
     
     if (!response.ok) {
       throw new Error('Nie udało się pobrać rankingu');

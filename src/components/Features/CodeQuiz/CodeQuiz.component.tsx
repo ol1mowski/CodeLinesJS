@@ -15,7 +15,7 @@ export const CodeQuiz = memo(() => {
 
   return (
     <div className="flex flex-col">
-      <QuizHeader 
+      <QuizHeader
         title={title}
         subtitle="Wybierz poprawną odpowiedź"
       />
@@ -26,9 +26,12 @@ export const CodeQuiz = memo(() => {
             <QuizAnswer
               key={option.id}
               answer={option.text}
+              isSelected={selectedAnswer === option.id}
               isCorrect={selectedAnswer === correctAnswer && option.id === selectedAnswer}
               onClick={() => handleAnswerClick(option.id)}
+              disabled={selectedAnswer !== null}
             />
+
           ))}
         </div>
       </div>

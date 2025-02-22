@@ -6,8 +6,8 @@ import type { Lesson } from "../../../../types/lesson.types";
 
 type LessonCardProps = {
   lesson: Lesson;
-  userLevel: number;
 }
+
 
 const cardVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -20,7 +20,7 @@ const cardVariants = {
   }
 };
 
-export const LessonCard = memo(({ lesson, userLevel }: LessonCardProps) => {
+export const LessonCard = memo(({ lesson }: LessonCardProps) => {
   const { 
     id, 
     title, 
@@ -31,7 +31,6 @@ export const LessonCard = memo(({ lesson, userLevel }: LessonCardProps) => {
     requiredLevel,
     isLocked,
     isCompleted,
-    category 
   } = lesson;
 
   return (
@@ -107,7 +106,8 @@ export const LessonCard = memo(({ lesson, userLevel }: LessonCardProps) => {
               </span>
             ) : (
               <Link 
-                to={`/dashboard/learn/lesson/${id}`}
+                to={`/dashboard/learn/lesson?lessonId=${id}`}
+                state={{ lessonId: id }}
                 className={`p-2 rounded-lg transition-colors ${
                   isCompleted 
                     ? 'text-green-400 hover:bg-green-500/10' 

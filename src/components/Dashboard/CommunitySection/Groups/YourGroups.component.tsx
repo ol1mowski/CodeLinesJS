@@ -1,60 +1,73 @@
 import { memo } from "react";
-import { motion } from "framer-motion";
 import { FaUsers } from "react-icons/fa";
 import { useGroups } from "../../../../Hooks/useGroups";
-import { HiOutlineUserGroup } from "react-icons/hi2";
+import { Link } from "react-router-dom";
 
 export const YourGroups = memo(() => {
   const { groups, isLoading } = useGroups();
-  const joinedGroups = groups?.filter(group => group.isJoined);
+
+  const userGroups = groups?.userGroups || [];
 
   if (isLoading) {
     return (
-      <motion.div className="bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10 p-6 shadow-lg animate-pulse">
-        <div className="h-6 w-32 bg-js/10 rounded mb-4" />
-        <div className="space-y-4">
-          {[1, 2, 3].map(i => (
-            <div key={i} className="flex items-center gap-3">
+      <div className="bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10 p-4">
+        <h2 className="text-lg font-bold text-js mb-4">Twoje grupy</h2>
+        <div className="space-y-3">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="animate-pulse flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-js/10" />
-              <div className="h-4 w-24 bg-js/10 rounded" />
+              <div className="flex-1">
+                <div className="h-4 w-24 bg-js/10 rounded mb-2" />
+                <div className="h-3 w-16 bg-js/10 rounded" />
+              </div>
             </div>
           ))}
         </div>
-      </motion.div>
+      </div>
     );
   }
 
-  if (!groups?.length) {
+  if (!userGroups.length) {
     return (
-      <motion.div className="bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10 p-6 shadow-lg">
-        <h2 className="text-xl font-bold text-js mb-4">Twoje Grupy</h2>
-        <div className="text-center text-gray-400 py-4">
-          <HiOutlineUserGroup className="w-8 h-8 mx-auto mb-2 opacity-50" />
-          <div>Nie dołączyłeś jeszcze do żadnej grupy</div>
+      <div className="bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10 p-6">
+        <div className="text-center">
+          <div className="bg-js/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+            <FaUsers className="w-8 h-8 text-js" />
+          </div>
+          <h2 className="text-lg font-bold text-js mb-2">Brak grup</h2>
+          <p className="text-gray-400 text-sm mb-4">
+            Nie należysz jeszcze do żadnej grupy. Dołącz do istniejącej lub stwórz własną!
+          </p>
         </div>
-      </motion.div>
+      </div>
     );
   }
 
   return (
-    <motion.div className="bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10 p-6 shadow-lg">
-      <h2 className="text-xl font-bold text-js mb-4">Twoje grupy</h2>
-      <div className="space-y-4">
-        {joinedGroups?.map(group => (
-          <div key={group.id} className="flex items-center justify-between p-3 bg-dark/20 rounded-lg">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-js/20 flex items-center justify-center">
-                <FaUsers className="w-5 h-5 text-js" />
-              </div>
-              <div>
-                <h3 className="font-medium text-js">{group.name}</h3>
-                <span className="text-sm text-gray-400">{group.membersCount} członków</span>
-              </div>
+    <div className="bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10 p-4">
+      <h2 className="text-lg font-bold text-js mb-4">Twoje grupy</h2>
+      <div className="space-y-3">
+        {userGroups.map(group => (
+          <Link
+            key={group._id}
+            to={`/dashboard/community/groups/${group._id}`}
+            className="flex items-center gap-3 p-2 rounded-lg hover:bg-dark/40 transition-colors group"
+          >
+            <div className="w-10 h-10 rounded-lg bg-js/10 flex items-center justify-center">
+              <FaUsers className="w-5 h-5 text-js" />
             </div>
-          </div>
+            <div>
+              <h3 className="font-medium text-gray-200 group-hover:text-js transition-colors">
+                {group.name}
+              </h3>
+              <span className="text-xs text-gray-400">
+                {group.membersCount} członków
+              </span>
+            </div>
+          </Link>
         ))}
       </div>
-    </motion.div>
+    </div>
   );
 });
 

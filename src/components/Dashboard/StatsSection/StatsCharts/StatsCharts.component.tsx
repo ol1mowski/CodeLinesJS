@@ -23,7 +23,7 @@ export const StatsCharts = memo(({ data, isLoading }: StatsChartsProps) => {
   }
 
   return (
-    <div className="flex flex-col gap-6 h-full">
+    <div className="hidden md:flex flex-col gap-6 h-full">
       <div className="bg-dark/50 rounded-lg p-6 flex-1">
         <h3 className="text-xl font-bold text-js mb-6">Aktywność</h3>
         <div className="h-[300px]">

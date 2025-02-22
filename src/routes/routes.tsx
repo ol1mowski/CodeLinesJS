@@ -11,11 +11,15 @@ import { SettingsSection } from "../components/Dashboard/SettingsSection/Setting
 import { GamesSection } from "../components/Dashboard/GamesSection/GamesSection.component";
 import { CodeEditor } from "../components/Dashboard/CodeEditor/CodeEditor.component";
 import { LessonPage } from "../components/Dashboard/LearnSection/Lesson/Lesson.page";
-
-
+import { CommunityProvider } from "../contexts/CommunityContext";
+import { GroupView } from "../components/Dashboard/CommunitySection/Groups/GroupView.component";
+import { GameplayRouter } from "../components/Dashboard/GamesSection/components/GameplayRouter/GameplayRouter.component";
 
 const Home = lazy(() => import("../pages/Home"));
 const Auth = lazy(() => import("../pages/Auth"));
+const CommunityFeed = lazy(() => import("../components/Dashboard/CommunitySection/Feed/CommunityFeed.component"));
+const CommunityRanking = lazy(() => import("../components/Dashboard/CommunitySection/Ranking/CommunityRanking.component"));
+const CommunityGroups = lazy(() => import("../components/Dashboard/CommunitySection/Groups/CommunityGroups.component"));
 
 export const router = createBrowserRouter([
   {
@@ -26,10 +30,6 @@ export const router = createBrowserRouter([
   {
     path: "/logowanie",
     element: <Auth />,
-  },
-  {
-    path: "/lesson/:lessonId",
-    element: <LessonPage />
   },
   {
     path: "/dashboard",
@@ -52,8 +52,40 @@ export const router = createBrowserRouter([
         element: <LearnSection />,
       },
       {
+        path: "learn/lesson/:lessonSlug",
+        element: <LessonPage />
+      },
+      {
         path: "community",
-        element: <CommunitySection />
+        element: (
+          <CommunityProvider>
+            <CommunitySection />
+          </CommunityProvider>
+        ),
+        children: [
+          {
+            index: true,
+            element: <CommunityFeed />
+          },
+          {
+            path: "feed",
+            element: <CommunityFeed />
+          },
+          {
+            path: "ranking",
+            element: <CommunityRanking />
+          },
+          {
+            path: "groups",
+            element: <CommunityGroups />,
+            children: [
+              {
+                path: ":groupId",
+                element: <GroupView />
+              }
+            ]
+          }
+        ]
       },
       {
         path: "settings",
@@ -61,12 +93,10 @@ export const router = createBrowserRouter([
       },
       {
         path: "play",
-        element: <GamesSection />
+        element: <GamesSection />,
       },
-      {
-        path: "code",
-        element: <CodeEditor />
-      }
+      { path: "play/:slug", element: <GameplayRouter /> },
+      { path: "code", element: <CodeEditor /> },
     ]
   },
   {

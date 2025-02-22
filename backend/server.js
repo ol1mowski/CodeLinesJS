@@ -3,7 +3,6 @@ import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import authRoutes from "./routes/auth.routes.js";
-import dashboardRoutes from "./routes/dashboard.routes.js";
 import statsRoutes from "./routes/stats.routes.js";
 import groupsRoutes from "./routes/groups.routes.js";
 import rankingRoutes from "./routes/ranking.routes.js";
@@ -17,6 +16,8 @@ import { fileURLToPath } from 'url';
 import { initializeModels } from './models/index.js';
 import resourcesRoutes from './routes/resources.routes.js';
 import usersRoutes from './routes/users.routes.js';
+import gamesRoutes from './routes/games.routes.js';
+import progressRoutes from './routes/progress.routes.js';
 
 dotenv.config();
 
@@ -37,10 +38,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/auth", authRoutes);
-app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/stats", statsRoutes);
+app.use("/api/games", gamesRoutes);
 app.use("/api/groups", groupsRoutes);
 app.use("/api/ranking", rankingRoutes);
+app.use("/api/progress", progressRoutes);
 app.use("/api/posts", postsRoutes);
 app.use("/api/settings", settingsRoutes);
 app.use("/api/learning-paths", learningPathsRoutes);

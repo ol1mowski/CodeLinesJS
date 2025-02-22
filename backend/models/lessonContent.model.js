@@ -40,14 +40,14 @@ const lessonContentSchema = new mongoose.Schema({
       code: String,
       language: String,
       explanation: String
-    }],
-    quiz: [{
-      id: String,
-      question: String,
-      options: [String],
-      correctAnswer: Number,
-      explanation: String
     }]
+  }],
+  quiz: [{
+    id: String,
+    question: String,
+    options: [String],
+    correctAnswer: Number,
+    explanation: String
   }]
 }, {
   timestamps: true
