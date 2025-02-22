@@ -1,6 +1,7 @@
 export interface Badge {
   id: string;
   name: string;
+  description: string;
   icon: string;
   earnedAt: string;
 }
@@ -8,14 +9,13 @@ export interface Badge {
 export type UnlockedFeature = 'custom_themes' | 'create_challenges';
 
 export type UserStats = {
+  data: {
   level: number;
-  experiencePoints: number;
-  nextLevelThreshold: number;
-  completedChallenges: number;
-  currentStreak: number;
+  points: number;
+  pointsToNextLevel: number;
+  completedLessons: number;
+  streak: number;
   bestStreak: number;
-  averageScore: number;
-  totalTimeSpent: number;
   badges: Badge[];
   unlockedFeatures: UnlockedFeature[];
   levelUp?: boolean;
@@ -36,6 +36,7 @@ export type UserStats = {
       total: number;
     }>;
   };
+}
 };
 
 export type StatsContextType = {

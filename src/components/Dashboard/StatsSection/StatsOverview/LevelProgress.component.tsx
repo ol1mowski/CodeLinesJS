@@ -20,7 +20,7 @@ export const LevelProgress = memo(({ level, experience, nextLevel }: LevelProgre
             {experience} / {nextLevel} XP do następnego poziomu
           </p>
         </div>
-        <div className="w-16 h-16 rounded-full bg-js/20 flex items-center justify-center">
+        <div className="hidden w-16 h-16 rounded-full bg-js/20 md:flex items-center justify-center">
           <span className="text-2xl font-bold text-js">{level}</span>
         </div>
       </div>

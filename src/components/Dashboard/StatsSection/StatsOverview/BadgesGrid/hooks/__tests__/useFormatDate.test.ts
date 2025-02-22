@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { renderHook } from '@testing-library/react-hooks';
-import { useFormatDate } from '../useFormatDate';
+import { useFormatDate } from '../useFormatDate.hook';
 
 describe('useFormatDate', () => {
   it('formats valid dates correctly', () => {
