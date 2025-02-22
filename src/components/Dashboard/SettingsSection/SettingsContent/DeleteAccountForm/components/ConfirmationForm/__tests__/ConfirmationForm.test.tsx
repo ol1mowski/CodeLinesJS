@@ -21,7 +21,7 @@ const defaultProps = {
 };
 
 describe('ConfirmationForm', () => {
-  it('powinien wyrenderować wszystkie pola formularza', () => {
+  it('should render all form fields', () => {
     render(<ConfirmationForm {...defaultProps} />);
 
     expect(screen.getByRole('textbox', { name: /potwierdzenie/i })).toBeDefined();
@@ -30,7 +30,7 @@ describe('ConfirmationForm', () => {
     expect(screen.getByRole('button', { name: /anuluj/i })).toBeDefined();
   });
 
-  it('powinien wyświetlić błędy walidacji', () => {
+  it('should display validation errors', () => {
     const propsWithErrors = {
       ...defaultProps,
       errors: {
@@ -45,7 +45,7 @@ describe('ConfirmationForm', () => {
     expect(screen.getByText('Nieprawidłowe potwierdzenie')).toBeDefined();
   });
 
-  it('powinien wyświetlić stan ładowania podczas submitu', () => {
+  it('should display loading state during submission', () => {
     render(<ConfirmationForm {...defaultProps} isSubmitting={true} />);
 
     expect(screen.getByText('Usuwanie')).toBeDefined();

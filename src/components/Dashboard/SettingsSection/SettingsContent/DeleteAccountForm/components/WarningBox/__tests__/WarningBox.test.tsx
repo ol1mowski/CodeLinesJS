@@ -4,7 +4,7 @@ import { WarningBox } from '../WarningBox.component';
 import { warningItems } from '../data/WarningBox.data';
 
 describe('WarningBox', () => {
-  it('powinien wyrenderować wszystkie elementy ostrzeżenia', () => {
+  it('should render all warning elements', () => {
     render(<WarningBox />);
 
     expect(screen.getByText('Usuwanie konta jest nieodwracalne')).toBeDefined();
@@ -14,7 +14,7 @@ describe('WarningBox', () => {
     });
   });
 
-  it('powinien mieć odpowiednią ikonę ostrzeżenia', () => {
+  it('should have the correct warning icon', () => {
     render(<WarningBox />);
     
     const icon = screen.getByTestId('warning-icon');
