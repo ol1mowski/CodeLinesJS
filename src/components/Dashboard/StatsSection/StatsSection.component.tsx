@@ -5,7 +5,8 @@ import { StatsOverview } from "./StatsOverview/StatsOverview.component";
 import { StatsCharts } from "./StatsCharts/StatsCharts.component";
 import { DashboardState } from "../DashboardContent/components/DashboardState.component";
 import { LevelUpNotification } from "../../UI/Notifications/LevelUpNotification.component";
-import { Loader } from "../SettingsSection/components/UI/Loader/Loader.component";
+import { LoadingScreen } from "../../UI/LoadingScreen/LoadingScreen.component";
+
 
 export const StatsSection = memo(() => {
   const { stats, isLoading, error } = useStats();
@@ -26,7 +27,7 @@ export const StatsSection = memo(() => {
   }, [stats]);
 
   if (isLoading) {
-    return <Loader />;
+    return <LoadingScreen />;
   }
 
   if (error) {
