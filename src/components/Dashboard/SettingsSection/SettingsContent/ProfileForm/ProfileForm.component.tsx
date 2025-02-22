@@ -2,12 +2,11 @@ import { memo, useCallback, useEffect } from "react";
 import { useProfile } from "../../hooks/useProfile";
 import { useProfileFormLogic } from "../../hooks/useProfileFormLogic";
 import { ProfileFormContent } from "./components/ProfileFormContent/ProfileFormContent.component";
-import { useToast } from "../../contexts/ToastContext";
 import { LoadingScreen } from "../../../../UI/LoadingScreen/LoadingScreen.component";
 import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-hot-toast";
 
 export const ProfileForm = memo(() => {
-  const { showToast } = useToast();
   const { profile, isLoading, updateProfile } = useProfile();
   const { form, onSubmit } = useProfileFormLogic(profile || null);
   const queryClient = useQueryClient();
@@ -26,20 +25,20 @@ export const ProfileForm = memo(() => {
     try {
       if (profile) {
         reset(profile);
-        showToast('Zmiany zostały anulowane', 'success');
+        toast.success('Zmiany zostały anulowane');
       }
     } catch (error) {
-      showToast('Nie udało się anulować zmian', 'error');
+      toast.error('Nie udało się anulować zmian');
     }
-  }, [profile, reset, showToast]);
+  }, [profile, reset]);
 
   const handleSubmit = async (data: any) => {
     try {
       await onSubmit(data);
       await queryClient.invalidateQueries({ queryKey: ["userProfile"] });
-      showToast("Profil został zaktualizowany", "success");
+      toast.success("Profil został zaktualizowany");
     } catch (error) {
-      showToast("Wystąpił błąd podczas aktualizacji profilu", "error");
+      toast.error("Wystąpił błąd podczas aktualizacji profilu");
     }
   };
 
