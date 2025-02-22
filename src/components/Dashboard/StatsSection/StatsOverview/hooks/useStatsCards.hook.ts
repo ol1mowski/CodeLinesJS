@@ -1,11 +1,8 @@
 import { useMemo } from 'react';
 import { FaTrophy, FaFire } from "react-icons/fa";
 import { UserStats } from "../../../../../types/stats.types";
-import { useFormatTime } from './useFormatTime.hook';
 
 export const useStatsCards = (stats: UserStats | undefined) => {
-  const formatTime = useFormatTime();
-
   return useMemo(() => {
     if (!stats) return [];
         
@@ -24,5 +21,5 @@ export const useStatsCards = (stats: UserStats | undefined) => {
         gradient: "from-red-500 to-pink-500"
       },
     ];
-  }, [stats, formatTime]);
+  }, [stats]);
 }; 

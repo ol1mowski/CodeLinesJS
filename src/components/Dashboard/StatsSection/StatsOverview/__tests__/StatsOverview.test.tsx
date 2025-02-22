@@ -43,30 +43,23 @@ describe("StatsOverview", () => {
   });
 
   it("renders error state", () => {
-    (useStats as Mock).mockReturnValue({
-      error: new Error("Test error"),
-      isLoading: false,
-    });
+    const error = new Error("Test error");
     render(
       <StatsOverview
         stats={mockStats}
         isLoading={false}
-        error={new Error("Test error")}
+        error={error}
       />
     );
     expect(screen.getByText(/Wystąpił błąd/)).toBeInTheDocument();
   });
 
   it("renders stats correctly", () => {
-    (useStats as Mock).mockReturnValue({
-      data: mockStats,
-      isLoading: false,
-    });
     render(
       <StatsOverview
         stats={mockStats}
         isLoading={false}
-        error={new Error("Test error")}
+        error={null}
       />
     );
 
