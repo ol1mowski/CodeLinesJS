@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
-import { usePreferencesForm } from '../usePreferencesForm';
-import { usePreferences } from '../usePreferences';
-import { useToast } from '../../contexts/ToastContext';
-import { PreferencesError } from '../../utils/api/preferences';
+import { usePreferencesForm } from './usePreferencesForm';
+import { usePreferences } from './usePreferences';
+import { useToast } from '../contexts/ToastContext';
+import { PreferencesError } from '../utils/api/preferences';
 
 export const usePreferencesFormLogic = () => {
   const { preferences, isLoading, updatePreferences } = usePreferences();

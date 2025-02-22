@@ -1,9 +1,9 @@
 import { memo, useCallback, useEffect } from "react";
 import { useProfile } from "../../hooks/useProfile";
-import { Loader } from "../../components/UI/Loader/Loader.component";
 import { useProfileFormLogic } from "../../hooks/useProfileFormLogic";
 import { ProfileFormContent } from "./components/ProfileFormContent/ProfileFormContent.component";
 import { useToast } from "../../contexts/ToastContext";
+import { LoadingScreen } from "../../../../UI/LoadingScreen/LoadingScreen.component";
 
 export const ProfileForm = memo(() => {
   const { showToast } = useToast();
@@ -32,7 +32,7 @@ export const ProfileForm = memo(() => {
   }, [profile, reset, showToast]);
 
   if (isLoading) {
-    return <Loader />;
+    return <LoadingScreen />;
   }
 
   return (

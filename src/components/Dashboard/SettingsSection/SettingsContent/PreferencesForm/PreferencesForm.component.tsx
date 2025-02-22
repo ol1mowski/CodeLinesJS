@@ -1,7 +1,7 @@
 import { memo } from "react";
-import { usePreferencesFormLogic } from "../../hooks/preferences/usePreferencesFormLogic";
-import { Loader } from "../../components/UI/Loader/Loader.component";
+import { usePreferencesFormLogic } from "../../hooks/usePreferencesFormLogic";
 import { PreferencesFormContent } from "./components/PreferencesFormContent/PreferencesFormContent.component";
+import { LoadingScreen } from "../../../../UI/LoadingScreen/LoadingScreen.component";
 
 export const PreferencesForm = memo(() => {
   const {
@@ -16,7 +16,7 @@ export const PreferencesForm = memo(() => {
   } = usePreferencesFormLogic();
 
   if (isLoading) {
-    return <Loader />;
+    return <LoadingScreen />;
   }
 
   return (
