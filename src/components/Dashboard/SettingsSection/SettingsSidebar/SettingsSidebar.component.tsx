@@ -1,8 +1,8 @@
 import { memo, useCallback } from "react";
 import { motion } from "framer-motion";
 import { SettingsView } from "../types/settings";
-import { menuItems } from "../components/Settings/Sidebar/SettingsSidebar.data";
-import { styles } from "../components/Settings/Sidebar/SettingsSidebar.styles";
+import { menuItems } from "../data/SettingsSidebar.data";
+import { styles } from "./style/SettingsSidebar.styles";
 
 type SettingsSidebarProps = {
   activeView: SettingsView;

@@ -9,7 +9,6 @@ import {
 import {
   getProfile,
   updateProfile,
-  updateAvatar,
   changePassword,
   getPreferences,
   updatePreferences,
@@ -17,13 +16,11 @@ import {
   getUserData,
   getUserByIdentifier
 } from '../controllers/settings.controller.js';
-import { upload } from '../config/multer.js';
 
 const router = Router();
 
 router.get('/profile', authMiddleware, getProfile);
 router.put('/profile', authMiddleware, validateProfileUpdate, updateProfile);
-router.put('/avatar', authMiddleware, upload.single('avatar'), updateAvatar);
 router.put('/security/password', authMiddleware, validatePasswordChange, changePassword);
 router.get('/preferences', authMiddleware, getPreferences);
 router.put('/preferences', authMiddleware, validatePreferencesUpdate, updatePreferences);

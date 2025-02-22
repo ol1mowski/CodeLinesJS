@@ -10,10 +10,6 @@ export const styles = {
 
   header: `flex flex-col md:flex-row gap-6 md:gap-8`,
 
-  avatarSection: `w-full md:w-1/3 
-    flex flex-col items-center md:items-start 
-    space-y-4`,
-
   infoSection: `w-full md:w-2/3 space-y-6`,
 
   bioSection: `space-y-4`,

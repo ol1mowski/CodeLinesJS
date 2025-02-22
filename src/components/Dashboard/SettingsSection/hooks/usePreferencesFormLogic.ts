@@ -1,12 +1,10 @@
 import { useEffect } from 'react';
-import { usePreferencesForm } from '../usePreferencesForm';
-import { usePreferences } from '../usePreferences';
-import { useToast } from '../../contexts/ToastContext';
-import { PreferencesError } from '../../utils/api/preferences';
+import { usePreferencesForm } from './usePreferencesForm';
+import { usePreferences } from './usePreferences';
+import { toast } from 'react-hot-toast';
 
 export const usePreferencesFormLogic = () => {
   const { preferences, isLoading, updatePreferences } = usePreferences();
-  const { showToast } = useToast();
 
   const { form, onSubmit } = usePreferencesForm({
     onSubmit: async (data) => {
@@ -16,9 +14,9 @@ export const usePreferencesFormLogic = () => {
           pushNotifications: data.pushNotifications,
           language: "pl"
         });
-        showToast('Preferencje zostały zaktualizowane', 'success');
+        toast.success('Preferencje zostały zaktualizowane');
       } catch (error) {
-        handleError(error);
+        toast.error('Nie udało się zaktualizować preferencji');
       }
     }
   });
@@ -40,10 +38,10 @@ export const usePreferencesFormLogic = () => {
         setValue('emailNotifications', preferences.emailNotifications);
         setValue('pushNotifications', preferences.pushNotifications);
         setValue('language', "pl");
-        showToast('Zmiany zostały anulowane', 'success');
+        toast.success('Zmiany zostały anulowane');
       }
     } catch (error) {
-      showToast('Nie udało się anulować zmian', 'error');
+      toast.error('Nie udało się anulować zmian');
     }
   };
 

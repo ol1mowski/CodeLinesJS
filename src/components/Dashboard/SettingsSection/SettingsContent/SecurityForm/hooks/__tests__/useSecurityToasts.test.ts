@@ -1,8 +1,7 @@
 import { describe, it, expect, vi, beforeEach, MockInstance } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { useSecurityToasts } from '../useSecurityToasts';
-import { useToast } from '../../../../contexts/ToastContext';
-import { SecurityError } from '../../../../utils/api/security';
+import { SecurityError } from '../../../../api/security';
 
 vi.mock('../../../../contexts/ToastContext', () => ({
   useToast: vi.fn()
@@ -13,7 +12,6 @@ describe('useSecurityToasts', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useToast as unknown as MockInstance).mockReturnValue({ showToast: mockShowToast });
   });
 
   it('handles success correctly', () => {

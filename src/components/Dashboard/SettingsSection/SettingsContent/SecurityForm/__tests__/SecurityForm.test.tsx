@@ -1,3 +1,4 @@
+import React from 'react';
 import { describe, it, expect, vi, beforeEach, MockInstance } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -21,9 +22,17 @@ vi.mock('framer-motion', () => ({
 }));
 
 vi.mock('../../../../UI/Button/Button.component', () => ({
-  Button: ({ children, ...props }: any) => (
-    <button data-testid="button" {...props}>{children}</button>
-  ),
+  Button: ({ children, onClick, disabled, type = 'button', ...props }: any) => (
+    <button 
+      onClick={onClick}
+      disabled={disabled}
+      type={type}
+      data-testid="button" 
+      {...props}
+    >
+      {children}
+    </button>
+  )
 }));
 
 vi.mock('../../components/Profile/FormButtons/FormButtons.component', () => ({
@@ -100,10 +109,9 @@ describe('SecurityForm', () => {
       </MemoryRouter>
     );
     
-    expect(screen.getByText('Zmień hasło')).toBeInTheDocument();
-    expect(screen.getByText('Aktualne hasło')).toBeInTheDocument();
-    expect(screen.getByText('Nowe hasło')).toBeInTheDocument();
-    expect(screen.getByText('Potwierdź nowe hasło')).toBeInTheDocument();
+    expect(screen.getByTestId('input-currentPassword')).toBeInTheDocument();
+    expect(screen.getByTestId('input-newPassword')).toBeInTheDocument();
+    expect(screen.getByTestId('input-confirmPassword')).toBeInTheDocument();
   });
 
   it('handles form submission successfully', async () => {

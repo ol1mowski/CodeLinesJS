@@ -1,9 +1,4 @@
-const API_URL = 'http://localhost:5001';
-
-const getAuthHeaders = () => ({
-  'Authorization': `Bearer ${localStorage.getItem('token') || sessionStorage.getItem('token')}`,
-  'Content-Type': 'application/json',
-});
+import { API_URL } from "../../../../config/api.config";
 
 export class AccountError extends Error {
   constructor(public code: 'INVALID_PASSWORD' | 'INVALID_CONFIRMATION' | 'UNKNOWN_ERROR', message: string) {
@@ -12,13 +7,19 @@ export class AccountError extends Error {
   }
 }
 
-export const deleteAccount = async (data: {
-  password: string;
-  confirmation: string;
-}): Promise<void> => {
-  const response = await fetch(`${API_URL}/api/settings/account`, {
+export const deleteAccount = async (
+  data: {
+    password: string;
+    confirmation: string;
+  },
+  token: string
+): Promise<void> => {
+  const response = await fetch(`${API_URL}/settings/account`, {
     method: 'DELETE',
-    headers: getAuthHeaders(),
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
     body: JSON.stringify(data),
   });
 
