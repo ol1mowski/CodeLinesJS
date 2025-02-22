@@ -1,9 +1,4 @@
-const API_URL = 'http://localhost:5001';
-
-const getAuthHeaders = () => ({
-  'Authorization': `Bearer ${localStorage.getItem('token') || sessionStorage.getItem('token')}`,
-  'Content-Type': 'application/json',
-});
+import { API_URL } from "../../../../config/api.config";
 
 export class SecurityError extends Error {
   constructor(public code: 'INVALID_CURRENT_PASSWORD' | 'UNKNOWN_ERROR', message: string) {
@@ -12,13 +7,19 @@ export class SecurityError extends Error {
   }
 }
 
-export const updatePassword = async (data: {
-  currentPassword: string;
-  newPassword: string;
-}): Promise<void> => {
-  const response = await fetch(`${API_URL}/api/settings/security/password`, {
+export const updatePassword = async (
+  data: {
+    currentPassword: string;
+    newPassword: string;
+  },
+  token: string
+): Promise<void> => {
+  const response = await fetch(`${API_URL}/settings/security/password`, {
     method: 'PUT',
-    headers: getAuthHeaders(),
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
     body: JSON.stringify(data),
   });
 

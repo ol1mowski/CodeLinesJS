@@ -1,29 +1,5 @@
-import { PreferencesData } from "../../types/settings";
-
-const API_URL = 'http://localhost:5001';
-
-const getAuthHeaders = () => ({
-  'Authorization': `Bearer ${localStorage.getItem('token') || sessionStorage.getItem('token')}`,
-  'Content-Type': 'application/json',
-});
-
-export const fetchPreferences = async (): Promise<PreferencesData> => {
-  const response = await fetch(`${API_URL}/api/settings/preferences`, {
-    headers: getAuthHeaders(),
-  });
-  
-  if (!response.ok) {
-    throw new Error('Failed to fetch preferences');
-  }
-  
-  const data = await response.json();
-  
-  return {
-    emailNotifications: data.emailNotifications ?? false,
-    pushNotifications: data.pushNotifications ?? false,
-    language: "pl"
-  };
-};
+import { PreferencesData } from "../types/settings";
+import { API_URL } from "../../../../config/api.config";
 
 export class PreferencesError extends Error {
   constructor(public code: 'VALIDATION_ERROR' | 'SAVE_ERROR' | 'UNKNOWN_ERROR', message: string) {
@@ -32,10 +8,36 @@ export class PreferencesError extends Error {
   }
 }
 
-export const updatePreferences = async (preferences: PreferencesData): Promise<PreferencesData> => {
-  const response = await fetch(`${API_URL}/api/settings/preferences`, {
+export const fetchPreferences = async (token: string): Promise<PreferencesData> => {
+  const response = await fetch(`${API_URL}/settings/preferences`, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+  
+  if (!response.ok) {
+    throw new Error('Failed to fetch preferences');
+  }
+  
+  const data = await response.json();
+  return {
+    emailNotifications: data.emailNotifications ?? false,
+    pushNotifications: data.pushNotifications ?? false,
+    language: "pl"
+  };
+};
+
+export const updatePreferences = async (
+  preferences: PreferencesData, 
+  token: string
+): Promise<PreferencesData> => {
+  const response = await fetch(`${API_URL}/settings/preferences`, {
     method: 'PUT',
-    headers: getAuthHeaders(),
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
     body: JSON.stringify(preferences),
   });
 

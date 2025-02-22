@@ -1,48 +1,28 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { fetchUserProfile, updateUserProfile, updateUserAvatar } from '../utils/api/profile';
+import { fetchUserProfile, updateUserProfile } from '../api/profile';
+import { useAuth } from '../../../../hooks/useAuth';
+import type { UserProfile } from "../types/settings";
 
-export const PROFILE_QUERY_KEY = ['profile'];
-export const AVATAR_QUERY_KEY = ['avatar'];
+export const PROFILE_QUERY_KEY = ['profile'] as const;
 
 export const useProfile = () => {
   const queryClient = useQueryClient();
+  const { token } = useAuth();
 
   const { data: profile, isLoading, error } = useQuery({
     queryKey: PROFILE_QUERY_KEY,
-    queryFn: fetchUserProfile,
+    queryFn: () => fetchUserProfile(token || ''),
+    enabled: !!token,
     staleTime: 1000 * 60 * 5,
   });
 
   const updateProfile = useMutation({
-    mutationFn: updateUserProfile,
+    mutationFn: (data: UserProfile) => updateUserProfile(data, token || ''),
     onSuccess: (newProfile) => {
       queryClient.setQueryData(PROFILE_QUERY_KEY, newProfile);
       queryClient.invalidateQueries({ queryKey: PROFILE_QUERY_KEY });
     },
   });
 
-  const updateAvatar = useMutation({
-    mutationFn: updateUserAvatar,
-    mutationKey: ["userProfile"],
-    onSuccess: (data) => {
-      queryClient.setQueryData(PROFILE_QUERY_KEY, (old: any) => ({
-        ...old,
-        profile: {
-          ...old.profile,
-          avatar: data.avatarUrl,
-        },
-      }));
-      queryClient.invalidateQueries({ queryKey: PROFILE_QUERY_KEY });
-    },
-  });
-
-  return {
-    profile,
-    avatarUrl: profile?.profile?.avatar || '',
-    bio: profile?.profile?.bio || '',
-    isLoading,
-    error,
-    updateProfile,
-    updateAvatar,
-  };
+  return { profile, bio: profile?.profile?.bio || '', isLoading, error, updateProfile };
 }; 

@@ -1,15 +1,12 @@
+import { useAuth } from "../contexts/AuthContext";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { securitySchema, type SecurityFormData } from "../schema/security.schema";
-import { useMutation } from "@tanstack/react-query";
-import { updatePassword } from "../../../api/security";
-
-interface UseSecurityFormProps {
-  onSuccess?: () => void;
-  onError?: (error: unknown) => void;
-}
+import { useMutation } from "react-query";
+import { updatePassword } from "../api/security";
+import { securitySchema } from "../schemas/security";
 
 export const useSecurityForm = ({ onSuccess, onError }: UseSecurityFormProps = {}) => {
+  const { token } = useAuth();
   const form = useForm<SecurityFormData>({
     resolver: zodResolver(securitySchema),
     defaultValues: {
@@ -20,7 +17,7 @@ export const useSecurityForm = ({ onSuccess, onError }: UseSecurityFormProps = {
   });
 
   const updatePasswordMutation = useMutation({
-    mutationFn: updatePassword,
+    mutationFn: (data: SecurityFormData) => updatePassword(data, token || ''),
     onSuccess: () => {
       form.reset();
       onSuccess?.();

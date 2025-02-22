@@ -1,37 +1,35 @@
 import { useCallback } from 'react';
 import { useDeleteAccountForm } from './useDeleteAccountForm';
-import { useToast } from '../contexts/ToastContext';
-import { AccountError } from '../utils/api/account';
+import { AccountError } from '../api/account';
+import { toast } from 'react-hot-toast';
 
 export const useAccountDeletion = (onCancel: () => void) => {
-  const { showToast } = useToast();
-
   const handleSuccess = useCallback(() => {
-    showToast('Konto zostało usunięte', 'success');
-  }, [showToast]);
+    toast.success('Konto zostało usunięte');
+  }, []);
 
   const handleError = useCallback((error: unknown) => {
     if (error instanceof AccountError) {
       switch (error.code) {
         case 'INVALID_PASSWORD':
-          showToast('Podane hasło jest nieprawidłowe', 'error');
+          toast.error('Podane hasło jest nieprawidłowe');
           return;
         case 'INVALID_CONFIRMATION':
-          showToast('Nieprawidłowe potwierdzenie', 'error');
+          toast.error('Nieprawidłowe potwierdzenie');
           return;
       }
     }
-    showToast('Nie udało się usunąć konta', 'error');
-  }, [showToast]);
+    toast.error('Nie udało się usunąć konta');
+  }, []);
 
   const handleCancel = useCallback(() => {
     try {
       onCancel();
-      showToast('Operacja została anulowana', 'success');
+      toast.success('Operacja została anulowana');
     } catch (error) {
-      showToast('Nie udało się anulować operacji', 'error');
+      toast.error('Nie udało się anulować operacji');
     }
-  }, [onCancel, showToast]);
+  }, [onCancel]);
 
   const { form, onSubmit, isDeleting } = useDeleteAccountForm({
     onSuccess: handleSuccess,
