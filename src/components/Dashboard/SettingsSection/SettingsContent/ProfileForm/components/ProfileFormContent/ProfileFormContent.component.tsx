@@ -6,11 +6,7 @@ import { FormButtons } from '../FormButtons/FormButtons.component';
 import { styles } from '../../style/ProfileForm.styles';
 
 type ProfileFormContentProps = {
-  avatarUrl: string;
-  previewAvatar: string | null;
-  handleChangeAvatar: (file: File) => Promise<void>;
   handleCancel: () => void;
-  isUploading: boolean;
   register: any;
   errors: any;
   defaultBio?: string;

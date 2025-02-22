@@ -4,7 +4,7 @@ import { useToast } from '../contexts/ToastContext';
 import { UserProfile } from '../types/settings';
 import { useProfile } from '../hooks/useProfile';
 
-export const useProfileFormLogic = (profile: UserProfile | null, avatarUrl: string) => {
+export const useProfileFormLogic = (profile: UserProfile | null) => {
   const { showToast } = useToast();
   const { updateProfile } = useProfile();
 
@@ -15,21 +15,19 @@ export const useProfileFormLogic = (profile: UserProfile | null, avatarUrl: stri
         email: data.email,
         profile: {
           bio: data.profile?.bio || '',
-          avatar: avatarUrl || ''
         }
       });
       showToast('Profil został zaktualizowany', 'success');
     } catch (error) {
       showToast('Nie udało się zaktualizować profilu', 'error');
     }
-  }, [avatarUrl, showToast, updateProfile]);
+  }, [showToast, updateProfile]);
 
   const defaultValues = {
     username: profile?.username || '',
     email: profile?.email || '',
     profile: {
       bio: profile?.profile?.bio || '',
-      avatar: profile?.profile?.avatar || ''
     }
   };
 

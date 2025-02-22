@@ -23,16 +23,17 @@ export const useProfile = () => {
 
   const updateAvatar = useMutation({
     mutationFn: updateUserAvatar,
+    mutationKey: ["userProfile"],
     onSuccess: (data) => {
       queryClient.setQueryData(PROFILE_QUERY_KEY, (old: any) => ({
         ...old,
         profile: {
           ...old.profile,
-          avatar: data.avatarUrl
-        }
+          avatar: data.avatarUrl,
+        },
       }));
       queryClient.invalidateQueries({ queryKey: PROFILE_QUERY_KEY });
-    }
+    },
   });
 
   return {

@@ -4,11 +4,13 @@ import { useProfileFormLogic } from "../../hooks/useProfileFormLogic";
 import { ProfileFormContent } from "./components/ProfileFormContent/ProfileFormContent.component";
 import { useToast } from "../../contexts/ToastContext";
 import { LoadingScreen } from "../../../../UI/LoadingScreen/LoadingScreen.component";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const ProfileForm = memo(() => {
   const { showToast } = useToast();
   const { profile, isLoading, updateProfile } = useProfile();
   const { form, onSubmit } = useProfileFormLogic(profile || null);
+  const queryClient = useQueryClient();
   
   const { register, formState: { errors, isSubmitting }, reset, setValue } = form;
 
@@ -31,6 +33,16 @@ export const ProfileForm = memo(() => {
     }
   }, [profile, reset, showToast]);
 
+  const handleSubmit = async (data: any) => {
+    try {
+      await onSubmit(data);
+      await queryClient.invalidateQueries({ queryKey: ["userProfile"] });
+      showToast("Profil został zaktualizowany", "success");
+    } catch (error) {
+      showToast("Wystąpił błąd podczas aktualizacji profilu", "error");
+    }
+  };
+
   if (isLoading) {
     return <LoadingScreen />;
   }
@@ -43,7 +55,7 @@ export const ProfileForm = memo(() => {
       defaultBio={profile?.profile?.bio}
       isSubmitting={isSubmitting}
       isPending={updateProfile.isPending}
-      onSubmit={onSubmit}
+      onSubmit={handleSubmit}
     />
   );
 });
