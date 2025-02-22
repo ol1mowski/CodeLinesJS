@@ -15,7 +15,7 @@ export const BadgeCard = memo(({ badge }: BadgeCardProps) => {
   return (
     <motion.div
       variants={item}
-      className="flex flex-col items-center p-4 bg-dark/30 rounded-lg border border-js/10 hover:border-js/30 transition-colors"
+      className="min-w-[8rem] flex flex-col items-center p-4 bg-dark/30 rounded-lg border border-js/10 hover:border-js/30 transition-colors"
     >
       <span className="text-3xl mb-2">{badge.icon || '🏆'}</span>
       <h4 className="text-js font-medium text-sm text-center">
