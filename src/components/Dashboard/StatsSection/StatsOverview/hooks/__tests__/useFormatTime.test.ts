@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { renderHook } from '@testing-library/react-hooks';
-import { useFormatTime } from '../useFormatTime';
+import { useFormatTime } from '../useFormatTime.hook';
 
 describe('useFormatTime', () => {
   it('formats minutes correctly', () => {

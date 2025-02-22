@@ -1,6 +1,6 @@
 import { memo, useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { useStats } from "../../../Hooks/useStats";
+import { useStats } from "./hooks/useStats.hook";
 import { StatsOverview } from "./StatsOverview/StatsOverview.component";
 import { StatsCharts } from "./StatsCharts/StatsCharts.component";
 import { DashboardState } from "../DashboardContent/components/DashboardState.component";

@@ -1,7 +1,7 @@
 import { memo } from "react";
 import { motion } from "framer-motion";
 
-import { useFormatDate } from "../hooks/useFormatDate";
+import { useFormatDate } from "../hooks/useFormatDate.hook";
 import { item } from "../animations";
 import { Badge } from "../../../../../../types/stats.types";
 

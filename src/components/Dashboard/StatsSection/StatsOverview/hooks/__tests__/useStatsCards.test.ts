@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { renderHook } from '@testing-library/react-hooks';
-import { useStatsCards } from '../useStatsCards';
+import { useStatsCards } from '../useStatsCards.hook';
 
 const mockStats = {
   completedChallenges: 25,

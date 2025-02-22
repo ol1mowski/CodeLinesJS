@@ -5,7 +5,7 @@ import { LevelProgress } from "./LevelProgress.component";
 import { StatCard } from "./StatCard.component";
 import { BadgesGrid } from "./BadgesGrid/BadgesGrid.component";
 import { ErrorState } from "./components/ErrorState.component";
-import { useStatsCards } from "./hooks/useStatsCards";
+import { useStatsCards } from "./hooks/useStatsCards.hook";
 import { UserStats } from "../../../../types/stats.types";
 import { useUserStats } from "../hooks/useUserStats";
 
