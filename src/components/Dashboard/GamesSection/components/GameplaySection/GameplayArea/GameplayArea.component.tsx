@@ -1,29 +1,36 @@
-import { memo } from 'react';
-import { motion } from 'framer-motion';
+import React, { lazy, Suspense, memo } from 'react';
+import { useParams } from 'react-router-dom';
+import { GameContentProvider } from '../../../contexts/GameContentContext';
 
-type GameplayAreaProps = {
-  isPaused: boolean;
-  isFullscreen: boolean;
+const gameComponents = {
+  'scope-explorer': lazy(() => import('./ScopeExplorer/ScopeExplorer.component')),
+  'js-typo-hunter': lazy(() => import('./JSTypoHunter/JSTypoHunter.component')),
+  'async-quest': lazy(() => import('./AsyncQuest/AsyncQuest.component')),
+  'regex-raider': lazy(() => import('./RegexRaider/RegexRaider.component'))
 };
 
-export const GameplayArea = memo(({ isPaused }: GameplayAreaProps) => {
-  return (
-    <div className="relative aspect-video rounded-xl overflow-hidden border-2 border-js/20 bg-dark-800">
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="text-gray-400 font-mono">
-          Tutaj daj logike byczku
-        </div>
+export const GameplayArea = memo(() => {
+  const { slug } = useParams<{ slug: string }>();
+  
+  if (!slug || !gameComponents[slug as keyof typeof gameComponents]) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <div className="text-gray-400">Gra nie została znaleziona</div>
       </div>
+    );
+  }
 
-      {isPaused && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="absolute inset-0 bg-dark-900/80 flex items-center justify-center"
-        >
-          <div className="text-js text-xl font-bold">PAUZA</div>
-        </motion.div>
-      )}
-    </div>
+  const GameComponent = gameComponents[slug as keyof typeof gameComponents];
+  
+  return (
+    <GameContentProvider>
+      <div className="w-full h-full">
+        <Suspense fallback={<div>Ładowanie gry...</div>}>
+          <GameComponent />
+        </Suspense>
+      </div>
+    </GameContentProvider>
   );
-}); 
+});
+
+GameplayArea.displayName = 'GameplayArea'; 

@@ -7,13 +7,14 @@ import { StatsBlock } from "./StatsBlock/StatsBlock.component";
 import { DashboardState } from "./components/DashboardState.component";
 import { useDashboardData } from "./hooks/useDashboardData";
 import { useDashboardAnimation } from "./hooks/useDashboardAnimation";
+import { LoadingScreen } from "../../../components/UI/LoadingScreen/LoadingScreen.component";
 
 export const DashboardContent = memo(() => {
   const { data, isLoading, error } = useDashboardData();
   const animations = useDashboardAnimation();
 
   if (isLoading) {
-    return <DashboardState type="loading" />;
+    return <LoadingScreen />;
   }
 
   if (error) {
@@ -26,7 +27,7 @@ export const DashboardContent = memo(() => {
 
   return (
     <motion.div
-      className="p-8 w-full"
+      className="p-1 md:p-12 w-full overflow-y-auto"
       variants={animations.container}
       initial="hidden"
       animate="visible"
@@ -43,10 +44,7 @@ export const DashboardContent = memo(() => {
           variants={animations.item}
           className={styles.card.community}
         >
-          <CommunityBlock 
-            notifications={data.notifications} 
-            unreadCount={data.unreadCount}
-          />
+          <CommunityBlock />
         </motion.div>
 
         <motion.div
@@ -60,7 +58,7 @@ export const DashboardContent = memo(() => {
           variants={animations.item}
           className={styles.card.stats}
         >
-          <StatsBlock stats={data.stats} />
+          <StatsBlock stats={data.data} />
         </motion.div>
       </div>
     </motion.div>

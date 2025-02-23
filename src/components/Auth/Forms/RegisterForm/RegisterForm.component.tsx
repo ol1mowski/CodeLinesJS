@@ -7,7 +7,7 @@ import { useState } from "react";
 import { Button } from "../../../UI/Button/Button.component";
 import { FormInput } from "../../../UI/Form/FormInput/FormInput.component";
 import { RegisterFormData, registerSchema } from "../../../../schemas/auth.schema";
-import { useAuth } from "../../../../Hooks/useAuth";
+import { useAuth } from "../../../../hooks/useAuth";
 import { PrivacyPolicyCheckbox } from "./PrivacyPolicyCheckbox.component";
 
 const RegisterForm = () => {

@@ -22,14 +22,16 @@ export const SecurityForm = memo(() => {
     onError: handleError
   });
 
+  const { formState: { errors, isSubmitting }, reset } = form;
+
   const handleCancel = useCallback(() => {
     try {
-      form.reset();
+      reset();
       handleCancelToast();
     } catch (error) {
       handleCancelError();
     }
-  }, [form, handleCancelToast, handleCancelError]);
+  }, [reset, handleCancelToast, handleCancelError]);
 
   return (
     <motion.form
@@ -37,11 +39,14 @@ export const SecurityForm = memo(() => {
       className="w-full max-w-md sm:ml-0 sm:mr-auto space-y-8 px-4 sm:px-0"
       {...FORM_ANIMATION}
     >
-      <PasswordFields form={form} />
+      <PasswordFields 
+        form={form}
+        errors={errors}
+      />
       
       <FormButtons 
         onCancel={handleCancel}
-        isSubmitting={form.formState.isSubmitting || isUpdating}
+        isSubmitting={isSubmitting || isUpdating}
         submitText="Zmień hasło"
         loadingText="Zmienianie hasła"
       />

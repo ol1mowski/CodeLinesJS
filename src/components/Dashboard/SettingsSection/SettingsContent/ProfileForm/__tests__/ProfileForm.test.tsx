@@ -1,161 +1,122 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import '@testing-library/jest-dom';
+import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ProfileForm } from '../ProfileForm.component';
+import { useAuth } from '../../../../../../hooks/useAuth';
 import { useProfile } from '../../../hooks/useProfile';
-import { useAvatarHandling } from '../../../hooks/useAvatarHandling';
-import { ToastProvider } from '../../../contexts/ToastContext';
+import { toast } from 'react-hot-toast';
+import { expect, vi, describe, beforeEach, afterEach, it } from 'vitest';
 
-
+vi.mock('../../../../../../hooks/useAuth');
 vi.mock('../../../hooks/useProfile');
-vi.mock('../../../hooks/useAvatarHandling');
-vi.mock('../../../hooks/useProfileFormLogic', () => ({
-  useProfileFormLogic: vi.fn().mockReturnValue({
-    form: {
-      register: vi.fn(),
-      formState: { 
-        errors: {},
-        isSubmitting: false 
-      },
-      reset: vi.fn(),
-      watch: vi.fn()
-    },
-    onSubmit: vi.fn(e => e.preventDefault())
-  })
+vi.mock('react-hot-toast', () => ({
+  toast: {
+    success: vi.fn(),
+    error: vi.fn()
+  }
 }));
 
 describe('ProfileForm', () => {
-  const mockUpdateAvatar = vi.fn();
-  const mockUpdateProfile = vi.fn();
-  const mockHandleChangeAvatar = vi.fn();
-  
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
+
+  const wrapper = ({ children }: { children: React.ReactNode }) => (
+    <QueryClientProvider client={queryClient}>
+      {children}
+    </QueryClientProvider>
+  );
+
+  const mockProfile = {
+    username: 'testuser',
+    email: 'test@example.com',
+    profile: {
+      bio: 'Test bio'
+    }
+  };
+
   beforeEach(() => {
     vi.clearAllMocks();
-    
-    vi.mocked(useProfile).mockReturnValue({
-      profile: {
+    vi.mocked(useAuth).mockReturnValue({
+      token: 'test-token',
+      isAuthenticated: true,
+      user: {
+        id: '1',
         username: 'testuser',
-        email: 'test@example.com',
-        profile: {
-          bio: 'Test bio',
-          avatar: 'test-avatar.jpg'
-        }
+        email: 'test@example.com'
       },
-      avatarUrl: 'test-avatar.jpg',
+      loading: false,
+      error: null,
+      logout: vi.fn(),
+      login: vi.fn()
+    });
+    vi.mocked(useProfile).mockReturnValue({
+      profile: mockProfile,
       isLoading: false,
       updateProfile: {
-        mutateAsync: mockUpdateProfile,
-        isPending: false
-      },
-      updateAvatar: {
-        mutateAsync: mockUpdateAvatar,
+        mutateAsync: vi.fn(),
         isPending: false
       }
-    } as any);
-
-    vi.mocked(useAvatarHandling).mockReturnValue({
-      previewAvatar: null,
-      handleChangeAvatar: mockHandleChangeAvatar,
-      setPreviewAvatar: vi.fn()
     });
   });
 
-  it('powinien wyrenderować formularz z danymi użytkownika', () => {
-    render(
-      <ToastProvider>
-        <ProfileForm />
-      </ToastProvider>
-    );
-
-    expect(screen.getByPlaceholderText('Wprowadź nazwę użytkownika')).toBeDefined();
-    expect(screen.getByPlaceholderText('Wprowadź adres email')).toBeDefined();
-    expect(screen.getByPlaceholderText('Test bio')).toBeDefined();
-    expect(screen.getByRole('img', { name: /avatar/i })).toBeDefined();
+  afterEach(() => {
+    vi.clearAllMocks();
+    queryClient.clear();
   });
 
-  it('powinien wyświetlić loader podczas ładowania', () => {
-    vi.mocked(useProfile).mockReturnValue({
-      profile: null,
-      isLoading: true,
-      updateProfile: {
-        mutateAsync: mockUpdateProfile,
-        isPending: false
-      },
-      updateAvatar: {
-        mutateAsync: mockUpdateAvatar,
-        isPending: false
-      }
-    } as any);
-
-    render(
-      <ToastProvider>
-        <ProfileForm />
-      </ToastProvider>
-    );
-
-    expect(screen.getByRole('status')).toBeDefined();
-  });
-
-  it('powinien obsłużyć zmianę avatara', async () => {
-    render(
-      <ToastProvider>
-        <ProfileForm />
-      </ToastProvider>
-    );
-
-    const file = new File(['test'], 'test.png', { type: 'image/png' });
-    const fileInput = screen.getByRole('button', { name: /zmień avatar/i });
-    const hiddenInput = document.querySelector('input[type="file"]') as HTMLInputElement;
-    
-    fireEvent.click(fileInput);
-    fireEvent.change(hiddenInput, { target: { files: [file] } });
+  it('should render the form with user data', async () => {
+    render(<ProfileForm />, { wrapper });
     
     await waitFor(() => {
-      expect(mockHandleChangeAvatar).toHaveBeenCalledWith(file);
+      expect(screen.getByPlaceholderText('Wprowadź nazwę użytkownika')).toBeInTheDocument();
+      expect(screen.getByPlaceholderText('Wprowadź adres email')).toBeInTheDocument();
+      expect(screen.getByPlaceholderText('Test bio')).toBeInTheDocument();
     });
   });
 
-  it('powinien obsłużyć anulowanie zmian', () => {
-    render(
-      <ToastProvider>
-        <ProfileForm />
-      </ToastProvider>
-    );
-
-    const cancelButton = screen.getByText('Anuluj zmiany');
-    fireEvent.click(cancelButton);
-
-    expect(screen.getByText('Zmiany zostały anulowane')).toBeDefined();
-  });
-
-  it('powinien wyświetlić stan ładowania podczas zapisywania', () => {
+  it('should display loader during loading', () => {
     vi.mocked(useProfile).mockReturnValue({
-      profile: {
-        username: 'testuser',
-        email: 'test@example.com',
-        profile: {
-          bio: 'Test bio',
-          avatar: 'test-avatar.jpg'
-        }
-      },
-      avatarUrl: 'test-avatar.jpg',
-      isLoading: false,
+      profile: undefined,
+      isLoading: true,
       updateProfile: {
-        mutateAsync: mockUpdateProfile,
-        isPending: true
-      },
-      updateAvatar: {
-        mutateAsync: mockUpdateAvatar,
+        mutateAsync: vi.fn(),
         isPending: false
       }
-    } as any);
+    });
 
-    render(
-      <ToastProvider>
-        <ProfileForm />
-      </ToastProvider>
-    );
+    render(<ProfileForm />, { wrapper });
+    expect(screen.getByRole('status')).toBeInTheDocument();
+  });
 
-    expect(screen.getByText('Zapisywanie')).toBeDefined();
-    expect(screen.getByRole('button', { name: /zapisywanie/i })).toBeDisabled();
+  it('should handle cancellation of changes', async () => {
+    render(<ProfileForm />, { wrapper });
+    
+    const cancelButton = await screen.findByText(/anuluj/i);
+    fireEvent.click(cancelButton);
+    
+    expect(toast.success).toHaveBeenCalledWith('Zmiany zostały anulowane');
+  });
+
+  it('should display loading state during saving', async () => {
+    vi.mocked(useProfile).mockReturnValue({
+      profile: mockProfile,
+      isLoading: false,
+      updateProfile: {
+        mutateAsync: vi.fn().mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100))),
+        isPending: true
+      }
+    });
+
+    render(<ProfileForm />, { wrapper });
+    
+    const saveButton = screen.getByRole('button', { name: /zapisywanie/i });
+    expect(saveButton).toBeInTheDocument();
+    expect(saveButton).toBeDisabled();
   });
 }); 

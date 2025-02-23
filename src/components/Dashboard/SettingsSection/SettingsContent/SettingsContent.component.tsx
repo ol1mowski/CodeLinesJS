@@ -4,7 +4,6 @@ import {ProfileForm} from "./ProfileForm/ProfileForm.component";
 import { SecurityForm } from "./SecurityForm/SecurityForm.component";
 import { PreferencesForm } from "./PreferencesForm/PreferencesForm.component";
 import { DeleteAccountForm } from "./DeleteAccountForm/DeleteAccountForm.component";
-import { ToastProvider } from "../contexts/ToastContext";
 
 type SettingsView = "profile" | "security" | "preferences" | "delete";
 
@@ -13,7 +12,6 @@ type SettingsContentProps = {
 };
 
 export const SettingsContent = memo(({ activeView }: SettingsContentProps) => (
-  <ToastProvider>
     <AnimatePresence mode="wait">
       <motion.div
         key={activeView}
@@ -36,7 +34,6 @@ export const SettingsContent = memo(({ activeView }: SettingsContentProps) => (
         {activeView === "delete" && <DeleteAccountForm />}
       </motion.div>
     </AnimatePresence>
-  </ToastProvider>
 ));
 
 SettingsContent.displayName = "SettingsContent"; 

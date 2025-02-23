@@ -1,23 +1,22 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { DeleteAccountForm } from '../DeleteAccountForm.component';
-import { useConfirmationState } from '../../../hooks/useConfirmationState';
-import { useAccountDeletion } from '../../../hooks/useAccountDeletion';
-import { ToastProvider } from '../../../contexts/ToastContext';
-import { UseFormRegister } from 'react-hook-form';
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen, fireEvent } from "@testing-library/react";
+import { DeleteAccountForm } from "../DeleteAccountForm.component";
+import { useConfirmationState } from "../../../hooks/useConfirmationState";
+import { useAccountDeletion } from "../../../hooks/useAccountDeletion";
+import { UseFormRegister } from "react-hook-form";
 
-vi.mock('../../../hooks/useConfirmationState');
-vi.mock('../../../hooks/useAccountDeletion');
+vi.mock("../../../hooks/useConfirmationState");
+vi.mock("../../../hooks/useAccountDeletion");
 
 type FormFields = {
   password: string;
   confirmation: "USUŃ KONTO";
 };
 
-describe('DeleteAccountForm', () => {
+describe("DeleteAccountForm", () => {
   const mockHandleShowConfirmation = vi.fn();
   const mockHandleCancel = vi.fn();
-  const mockOnSubmit = vi.fn(e => e.preventDefault());
+  const mockOnSubmit = vi.fn((e) => e.preventDefault());
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -25,13 +24,13 @@ describe('DeleteAccountForm', () => {
     vi.mocked(useConfirmationState).mockReturnValue({
       showConfirmation: false,
       handleShowConfirmation: mockHandleShowConfirmation,
-      handleHideConfirmation: vi.fn()
+      handleHideConfirmation: vi.fn(),
     });
 
     vi.mocked(useAccountDeletion).mockReturnValue({
       form: {
         register: vi.fn() as unknown as UseFormRegister<FormFields>,
-        formState: { 
+        formState: {
           errors: {},
           isDirty: false,
           isLoading: false,
@@ -44,7 +43,7 @@ describe('DeleteAccountForm', () => {
           disabled: false,
           dirtyFields: {},
           touchedFields: {},
-          validatingFields: {}
+          validatingFields: {},
         },
         watch: vi.fn(),
         getValues: vi.fn(),
@@ -56,67 +55,51 @@ describe('DeleteAccountForm', () => {
         reset: vi.fn(),
         resetField: vi.fn(),
         setFocus: vi.fn(),
-        handleSubmit: vi.fn()
+        handleSubmit: vi.fn(),
       } as any,
       onSubmit: mockOnSubmit,
       isDeleting: false,
-      handleCancel: mockHandleCancel
+      handleCancel: mockHandleCancel,
     });
   });
 
-  it('powinien wyświetlić ekran ostrzeżenia', () => {
-    render(
-      <ToastProvider>
-        <DeleteAccountForm />
-      </ToastProvider>
-    );
+  it("should display the warning screen", () => {
+    render(<DeleteAccountForm />);
 
-    expect(screen.getByText('Usuwanie konta jest nieodwracalne')).toBeDefined();
-    expect(screen.getByText('Chcę usunąć konto')).toBeDefined();
+    expect(screen.getByText("Usuwanie konta jest nieodwracalne")).toBeDefined();
+    expect(screen.getByText("Chcę usunąć konto")).toBeDefined();
   });
 
-  it('powinien wyświetlić formularz potwierdzenia po kliknięciu przycisku', () => {
+  it("should display the confirmation form after clicking the button", () => {
     vi.mocked(useConfirmationState).mockReturnValue({
       showConfirmation: true,
       handleShowConfirmation: mockHandleShowConfirmation,
-      handleHideConfirmation: vi.fn()
+      handleHideConfirmation: vi.fn(),
     });
 
-    render(
-      <ToastProvider>
-        <DeleteAccountForm />
-      </ToastProvider>
-    );
+    render(<DeleteAccountForm />);
 
-    expect(screen.getByText('Hasło')).toBeDefined();
-    expect(screen.getByText('Potwierdzenie')).toBeDefined();
+    expect(screen.getByText("Hasło")).toBeDefined();
+    expect(screen.getByText("Potwierdzenie")).toBeDefined();
   });
 
-  it('powinien wywołać handleShowConfirmation po kliknięciu przycisku', () => {
-    render(
-      <ToastProvider>
-        <DeleteAccountForm />
-      </ToastProvider>
-    );
+  it("should call handleShowConfirmation on button click", () => {
+    render(<DeleteAccountForm />);
 
-    fireEvent.click(screen.getByText('Chcę usunąć konto'));
+    fireEvent.click(screen.getByText("Chcę usunąć konto"));
     expect(mockHandleShowConfirmation).toHaveBeenCalledTimes(1);
   });
 
-  it('powinien obsłużyć anulowanie w formularzu potwierdzenia', () => {
+  it("should handle cancellation in the confirmation form", () => {
     vi.mocked(useConfirmationState).mockReturnValue({
       showConfirmation: true,
       handleShowConfirmation: mockHandleShowConfirmation,
-      handleHideConfirmation: vi.fn()
+      handleHideConfirmation: vi.fn(),
     });
 
-    render(
-      <ToastProvider>
-        <DeleteAccountForm />
-      </ToastProvider>
-    );
+    render(<DeleteAccountForm />);
 
-    fireEvent.click(screen.getByText('Anuluj'));
+    fireEvent.click(screen.getByText("Anuluj"));
     expect(mockHandleCancel).toHaveBeenCalledTimes(1);
   });
-}); 
+});

@@ -1,33 +1,30 @@
 import { useCallback } from 'react';
-import { useToast } from '../../../contexts/ToastContext';
-import { SecurityError } from '../../../utils/api/security';
-
+import { SecurityError } from '../../../api/security';
+import { toast } from 'react-hot-toast';
 
 export const useSecurityToasts = () => {
-  const { showToast } = useToast();
-
   const handleSuccess = useCallback(() => {
-    showToast('Hasło zostało zmienione', 'success');
-  }, [showToast]);
+    toast.success('Hasło zostało zmienione');
+  }, []);
 
   const handleError = useCallback((error: unknown) => {
     if (error instanceof SecurityError) {
       switch (error.code) {
         case 'INVALID_CURRENT_PASSWORD':
-          showToast('Aktualne hasło jest nieprawidłowe', 'error');
+          toast.error('Aktualne hasło jest nieprawidłowe');
           return;
       }
     }
-    showToast('Wystąpił błąd podczas zmiany hasła', 'error');
-  }, [showToast]);
+    toast.error('Wystąpił błąd podczas zmiany hasła');
+  }, []);
 
   const handleCancel = useCallback(() => {
-    showToast('Zmiany zostały anulowane', 'success');
-  }, [showToast]);
+    toast.success('Zmiany zostały anulowane');
+  }, []);
 
   const handleCancelError = useCallback(() => {
-    showToast('Nie udało się anulować zmian', 'error');
-  }, [showToast]);
+    toast.error('Nie udało się anulować zmian');
+  }, []);
 
   return {
     handleSuccess,

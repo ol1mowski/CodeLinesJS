@@ -17,28 +17,22 @@ describe('NotificationsSection', () => {
     onChange: mockOnChange
   };
 
-  it('powinien wyrenderować wszystkie opcje powiadomień', () => {
+  it('should render all notification options', () => {
     render(<NotificationsSection {...defaultProps} />);
-
-    expect(screen.getByText('Powiadomienia email')).toBeDefined();
-    expect(screen.getByText('Powiadomienia push')).toBeDefined();
+    
+    expect(screen.getByText('Powiadomienia')).toBeInTheDocument();
+    expect(screen.getByText('Powiadomienia email')).toBeInTheDocument();
+    expect(screen.getByText('Otrzymuj powiadomienia na email')).toBeInTheDocument();
   });
 
-  it('powinien obsłużyć zmianę powiadomień email', () => {
+  it('should handle email notification change', () => {
     render(<NotificationsSection {...defaultProps} />);
 
-    const emailCheckbox = screen.getByRole('checkbox', { name: /email/i });
+    const emailCheckbox = screen.getByRole('checkbox', { 
+      name: /powiadomienia email/i 
+    });
     fireEvent.click(emailCheckbox);
 
     expect(mockOnChange).toHaveBeenCalledWith('emailNotifications', false);
-  });
-
-  it('powinien obsłużyć zmianę powiadomień push', () => {
-    render(<NotificationsSection {...defaultProps} />);
-
-    const pushCheckbox = screen.getByRole('checkbox', { name: /push/i });
-    fireEvent.click(pushCheckbox);
-
-    expect(mockOnChange).toHaveBeenCalledWith('pushNotifications', true);
   });
 }); 

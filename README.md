@@ -7,6 +7,9 @@
 ## Auth page
 ![{A7EEB451-0609-459D-B53A-4D2BBC789ABA}](https://github.com/user-attachments/assets/9982dedc-5104-424a-ae17-6d5ccf06fd44)
 
+## Dashboard
+<img width="1440" alt="Screenshot 2025-02-21 at 18 00 56" src="https://github.com/user-attachments/assets/1aeae37b-cdd9-4ff4-9e70-4eed53e8ec66" />
+
 
 
 ## 🚀 O Projekcie

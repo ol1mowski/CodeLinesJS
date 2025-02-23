@@ -54,6 +54,10 @@ const gameSchema = new mongoose.Schema({
     required: true,
     min: 0
   },
+  gameData: {
+    type: Array,
+    required: true
+  },
   isActive: {
     type: Boolean,
     default: true
@@ -61,7 +65,7 @@ const gameSchema = new mongoose.Schema({
   category: {
     type: String,
     required: true,
-    enum: ['basics', 'challenges', 'algorithms']
+    enum: ['basics', 'challenges', 'algorithms', 'syntax', 'variables', 'async', 'debugging', 'regex']
   },
   estimatedTime: {
     type: Number, 
