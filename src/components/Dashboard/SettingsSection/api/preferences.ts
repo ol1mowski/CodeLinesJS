@@ -9,7 +9,7 @@ export class PreferencesError extends Error {
 }
 
 export const fetchPreferences = async (token: string): Promise<PreferencesData> => {
-  const response = await fetch(`${API_URL}/settings/preferences`, {
+  const response = await fetch(`${API_URL}settings/preferences`, {
     headers: {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
@@ -32,7 +32,7 @@ export const updatePreferences = async (
   preferences: PreferencesData, 
   token: string
 ): Promise<PreferencesData> => {
-  const response = await fetch(`${API_URL}/settings/preferences`, {
+  const response = await fetch(`${API_URL}settings/preferences`, {
     method: 'PUT',
     headers: {
       'Authorization': `Bearer ${token}`,

@@ -14,7 +14,7 @@ export const deleteAccount = async (
   },
   token: string
 ): Promise<void> => {
-  const response = await fetch(`${API_URL}/settings/account`, {
+  const response = await fetch(`${API_URL}settings/account`, {
     method: 'DELETE',
     headers: {
       'Authorization': `Bearer ${token}`,

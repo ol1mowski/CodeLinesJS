@@ -7,7 +7,7 @@ const getAuthHeaders = (token: string) => ({
 });
 
 export const fetchUserProfile = async (token: string): Promise<UserProfile> => {
-  const response = await fetch(`${API_URL}/settings/profile`, {
+  const response = await fetch(`${API_URL}settings/profile`, {
     headers: getAuthHeaders(token),
   });
 
@@ -26,7 +26,7 @@ export const fetchUserProfile = async (token: string): Promise<UserProfile> => {
 };
 
 export const updateUserProfile = async (data: UserProfile, token: string) => {
-  const response = await fetch(`${API_URL}/settings/profile`, {
+  const response = await fetch(`${API_URL}settings/profile`, {
     method: "PUT",
     headers: getAuthHeaders(token),
     body: JSON.stringify(data),

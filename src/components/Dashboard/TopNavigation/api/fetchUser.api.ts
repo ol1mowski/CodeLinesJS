@@ -1,5 +1,7 @@
+import { API_URL } from "../../../../config/api.config";
+
 export const fetchUser = async (token: string | null) => {
-  const response = await fetch("http://localhost:5001/api/users/profile", {
+  const response = await fetch(`${API_URL}users/profile`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
