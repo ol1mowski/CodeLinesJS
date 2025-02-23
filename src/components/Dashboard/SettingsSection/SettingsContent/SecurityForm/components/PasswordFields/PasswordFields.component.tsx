@@ -1,18 +1,19 @@
 import { memo } from 'react';
 import { FaLock } from "react-icons/fa";
-import type { UseFormReturn } from 'react-hook-form';
+import type { UseFormReturn, FieldErrors } from 'react-hook-form';
 import type { SecurityFormData } from '../../schema/security.schema';
 import { FormInput } from '../../../../../../UI/Form/FormInput/FormInput.component';
 
-type PasswordFieldsProps = {
+interface PasswordFieldsProps {
   form: UseFormReturn<SecurityFormData>;
+  errors: FieldErrors<SecurityFormData>;
 }
 
-export const PasswordFields = memo(({ form }: PasswordFieldsProps) => {
-  const { register, formState: { errors } } = form;
+export const PasswordFields = memo(({ form, errors }: PasswordFieldsProps) => {
+  const { register } = form;
 
   return (
-    <div className="bg-dark/30 backdrop-blur-sm rounded-xl p-4 sm:p-6 md:p-8 border border-js/10 space-y-6">
+    <div className="space-y-6">
       <FormInput
         type="password"
         label="Aktualne hasło"
@@ -21,6 +22,7 @@ export const PasswordFields = memo(({ form }: PasswordFieldsProps) => {
         error={errors.currentPassword?.message}
         {...register("currentPassword")}
       />
+
       <FormInput
         type="password"
         label="Nowe hasło"
@@ -29,10 +31,11 @@ export const PasswordFields = memo(({ form }: PasswordFieldsProps) => {
         error={errors.newPassword?.message}
         {...register("newPassword")}
       />
+
       <FormInput
         type="password"
-        label="Potwierdź nowe hasło"
-        placeholder="Wprowadź ponownie nowe hasło"
+        label="Powtórz nowe hasło"
+        placeholder="Powtórz nowe hasło"
         icon={<FaLock />}
         error={errors.confirmPassword?.message}
         {...register("confirmPassword")}

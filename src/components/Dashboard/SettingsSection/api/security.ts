@@ -14,7 +14,7 @@ export const updatePassword = async (
   },
   token: string
 ): Promise<void> => {
-  const response = await fetch(`${API_URL}/settings/security/password`, {
+  const response = await fetch(`${API_URL}settings/security/password`, {
     method: 'PUT',
     headers: {
       'Authorization': `Bearer ${token}`,

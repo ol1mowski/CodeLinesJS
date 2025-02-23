@@ -36,7 +36,6 @@ export const ProfileForm = memo(() => {
     try {
       await onSubmit(data);
       await queryClient.invalidateQueries({ queryKey: ["userProfile"] });
-      toast.success("Profil został zaktualizowany");
     } catch (error) {
       toast.error("Wystąpił błąd podczas aktualizacji profilu");
     }
