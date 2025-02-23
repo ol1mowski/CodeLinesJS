@@ -6,7 +6,7 @@ import { Post as PostType } from '../../../../types/post.types';
 import { Post as PostComponent } from "./Post.component";
 import { FaRegCommentDots } from "react-icons/fa";
 
-interface PostsListProps {
+type PostsListProps = {
   posts: PostType[];
   isLoading: boolean;
   isFetchingMore: boolean;

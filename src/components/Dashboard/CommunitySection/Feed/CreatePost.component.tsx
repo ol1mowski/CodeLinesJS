@@ -1,48 +1,29 @@
 import { motion } from "framer-motion";
 import { memo, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-
-const token = sessionStorage.getItem('token') || localStorage.getItem('token');
+import { createPost } from "../api/posts";
+import { useAuth } from "../../../../hooks/useAuth";
 
 export const CreatePost = memo(() => {
   const [content, setContent] = useState("");
   const queryClient = useQueryClient();
-
-  const user = localStorage.getItem('user') || sessionStorage.getItem('user');
-
-  const userId = user ? JSON.parse(user).id : null;
+  const { token } = useAuth();
 
   const createPostMutation = useMutation({
-    mutationFn: async (content: string) => {
-
-      const response = await fetch('http://localhost:5001/api/posts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({ content, userId }),
-
-      });
-      
-      if (!response.ok) {
-        throw new Error('Nie udało się utworzyć posta');
-      }
-      return response.json();
-    },
+    mutationFn: () => createPost(content, token || ""),
     onSuccess: () => {
       setContent("");
       queryClient.invalidateQueries({ queryKey: ['posts'] });
     },
   });
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!content.trim()) return;
-    createPostMutation.mutate(content);
+    createPostMutation.mutate();
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className="bg-dark/50 backdrop-blur-sm rounded-xl border border-js/10 p-6"
@@ -51,7 +32,7 @@ export const CreatePost = memo(() => {
         value={content}
         onChange={(e) => setContent(e.target.value)}
         placeholder="Co słychać w świecie kodu?"
-        className="w-full bg-transparent border-none focus:ring-0 text-gray-300 placeholder-gray-500 resize-none"
+        className="p-5 w-full bg-transparent border-none focus:ring-0 focus:outline-none focus:outline-yellow-500 focus:rounded-md text-gray-300 placeholder-gray-500 resize-none"
         rows={3}
       />
       <div className="flex justify-between items-center mt-4">

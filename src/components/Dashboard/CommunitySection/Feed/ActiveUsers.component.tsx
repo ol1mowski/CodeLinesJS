@@ -1,6 +1,9 @@
 import { memo } from "react";
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
+import { fetchActiveUsers } from "../api/fetchActiveUsers.api";
+import { useAuth } from "../../../../hooks/useAuth";
+
 
 type User = {
   users: {
@@ -12,18 +15,10 @@ type User = {
 };
 
 export const ActiveUsers = memo(() => {
+  const { token } = useAuth();
   const { data } = useQuery<User>({
     queryKey: ['activeUsers'],
-    queryFn: async () => {
-      const response = await fetch('http://localhost:5001/api/users/active', {
-        headers: {
-          'Authorization': `Bearer ${sessionStorage.getItem('token') || localStorage.getItem('token')}`
-        }
-      });
-      if (!response.ok) throw new Error('Nie udało się pobrać aktywnych użytkowników');
-      const data = await response.json();
-      return data;
-    },
+    queryFn: () => fetchActiveUsers(token || ""),
     refetchInterval: 30000
   });
 
@@ -46,16 +41,14 @@ export const ActiveUsers = memo(() => {
               <div className="w-full h-full rounded-full bg-js/20 flex items-center justify-center border-2 border-dark/50">
                 {user.username.charAt(0).toUpperCase()}
               </div>
-              {user.isActive && (
-                <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-dark">
-                  <div className="absolute inset-0 bg-green-500 rounded-full animate-ping opacity-75"></div>
-                </div>
-              )}
+              <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-dark">
+                <div className="absolute inset-0 bg-green-500 rounded-full animate-ping opacity-75"></div>
+              </div>
             </div>
           </motion.div>
         ))}
 
-        {data?.users.length > 8 && (
+        {data?.users.length && data.users.length > 8 && (
           <motion.div
             whileHover={{ scale: 1.1 }}
             className="w-10 h-10 rounded-full bg-js/10 flex items-center justify-center

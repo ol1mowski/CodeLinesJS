@@ -1,10 +1,10 @@
-export interface GroupMember {
+export type GroupMember = {
   _id: string;
   username: string;
   avatar?: string;
 }
 
-export interface Group {
+export type Group = {
   _id: string;
   name: string;
   description: string;
@@ -17,7 +17,7 @@ export interface Group {
   image?: string;
 }
 
-export interface GroupsResponse {
+export type GroupsResponse = {
   allGroups: Group[];
   userGroups: Group[];
 } 
