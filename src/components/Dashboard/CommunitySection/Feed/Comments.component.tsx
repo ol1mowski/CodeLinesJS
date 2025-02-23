@@ -55,9 +55,6 @@ export const Comments = memo(({ postId, isOpen }: CommentsProps) => {
     },
     enabled: isOpen,
     retry: 1,
-    onError: (error) => {
-      console.error("Błąd podczas pobierania komentarzy:", error);
-    }
   });
 
   const onSubmit = handleSubmit((data) => {

@@ -4,7 +4,6 @@ export type Post = {
   author: {
     _id: string;
     username: string;
-    avatar?: string;
   };
   createdAt: string;
   likes: number;
