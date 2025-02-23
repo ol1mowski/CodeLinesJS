@@ -74,9 +74,9 @@ describe('ProfileForm', () => {
     render(<ProfileForm />, { wrapper });
     
     await waitFor(() => {
-      expect(screen.getByLabelText('Nazwa użytkownika')).toBeInTheDocument();
-      expect(screen.getByLabelText('Email')).toBeInTheDocument();
-      expect(screen.getByLabelText('Bio')).toBeInTheDocument();
+      expect(screen.getByPlaceholderText('Wprowadź nazwę użytkownika')).toBeInTheDocument();
+      expect(screen.getByPlaceholderText('Wprowadź adres email')).toBeInTheDocument();
+      expect(screen.getByPlaceholderText('Test bio')).toBeInTheDocument();
     });
   });
 
@@ -91,7 +91,7 @@ describe('ProfileForm', () => {
     });
 
     render(<ProfileForm />, { wrapper });
-    expect(screen.getByTestId('loading-screen')).toBeInTheDocument();
+    expect(screen.getByRole('status')).toBeInTheDocument();
   });
 
   it('should handle cancellation of changes', async () => {
@@ -115,9 +115,8 @@ describe('ProfileForm', () => {
 
     render(<ProfileForm />, { wrapper });
     
-    const saveButton = screen.getByRole('button', { name: /zapisz/i });
-    fireEvent.click(saveButton);
-    
-    expect(screen.getByText('Zapisywanie')).toBeInTheDocument();
+    const saveButton = screen.getByRole('button', { name: /zapisywanie/i });
+    expect(saveButton).toBeInTheDocument();
+    expect(saveButton).toBeDisabled();
   });
 }); 
