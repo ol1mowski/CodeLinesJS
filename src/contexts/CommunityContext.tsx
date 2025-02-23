@@ -1,7 +1,7 @@
 import { createContext, useContext, useReducer, ReactNode, useCallback } from 'react';
 
 type CommunityState = {
-  activeView: 'feed' | 'ranking' | 'groups';
+  activeView: 'community' | 'ranking' | 'groups';
   filters: {
     groupsFilter: string;
     groupsSort: 'newest' | 'popular' | 'active';
@@ -16,7 +16,7 @@ type CommunityAction =
   | { type: 'SET_RANKING_PERIOD'; payload: CommunityState['filters']['rankingPeriod'] };
 
 const initialState: CommunityState = {
-  activeView: 'feed',
+  activeView: 'community',
   filters: {
     groupsFilter: '',
     groupsSort: 'newest',

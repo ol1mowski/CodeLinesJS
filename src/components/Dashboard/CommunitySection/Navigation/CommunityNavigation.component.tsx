@@ -5,10 +5,10 @@ import { useNavigate, useLocation } from "react-router-dom";
 
 const navigationItems = [
   {
-    id: "feed",
+    id: "/",
     label: "Aktualności",
     icon: FaNewspaper,
-    path: "/dashboard/community/feed"
+    path: "/dashboard/community/" 
   },
   {
     id: "ranking",

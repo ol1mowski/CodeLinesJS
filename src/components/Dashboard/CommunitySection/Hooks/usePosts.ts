@@ -1,9 +1,10 @@
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Post } from '../types/post.types';
+import { API_URL } from '../../../../config/api.config';
+import { useAuth } from '../../../../hooks/useAuth';
 
 const POSTS_PER_PAGE = 5;
 const POSTS_QUERY_KEY = 'posts';
-const API_URL = 'http://localhost:5001/api';
 
 export const usePosts = () => {
   const queryClient = useQueryClient();
@@ -17,9 +18,9 @@ export const usePosts = () => {
   } = useInfiniteQuery({
     queryKey: [POSTS_QUERY_KEY],
     queryFn: async ({ pageParam = 1 }) => {
-      const token = sessionStorage.getItem("token") || localStorage.getItem("token");
+      const { token } = useAuth();
       const response = await fetch(
-        `${API_URL}/posts?page=${pageParam}&limit=${POSTS_PER_PAGE}`, {
+        `${API_URL}posts?page=${pageParam}&limit=${POSTS_PER_PAGE}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -36,7 +37,7 @@ export const usePosts = () => {
 
   const likeMutation = useMutation({
     mutationFn: async (postId: string) => {
-      const token = localStorage.getItem('token');
+      const { token } = useAuth();
       const response = await fetch(`${API_URL}/posts/${postId}/like`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` },

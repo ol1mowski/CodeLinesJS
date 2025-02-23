@@ -11,17 +11,18 @@ export const CommunitySection = memo(() => {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    const path = location.pathname.split('/').pop() || 'feed';
+    const path = location.pathname.split('community').pop() || 'community';
     if (path !== activeView) {
-      setActiveView(path as 'feed' | 'ranking' | 'groups');
+      setActiveView(path as 'community' | 'ranking' | 'groups');
     }
   }, [location.pathname, activeView, setActiveView]);
 
   useEffect(() => {
-    if (activeView === 'feed' || activeView === 'ranking') {
-      prefetchRanking(queryClient, 'weekly');
+    if (activeView === 'community' || activeView === 'ranking') {
+      prefetchRanking(queryClient);
     }
   }, [activeView, queryClient]);
+  
 
   return (
     <div className="p-8 w-full min-h-screen bg-dark/50 backdrop-blur-sm">
@@ -31,12 +32,12 @@ export const CommunitySection = memo(() => {
         </h1>
         <nav className="flex space-x-4 mb-8">
           <button
-            onClick={() => navigate('/dashboard/community/feed')}
+            onClick={() => navigate('/dashboard/community')}
             className={`px-4 py-2 rounded-lg transition-colors ${
-              activeView === 'feed' ? 'bg-js text-dark' : 'text-gray-400 hover:text-js'
+              activeView === 'community' ? 'bg-js text-dark' : 'text-gray-400 hover:text-js'
             }`}
           >
-            Feed
+            Aktualności
           </button>
           <button
             onClick={() => navigate('/dashboard/community/ranking')}

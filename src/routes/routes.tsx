@@ -68,10 +68,6 @@ export const router = createBrowserRouter([
             element: <CommunityFeed />
           },
           {
-            path: "feed",
-            element: <CommunityFeed />
-          },
-          {
             path: "ranking",
             element: <CommunityRanking />
           },
