@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer, ReactNode, useCallback } from 'react';
+import React, { createContext, useReducer, ReactNode, useCallback } from 'react';
 
 type CommunityState = {
   activeView: 'community' | 'ranking' | 'groups';
@@ -24,7 +24,7 @@ const initialState: CommunityState = {
   }
 };
 
-const CommunityContext = createContext<{
+export const CommunityContext = createContext<{
   state: CommunityState;
   dispatch: React.Dispatch<CommunityAction>;
   setActiveView: (view: CommunityState['activeView']) => void;
@@ -80,11 +80,3 @@ export const CommunityProvider = ({ children }: { children: ReactNode }) => {
     </CommunityContext.Provider>
   );
 };
-
-export const useCommunity = () => {
-  const context = useContext(CommunityContext);
-  if (!context) {
-    throw new Error('useCommunity must be used within a CommunityProvider');
-  }
-  return context;
-}; 

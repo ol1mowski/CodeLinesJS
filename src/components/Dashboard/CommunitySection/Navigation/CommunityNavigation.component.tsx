@@ -1,28 +1,8 @@
-import { memo } from "react";
+import React, { memo } from "react";
 import { motion } from "framer-motion";
-import { FaNewspaper, FaTrophy, FaUsers } from "react-icons/fa";
 import { useNavigate, useLocation } from "react-router-dom";
+import { navigationItems } from "../constance/navigationItems.const";
 
-const navigationItems = [
-  {
-    id: "/",
-    label: "Aktualności",
-    icon: FaNewspaper,
-    path: "/dashboard/community/" 
-  },
-  {
-    id: "ranking",
-    label: "Ranking",
-    icon: FaTrophy,
-    path: "/dashboard/community/ranking"
-  },
-  {
-    id: "groups",
-    label: "Grupy",
-    icon: FaUsers,
-    path: "/dashboard/community/groups"
-  }
-] as const;
 
 export const CommunityNavigation = memo(() => {
   const navigate = useNavigate();
