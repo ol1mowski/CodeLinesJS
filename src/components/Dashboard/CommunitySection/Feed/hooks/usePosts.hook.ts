@@ -1,11 +1,10 @@
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { fetchPosts, likePost } from '../api/posts';
-
-const POSTS_PER_PAGE = 5;
-const POSTS_QUERY_KEY = 'posts';
+import { fetchPosts, likePost } from '../../api/posts.api';
+import { useAuth } from '../../../../../hooks/useAuth';
 
 export const usePosts = () => {
   const queryClient = useQueryClient();
+  const { token } = useAuth()
 
   const {
     data,
@@ -15,13 +14,13 @@ export const usePosts = () => {
     fetchNextPage
   } = useInfiniteQuery({
     queryKey: ['posts'],
-    queryFn: ({ pageParam = 1 }) => fetchPosts(pageParam),
+    queryFn: ({ pageParam = 1 }) => fetchPosts(pageParam, token || ''),
     getNextPageParam: (lastPage) => lastPage.hasNextPage ? lastPage.nextPage : undefined,
     initialPageParam: 1
   });
 
   const likePostMutation = useMutation({
-    mutationFn: likePost,
+    mutationFn: (postId: string) => likePost(postId, token || ''),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['posts'] });
     }

@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useComments } from "../hooks/useComments";
+import { useComments } from "./hooks/useComments.hook.ts";
 import { CommentForm } from "./components/Comments/CommentForm.component";
 import { CommentsList } from "./components/Comments/CommentsList.component.tsx";
 import { CommentsError } from "./components/Comments/CommentsError.component.tsx";

@@ -1,8 +1,8 @@
 import { memo } from "react";
 import { CreatePost } from "./CreatePost.component";
 import { PostsList } from "./PostsList.component";
-import { usePosts } from "../../../../Hooks/usePosts";
 import { ActiveUsers } from "./ActiveUsers.component";
+import { usePosts } from "./hooks/usePosts.hook";
 
 const CommunityFeed = memo(() => {
   const { 

@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { memo, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createPost } from "../api/posts";
+import { createPost } from "../api/posts.api";
 import { useAuth } from "../../../../hooks/useAuth";
 
 export const CreatePost = memo(() => {

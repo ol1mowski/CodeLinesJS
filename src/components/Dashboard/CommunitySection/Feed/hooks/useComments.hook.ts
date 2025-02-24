@@ -1,8 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
-import { commentsApi } from '../api/comments.api';
-import { useAuth } from '../../../../hooks/useAuth';
-import { CommentFormData } from '../types/comments.types';
+import { commentsApi } from '../../api/comments.api';
+import { useAuth } from '../../../../../hooks/useAuth';
+import { CommentFormData } from '../../types/comments.types';
 import toast from 'react-hot-toast';
 
 export const useComments = (postId: string, isOpen: boolean) => {

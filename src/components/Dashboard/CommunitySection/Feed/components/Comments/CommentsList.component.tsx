@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { motion } from 'framer-motion';
-import { Comment } from '../../types/comments.types';
+import { Comment } from '../../../types/comments.types';
 import { formatDistanceToNow } from 'date-fns';
 import { pl } from 'date-fns/locale';
 import { FaUserCircle } from 'react-icons/fa';
