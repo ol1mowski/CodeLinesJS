@@ -21,6 +21,7 @@ export const PostActions = memo(({
 }: PostActionsProps) => (
   <div className="flex items-center gap-6">
     <motion.button
+      data-testid="like-button"
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
       onClick={onLike}
@@ -33,15 +34,14 @@ export const PostActions = memo(({
       <FaHeart className={isLiked ? "fill-pink-500" : "stroke-current"} />
       <span>{Math.max(0, likesCount)}</span>
     </motion.button>
-    <motion.button
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.9 }}
-      onClick={onCommentClick}
+    <button
+      data-testid="comments-button"
       className="flex items-center gap-2 text-gray-400 hover:text-indigo-400 transition-colors"
+      onClick={onCommentClick}
     >
       <FaComment />
       <span>{Math.max(0, commentsCount)}</span>
-    </motion.button>
+    </button>
   </div>
 ));
 
