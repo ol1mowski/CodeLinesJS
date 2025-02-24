@@ -1,9 +1,8 @@
 import React, { memo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CommunityView } from '../types/community.types';
 
 type CommunityNavProps = {
-  activeView: CommunityView;
+  activeView: string;
 };
 
 export const CommunityNav = memo(({ activeView }: CommunityNavProps) => {
