@@ -11,7 +11,6 @@ const CommunityFeed = memo(() => {
     isFetchingNextPage, 
     hasNextPage, 
     fetchNextPage,
-    likePost 
   } = usePosts();
 
   return (
@@ -24,7 +23,6 @@ const CommunityFeed = memo(() => {
         isFetchingMore={isFetchingNextPage}
         hasMore={hasNextPage}
         onLoadMore={fetchNextPage}
-        onLike={likePost}
       />
     </div>
   );

@@ -11,7 +11,6 @@ type PostsListProps = {
   isFetchingMore: boolean;
   hasMore: boolean;
   onLoadMore: () => void;
-  onLike: (postId: string) => void;
 };
 
 export const PostsList = memo(({
@@ -20,7 +19,6 @@ export const PostsList = memo(({
   isFetchingMore,
   hasMore,
   onLoadMore,
-  onLike
 }: PostsListProps) => {
   const observerTarget = useInfiniteScroll(onLoadMore, hasMore, isFetchingMore);
 
@@ -39,7 +37,6 @@ export const PostsList = memo(({
           <Post 
             key={post._id} 
             post={post} 
-            onLike={() => onLike(post._id)} 
           />
         ))}
       </div>

@@ -1,5 +1,4 @@
 import { memo } from "react";
-import { FaUserCircle } from "react-icons/fa";
 import { formatDistanceToNow } from "date-fns";
 import { pl } from "date-fns/locale";
 

@@ -5,7 +5,7 @@ import { PostContent } from "./components/Post/PostContent.component";
 import { PostActions } from "./components/Post/PostActions.component";
 import { Comments } from "./Comments.component";
 import { useLikePost } from "./hooks/useLikePost.hook";
-import { Post as PostType } from "../../../../types/post.types";
+import { Post as PostType } from "../types/post.types";
 
 type PostProps = {
   post: PostType;
@@ -31,7 +31,7 @@ export const Post = memo(({ post }: PostProps) => {
       />
       <PostContent content={post.content} />
       <PostActions
-        isLiked={post.likes.isLiked}
+        isLiked={post.isLiked}
         likesCount={post.likes.count}
         commentsCount={post.comments.length}
         onLike={handleLike}

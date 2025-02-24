@@ -7,43 +7,58 @@ import { useAuth } from "../../../../../hooks/useAuth";
 export const useLikePost = (post: Post) => {
   const queryClient = useQueryClient();
   const { token } = useAuth();
+
   const likeMutation = useMutation({
-    mutationFn: () => toggleLike(post._id, post.likes.isLiked, token || ''),
+    mutationFn: () => toggleLike(post._id, post.isLiked, token || ''),
+    
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ["posts"] });
-      const previousPosts = queryClient.getQueryData(["posts"]);
+      const previousData = queryClient.getQueryData(["posts"]);
 
-      queryClient.setQueryData(["posts"], (old: any) => ({
-        ...old,
-        pages: old.pages.map((page: any) => ({
-          ...page,
-          posts: page.posts.map((p: Post) => 
-            p._id === post._id 
-              ? {
-                  ...p,
-                  likes: {
-                    isLiked: !p.likes.isLiked,
-                    count: p.likes.isLiked ? p.likes.count - 1 : p.likes.count + 1
+      queryClient.setQueryData(["posts"], (old: any) => {
+        if (!old?.pages) return old;
+
+        return {
+          ...old,
+          pages: old.pages.map((page: any) => ({
+            ...page,
+            posts: page.posts.map((p: Post) => 
+              p._id === post._id 
+                ? {
+                    ...p,
+                    isLiked: !p.isLiked,
+                    likes: {
+                      count: p.isLiked ? p.likes.count - 1 : p.likes.count + 1
+                    }
                   }
-                }
-              : p
-          )
-        }))
-      }));
+                : p
+            )
+          }))
+        };
+      });
 
-      return { previousPosts };
+      return { previousData };
     },
+
     onError: (_, __, context) => {
-      queryClient.setQueryData(["posts"], context?.previousPosts);
+      if (context?.previousData) {
+        queryClient.setQueryData(["posts"], context.previousData);
+      }
       toast.error("Nie udało się zaktualizować polubienia");
+    },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
     }
   });
 
+  const handleLike = () => {
+    if (likeMutation.isPending) return;
+    likeMutation.mutate();
+  };
+
   return {
-    handleLike: () => {
-      if (likeMutation.isPending) return;
-      likeMutation.mutate();
-    },
+    handleLike,
     isLiking: likeMutation.isPending
   };
 }; 

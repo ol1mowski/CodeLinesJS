@@ -30,7 +30,7 @@ export const PostActions = memo(({
         ${isLikeLoading ? "opacity-50 cursor-not-allowed" : ""}
         transition-colors`}
     >
-      <FaHeart className={isLiked ? "fill-current" : "stroke-current"} />
+      <FaHeart className={isLiked ? "fill-pink-500" : "stroke-current"} />
       <span>{Math.max(0, likesCount)}</span>
     </motion.button>
     <motion.button

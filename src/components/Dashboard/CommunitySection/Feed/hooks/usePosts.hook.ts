@@ -1,9 +1,8 @@
-import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { fetchPosts, likePost } from '../../api/posts.api';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { fetchPosts } from '../../api/posts.api';
 import { useAuth } from '../../../../../hooks/useAuth';
 
 export const usePosts = () => {
-  const queryClient = useQueryClient();
   const { token } = useAuth()
 
   const {
@@ -19,13 +18,6 @@ export const usePosts = () => {
     initialPageParam: 1
   });
 
-  const likePostMutation = useMutation({
-    mutationFn: (postId: string) => likePost(postId, token || ''),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['posts'] });
-    }
-  });
-
   const posts = data?.pages.flatMap(page => page.posts) ?? [];
 
   return {
@@ -34,6 +26,5 @@ export const usePosts = () => {
     isFetchingNextPage,
     hasNextPage,
     fetchNextPage,
-    likePost: likePostMutation.mutate
   };
 }; 
