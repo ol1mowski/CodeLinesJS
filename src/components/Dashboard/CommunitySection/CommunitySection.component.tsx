@@ -1,9 +1,9 @@
 import React, { memo, useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
-import { useCommunity } from './hooks/useCommunity';
+import { useCommunity } from './Feed/hooks/useCommunity.hook';
 import { prefetchRanking } from './Ranking/hooks/useRanking';
-import { CommunityNav } from './components/CommunityNav';
+import { CommunityNav } from './Feed/components/Comments/CommunityNav.component';
 import { CommunityView } from './types/community.types';
 
 export const CommunitySection = memo(() => {

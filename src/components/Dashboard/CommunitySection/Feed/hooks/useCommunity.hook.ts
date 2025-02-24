@@ -1,5 +1,5 @@
 import { useCallback, useReducer } from 'react';
-import { CommunityView, CommunityContextState } from '../types/community.types';
+import { CommunityView, CommunityContextState } from '../../types/community.types';
 
 type CommunityAction = { type: 'SET_ACTIVE_VIEW'; payload: CommunityView };
 

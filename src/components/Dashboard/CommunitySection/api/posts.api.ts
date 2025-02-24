@@ -56,24 +56,6 @@ export const fetchPosts = async (page: number = 1, token: string): Promise<{
   }
 };
 
-export const likePost = async (postId: string, token: string): Promise<{ message: string }> => {
-  try {
-    const response = await fetch(`${API_URL}posts/${postId}/like`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error('Nie udało się polubić posta');
-    }
-
-    return response.json();
-  } catch (error) {
-    handleError(error);
-  }
-};
 
 export const addComment = async (postId: string, content: string, token: string) => {
   const response = await fetch(`${API_URL}posts/${postId}/comments`, {

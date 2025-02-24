@@ -69,6 +69,8 @@ export const likePost = async (req, res, next) => {
   try {
     const userId = req.user.userId;
     const post = await Post.findById(req.params.id);
+    console.log('render');
+    
     
     if (!post) {
       throw new ValidationError('Post nie istnieje');
@@ -93,23 +95,27 @@ export const likePost = async (req, res, next) => {
       post.likes.count = post.likes.userIds.length;
     }
     
-    post.markModified('likes');
     await post.save();
 
+    // Pobierz zaktualizowany post z poprawną liczbą polubień
     const populatedPost = await Post.findById(post._id)
       .populate('author', 'username avatar')
       .populate({
         path: 'comments.author',
         select: 'username avatar'
-      });
+      })
+      .lean();
 
-    res.json({
-      ...populatedPost.toObject(),
+    // Zachowaj aktualne dane o polubieniach
+    const response = {
+      ...populatedPost,
       isLiked: post.likes.userIds.includes(userId),
       likes: {
         count: post.likes.count
       }
-    });
+    };
+
+    res.json(response);
   } catch (error) {
     next(error);
   }
