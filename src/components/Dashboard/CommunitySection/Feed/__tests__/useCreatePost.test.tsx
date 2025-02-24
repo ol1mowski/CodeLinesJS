@@ -16,9 +16,9 @@ vi.mock('@tanstack/react-query', () => ({
 
 describe('useCreatePost Hook', () => {
   it('handles content change within limits', () => {
-    const wrapper = ({ children }: { children: React.ReactNode }) => {
-      return <MemoryRouter>{children}</MemoryRouter>;
-    };    
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <MemoryRouter>{children}</MemoryRouter>
+    );
     const { result } = renderHook(() => useCreatePost(), { wrapper });
 
     act(() => {
@@ -31,7 +31,9 @@ describe('useCreatePost Hook', () => {
   });
 
   it('prevents content exceeding max chars', () => {
-    const wrapper = ({ children }) => <MemoryRouter>{children}</MemoryRouter>;
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <MemoryRouter>{children}</MemoryRouter>
+    );
     const { result } = renderHook(() => useCreatePost(), { wrapper });
     const longContent = 'a'.repeat(501);
 

@@ -35,6 +35,7 @@
     "react-icons": "^5.4.0",
     "react-intersection-observer": "^9.15.1",
     "react-router-dom": "^7.1.1",
+    "react-select": "^5.10.0",
     "react-syntax-highlighter": "^15.6.1",
     "react-toastify": "^11.0.2",
     "recharts": "^2.15.0",
