@@ -38,8 +38,8 @@ export const ActiveUsers = memo(() => {
             transition={{ type: "spring", stiffness: 400, damping: 17 }}
           >
             <div className="w-10 h-10 rounded-full relative">
-              <div className="w-full h-full rounded-full bg-js/20 flex items-center justify-center border-2 border-dark/50">
-                {user.username.charAt(0).toUpperCase()}
+              <div className="w-10 h-10 rounded-full bg-js flex items-center justify-center">
+                <span className="text-dark font-bold text-xl">{user.username.charAt(0).toUpperCase()}</span>
               </div>
               <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-dark">
                 <div className="absolute inset-0 bg-green-500 rounded-full animate-ping opacity-75"></div>

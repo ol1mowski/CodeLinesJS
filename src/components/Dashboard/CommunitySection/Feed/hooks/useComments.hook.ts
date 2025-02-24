@@ -28,7 +28,6 @@ export const useComments = (postId: string, isOpen: boolean) => {
       reset();
       queryClient.invalidateQueries({ queryKey: ['comments', postId] });
       queryClient.invalidateQueries({ queryKey: ['posts'] });
-      toast.success('Komentarz został dodany');
     }
   });
 

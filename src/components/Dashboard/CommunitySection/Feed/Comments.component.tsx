@@ -22,6 +22,9 @@ export const Comments = memo(({ postId, isOpen }: CommentsProps) => {
     isSubmitting
   } = useComments(postId, isOpen);
 
+  console.log(comments);
+  
+
   return (
     <AnimatePresence>
       {isOpen && (

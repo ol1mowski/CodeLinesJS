@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { Comment } from '../../../types/comments.types';
 import { formatDistanceToNow } from 'date-fns';
 import { pl } from 'date-fns/locale';
-import { FaUserCircle } from 'react-icons/fa';
 
 type CommentsListProps = {
   comments?: Comment[];
@@ -30,22 +29,14 @@ const CommentItem = memo(({ comment }: { comment: Comment }) => (
     animate={{ opacity: 1, y: 0 }}
     className="flex gap-3"
   >
-    <div className="flex-shrink-0">
-      {comment.author.avatar ? (
-        <img
-          src={comment.author.avatar}
-          alt={comment.author.name}
-          className="w-8 h-8 rounded-full"
-        />
-      ) : (
-        <FaUserCircle className="w-8 h-8 text-gray-400" />
-      )}
+    <div className="w-10 h-10 rounded-full bg-js flex items-center justify-center">
+      <span className='text-dark font-bold text-xl'>{comment.author.username[0]}</span>
     </div>
     <div className="flex-1">
       <div className="bg-dark/20 rounded-lg p-3">
         <div className="flex items-center gap-2 mb-1">
           <span className="font-medium text-gray-200">
-            {comment.author.name}
+            {comment.author.username}
           </span>
           <span className="text-xs text-gray-400">
             {formatDistanceToNow(new Date(comment.createdAt), {

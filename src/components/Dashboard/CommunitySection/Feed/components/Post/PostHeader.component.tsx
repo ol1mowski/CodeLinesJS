@@ -12,8 +12,8 @@ type PostHeaderProps = {
 
 export const PostHeader = memo(({ author, createdAt }: PostHeaderProps) => (
   <div className="flex items-center gap-4 mb-4">
-    <div className="w-10 h-10 rounded-full bg-js/20 flex items-center justify-center">
-      <FaUserCircle className="w-6 h-6 text-js" />
+    <div className="w-10 h-10 rounded-full bg-js flex items-center justify-center">
+      <span className='text-dark font-bold text-xl'>{author.username[0]}</span>
     </div>
     <div>
       <h3 className="font-medium text-js">{author.username}</h3>
