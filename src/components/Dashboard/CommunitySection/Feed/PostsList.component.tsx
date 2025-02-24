@@ -2,7 +2,6 @@ import { memo } from 'react';
 import { Post } from './Post.component';
 import { PostsListSkeleton } from './PostsListSkeleton.component';
 import { useInfiniteScroll } from './hooks/useInfiniteScroll.hook';
-import { MemoizedVirtualList } from '../../../Common/VirtualList.component';
 import { Post as PostType } from '../../../../types/post.types';
 import { EmptyState } from './components/Posts/EmptyState.component';
 
@@ -34,11 +33,16 @@ export const PostsList = memo(({
   }
 
   return (
-    <div className="space-y-6">
-      <VirtualizedPosts 
-        posts={posts} 
-        onLike={onLike} 
-      />
+    <div className="space-y-8">
+      <div className="grid grid-cols-1 gap-8">
+        {posts.map((post) => (
+          <Post 
+            key={post._id} 
+            post={post} 
+            onLike={() => onLike(post._id)} 
+          />
+        ))}
+      </div>
       
       {isFetchingMore && (
         <div className="py-4">
@@ -51,27 +55,4 @@ export const PostsList = memo(({
   );
 });
 
-type VirtualizedPostsProps = {
-  posts: PostType[];
-  onLike: (postId: string) => void;
-};
-
-const VirtualizedPosts = memo(({ posts, onLike }: VirtualizedPostsProps) => (
-  <div className="h-[800px]">
-    <MemoizedVirtualList
-      items={posts}
-      renderItem={(post) => (
-        <Post 
-          key={post._id} 
-          post={post} 
-          onLike={() => onLike(post._id)} 
-        />
-      )}
-      itemHeight={200}
-      className="h-full"
-    />
-  </div>
-));
-
-PostsList.displayName = 'PostsList';
-VirtualizedPosts.displayName = 'VirtualizedPosts'; 
+PostsList.displayName = 'PostsList'; 

@@ -1,7 +1,7 @@
 import { memo, useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import { PostHeader } from "./components/Post/PostHeader.component";
-import { PostContent } from "./components/Post/PostContent";
+import { PostContent } from "./components/Post/PostContent.component";
 import { PostActions } from "./components/Post/PostActions.component";
 import { Comments } from "./Comments.component";
 import { useLikePost } from "./hooks/useLikePost.hook";
