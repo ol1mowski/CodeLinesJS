@@ -7,7 +7,6 @@ import { Comments } from "./Comments.component";
 import { useLikePost } from "./hooks/useLikePost.hook";
 import { usePosts } from "./hooks/usePosts.hook";
 import { Post as PostType } from "../types/post.types";
-import { FaRegEdit, FaTrashAlt } from 'react-icons/fa';
 
 type PostProps = {
   post: PostType;

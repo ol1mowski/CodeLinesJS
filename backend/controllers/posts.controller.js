@@ -69,8 +69,6 @@ export const likePost = async (req, res, next) => {
   try {
     const userId = req.user.userId;
     const post = await Post.findById(req.params.id);
-    console.log('render');
-    
     
     if (!post) {
       throw new ValidationError('Post nie istnieje');

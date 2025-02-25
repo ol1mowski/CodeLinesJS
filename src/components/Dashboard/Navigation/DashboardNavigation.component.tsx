@@ -15,8 +15,8 @@ import { navigationItems } from "./constants/navigationItems";
 
 const sectionTitles: Record<string, string> = {
   main: "Główne",
-  game: "Gra",
-  social: "Społeczność",
+  game: "Nauka",
+  // social: "Społeczność",
 };
 
 export const DashboardNavigation = () => {

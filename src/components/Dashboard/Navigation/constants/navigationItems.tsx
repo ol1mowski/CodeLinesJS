@@ -37,13 +37,13 @@ export const navigationItems: NavigationItem[] = [
         section: "game",
         path: "/dashboard/code",
       },
-      {
-        id: "community",
-        label: "Społeczność",
-        icon: <FaUsers />,
-        section: "social",
-        path: "/dashboard/community",
-      },
+      // {
+      //   id: "community",
+      //   label: "Społeczność",
+      //   icon: <FaUsers />,
+      //   section: "social",
+      //   path: "/dashboard/community",
+      // },
       {
         id: "settings",
         label: "Ustawienia",
