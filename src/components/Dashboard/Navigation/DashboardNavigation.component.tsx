@@ -48,12 +48,11 @@ export const DashboardNavigation = () => {
     []
   );
 
-  const isMobileView = window.innerWidth < 768;
-  const isHiddenPath = ['/dashboard/community', '/dashboard/learn', '/dashboard/play'].includes(location.pathname);
+  const isHiddenPath = ['/dashboard/community','/dashboard/community/ranking', '/dashboard/community/groups', '/dashboard/learn', '/dashboard/play', '/dashboard/play/regex-raider', '/dashboard/play/async-quest', '/dashboard/play/js-typo-hunter', '/dashboard/play/scope-explorer'].includes(location.pathname);
 
   return (
     <>
-      {!isHiddenPath ? (
+      {!isHiddenPath && (
         <motion.nav
           initial="collapsed"
           animate={isExpanded ? "expanded" : "collapsed"}
@@ -89,17 +88,6 @@ export const DashboardNavigation = () => {
             />
           </div>
         </motion.nav>
-      ) : (
-        isMobileView && (
-          <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 mb-4">
-            <motion.button
-              onClick={() => navigate('/dashboard')}
-              className="flex items-center justify-center w-16 h-16 rounded-full bg-js text-dark hover:bg-js/80 transition-colors shadow-lg"
-            >
-              <FaHome className="text-4xl" />
-            </motion.button>
-          </div>
-        )
       )}
     </>
   );
