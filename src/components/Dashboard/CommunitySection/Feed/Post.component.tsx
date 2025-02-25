@@ -13,9 +13,11 @@ type PostProps = {
 };
 
 export const Post = memo(({ post }: PostProps) => {
-  const { deletePost } = usePosts();
+  const { deletePost, updatePost } = usePosts();
   const [showComments, setShowComments] = useState(false);
   const { handleLike, isLiking } = useLikePost(post);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedContent, setEditedContent] = useState(post.content);
 
   const toggleComments = useCallback(() => {
     setShowComments(prev => !prev);
@@ -23,6 +25,15 @@ export const Post = memo(({ post }: PostProps) => {
 
   const handleDelete = () => {
     deletePost(post._id);
+  };
+
+  const handleEdit = () => {
+    setIsEditing(true);
+  };
+
+  const handleUpdate = async () => {
+    await updatePost(post._id, { content: editedContent });
+    setIsEditing(false);
   };
 
   return (
@@ -35,7 +46,21 @@ export const Post = memo(({ post }: PostProps) => {
         author={post.author} 
         createdAt={post.createdAt} 
       />
-      <PostContent content={post.content} />
+      {isEditing ? (
+        <div>
+          <textarea 
+            value={editedContent} 
+            onChange={(e) => setEditedContent(e.target.value)} 
+          />
+          <button onClick={handleUpdate}>Save</button>
+          <button onClick={() => setIsEditing(false)}>Cancel</button>
+        </div>
+      ) : (
+        <>
+          <PostContent content={post.content} />
+          <button onClick={handleEdit} className="edit-button">✏️</button>
+        </>
+      )}
       <PostActions
         isLiked={post.isLiked}
         likesCount={post.likes.count}
@@ -45,7 +70,6 @@ export const Post = memo(({ post }: PostProps) => {
         isLikeLoading={isLiking}
       />
       <button onClick={handleDelete} className="delete-button">🗑️</button>
-      <button className="edit-button">✏️</button>
       <Comments 
         postId={post._id} 
         isOpen={showComments} 

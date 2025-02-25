@@ -35,5 +35,22 @@ export const usePosts = () => {
         }
     };
 
-    return { posts, loading, error, deletePost };
+    const updatePost = async (id: string, updatedData: Partial<PostType>) => {
+        try {
+            const response = await fetch(`${API_URL}/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updatedData),
+            });
+            if (!response.ok) throw new Error('Failed to update post');
+            const updatedPost = await response.json();
+            setPosts(posts.map(post => (post._id === id ? updatedPost : post)));
+        } catch (err) {
+            setError(err.message);
+        }
+    };
+
+    return { posts, loading, error, deletePost, updatePost };
 }; 
