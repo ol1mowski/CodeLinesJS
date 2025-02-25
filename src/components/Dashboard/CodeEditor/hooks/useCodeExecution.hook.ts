@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 
-const EXECUTION_TIMEOUT = 3000; // 3 seconds
+const EXECUTION_TIMEOUT = 3000; 
 
 export const useCodeExecution = () => {
   const [output, setOutput] = useState<string[]>([]);
