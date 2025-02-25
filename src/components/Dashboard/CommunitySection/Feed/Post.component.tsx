@@ -7,6 +7,7 @@ import { Comments } from "./Comments.component";
 import { useLikePost } from "./hooks/useLikePost.hook";
 import { usePosts } from "./hooks/usePosts.hook";
 import { Post as PostType } from "../types/post.types";
+import { FaRegEdit, FaTrashAlt } from 'react-icons/fa';
 
 type PostProps = {
   post: PostType;
@@ -40,25 +41,29 @@ export const Post = memo(({ post }: PostProps) => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10 p-6 shadow-lg"
+      className="bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10 p-6 shadow-lg relative"
     >
       <PostHeader 
         author={post.author} 
         createdAt={post.createdAt} 
+        onEdit={handleEdit}
+        onDelete={handleDelete}
       />
       {isEditing ? (
-        <div>
+        <div className="mt-4">
           <textarea 
             value={editedContent} 
+            className="w-full p-2 rounded-md border border-js/10 focus:outline-none focus:ring-2 focus:ring-js/50"
             onChange={(e) => setEditedContent(e.target.value)} 
           />
-          <button onClick={handleUpdate}>Save</button>
-          <button onClick={() => setIsEditing(false)}>Cancel</button>
+          <div className="flex gap-2 mt-2">
+            <button className="bg-js text-dark px-4 py-2 rounded-md" onClick={handleUpdate}>Zapisz</button>
+            <button className="border border-js text-js px-4 py-2 rounded-md" onClick={() => setIsEditing(false)}>Anuluj</button>
+          </div>
         </div>
       ) : (
         <>
           <PostContent content={post.content} />
-          <button onClick={handleEdit} className="edit-button">✏️</button>
         </>
       )}
       <PostActions
@@ -69,7 +74,6 @@ export const Post = memo(({ post }: PostProps) => {
         onCommentClick={toggleComments}
         isLikeLoading={isLiking}
       />
-      <button onClick={handleDelete} className="delete-button">🗑️</button>
       <Comments 
         postId={post._id} 
         isOpen={showComments} 
