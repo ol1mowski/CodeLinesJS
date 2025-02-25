@@ -4,7 +4,6 @@ import { jsSnippets } from '../constants/snippets';
 
 export const useEditorConfig = () => {
 
-
   const editorOptions: editor.IStandaloneEditorConstructionOptions = {
     minimap: { enabled: false },
     fontSize: 14,

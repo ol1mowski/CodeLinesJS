@@ -45,6 +45,7 @@ export const NavigationSection = memo(({
     {items.map((item) => (
       <NavigationButton
         key={item.id}
+        id={item.id}
         icon={item.icon}
         label={item.label}
         isActive={activeItem === item.id}

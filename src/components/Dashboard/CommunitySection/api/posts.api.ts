@@ -28,9 +28,10 @@ export const createPost = async (content: string, token: string): Promise<Post> 
       throw new Error('Nie udało się utworzyć posta');
     }
 
-    return response.json();
+    return await response.json();
   } catch (error) {
     handleError(error);
+    return Promise.reject(error);
   }
 };
 
@@ -38,6 +39,8 @@ export const fetchPosts = async (page: number = 1, token: string): Promise<{
   posts: Post[];
   hasNextPage: boolean;
   nextPage: number;
+  totalPages: number;
+  totalPosts: number; 
 }> => {
   try {
     const response = await fetch(`${API_URL}posts?page=${page}`, {
@@ -53,9 +56,9 @@ export const fetchPosts = async (page: number = 1, token: string): Promise<{
     return response.json();
   } catch (error) {
     handleError(error);
+    return Promise.reject(error);
   }
 };
-
 
 export const addComment = async (postId: string, content: string, token: string) => {
   const response = await fetch(`${API_URL}posts/${postId}/comments`, {
@@ -101,4 +104,27 @@ export const toggleLike = async (postId: string, isLiked: boolean, token: string
     isLiked: Boolean(data.isLiked),
     likesCount: Number(data.likes.count)
   };
+};
+
+export const deletePost = async (id: string, token: string) => {
+  const response = await fetch(`${API_URL}/${id}`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!response.ok) throw new Error('Failed to delete post');
+};
+
+export const updatePost = async (id: string, updatedData: Partial<Post>, token: string) => {
+  const response = await fetch(`${API_URL}/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(updatedData),
+  });
+  if (!response.ok) throw new Error('Failed to update post');
+  return response.json();
 };
