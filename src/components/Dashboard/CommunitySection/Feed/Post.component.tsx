@@ -1,4 +1,4 @@
-import { memo, useState, useCallback } from "react";
+import React, { memo, useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import { PostHeader } from "./components/Post/PostHeader.component";
 import { PostContent } from "./components/Post/PostContent.component";
