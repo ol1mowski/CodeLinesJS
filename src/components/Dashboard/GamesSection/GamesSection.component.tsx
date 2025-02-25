@@ -12,7 +12,6 @@ export type ActiveCategory = "all" | "basics" | "algorithms" | "challenges" | "c
 export type SortOption = "newest" | "popular" | "difficulty" | "xp";
 
 export const GamesSection = memo(() => {
-  const [activeCategory, setActiveCategory] = useState<ActiveCategory>("all");
   const [sortBy, setSortBy] = useState<SortOption>("newest");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDifficulty, setSelectedDifficulty] = useState<GameDifficulty | "all">("all");
@@ -29,12 +28,6 @@ export const GamesSection = memo(() => {
 
         <div className="mt-8 bg-dark-800/50 border border-js/10 rounded-xl p-4 sm:p-6">
           <div className="space-y-6">
-            <div className="w-full">
-              <GamesCategories 
-                activeCategory={activeCategory} 
-                onCategoryChange={setActiveCategory} 
-              />
-            </div>
             
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="w-full sm:w-72">
@@ -59,7 +52,6 @@ export const GamesSection = memo(() => {
 
           <div className="mt-6">
             <GamesList
-              activeCategory={activeCategory}
               sortBy={sortBy}
               searchQuery={searchQuery}
               selectedDifficulty={selectedDifficulty}
