@@ -1,13 +1,10 @@
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { Link, Outlet } from 'react-router-dom';
 import { DashboardNavigation } from "./Navigation/DashboardNavigation.component";
 import { TopNavigation } from "./TopNavigation/TopNavigation.component";
+import { useIsHiddenPath } from '../../Hooks/useIsHiddingPath.hook';
 
 const Dashboard = () => {
-
-  const location = useLocation();
-
-  const isHiddenPath = ['/dashboard/community','/dashboard/community/ranking', '/dashboard/community/groups', '/dashboard/learn', '/dashboard/play', '/dashboard/play/regex-raider', '/dashboard/play/async-quest', '/dashboard/play/js-typo-hunter', '/dashboard/play/scope-explorer', '/dashboard/settings'].includes(location.pathname);
-
+  const isHiddenPath = useIsHiddenPath();
   return (
     <main className="bg-gradient-to-b from-dark via-dark-medium to-dark backdrop-blur-lg flex min-h-screen">
       <DashboardNavigation />

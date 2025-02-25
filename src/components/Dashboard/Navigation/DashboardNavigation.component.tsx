@@ -1,12 +1,12 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { FaSignOutAlt } from "react-icons/fa";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../Hooks/useAuth";
 import { useNavigation } from "../../../Hooks/useNavigation";
 import { NavigationLogo } from "./components/NavigationLogo";
 import { NavigationButton } from "./components/NavigationButton";
 import { NavigationSection } from "./components/NavigationSection";
-
+import { useIsHiddenPath } from "../../../Hooks/useIsHiddingPath.hook";
 import { navVariants } from "./animations/navigationAnimations";
 import { useMemo, useCallback } from "react";
 import type { NavigationItem } from ".";
@@ -21,9 +21,9 @@ const sectionTitles: Record<string, string> = {
 
 export const DashboardNavigation = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const { isExpanded, setIsExpanded, activeItem, setActiveItem } = useNavigation();
   const { logout } = useAuth();
+  const isHiddenPath = useIsHiddenPath();
 
   const handleNavigation = useCallback((item: NavigationItem) => {
     setActiveItem(item.id);
@@ -45,7 +45,6 @@ export const DashboardNavigation = () => {
     []
   );
 
-  const isHiddenPath = ['/dashboard/community', '/dashboard/community/ranking', '/dashboard/community/groups', '/dashboard/learn', '/dashboard/play', '/dashboard/play/regex-raider', '/dashboard/play/async-quest', '/dashboard/play/js-typo-hunter', '/dashboard/play/scope-explorer', '/dashboard/settings'].includes(location.pathname);
 
   return (
     <>
