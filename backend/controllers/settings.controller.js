@@ -1,11 +1,10 @@
 import { User } from '../models/user.model.js';
-import {  deleteFromStorage } from '../utils/storage.js';
 import { AuthError, ValidationError } from '../utils/errors.js';
 
 export const getProfile = async (req, res, next) => {
   try {
     const user = await User.findById(req.user.userId)
-      .select('username email avatar profile preferences stats')
+      .select('username email profile preferences stats')
       .lean();
     
     if (!user) {
@@ -15,7 +14,6 @@ export const getProfile = async (req, res, next) => {
     res.json({
       username: user.username,
       email: user.email,
-      avatar: user.avatar,
       profile: user.profile,
       preferences: user.preferences,
       stats: {
@@ -76,49 +74,8 @@ export const updateProfile = async (req, res, next) => {
       username: updatedUser.username,
       email: updatedUser.email,
       profile: updatedUser.profile,
-      avatar: updatedUser.avatar
     });
   } catch (error) {
-    next(error);
-  }
-};
-
-export const updateAvatar = async (req, res, next) => {
-  try {
-    if (!req.file) {
-      throw new ValidationError('Brak pliku');
-    }
-    
-    const avatarUrl = `/uploads/avatars/${req.file.filename}`;
-    
-    const user = await User.findById(req.user.userId);
-    if (!user) {
-      throw new AuthError('Użytkownik nie znaleziony');
-    }
-
-    if (user.avatar && !user.avatar.includes('default-avatar.png')) {
-      try {
-        await deleteFromStorage(user.avatar);
-      } catch (error) {
-        console.error('Błąd podczas usuwania starego avatara:', error);
-      }
-    }
-    
-    user.avatar = avatarUrl;
-    await user.save();
-    
-    res.json({ 
-      avatar: user.avatar,
-      username: user.username 
-    });
-  } catch (error) {
-    if (req.file) {
-      try {
-        await deleteFromStorage(`/uploads/avatars/${req.file.filename}`);
-      } catch (deleteError) {
-        console.error('Błąd podczas usuwania pliku po błędzie:', deleteError);
-      }
-    }
     next(error);
   }
 };

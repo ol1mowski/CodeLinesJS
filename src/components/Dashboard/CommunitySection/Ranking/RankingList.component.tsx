@@ -1,8 +1,6 @@
 import { motion } from "framer-motion";
-import { FaUserCircle, FaTrophy, FaCode, FaBullseye } from "react-icons/fa";
-import { useRanking } from "../../../../Hooks/useRanking";
 import { HiOutlineTrophy } from "react-icons/hi2";
-
+import { useRanking } from "./hooks/useRanking";
 
 export const RankingList = () => {
   const { data, isLoading } = useRanking();

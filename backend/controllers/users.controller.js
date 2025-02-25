@@ -74,9 +74,11 @@ export const getUserStats = async (req, res, next) => {
       data: {
         points: stats.points || 0,
         level: stats.level || 1,
-        xp: stats.xp || 0,
         streak: stats.streak || 0,
         bestStreak: stats.bestStreak || 0,
+        pointsToNextLevel: stats.pointsToNextLevel || 0,
+        completedLessons: stats.completedLessons || 0,
+        badges: stats.badges || [],
         lastActive: stats.lastActive,
         learningPaths: learningPathsProgress,
         chartData: stats.chartData || { daily: [], progress: [] }

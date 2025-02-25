@@ -8,6 +8,7 @@ type NavigationButtonProps = {
   isActive?: boolean;
   isExpanded: boolean;
   onClick: () => void;
+  id: string;
   variant?: "default" | "danger";
 };
 
@@ -18,11 +19,13 @@ export const NavigationButton = memo(({
   isExpanded,
   onClick,
   variant = "default",
+  id,
 }: NavigationButtonProps) => (
   <motion.button
     onClick={onClick}
     data-testid={`nav-button-${label?.toLowerCase().replace(/\s/g, '-')}`}
     className={`
+      ${id === "code" && "hidden lg:flex"}
       w-full flex items-center gap-3 px-4 py-3 
       rounded-lg transition-all duration-200
       backdrop-blur-sm

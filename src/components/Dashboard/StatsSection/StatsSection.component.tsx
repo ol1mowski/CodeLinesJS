@@ -1,10 +1,12 @@
 import { memo, useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { useStats } from "../../../Hooks/useStats";
+import { useStats } from "./hooks/useStats.hook";
 import { StatsOverview } from "./StatsOverview/StatsOverview.component";
 import { StatsCharts } from "./StatsCharts/StatsCharts.component";
 import { DashboardState } from "../DashboardContent/components/DashboardState.component";
 import { LevelUpNotification } from "../../UI/Notifications/LevelUpNotification.component";
+import { LoadingScreen } from "../../UI/LoadingScreen/LoadingScreen.component";
+
 
 export const StatsSection = memo(() => {
   const { stats, isLoading, error } = useStats();
@@ -15,17 +17,17 @@ export const StatsSection = memo(() => {
   } | null>(null);
 
   useEffect(() => {
-    if (stats?.levelUp) {
+    if (stats?.data.levelUp) {
       setLevelUpData({
-        level: stats.level,
-        rewards: stats.rewards
+        level: stats.data.level,
+        rewards: stats.data.rewards
       });
       setShowLevelUp(true);
     }
   }, [stats]);
 
   if (isLoading) {
-    return <DashboardState type="loading" />;
+    return <LoadingScreen />;
   }
 
   if (error) {
@@ -65,6 +67,7 @@ export const StatsSection = memo(() => {
             <StatsOverview
               stats={stats}
               isLoading={isLoading}
+              error={error}
             />
           </div>
           <div className="flex flex-col gap-6 h-full">

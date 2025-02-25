@@ -1,4 +1,5 @@
-import { describe, it, expect, vi, beforeEach, MockInstance } from 'vitest';
+import React from 'react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { SecurityForm } from '../SecurityForm.component';
@@ -6,12 +7,13 @@ import { useSecurityForm } from '../hooks/useSecurityForm';
 import { useSecurityToasts } from '../hooks/useSecurityToasts';
 import { MemoryRouter } from 'react-router-dom';
 
-vi.mock('../hooks/useSecurityForm', () => ({
-  useSecurityForm: vi.fn()
-}));
-
-vi.mock('../hooks/useSecurityToasts', () => ({
-  useSecurityToasts: vi.fn()
+vi.mock('../hooks/useSecurityForm');
+vi.mock('../hooks/useSecurityToasts');
+vi.mock('react-hot-toast', () => ({
+  toast: {
+    success: vi.fn(),
+    error: vi.fn()
+  }
 }));
 
 vi.mock('framer-motion', () => ({
@@ -20,38 +22,15 @@ vi.mock('framer-motion', () => ({
   },
 }));
 
-vi.mock('../../../../UI/Button/Button.component', () => ({
-  Button: ({ children, ...props }: any) => (
-    <button data-testid="button" {...props}>{children}</button>
-  ),
-}));
-
-vi.mock('../../components/Profile/FormButtons/FormButtons.component', () => ({
+vi.mock('../../ProfileForm/components/FormButtons/FormButtons.component', () => ({
   FormButtons: ({ onCancel, isSubmitting, submitText, loadingText }: any) => (
-    <div data-testid="form-buttons">
-      <button onClick={onCancel} data-testid="cancel-button">Anuluj</button>
-      <button 
-        disabled={isSubmitting} 
-        data-testid="submit-button"
-      >
+    <div>
+      <button onClick={onCancel} type="button">Anuluj</button>
+      <button type="submit" disabled={isSubmitting}>
         {isSubmitting ? loadingText : submitText}
       </button>
     </div>
-  ),
-}));
-
-vi.mock('../../../../../../UI/Form/FormInput/FormInput.component', () => ({
-  FormInput: ({ id, placeholder, error, ...props }: any) => (
-    <div>
-      <input
-        data-testid={`input-${id}`}
-        id={id}
-        placeholder={placeholder}
-        {...props}
-      />
-      {error && <span data-testid={`error-${id}`}>{error}</span>}
-    </div>
-  ),
+  )
 }));
 
 describe('SecurityForm', () => {
@@ -60,55 +39,19 @@ describe('SecurityForm', () => {
   const mockHandleError = vi.fn();
   const mockHandleCancel = vi.fn();
   const mockHandleCancelError = vi.fn();
-  
+  const mockOnSubmit = vi.fn();
+
   beforeEach(() => {
     vi.clearAllMocks();
     
-    (useSecurityToasts as unknown as MockInstance).mockReturnValue({
+    vi.mocked(useSecurityToasts).mockReturnValue({
       handleSuccess: mockHandleSuccess,
       handleError: mockHandleError,
       handleCancel: mockHandleCancel,
-      handleCancelError: mockHandleCancelError,
+      handleCancelError: mockHandleCancelError
     });
 
-    (useSecurityForm as unknown as MockInstance).mockReturnValue({
-      form: {
-        reset: mockReset,
-        register: vi.fn(),
-        formState: { 
-          isSubmitting: false,
-          errors: {
-            currentPassword: undefined,
-            newPassword: undefined,
-            confirmPassword: undefined
-          }
-        },
-        handleSubmit: (fn: any) => (e: any) => {
-          e.preventDefault();
-          return fn();
-        },
-      },
-      onSubmit: vi.fn(),
-      isUpdating: false,
-    });
-  });
-
-  it('renders correctly', () => {
-    render(
-      <MemoryRouter>
-        <SecurityForm />
-      </MemoryRouter>
-    );
-    
-    expect(screen.getByText('Zmień hasło')).toBeInTheDocument();
-    expect(screen.getByText('Aktualne hasło')).toBeInTheDocument();
-    expect(screen.getByText('Nowe hasło')).toBeInTheDocument();
-    expect(screen.getByText('Potwierdź nowe hasło')).toBeInTheDocument();
-  });
-
-  it('handles form submission successfully', async () => {
-    const mockOnSubmit = vi.fn();
-    (useSecurityForm as unknown as MockInstance).mockReturnValue({
+    vi.mocked(useSecurityForm).mockReturnValue({
       form: {
         reset: mockReset,
         register: vi.fn(),
@@ -128,15 +71,30 @@ describe('SecurityForm', () => {
       onSubmit: mockOnSubmit,
       isUpdating: false,
     });
+  });
 
+  it('renders correctly', () => {
+    render(
+      <MemoryRouter>
+        <SecurityForm />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByPlaceholderText('Wprowadź aktualne hasło')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Wprowadź nowe hasło')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Powtórz nowe hasło')).toBeInTheDocument();
+    expect(screen.getByText('Anuluj')).toBeInTheDocument();
+  });
+
+  it('handles form submission successfully', async () => {
     render(
       <MemoryRouter>
         <SecurityForm />
       </MemoryRouter>
     );
     
-    const form = screen.getByRole('form');
-    fireEvent.submit(form);
+    const form = screen.getByRole('button', { name: 'Zmień hasło' });
+    fireEvent.click(form);
 
     await waitFor(() => {
       expect(mockOnSubmit).toHaveBeenCalled();
@@ -158,7 +116,7 @@ describe('SecurityForm', () => {
   });
 
   it('shows loading state when submitting', () => {
-    (useSecurityForm as unknown as MockInstance).mockReturnValue({
+    vi.mocked(useSecurityForm).mockReturnValue({
       form: {
         reset: mockReset,
         register: vi.fn(),
