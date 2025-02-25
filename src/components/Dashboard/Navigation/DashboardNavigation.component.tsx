@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { FaSignOutAlt, FaHome } from "react-icons/fa";
+import { FaSignOutAlt } from "react-icons/fa";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../../Hooks/useAuth";
 import { useNavigation } from "../../../Hooks/useNavigation";
@@ -48,7 +48,7 @@ export const DashboardNavigation = () => {
     []
   );
 
-  const isHiddenPath = ['/dashboard/community','/dashboard/community/ranking', '/dashboard/community/groups', '/dashboard/learn', '/dashboard/play', '/dashboard/play/regex-raider', '/dashboard/play/async-quest', '/dashboard/play/js-typo-hunter', '/dashboard/play/scope-explorer'].includes(location.pathname);
+  const isHiddenPath = ['/dashboard/community', '/dashboard/community/ranking', '/dashboard/community/groups', '/dashboard/learn', '/dashboard/play', '/dashboard/play/regex-raider', '/dashboard/play/async-quest', '/dashboard/play/js-typo-hunter', '/dashboard/play/scope-explorer', '/dashboard/settings'].includes(location.pathname);
 
   return (
     <>
@@ -61,7 +61,22 @@ export const DashboardNavigation = () => {
         >
           <NavigationLogo isExpanded={isExpanded} />
 
-          <div className="overflow-x-hidden flex-1 px-3 space-y-6 overflow-y-auto scrollbar-thin scrollbar-track-dark/50 scrollbar-thumb-js/20">
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="absolute -right-3 top-8 w-6 h-6 bg-js rounded-full flex items-center justify-center hover:opacity-90 transition-all shadow-lg shadow-js/20"
+          >
+            <motion.span
+              animate={{ rotate: isExpanded ? 180 : 0 }}
+              className="text-dark text-sm font-bold"
+              initial="collapsed"
+            >
+              →
+            </motion.span>
+          </motion.button>
+
+          <div className="overflow-x-hidden flex-1 px-3 space-y-6">
             <AnimatePresence mode="sync">
               {sections.map(([section, items], index) => (
                 <NavigationSection
