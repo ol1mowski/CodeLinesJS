@@ -5,6 +5,7 @@ import { PostContent } from "./components/Post/PostContent.component";
 import { PostActions } from "./components/Post/PostActions.component";
 import { Comments } from "./Comments.component";
 import { useLikePost } from "./hooks/useLikePost.hook";
+import { usePosts } from "./hooks/usePosts.hook";
 import { Post as PostType } from "../types/post.types";
 
 type PostProps = {
@@ -12,12 +13,17 @@ type PostProps = {
 };
 
 export const Post = memo(({ post }: PostProps) => {
+  const { deletePost } = usePosts();
   const [showComments, setShowComments] = useState(false);
   const { handleLike, isLiking } = useLikePost(post);
 
   const toggleComments = useCallback(() => {
     setShowComments(prev => !prev);
   }, []);
+
+  const handleDelete = () => {
+    deletePost(post._id);
+  };
 
   return (
     <motion.div
@@ -38,6 +44,8 @@ export const Post = memo(({ post }: PostProps) => {
         onCommentClick={toggleComments}
         isLikeLoading={isLiking}
       />
+      <button onClick={handleDelete} className="delete-button">🗑️</button>
+      <button className="edit-button">✏️</button>
       <Comments 
         postId={post._id} 
         isOpen={showComments} 
