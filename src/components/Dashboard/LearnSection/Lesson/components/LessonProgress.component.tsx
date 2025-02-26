@@ -57,7 +57,7 @@ export const LessonProgress = memo(({
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-dark-800/95 border-t border-js/10 backdrop-blur-sm">
+    <div className="mb-5 fixed bottom-0 left-0 right-0 bg-dark-800/95 border-t border-js/10 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
         <div className="flex-1 mr-8">
           <div className="relative h-2 bg-dark rounded-full overflow-hidden">

@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { ErrorMessage } from "../components/ErrorMessage.component";
-import { LoadingSpinner } from "../components/UI/LoadingSpinner.component";
+import { LoadingScreen } from "../../../UI/LoadingScreen/LoadingScreen.component";
 import { LessonsHeader } from "./LessonsHeader.component";
 import { LessonsList } from "./LessonsList.component";
 import { useLessons } from "../hooks/useLessons";
@@ -27,7 +27,7 @@ export const Lessons = memo(() => {
   }
 
   if (isLoading) {
-    return <LoadingSpinner />;
+    return <LoadingScreen />;
   }
 
   return (

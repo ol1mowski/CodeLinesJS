@@ -24,7 +24,7 @@ export const LessonMainContent = memo(({
 
 
   return (
-    <div className="col-span-9 lesson-content overflow-y-auto max-h-[calc(100vh-200px)]">
+    <div className="w-[85vw] mb-32 md:w-auto md:mb-auto col-span-9 lesson-content overflow-y-auto max-h-[calc(100vh-200px)]">
       <motion.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}

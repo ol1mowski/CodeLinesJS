@@ -3,12 +3,11 @@ import { useLessonData } from "./hooks/useLessonData";
 import { LessonLayout } from "./components/LessonLayout.component";
 import { LessonContent } from "./components/LessonContent.component";
 import { LessonNotFound } from "./components/LessonNotFound.component";
-import { LoadingSpinner } from "../components/UI/LoadingSpinner.component";
 import { ErrorMessage } from "../components/ErrorMessage.component";
-
+import { LoadingScreen } from "../../../UI/LoadingScreen/LoadingScreen.component";
 export const LessonPage = () => {
   const { lessonSlug } = useParams<{ lessonSlug: string }>();
-  
+
   if (!lessonSlug) {
     return <Navigate to="/dashboard/learn" replace />;
   }
@@ -23,14 +22,12 @@ export const LessonPage = () => {
     handleSectionChange,
     handleSectionComplete,
     handleQuizComplete,
-    handleLessonComplete
+    handleLessonComplete,
   } = useLessonData(lessonSlug);
-
 
   if (isLoading) {
     return <LessonLoadingState />;
   }
-  
 
   if (isNotFound) {
     return <LessonNotFound />;
@@ -39,41 +36,39 @@ export const LessonPage = () => {
   if (error) {
     return <LessonErrorState onRetry={() => window.location.reload()} />;
   }
-  
+
   if (!lesson) {
     return <LessonNotFound />;
   }
 
   return (
-    <LessonLayout>
-      <LessonContent
-        lesson={lesson}
-        activeSection={activeSection}
-        progress={progress || 0}
-        onSectionChange={handleSectionChange}
-        onSectionComplete={handleSectionComplete}
-        onQuizComplete={handleQuizComplete}
-        onLessonComplete={handleLessonComplete}
-      />
-    </LessonLayout>
+    <LessonContent
+      lesson={lesson}
+      activeSection={activeSection}
+      progress={progress || 0}
+      onSectionChange={handleSectionChange}
+      onSectionComplete={handleSectionComplete}
+      onQuizComplete={handleQuizComplete}
+      onLessonComplete={handleLessonComplete}
+    />
   );
 };
 
 const LessonLoadingState = () => (
   <LessonLayout>
     <div className="flex justify-center items-center min-h-[60vh]">
-      <LoadingSpinner />
+      <LoadingScreen />
     </div>
   </LessonLayout>
 );
 
 const LessonErrorState = ({ onRetry }: { onRetry: () => void }) => (
   <LessonLayout>
-    <ErrorMessage 
+    <ErrorMessage
       message="Nie udało się pobrać lekcji. Spróbuj ponownie później."
       onRetry={onRetry}
     />
   </LessonLayout>
 );
 
-LessonPage.displayName = "LessonPage"; 
+LessonPage.displayName = "LessonPage";

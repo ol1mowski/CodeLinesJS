@@ -30,6 +30,7 @@ export const CodeBlock = memo(({ code, language, showLineNumbers = true, classNa
         language={language}
         style={atomDark}
         showLineNumbers={showLineNumbers}
+        wrapLines={true}
         customStyle={{
           margin: 0,
           borderRadius: '0.5rem',
