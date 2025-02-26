@@ -11,6 +11,7 @@ export const useDashboardData = () => {
     queryFn: () => fetchDashboardData(token || ''),
     enabled: !!token,
     staleTime: 1000 * 60 * 5,
+    refetchInterval: 1000 * 60,
     retry: (failureCount, error) => {
       return failureCount < 2 && !error.message.includes('autoryzacji');
     }
