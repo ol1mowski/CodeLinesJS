@@ -28,7 +28,7 @@ export const LessonsFilter = memo(({ onFilterChange, className = "" }: LessonsFi
   };
 
   return (
-    <div className={`flex gap-2 ${className}`}>
+    <div className={`flex gap-2 flex-wrap ${className}`}>
       {filters.map((filter) => {
         const isActive = activeFilter === filter.id;
 
@@ -38,7 +38,7 @@ export const LessonsFilter = memo(({ onFilterChange, className = "" }: LessonsFi
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => handleFilterChange(filter.id)}
-            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all
+            className={`w-fit px-3 py-1.5 rounded-lg text-sm font-medium transition-all
               ${isActive 
                 ? "text-js bg-js/10 border border-js/20" 
                 : "text-gray-400 hover:text-js/80 border border-transparent"

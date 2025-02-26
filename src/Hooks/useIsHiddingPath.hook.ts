@@ -9,6 +9,8 @@ export const useIsHiddenPath = () => {
     '/dashboard/community/groups',
     '/dashboard/learn',
     '/dashboard/play',
+    '/dashboard/learn/lesson/js-variables',
+    '/dashboard/learn/lesson/js-functions',
     '/dashboard/play/regex-raider',
     '/dashboard/play/async-quest',
     '/dashboard/play/js-typo-hunter',

@@ -3,9 +3,8 @@ import { useLessonData } from "./hooks/useLessonData";
 import { LessonLayout } from "./components/LessonLayout.component";
 import { LessonContent } from "./components/LessonContent.component";
 import { LessonNotFound } from "./components/LessonNotFound.component";
-import { LoadingSpinner } from "../components/UI/LoadingSpinner.component";
 import { ErrorMessage } from "../components/ErrorMessage.component";
-
+import { LoadingScreen } from "../../../UI/LoadingScreen/LoadingScreen.component";
 export const LessonPage = () => {
   const { lessonSlug } = useParams<{ lessonSlug: string }>();
   
@@ -62,7 +61,7 @@ export const LessonPage = () => {
 const LessonLoadingState = () => (
   <LessonLayout>
     <div className="flex justify-center items-center min-h-[60vh]">
-      <LoadingSpinner />
+      <LoadingScreen />
     </div>
   </LessonLayout>
 );
