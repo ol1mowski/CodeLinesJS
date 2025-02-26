@@ -14,11 +14,11 @@ export const TopNavigation = memo(() => {
     if (isLoading) {
       return 'Ładowanie...';
     }
-    if (!userProfile?.username) {
+    if (!userProfile?.data.username) {
       return 'Użytkowniku';
     }
-    return userProfile?.username;
-  }, [userProfile?.username, isLoading]);
+    return userProfile?.data.username;
+  }, [userProfile?.data.username, isLoading]);
 
   return (
     <motion.nav

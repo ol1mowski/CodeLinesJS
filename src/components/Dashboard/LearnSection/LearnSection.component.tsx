@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { memo, useEffect } from "react";
+import { memo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { SectionTitle } from "../../UI/SectionTitle/SectionTitle.component";
 import { Lessons } from "./Lessons/Lessons.component";

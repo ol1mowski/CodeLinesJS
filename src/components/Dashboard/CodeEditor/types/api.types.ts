@@ -1,4 +1,4 @@
-export interface SavedCode {
+export type SavedCode = {
   id: string;
   code: string;
   title: string;
@@ -7,7 +7,7 @@ export interface SavedCode {
   userId: string;
 }
 
-export interface SaveCodeDto {
+export type SaveCodeDto ={
   code: string;
   title: string;
 } 

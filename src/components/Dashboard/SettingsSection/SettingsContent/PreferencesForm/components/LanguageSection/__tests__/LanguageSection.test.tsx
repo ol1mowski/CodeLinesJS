@@ -7,7 +7,7 @@ import { PreferencesData } from '../../../../../types/settings';
 describe('LanguageSection', () => {
   const mockRegister = vi.fn() as unknown as UseFormRegister<PreferencesData>;
 
-  it('powinien wyrenderować selector języka', () => {
+  it('should render the language selector', () => {
     render(<LanguageSection register={mockRegister} />);
 
     expect(screen.getByText('Język')).toBeDefined();
@@ -15,7 +15,7 @@ describe('LanguageSection', () => {
     expect(screen.getByText('Polski')).toBeDefined();
   });
 
-  it('powinien mieć domyślnie wybrany język polski', () => {
+  it('should have the default language set to Polish', () => {
     render(<LanguageSection register={mockRegister} />);
 
     const select = screen.getByRole('combobox');

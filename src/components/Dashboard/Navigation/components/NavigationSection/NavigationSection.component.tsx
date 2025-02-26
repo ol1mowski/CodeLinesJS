@@ -26,7 +26,7 @@ export const NavigationSection = memo(({
 }: NavigationSectionProps) => (
   <motion.div
     key={title}
-    className="space-y-2"
+    className="space-y-10"
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ delay: index * 0.1 }}
@@ -45,6 +45,7 @@ export const NavigationSection = memo(({
     {items.map((item) => (
       <NavigationButton
         key={item.id}
+        id={item.id}
         icon={item.icon}
         label={item.label}
         isActive={activeItem === item.id}

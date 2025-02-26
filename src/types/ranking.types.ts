@@ -1,6 +1,6 @@
 export type RankingPeriod = 'daily' | 'weekly' | 'monthly' | 'allTime';
 
-export interface RankingStats {
+export type RankingStats = {
   rank: number;
   rankChange: number;
   activePlayers: number;
@@ -10,13 +10,20 @@ export interface RankingStats {
   accuracy: number;
 }
 
-export interface RankingBadge {
+export type RankingUserStats = {
+  rank: number;
+  points: number;
+  level: number;
+  streak: number;
+}
+
+export type RankingBadge = {
   id: string;
   name: string;
   icon: string;
 }
 
-export interface RankingUser {
+export type RankingUser = {
   id: string;
   name: string;
   avatar?: string;

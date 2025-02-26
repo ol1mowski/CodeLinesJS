@@ -3,14 +3,12 @@
 ## Landing page
 
 ![{F953484C-28A7-4177-84FA-8380813F80B4}](https://github.com/user-attachments/assets/969a5ba6-0bc2-48e4-be1d-42e4b1bd7b00)
-![{4ABB0556-EFDE-4DB5-B191-699B24CD3EFE}](https://github.com/user-attachments/assets/11c3d27a-eeee-4dba-afe1-63557cc658a5)
-![{E13799F2-C4F1-4D39-A4D3-ACA1B2269C38}](https://github.com/user-attachments/assets/ca0acc3a-28cb-4743-9bb4-2c2539873160)
-![{365A9239-BD01-48CB-8C6C-713B77D3CC98}](https://github.com/user-attachments/assets/6cf8b48b-4fb4-4294-9c6a-1ef72abdc10f)
-![{46B0A73D-B83C-4A48-958F-DF9E65BFA99C}](https://github.com/user-attachments/assets/5d1a3e9a-759e-4063-8b57-89e6372a5496)
-![{B074E8A3-57C3-4505-8AA8-62801D4912C2}](https://github.com/user-attachments/assets/55a9a73f-b8d0-42df-8cf4-20d25912e121)
 
 ## Auth page
 ![{A7EEB451-0609-459D-B53A-4D2BBC789ABA}](https://github.com/user-attachments/assets/9982dedc-5104-424a-ae17-6d5ccf06fd44)
+
+## Dashboard
+<img width="1440" alt="Screenshot 2025-02-21 at 18 00 56" src="https://github.com/user-attachments/assets/1aeae37b-cdd9-4ff4-9e70-4eed53e8ec66" />
 
 
 

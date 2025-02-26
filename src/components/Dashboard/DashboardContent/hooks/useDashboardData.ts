@@ -1,40 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
-import { DashboardData } from '../../../../types/dashboard.types';
-import { useAuth } from '../../../../Hooks/useAuth';
-
-const API_URL = 'http://localhost:5001';
-
-const fetchDashboardData = async (token: string): Promise<DashboardData> => {
-  if (!token) throw new Error('Brak autoryzacji');
-
-  const response = await fetch(`${API_URL}/api/dashboard`, {
-    method: 'GET',
-    credentials: 'include',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    }
-  });
-
-  if (!response.ok) {
-    if (response.status === 401) {
-      throw new Error('Brak autoryzacji - zaloguj się ponownie');
-    }
-    const error = await response.json();
-    throw new Error(error.message || 'Błąd podczas pobierania danych');
-  }
-
-  return response.json();
-};
+import { DashboardData } from '../types/dashboard.types';
+import { useAuth } from '../../../../hooks/useAuth';
+import { fetchDashboardData } from '../api/fetchDashboardData.api';
 
 export const useDashboardData = () => {
-  const { isAuthenticated, token } = useAuth();
+  const { token } = useAuth();
 
   return useQuery<DashboardData, Error>({
     queryKey: ['dashboard'],
     queryFn: () => fetchDashboardData(token || ''),
-    enabled: isAuthenticated && !!token,
+    enabled: !!token,
     staleTime: 1000 * 60 * 5,
+    refetchInterval: 1000 * 60,
     retry: (failureCount, error) => {
       return failureCount < 2 && !error.message.includes('autoryzacji');
     }

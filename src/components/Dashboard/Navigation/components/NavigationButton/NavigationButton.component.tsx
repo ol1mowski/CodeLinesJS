@@ -2,25 +2,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import { memo } from "react";
 import { itemVariants } from '../../animations/navigationAnimations';
 
-
 type NavigationButtonProps = {
   icon: React.ReactNode;
   label?: string;
   isActive?: boolean;
   isExpanded: boolean;
   onClick: () => void;
+  id: string;
   variant?: "default" | "danger";
-};
-
-const variants = {
-  default: {
-    active: "bg-js/20 border-l-2 border-js text-js",
-    inactive: "text-gray-400 hover:text-js hover:bg-js/10",
-  },
-  danger: {
-    active: "bg-red-500/20 text-red-400",
-    inactive: "text-red-400 hover:bg-red-500/10",
-  },
 };
 
 export const NavigationButton = memo(({
@@ -30,11 +19,13 @@ export const NavigationButton = memo(({
   isExpanded,
   onClick,
   variant = "default",
+  id,
 }: NavigationButtonProps) => (
   <motion.button
     onClick={onClick}
     data-testid={`nav-button-${label?.toLowerCase().replace(/\s/g, '-')}`}
     className={`
+      ${id === "code" && "hidden lg:flex"}
       w-full flex items-center gap-3 px-4 py-3 
       rounded-lg transition-all duration-200
       backdrop-blur-sm

@@ -20,10 +20,10 @@ export const GamesDifficulty = memo(({ selectedDifficulty, onDifficultyChange }:
     <motion.div
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="flex items-center gap-4"
+      className="flex items-center gap-4 flex-wrap"
     >
       <span className="text-gray-400 text-sm">Poziom:</span>
-      <div className="flex gap-3">
+      <div className="flex gap-3 flex-wrap">
         {difficulties.map((difficulty) => (
           <motion.button
             key={difficulty.value}

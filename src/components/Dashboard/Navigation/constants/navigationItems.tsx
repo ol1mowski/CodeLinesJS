@@ -1,18 +1,18 @@
-import { FaChartBar, FaGamepad, FaTrophy, FaUsers, FaCog, FaBook, FaCode } from "react-icons/fa";
+import { FaChartBar, FaGamepad, FaUsers, FaCog, FaBook, FaCode, FaHome } from "react-icons/fa";
 import { NavigationItem } from "../types/navigation.types";
 
 export const navigationItems: NavigationItem[] = [
     {
         id: "dashboard",
         label: "Dashboard",
-        icon: <FaChartBar />,
+        icon: <FaHome />,
         section: "main",
         path: "/dashboard",
       },
       {
         id: "stats",
         label: "Statystyki",
-        icon: <FaTrophy />,
+        icon: <FaChartBar />,
         section: "main",
         path: "/dashboard/stats",
       },
@@ -37,13 +37,13 @@ export const navigationItems: NavigationItem[] = [
         section: "game",
         path: "/dashboard/code",
       },
-      {
-        id: "community",
-        label: "Społeczność",
-        icon: <FaUsers />,
-        section: "social",
-        path: "/dashboard/community",
-      },
+      // {
+      //   id: "community",
+      //   label: "Społeczność",
+      //   icon: <FaUsers />,
+      //   section: "social",
+      //   path: "/dashboard/community",
+      // },
       {
         id: "settings",
         label: "Ustawienia",

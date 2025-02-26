@@ -1,115 +1,162 @@
 import { User } from "../models/user.model.js";
 import { Lesson, LearningPath } from "../models/index.js";
 import { ValidationError } from "../utils/errors.js";
+import LevelService from "../services/level.service.js";
 
 export const updateProgress = async (req, res, next) => {
   try {
     const { lessonId } = req.body;
     const userId = req.user.userId;
 
-    // Znajdź lekcję
     const lesson = await Lesson.findOne({ slug: lessonId });
     if (!lesson) throw new ValidationError("Lekcja nie znaleziona");
 
-    // Znajdź użytkownika i ścieżkę nauki
     const [user, learningPath] = await Promise.all([
       User.findById(userId),
       LearningPath.findOne({ lessons: { $in: [lesson._id] } }),
     ]);
 
-    if (!user) throw new ValidationError("Użytkownik nie znaleziony");
-    if (!learningPath)
-      throw new ValidationError("Ścieżka nauki nie znaleziona");
-
-    // ✅ Zapewnij, że user.learningPaths istnieje
-    if (!user.learningPaths) {
-      user.learningPaths = [];
+    if (!user || !learningPath) {
+      throw new ValidationError("Nie znaleziono użytkownika lub ścieżki nauki");
     }
 
-    // Znajdź indeks ścieżki użytkownika
-    let userPathIndex = user.learningPaths.findIndex(
-      (path) => path.pathId.toString() === learningPath._id.toString()
+    if (!user.stats.learningPaths) {
+      user.stats.learningPaths = [];
+    }
+
+    let userPathIndex = user.stats.learningPaths.findIndex(
+      path => path.pathId.toString() === learningPath._id.toString()
     );
 
-    let userPath = user.learningPaths[userPathIndex];
-
-    // Jeśli użytkownik nie ma tej ścieżki, dodaj ją
-    if (!userPath) {
-      userPath = {
+    if (userPathIndex === -1) {
+      user.stats.learningPaths.push({
         pathId: learningPath._id,
         status: "active",
         progress: {
-          completed: [],
+          completedLessons: [{
+            lessonId: lesson._id,
+            completedAt: new Date()
+          }],
           totalLessons: learningPath.totalLessons,
-          lastLesson: null,
+          lastLesson: lesson._id,
           lastActivity: new Date(),
-          startedAt: new Date(),
-          completedAt: null,
-        },
-      };
+          startedAt: new Date()
+        }
+      });
+      userPathIndex = user.stats.learningPaths.length - 1;
+    } else {
+      const userPath = user.stats.learningPaths[userPathIndex];
+      const isCompleted = userPath.progress.completedLessons.some(
+        completedLesson => completedLesson.lessonId.toString() === lesson._id.toString()
+      );
 
-      user.learningPaths.push(userPath);
-      userPathIndex = user.learningPaths.length - 1;
+      if (!isCompleted) {
+        userPath.progress.completedLessons.push({
+          lessonId: lesson._id,
+          completedAt: new Date()
+        });
+        userPath.progress.lastLesson = lesson._id;
+        userPath.progress.lastActivity = new Date();
+
+        if (userPath.progress.completedLessons.length === learningPath.totalLessons) {
+          userPath.status = "completed";
+          userPath.progress.completedAt = new Date();
+        }
+
+        user.stats.points = (user.stats.points || 0) + (lesson.points || 0);
+        user.stats.xp = (user.stats.xp || 0) + (lesson.points || 0);
+        
+        const today = new Date().toDateString();
+        const lastActive = user.stats.lastActive
+          ? new Date(user.stats.lastActive).toDateString()
+          : null;
+
+        if (today !== lastActive) {
+          user.stats.streak = (user.stats.streak || 0) + 1;
+          user.stats.bestStreak = Math.max(
+            user.stats.streak,
+            user.stats.bestStreak || 0
+          );
+        }
+
+        await LevelService.updateLevel(user);
+      }
     }
 
-    // Sprawdź, czy lekcja została już ukończona
-    const isLessonCompleted = userPath.progress.completed.some(
-      (id) => id.toString() === lesson._id.toString()
-    );
+    user.markModified('stats.learningPaths');
+    
+    await user.save();
 
-    if (!isLessonCompleted) {
-      userPath.progress.completed.push(lesson._id);
-      userPath.progress.lastLesson = lesson._id;
-      userPath.progress.lastActivity = new Date();
-
-      // Jeśli wszystkie lekcje są ukończone, oznacz ścieżkę jako "completed"
-      if (userPath.progress.completed.length === learningPath.totalLessons) {
-        userPath.status = "completed";
-        userPath.progress.completedAt = new Date();
-      }
-
-      // ✅ Oznacz zmiany w learningPaths
-      user.markModified("learningPaths");
-
-      // Aktualizacja statystyk użytkownika
-      const oldLastActive = user.stats.lastActive
-        ? new Date(user.stats.lastActive).toDateString()
-        : null;
-
-      user.stats.points = (user.stats.points || 0) + (lesson.points || 0);
-      user.stats.xp = (user.stats.xp || 0) + (lesson.points || 0);
-      user.stats.lastActive = new Date();
-
-      const today = new Date().toDateString();
-      if (oldLastActive !== today) {
-        user.stats.streak = (user.stats.streak || 0) + 1;
-        user.stats.bestStreak = Math.max(
-          user.stats.streak,
-          user.stats.bestStreak || 0
-        );
-      }
-
-      // ✅ Zapisz zmiany do bazy danych
-      await user.save();
-    }
-
-    // Zwrot odpowiedzi do klienta
+    const updatedPath = user.stats.learningPaths[userPathIndex];
     res.json({
       message: "Postęp zaktualizowany pomyślnie",
       stats: {
         points: user.stats.points,
         xp: user.stats.xp,
+        level: user.stats.level,
         streak: user.stats.streak,
         lastActive: user.stats.lastActive,
         pathProgress: {
-          completedLessons: userPath.progress.completed.length,
+          completedLessons: updatedPath.progress.completedLessons.length,
           totalLessons: learningPath.totalLessons,
           percentage: Math.round(
-            (userPath.progress.completed.length / learningPath.totalLessons) *
-              100
+            (updatedPath.progress.completedLessons.length / learningPath.totalLessons) * 100
           ),
-        },
-      },
+          status: updatedPath.status
+        }
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateUserProgress = async (req, res, next) => {
+  try {
+    const { points } = req.body;
+    const userId = req.user.userId;
+
+    if (typeof points !== 'number' || points < 0) {
+      throw new ValidationError("Nieprawidłowa wartość punktów");
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new ValidationError("Nie znaleziono użytkownika");
+    }
+
+    const currentPoints = user.stats.points || 0;
+    const newPoints = currentPoints + points;
+    
+    user.stats.points = newPoints;
+    user.stats.xp = (user.stats.xp || 0) + points;
+
+    const today = new Date().toDateString();
+    const lastActive = user.stats.lastActive
+      ? new Date(user.stats.lastActive).toDateString()
+      : null;
+
+    if (today !== lastActive) {
+      user.stats.streak = (user.stats.streak || 0) + 1;
+      user.stats.bestStreak = Math.max(user.stats.streak, user.stats.bestStreak || 0);
+    }
+
+    user.stats.lastActive = new Date();
+
+    user.markModified('stats');
+
+    await user.save();
+
+    res.json({
+      message: "Punkty użytkownika zaktualizowane pomyślnie",
+      data: {
+        userStats: {
+          points: user.stats.points,
+          xp: user.stats.xp,
+          streak: user.stats.streak,
+          lastActive: user.stats.lastActive
+        }
+      }
     });
   } catch (error) {
     next(error);

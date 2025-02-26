@@ -6,14 +6,20 @@ import { ErrorPage } from "../components/ErrorPage/ErrorPage.component";
 import { StatsSection } from "../components/Dashboard/StatsSection/StatsSection.component";
 import { DashboardContent } from "../components/Dashboard/DashboardContent/DashboardContent.component";
 import { LearnSection } from "../components/Dashboard/LearnSection/LearnSection.component";
-import { CommunitySection } from "../components/Dashboard/CommunitySection/CommunitySection.component";
+// import { CommunitySection } from "../components/Dashboard/CommunitySection/CommunitySection.component";
 import { SettingsSection } from "../components/Dashboard/SettingsSection/SettingsSection.component";
 import { GamesSection } from "../components/Dashboard/GamesSection/GamesSection.component";
 import { CodeEditor } from "../components/Dashboard/CodeEditor/CodeEditor.component";
 import { LessonPage } from "../components/Dashboard/LearnSection/Lesson/Lesson.page";
+// import { GroupView } from "../components/Dashboard/CommunitySection/Groups/GroupView.component";
+import { GameplayRouter } from "../components/Dashboard/GamesSection/components/GameplayRouter/GameplayRouter.component";
+// import { CommunityProvider } from "../components/Dashboard/CommunitySection/context/CommunityContext";
 
 const Home = lazy(() => import("../pages/Home"));
 const Auth = lazy(() => import("../pages/Auth"));
+const CommunityFeed = lazy(() => import("../components/Dashboard/CommunitySection/Feed/CommunityFeed.component"));
+const CommunityRanking = lazy(() => import("../components/Dashboard/CommunitySection/Ranking/CommunityRanking.component"));
+const CommunityGroups = lazy(() => import("../components/Dashboard/CommunitySection/Groups/CommunityGroups.component"));
 
 export const router = createBrowserRouter([
   {
@@ -49,22 +55,44 @@ export const router = createBrowserRouter([
         path: "learn/lesson/:lessonSlug",
         element: <LessonPage />
       },
-      {
-        path: "community",
-        element: <CommunitySection />
-      },
+      // {
+      //   path: "community",
+      //   element: (
+      //     <CommunityProvider>
+      //       <CommunitySection />
+      //     </CommunityProvider>
+      //   ),
+      //   children: [
+      //     {
+      //       index: true,
+      //       element: <CommunityFeed />
+      //     },
+      //     {
+      //       path: "ranking",
+      //       element: <CommunityRanking />
+      //     },
+      //     {
+      //       path: "groups",
+      //       element: <CommunityGroups />,
+      //       children: [
+      //         {
+      //           path: ":groupId",
+      //           element: <GroupView />
+      //         }
+      //       ]
+      //     }
+      //   ]
+      // },
       {
         path: "settings",
         element: <SettingsSection />
       },
       {
         path: "play",
-        element: <GamesSection />
+        element: <GamesSection />,
       },
-      {
-        path: "code",
-        element: <CodeEditor />
-      }
+      { path: "play/:slug", element: <GameplayRouter /> },
+      { path: "code", element: <CodeEditor /> },
     ]
   },
   {

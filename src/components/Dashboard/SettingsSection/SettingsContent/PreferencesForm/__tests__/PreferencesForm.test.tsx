@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { PreferencesForm } from '../PreferencesForm.component';
 import { usePreferences } from '../../../hooks/usePreferences';
-import { ToastProvider } from '../../../contexts/ToastContext';
 
 vi.mock('../../../hooks/usePreferences');
 vi.mock('../../../hooks/usePreferencesForm', () => ({
@@ -23,10 +22,10 @@ vi.mock('../../../hooks/usePreferencesForm', () => ({
 
 describe('PreferencesForm', () => {
   const mockUpdatePreferences = vi.fn();
-  
+
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     vi.mocked(usePreferences).mockReturnValue({
       preferences: {
         emailNotifications: true,
@@ -52,11 +51,9 @@ describe('PreferencesForm', () => {
     });
   });
 
-  it('powinien wyrenderować formularz z domyślnymi wartościami', () => {
+  it('should render the form with default values', () => {
     render(
-      <ToastProvider>
-        <PreferencesForm />
-      </ToastProvider>
+      <PreferencesForm />
     );
 
     expect(screen.getByText('Powiadomienia')).toBeDefined();
@@ -64,7 +61,7 @@ describe('PreferencesForm', () => {
     expect(screen.getByText('Zapisz preferencje')).toBeDefined();
   });
 
-  it('powinien wyświetlić loader podczas ładowania', () => {
+  it('should display loader during loading', () => {
     vi.mocked(usePreferences).mockReturnValue({
       preferences: undefined,
       isLoading: true,
@@ -86,9 +83,7 @@ describe('PreferencesForm', () => {
     });
 
     render(
-      <ToastProvider>
-        <PreferencesForm />
-      </ToastProvider>
+      <PreferencesForm />
     );
 
     expect(screen.getByRole('status')).toBeDefined();
