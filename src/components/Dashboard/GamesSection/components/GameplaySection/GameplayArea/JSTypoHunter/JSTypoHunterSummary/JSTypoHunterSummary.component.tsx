@@ -56,7 +56,7 @@ export const JSTypoHunterSummary = memo(({
           <FaClock className="w-5 h-5 text-js" />
           <div>
             <div className="text-sm text-gray-400">Czas ukończenia</div>
-            <div className="text-lg font-bold text-js">{formatTime(timeElapsed)}</div>
+            <div className="text-lg font-bold text-js flex flex-wrap">{formatTime(timeElapsed)}</div>
           </div>
         </div>
       </div>
