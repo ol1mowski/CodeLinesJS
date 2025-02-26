@@ -163,7 +163,13 @@ export const completeLesson = async (req, res, next) => {
       throw new ValidationError("Lekcja nie została znaleziona");
     }
 
-    const isCompleted = user.stats?.completedLessons?.some(
+    if (!user.stats.learningPaths || user.stats.learningPaths.length === 0) {
+      throw new ValidationError("Użytkownik nie ma przypisanych ścieżek nauki");
+    }
+
+    const userLearningPaths = user.stats.learningPaths[0].progress.completedLessons;
+
+    const isCompleted = userLearningPaths.some(
       (lessonId) => lessonId.toString() === lesson._id.toString()
     );
 
@@ -171,15 +177,9 @@ export const completeLesson = async (req, res, next) => {
       throw new ValidationError("Lekcja została już ukończona");
     }
 
-    const userLearningPaths = user.stats.learningPaths[0].progress.completedLessons;
-
-    user.stats = user.stats || {};
-    user.stats.learningPaths = user.stats.learningPaths || [];
     user.stats.points = (user.stats.points || 0) + (lesson.points || 0);
 
-    if (!userLearningPaths.some(lesson => lesson._id.toString() === lesson._id.toString())) {
-      userLearningPaths.push({ _id: lesson._id, completedAt: new Date() });
-    }
+    userLearningPaths.push({ _id: lesson._id, completedAt: new Date() });
 
     const today = new Date().toDateString();
     const lastActive = user.stats.lastActive
@@ -201,7 +201,6 @@ export const completeLesson = async (req, res, next) => {
         completedLessons: userLearningPaths.length,
         streak: user.stats.streak,
         lastActive: user.stats.lastActive,
-
       },
     });
   } catch (error) {
