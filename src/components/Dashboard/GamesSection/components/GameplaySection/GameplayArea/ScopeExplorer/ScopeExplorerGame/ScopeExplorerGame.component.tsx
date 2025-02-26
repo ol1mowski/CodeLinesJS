@@ -130,6 +130,7 @@ export const ScopeExplorerGame = memo(({
             onClick={() => handleAnswerSelect(option)}
             disabled={showExplanation}
             className={`
+              w-full break-words
               relative p-4 rounded-lg font-mono text-lg transition-colors
               ${selectedAnswer === option
                 ? isCorrect
