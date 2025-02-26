@@ -107,9 +107,9 @@ export const JSTypoHunterGame = memo(({
         </p>
       </div>
 
-      <div className="rounded-lg overflow-hidden">
+      <div className="rounded-lg">
         <Editor
-          className="w-full h-full"
+          className="w-full h-full flex flex-wrap"
           theme="vs-dark"
           height="400px"
           defaultLanguage="javascript"
@@ -119,6 +119,7 @@ export const JSTypoHunterGame = memo(({
             selectOnLineNumbers: true,
             automaticLayout: true,
             theme: 'vs-dark',
+            wordWrap: 'on',
           }}
         />
       </div>

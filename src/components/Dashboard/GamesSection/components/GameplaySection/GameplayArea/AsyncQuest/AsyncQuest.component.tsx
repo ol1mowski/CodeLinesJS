@@ -96,14 +96,12 @@ const AsyncQuest = memo(({ isPaused = false }: { isPaused?: boolean }) => {
   };
 
   const handleRestart = () => {
-    // Inicjalizujemy początkowe statystyki kategorii
     const initialCategoryStats = {
       promises: { total: 0, correct: 0, points: 0 },
       'async-await': { total: 0, correct: 0, points: 0 },
       callbacks: { total: 0, correct: 0, points: 0 }
     };
 
-    // Aktualizujemy total dla każdej kategorii na podstawie gameContent
     gameContent?.gameData.forEach(challenge => {
       if (challenge.category) {
         initialCategoryStats[challenge.category].total++;
@@ -117,7 +115,7 @@ const AsyncQuest = memo(({ isPaused = false }: { isPaused?: boolean }) => {
       timeElapsed: 0,
       maxTime: gameContent?.estimatedTime ? gameContent.estimatedTime * 60 : 300,
       correctAnswers: 0,
-      categoryStats: initialCategoryStats // Używamy zainicjalizowanych statystyk
+      categoryStats: initialCategoryStats 
     });
     setIsGameOver(false);
     resetTimer();
