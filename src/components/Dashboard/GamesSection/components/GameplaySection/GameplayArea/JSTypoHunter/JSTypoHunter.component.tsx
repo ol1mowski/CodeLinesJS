@@ -46,11 +46,6 @@ const JSTypoHunter = memo(({ isPaused = false }: { isPaused?: boolean }) => {
     isPaused,
   });
 
-  const handleTimeEnd = useCallback(() => {
-    setIsGameOver(true);
-    stopTimer();
-  }, [stopTimer]);
-
   const handleScoreUpdate = useCallback((points: number) => {
     const currentChallenge = gameContent?.gameData[gameStats.currentLevel - 1];
     const difficultyPoints = getDifficultyPoints(currentChallenge?.difficulty || 'easy');

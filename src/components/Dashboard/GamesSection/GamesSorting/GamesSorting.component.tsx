@@ -19,7 +19,7 @@ export const GamesSorting = memo(({ activeSortOption, onSortChange }: GamesSorti
   return (
     <div className="flex items-center gap-4 lg:ml-auto">
       <span className="text-gray-400 text-sm">Sortuj:</span>
-      <div className="flex gap-2">
+      <div className="flex gap-2 flex-wrap">
         {sortOptions.map((option) => {
           const Icon = option.icon;
           return (

@@ -46,7 +46,7 @@ export const AsyncQuestGame = memo(
 
     useEffect(() => {
       if (editorContainerRef.current) {
-        editorContainerRef.current.scrollIntoView({ 
+        editorContainerRef.current.scrollIntoView({
           behavior: 'smooth',
           block: 'center'
         });
@@ -72,7 +72,7 @@ export const AsyncQuestGame = memo(
 
     const scrollToFeedback = useCallback(() => {
       if (feedbackRef.current) {
-        feedbackRef.current.scrollIntoView({ 
+        feedbackRef.current.scrollIntoView({
           behavior: 'smooth',
           block: 'center'
         });
@@ -94,11 +94,11 @@ export const AsyncQuestGame = memo(
           setIsCorrect(true);
           setShowExplanation(true);
           onScoreUpdate(currentChallenge.points, currentChallenge.category);
-          
+
           setTimeout(() => {
             scrollToFeedback();
           }, 100);
-          
+
           setTimeout(() => {
             onLevelComplete();
           }, 1500);
@@ -107,11 +107,11 @@ export const AsyncQuestGame = memo(
           setShowExplanation(true);
           const hint = getErrorHint(code, currentChallenge.category);
           setErrorHint(hint);
-          
+
           setTimeout(() => {
             scrollToFeedback();
           }, 100);
-          
+
           setTimeout(() => {
             onGameOver();
           }, 2000);
@@ -121,11 +121,11 @@ export const AsyncQuestGame = memo(
         setShowExplanation(true);
         const hint = getErrorHint(code, currentChallenge.category);
         setErrorHint(hint);
-        
+
         setTimeout(() => {
           scrollToFeedback();
         }, 100);
-        
+
         setTimeout(() => {
           onGameOver();
         }, 2000);
@@ -167,13 +167,21 @@ export const AsyncQuestGame = memo(
               totalLevels={totalLevels}
             />
           </div>
-          <p className="text-gray-300 mb-4">{currentChallenge.description}</p>
-          <div className="text-sm text-gray-400">
-            <strong className="text-js">Zadanie:</strong> {currentChallenge.task}
+          <div className="bg-dark-800/50 border border-js/10 rounded-lg p-6 mb-6">
+            <h2 className="text-xl font-bold text-js mb-3">Opis zadania</h2>
+            <p className="text-gray-300 text-lg leading-relaxed mb-6">
+              {currentChallenge.description}
+            </p>
+
+            <div className="p-4 bg-dark-700/50 border border-js/20 rounded-lg">
+              <h3 className="text-lg font-semibold text-js mb-2">Zadanie</h3>
+              <p className="text-gray-300 text-base">{currentChallenge.task}</p>
+            </div>
           </div>
+
         </div>
 
-        <div 
+        <div
           ref={editorContainerRef}
           className="bg-dark-800/50 rounded-xl p-6"
         >
@@ -196,13 +204,12 @@ export const AsyncQuestGame = memo(
           <button
             onClick={handleCodeRun}
             disabled={isRunning || !isEditorReady}
-            className={`mt-4 w-full px-6 py-3 rounded-lg font-medium transition-colors ${
-              isRunning || !isEditorReady
+            className={`mt-4 w-full px-6 py-3 rounded-lg font-medium transition-colors ${isRunning || !isEditorReady
                 ? "bg-gray-500 cursor-not-allowed"
                 : "bg-js text-dark hover:bg-js/90"
-            }`}
+              }`}
           >
-            {isRunning ? "Wykonywanie..." : "Uruchom kod (Ctrl + Enter)"}
+            {isRunning ? "Wykonywanie..." : "Uruchom kod"}
           </button>
         </div>
 
