@@ -17,7 +17,7 @@ const tabs = [
 
 export const LearnTabs = memo(({ activeTab, onTabChange }: LearnTabsProps) => {
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-2 flex-wrap">
       {tabs.map((tab) => (
         <motion.button
           key={tab.id}
