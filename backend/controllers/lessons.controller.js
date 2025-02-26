@@ -17,8 +17,9 @@ export const getLessons = async (req, res, next) => {
       isAvailable: true,
     };
 
-    const usersCompletedLessons = user.stats.learningPaths[0].progress.completedLessons;
-
+    const usersCompletedLessons = user.stats.learningPaths && user.stats.learningPaths.length > 0
+      ? user.stats.learningPaths[0].progress.completedLessons
+      : [];
 
     if (category) query.category = category;
     if (difficulty) query.difficulty = difficulty;
@@ -40,7 +41,6 @@ export const getLessons = async (req, res, next) => {
       const isCompleted = usersCompletedLessons.some(
         (completedLesson) => completedLesson._id.toString() === lesson._id.toString()
       );
-
 
       return {
         id: lesson._id,

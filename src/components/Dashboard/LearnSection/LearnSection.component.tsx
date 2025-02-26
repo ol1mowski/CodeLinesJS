@@ -7,7 +7,7 @@ import { Resources } from "./Resources/Resources.component";
 import { LearningPaths } from "./LearningPaths/LearningPaths.component";
 import { LearnTabs } from "./LearnTabs/LearnTabs.component";
 import { useAuth } from "./hooks/useAuth";
-import { LoadingSpinner } from "./components/UI/LoadingSpinner.component";
+import { LoadingScreen } from "../../UI/LoadingScreen/LoadingScreen.component";
 
 type TabType = "paths" | "lessons" | "resources" | "articles";
 
@@ -44,7 +44,7 @@ export const LearnSection = memo(() => {
   if (!isAuthenticated) {
     return (
       <div className="flex justify-center py-12">
-        <LoadingSpinner />
+        <LoadingScreen />
       </div>
     );
   }
