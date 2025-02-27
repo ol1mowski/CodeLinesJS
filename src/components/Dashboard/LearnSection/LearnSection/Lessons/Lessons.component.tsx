@@ -50,6 +50,10 @@ export const Lessons = memo(() => {
     });
   };
 
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
+
   if (error) {
     return (
       <ErrorMessage 

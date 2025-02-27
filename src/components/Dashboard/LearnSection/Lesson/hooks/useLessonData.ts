@@ -31,6 +31,8 @@ export const useLessonData = (lessonSlug: string) => {
     mutationFn: completeLesson,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["userProgress"] });
+      queryClient.invalidateQueries({ queryKey: ["lessons"] });
+      queryClient.invalidateQueries({ queryKey: ["lesson", lessonSlug] });
       refetchLearningPaths();
     }
   });
@@ -73,19 +75,26 @@ export const useLessonData = (lessonSlug: string) => {
   const handleLessonComplete = async () => {
     if (!userId || !lessonSlug || !lesson) {
       console.error('Brak wymaganych danych:', { userId, lessonSlug, lesson });
-      return;
+      return Promise.reject(new Error('Brak wymaganych danych'));
     }
 
     try {
-      await completeLessonMutation.mutateAsync({
+      
+      const result = await completeLessonMutation.mutateAsync({
         userId: userId,
         lessonId: lesson.id,
         pathId: lesson.pathId
       });
+      
+      await refetch();
+      await refetchLearningPaths();
+      
       toast.success('Lekcja ukończona!', {
         duration: 3000,
         position: 'bottom-right'
       });
+      
+      return result;
     } catch (error) {
       console.error('Błąd podczas kończenia lekcji:', error);
       toast.error('Nie udało się ukończyć lekcji. Spróbuj ponownie.', {
