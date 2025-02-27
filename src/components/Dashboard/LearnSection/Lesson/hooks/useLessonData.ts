@@ -5,10 +5,12 @@ import { updateLessonProgress } from "../../lib/api/progress";
 import { useAuth } from "../../hooks/useAuth";
 import type { LessonProgress } from "../../types/lesson.types";
 import { toast } from "react-hot-toast";
+import { useLearningPaths } from '../../LearningPaths/hooks/useLearningPaths';
 
 export const useLessonData = (lessonSlug: string) => {
   const { userId } = useAuth();
   const queryClient = useQueryClient();
+  const { refetch: refetchLearningPaths } = useLearningPaths();
   const [activeSection, setActiveSection] = useState(0);
 
   const {
@@ -30,6 +32,7 @@ export const useLessonData = (lessonSlug: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["lessons"] });
       queryClient.invalidateQueries({ queryKey: ["userProgress"] });
+      refetchLearningPaths();
     }
   });
 
