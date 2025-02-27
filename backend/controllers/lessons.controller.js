@@ -195,7 +195,7 @@ export const completeLesson = async (req, res, next) => {
     }
 
     res.json({
-      message: `${isCompleted ? "Lekcja ukończona" : "Lekcja powtórzona"}`,
+      message: 'Lekcja ukończona',
       stats: {
         points: user.stats.points,
         xp: user.stats.xp,
