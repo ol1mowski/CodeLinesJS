@@ -69,7 +69,7 @@ export const useLessonData = (lessonSlug: string) => {
     });
 
   };
-
+  
   const handleLessonComplete = async () => {
     if (!userId || !lessonSlug || !lesson) {
       console.error('Brak wymaganych danych:', { userId, lessonSlug, lesson });
@@ -82,7 +82,7 @@ export const useLessonData = (lessonSlug: string) => {
         lessonId: lesson.id,
         pathId: lesson.pathId
       });
-      toast.success('Lekcja ukończona!', {
+      toast.success(`${lesson.isCompleted ? 'Lekcja powtórzona!' : 'Lekcja ukończona!'}`, {
         duration: 3000,
         position: 'bottom-right'
       });

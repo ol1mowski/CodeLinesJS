@@ -67,7 +67,7 @@ export const updateProgress = async (req, res, next) => {
       }
 
       user.stats.points = (user.stats.points || 0) + (lesson.points || 0);
-      user.stats.xp = (user.stats.xp || 0) + (lesson.points || 0);
+      user.stats.xp = (user.stats.xp || 0) + (lesson.xp || 0);
       
       const today = new Date().toDateString();
       const lastActive = user.stats.lastActive
