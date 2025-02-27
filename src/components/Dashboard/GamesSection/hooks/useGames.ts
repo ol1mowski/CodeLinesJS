@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Game } from '../types/api.types';
+import { fetchGames } from '../api/fetchGames.api';
+import { useAuth } from '../../../../Hooks/useAuth';
 
 type UseGamesReturn = {
   games: Game[];
@@ -13,23 +15,13 @@ export const useGames = (): UseGamesReturn => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchGames = async () => {
+    const getGames = async () => {
       setIsLoading(true);
       setError(null);
 
       try {
-        const token = sessionStorage.getItem('token') || localStorage.getItem('token');
-        const response = await fetch('http://localhost:5001/api/games', {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        if (!response.ok) {
-          throw new Error('Nie udało się pobrać listy gier');
-        }
-
+        const { token } = useAuth();
+        const response = await fetchGames(token || '');
         const data = await response.json();
         setGames(data.data.games);
       } catch (err) {
@@ -40,7 +32,7 @@ export const useGames = (): UseGamesReturn => {
       }
     };
 
-    fetchGames();
+    getGames();
   }, []);
 
   return { games, isLoading, error };

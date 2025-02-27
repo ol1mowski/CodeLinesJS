@@ -170,34 +170,43 @@ export const completeLesson = async (req, res, next) => {
     const userLearningPaths = user.stats.learningPaths[0].progress.completedLessons;
 
     const isCompleted = userLearningPaths.some(
-      (lessonId) => lessonId.toString() === lesson._id.toString()
+      (completedLesson) => completedLesson._id.toString() === lesson._id.toString()
     );
 
-    if (isCompleted) {
-      throw new ValidationError("Lekcja została już ukończona");
+    if (!isCompleted) {
+      userLearningPaths.push({ _id: lesson._id, completedAt: new Date() });
+
+      user.stats.points = (user.stats.points || 0) + (lesson.points || 0);
+      user.stats.xp = (user.stats.xp || 0) + (lesson.xp || 0);
+
+      const today = new Date().toDateString();
+      const lastActive = user.stats.lastActive
+        ? new Date(user.stats.lastActive).toDateString()
+        : null;
+
+      if (today !== lastActive) {
+        user.stats.streak = (user.stats.streak || 0) + 1;
+      }
+
+      user.stats.lastActive = new Date();
+
+      const currentLevel = user.stats.level || 1;
+      const pointsToNextLevel = currentLevel * 100;
+
+      if (user.stats.points >= pointsToNextLevel && user.stats.level < Math.floor(user.stats.points / 100) + 1) {
+        user.stats.level = Math.floor(user.stats.points / 100) + 1;
+      }
+
+      await user.save();
     }
 
-    user.stats.points = (user.stats.points || 0) + (lesson.points || 0);
-
-    userLearningPaths.push({ _id: lesson._id, completedAt: new Date() });
-
-    const today = new Date().toDateString();
-    const lastActive = user.stats.lastActive
-      ? new Date(user.stats.lastActive).toDateString()
-      : null;
-
-    if (today !== lastActive) {
-      user.stats.streak = (user.stats.streak || 0) + 1;
-    }
-
-    user.stats.lastActive = new Date();
-    await user.save();
 
     res.json({
       message: "Lekcja ukończona",
-      points: lesson.points,
       stats: {
         points: user.stats.points,
+        xp: user.stats.xp,
+        level: user.stats.level,
         completedLessons: userLearningPaths.length,
         streak: user.stats.streak,
         lastActive: user.stats.lastActive,

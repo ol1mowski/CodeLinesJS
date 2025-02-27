@@ -30,7 +30,6 @@ export const useLessonData = (lessonSlug: string) => {
   const completeLessonMutation = useMutation({
     mutationFn: completeLesson,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["lessons"] });
       queryClient.invalidateQueries({ queryKey: ["userProgress"] });
       refetchLearningPaths();
     }

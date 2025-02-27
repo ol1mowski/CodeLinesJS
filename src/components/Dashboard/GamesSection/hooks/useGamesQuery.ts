@@ -1,24 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
-import { ApiResponse } from '../types/api.types';
-
-const fetchGames = async (): Promise<ApiResponse> => {
-  const token = sessionStorage.getItem('token') || localStorage.getItem('token');
-  const response = await fetch('http://localhost:5001/api/games', {
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    }
-  });
-  if (!response.ok) {
-    throw new Error('Network response was not ok');
-  }
-  return response.json();
-};
+import { fetchGames } from '../api/fetchGames.api';
+import { useAuth } from '../../../../Hooks/useAuth';
 
 export const useGamesQuery = () => {
+  const { token } = useAuth();
   return useQuery({
     queryKey: ['games'],
-    queryFn: fetchGames,
+    queryFn: () => fetchGames(token || ''),
     select: (data) => ({
       games: data.data.games,
       pagination: data.data.pagination
