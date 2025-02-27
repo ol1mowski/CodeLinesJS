@@ -7,7 +7,7 @@ export const useDashboardData = () => {
   const { token } = useAuth();
 
   return useQuery<DashboardData, Error>({
-    queryKey: ['dashboard'],
+    queryKey: ['userProgress'],
     queryFn: () => fetchDashboardData(token || ''),
     enabled: !!token,
     staleTime: 1000 * 60 * 5,

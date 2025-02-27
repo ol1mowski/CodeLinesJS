@@ -7,7 +7,7 @@ export const useStats = () => {
   const { token, isAuthenticated } = useAuth();
 
   const { data: stats, isLoading, error } = useQuery<UserStats, Error>({
-    queryKey: ['stats'],
+    queryKey: ['userProgress'],
     queryFn: () => fetchStats(token!),
     enabled: isAuthenticated && !!token,
     staleTime: 1000 * 60 * 5,

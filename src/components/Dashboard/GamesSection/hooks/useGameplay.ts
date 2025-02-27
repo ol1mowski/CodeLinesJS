@@ -12,6 +12,7 @@ export const useGameplay = () => {
   const [controls, setControls] = useState({
     isPaused: false,
     isFullscreen: false,
+    isHelpVisible: false,
   });
 
   const togglePause = useCallback(() => {
