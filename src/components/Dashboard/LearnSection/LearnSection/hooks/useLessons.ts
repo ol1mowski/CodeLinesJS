@@ -1,8 +1,8 @@
 import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { fetchLessons } from '../../../../lib/api/lessons';
-import type { FilterType } from '../../../../types/filter.types';
-import type { Lesson } from '../../../../types/lesson.types';
+import { fetchLessons } from '../../lib/api/lessons';
+import type { FilterType } from '../../types/filter.types';
+import type { Lesson } from '../../types/lesson.types';
 
 type Category = 'javascript' | 'react';
 
@@ -26,7 +26,7 @@ export const useLessons = (initialFilter: FilterType = 'all') => {
     refetch 
   } = useQuery<LessonsResponse>({
     queryKey: ['lessons', filter],
-    queryFn: () => fetchLessons(filter),
+    queryFn: () => fetchLessons(),
     retry: 2,
     refetchOnWindowFocus: false
   });

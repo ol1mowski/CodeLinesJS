@@ -5,6 +5,7 @@ import { LessonContent } from "./components/LessonContent.component";
 import { LessonNotFound } from "./components/LessonNotFound.component";
 import { ErrorMessage } from "../components/ErrorMessage.component";
 import { LoadingScreen } from "../../../UI/LoadingScreen/LoadingScreen.component";
+
 export const LessonPage = () => {
   const { lessonSlug } = useParams<{ lessonSlug: string }>();
 

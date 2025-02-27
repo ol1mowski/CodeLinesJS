@@ -13,6 +13,7 @@ export type QuizQuestion = {
 }
 
 export type LessonSection = {
+    id: string;
     title: string;
     content: string;
     examples?: CodeExample[];
@@ -27,14 +28,9 @@ type QuizResult = {
 };
 
 export type LessonProgress = {
-    lessonId: string;
-    completedSections: number[];
-    quizResults: {
-        [quizId: string]: QuizResult;
-    };
-    xpEarned: number;
+    completedSections: string[];
     isCompleted: boolean;
-    lastAccessedAt: string;
+    points: number;
 }
 
 export type Lesson = {
@@ -56,5 +52,5 @@ export type Lesson = {
     isLocked?: boolean;
     isCompleted?: boolean;
     pathId?: string;
-
+    progress?: LessonProgress;
 }

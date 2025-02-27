@@ -14,7 +14,6 @@ export const fetchLesson = async (lessonId: string): Promise<Lesson> => {
   });
   
 
-
   if (!response.ok) {
     if (response.status === 404) {
       throw new Error("lesson_not_found");

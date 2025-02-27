@@ -102,6 +102,13 @@ export const updateUserStats = async (req, res, next) => {
     if (points) user.stats.points = (user.stats.points || 0) + points;
     if (xp) user.stats.xp = (user.stats.xp || 0) + xp;
 
+    const currentLevel = user.stats.level || 1;
+    const pointsToNextLevel = currentLevel * 100;
+
+    if (user.stats.points >= pointsToNextLevel) {
+      user.stats.level = Math.floor(user.stats.points / 100) + 1;
+    }
+
     user.stats.lastActive = new Date();
     user.markModified('stats');
     await user.save();

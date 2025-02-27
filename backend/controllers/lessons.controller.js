@@ -78,7 +78,6 @@ export const getLessons = async (req, res, next) => {
   }
 };
 
-
 export const getLessonById = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -90,7 +89,7 @@ export const getLessonById = async (req, res, next) => {
       }).populate("requirements", "title"),
       LessonContent.findOne({ lessonSlug: id }).lean(),
       User.findById(req.user.userId)
-        .select("stats.completedLessons stats.level")
+        .select("stats.learningPaths stats.level")
         .lean(),
     ]);
 
@@ -103,8 +102,6 @@ export const getLessonById = async (req, res, next) => {
     }
 
     const userLevel = user.stats?.level || 1;
-    const completedLessons = user.stats?.completedLessons || [];
-
 
     if (userLevel < lesson.requiredLevel) {
       throw new ValidationError(
@@ -112,9 +109,13 @@ export const getLessonById = async (req, res, next) => {
       );
     }
 
+    const completedLessons = user.stats.learningPaths && user.stats.learningPaths.length > 0
+    ? user.stats.learningPaths[0].progress.completedLessons
+    : [];
+
     if (lesson.requirements?.length > 0) {
-      const hasCompletedRequirements = lesson.requirements.every((req) =>
-        completedLessons.includes(req._id)
+      const hasCompletedRequirements = lesson.requirements.every(req =>
+        completedLessons.includes(req._id.toString())
       );
 
       if (!hasCompletedRequirements) {
@@ -123,7 +124,7 @@ export const getLessonById = async (req, res, next) => {
         );
       }
     }
-
+    
     const response = {
       id: lesson._id,
       slug: lesson.slug,
@@ -134,7 +135,9 @@ export const getLessonById = async (req, res, next) => {
       duration: lesson.duration,
       points: lesson.points,
       requiredLevel: lesson.requiredLevel,
-      isCompleted: completedLessons.some((id) => id.equals(lesson._id)),
+      isCompleted: completedLessons.some(
+        (completedLesson) => completedLesson._id.toString() === lesson._id.toString()
+      ),
       content: {
         xp: lessonContent.xp,
         rewards: lessonContent.rewards,
@@ -148,6 +151,8 @@ export const getLessonById = async (req, res, next) => {
     next(error);
   }
 };
+
+
 
 export const completeLesson = async (req, res, next) => {
   try {
@@ -170,37 +175,32 @@ export const completeLesson = async (req, res, next) => {
     const userLearningPaths = user.stats.learningPaths[0].progress.completedLessons;
 
     const isCompleted = userLearningPaths.some(
-      (lessonId) => lessonId.toString() === lesson._id.toString()
+      (completedLesson) => completedLesson._id.toString() === lesson._id.toString()
     );
 
-    if (isCompleted) {
-      throw new ValidationError("Lekcja została już ukończona");
+    if (!isCompleted) {
+      userLearningPaths.push({ _id: lesson._id, completedAt: new Date() });
+
+      user.stats.points = (user.stats.points || 0) + (lesson.points || 0);
+      user.stats.xp = (user.stats.xp || 0) + (lesson.xp || 0);
+
+      const currentLevel = user.stats.level || 1;
+      const pointsToNextLevel = currentLevel * 100;
+
+      if (user.stats.points >= pointsToNextLevel) {
+        user.stats.level = Math.floor(user.stats.points / 100) + 1;
+      }
+
+      await user.save();
     }
-
-    user.stats.points = (user.stats.points || 0) + (lesson.points || 0);
-
-    userLearningPaths.push({ _id: lesson._id, completedAt: new Date() });
-
-    const today = new Date().toDateString();
-    const lastActive = user.stats.lastActive
-      ? new Date(user.stats.lastActive).toDateString()
-      : null;
-
-    if (today !== lastActive) {
-      user.stats.streak = (user.stats.streak || 0) + 1;
-    }
-
-    user.stats.lastActive = new Date();
-    await user.save();
 
     res.json({
-      message: "Lekcja ukończona",
-      points: lesson.points,
+      message: 'Lekcja ukończona',
       stats: {
         points: user.stats.points,
+        xp: user.stats.xp,
+        level: user.stats.level,
         completedLessons: userLearningPaths.length,
-        streak: user.stats.streak,
-        lastActive: user.stats.lastActive,
       },
     });
   } catch (error) {

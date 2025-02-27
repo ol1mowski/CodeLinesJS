@@ -9,7 +9,7 @@ export const useLearningPaths = () => {
     error,
     refetch
   } = useQuery<PathsResponse>({
-    queryKey: ['learningPaths'],
+    queryKey: ['learningPaths', 'userProgress'],
     queryFn: fetchLearningPaths,
     staleTime: 1000 * 60 * 5,
     retry: 2,

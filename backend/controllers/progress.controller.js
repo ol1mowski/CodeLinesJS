@@ -50,37 +50,47 @@ export const updateProgress = async (req, res, next) => {
         completedLesson => completedLesson.lessonId.toString() === lesson._id.toString()
       );
 
-      if (!isCompleted) {
-        userPath.progress.completedLessons.push({
-          lessonId: lesson._id,
-          completedAt: new Date()
-        });
-        userPath.progress.lastLesson = lesson._id;
-        userPath.progress.lastActivity = new Date();
-
-        if (userPath.progress.completedLessons.length === learningPath.totalLessons) {
-          userPath.status = "completed";
-          userPath.progress.completedAt = new Date();
-        }
-
-        user.stats.points = (user.stats.points || 0) + (lesson.points || 0);
-        user.stats.xp = (user.stats.xp || 0) + (lesson.points || 0);
-        
-        const today = new Date().toDateString();
-        const lastActive = user.stats.lastActive
-          ? new Date(user.stats.lastActive).toDateString()
-          : null;
-
-        if (today !== lastActive) {
-          user.stats.streak = (user.stats.streak || 0) + 1;
-          user.stats.bestStreak = Math.max(
-            user.stats.streak,
-            user.stats.bestStreak || 0
-          );
-        }
-
-        await LevelService.updateLevel(user);
+      if (isCompleted) {
+        return res.status(400).json({ status: "error", message: "Lekcja została już ukończona" });
       }
+
+      userPath.progress.completedLessons.push({
+        lessonId: lesson._id,
+        completedAt: new Date()
+      });
+      userPath.progress.lastLesson = lesson._id;
+      userPath.progress.lastActivity = new Date();
+
+      if (userPath.progress.completedLessons.length === learningPath.totalLessons) {
+        userPath.status = "completed";
+        userPath.progress.completedAt = new Date();
+      }
+
+      user.stats.points = (user.stats.points || 0) + (lesson.points || 0);
+      user.stats.xp = (user.stats.xp || 0) + (lesson.xp || 0);
+      
+      const today = new Date().toDateString();
+      const lastActive = user.stats.lastActive
+        ? new Date(user.stats.lastActive).toDateString()
+        : null;
+
+      if (today !== lastActive) {
+        user.stats.streak = (user.stats.streak || 0) + 1;
+        user.stats.bestStreak = Math.max(
+          user.stats.streak,
+          user.stats.bestStreak || 0
+        );
+      }
+
+      // Sprawdzenie, czy użytkownik może awansować na kolejny poziom
+      const currentLevel = user.stats.level || 1;
+      const pointsToNextLevel = currentLevel * 100;
+
+      if (user.stats.points >= pointsToNextLevel && user.stats.level < Math.floor(user.stats.points / 100) + 1) {
+        user.stats.level = Math.floor(user.stats.points / 100) + 1;
+      }
+
+      await LevelService.updateLevel(user);
     }
 
     user.markModified('stats.learningPaths');
@@ -110,6 +120,7 @@ export const updateProgress = async (req, res, next) => {
     next(error);
   }
 };
+
 
 export const updateUserProgress = async (req, res, next) => {
   try {

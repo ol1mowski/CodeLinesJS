@@ -5,10 +5,12 @@ import { updateLessonProgress } from "../../lib/api/progress";
 import { useAuth } from "../../hooks/useAuth";
 import type { LessonProgress } from "../../types/lesson.types";
 import { toast } from "react-hot-toast";
+import { useLearningPaths } from '../../LearningPaths/hooks/useLearningPaths';
 
 export const useLessonData = (lessonSlug: string) => {
   const { userId } = useAuth();
   const queryClient = useQueryClient();
+  const { refetch: refetchLearningPaths } = useLearningPaths();
   const [activeSection, setActiveSection] = useState(0);
 
   const {
@@ -28,8 +30,10 @@ export const useLessonData = (lessonSlug: string) => {
   const completeLessonMutation = useMutation({
     mutationFn: completeLesson,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["lessons"] });
       queryClient.invalidateQueries({ queryKey: ["userProgress"] });
+      queryClient.invalidateQueries({ queryKey: ["lessons"] });
+      queryClient.invalidateQueries({ queryKey: ["lesson", lessonSlug] });
+      refetchLearningPaths();
     }
   });
 
@@ -67,23 +71,30 @@ export const useLessonData = (lessonSlug: string) => {
     });
 
   };
-
+  
   const handleLessonComplete = async () => {
     if (!userId || !lessonSlug || !lesson) {
       console.error('Brak wymaganych danych:', { userId, lessonSlug, lesson });
-      return;
+      return Promise.reject(new Error('Brak wymaganych danych'));
     }
 
     try {
-      await completeLessonMutation.mutateAsync({
+      
+      const result = await completeLessonMutation.mutateAsync({
         userId: userId,
         lessonId: lesson.id,
         pathId: lesson.pathId
       });
+      
+      await refetch();
+      await refetchLearningPaths();
+      
       toast.success('Lekcja ukończona!', {
         duration: 3000,
         position: 'bottom-right'
       });
+      
+      return result;
     } catch (error) {
       console.error('Błąd podczas kończenia lekcji:', error);
       toast.error('Nie udało się ukończyć lekcji. Spróbuj ponownie.', {
