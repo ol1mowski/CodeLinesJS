@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { Game } from '../types/api.types';
 import { fetchGames } from '../api/fetchGames.api';
 import { useAuth } from '../../../../Hooks/useAuth';
+import { useQuery } from '@tanstack/react-query';
+import { fetchGames as gamesApi } from '../api/gamesApi';
+import { GameDifficulty, SortOption } from '../types/games.types';
 
 type UseGamesReturn = {
   games: Game[];
@@ -36,4 +39,38 @@ export const useGames = (): UseGamesReturn => {
   }, []);
 
   return { games, isLoading, error };
+};
+
+export const useGamesQuery = () => {
+  return useQuery<Game[], Error>(['games'], gamesApi);
+};
+
+export const useFilteredGames = (
+  games: Game[] | undefined,
+  sortBy: SortOption,
+  searchQuery: string,
+  selectedDifficulty: GameDifficulty | 'all'
+) => {
+  if (!games) return [];
+
+  return games
+    .filter(game => 
+      (selectedDifficulty === 'all' || game.difficulty === selectedDifficulty) &&
+      (game.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+       game.description.toLowerCase().includes(searchQuery.toLowerCase()))
+    )
+    .sort((a, b) => {
+      switch (sortBy) {
+        case 'newest':
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        case 'popular':
+          return b.completions.count - a.completions.count;
+        case 'difficulty':
+          return b.difficulty.localeCompare(a.difficulty);
+        case 'xp':
+          return b.rewardPoints - a.rewardPoints;
+        default:
+          return 0;
+      }
+    });
 }; 
