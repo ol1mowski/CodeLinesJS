@@ -200,10 +200,9 @@ export const completeLesson = async (req, res, next) => {
       userLearningPaths.push({ _id: lesson._id, completedAt: new Date() });
 
       const earnedPoints = lesson.points || 0;
-      const levelUpdate = await LevelService.updateUserLevel(user, earnedPoints);
-
       const timeSpent = lesson.duration || 0;
-      const activityUpdate = await StreakService.updateUserActivity(user._id, true, {
+      
+      const update = await LevelService.updateUserLevelAndStreak(userId, earnedPoints, {
         points: earnedPoints,
         challenges: 1,
         timeSpent: timeSpent
@@ -212,8 +211,8 @@ export const completeLesson = async (req, res, next) => {
       const levelStats = LevelService.getUserLevelStats(user);
 
       return res.json({
-        message: levelUpdate.leveledUp 
-          ? `Lekcja ukończona! Awansowałeś na poziom ${levelUpdate.currentLevel}!` 
+        message: update.level.leveledUp 
+          ? `Lekcja ukończona! Awansowałeś na poziom ${update.level.level}!` 
           : 'Lekcja ukończona',
         stats: {
           points: levelStats.points,
@@ -222,11 +221,11 @@ export const completeLesson = async (req, res, next) => {
           level: levelStats.level,
           levelProgress: levelStats.progress,
           completedLessons: userLearningPaths.length,
-          leveledUp: levelUpdate.leveledUp,
-          levelsGained: levelUpdate.levelsGained,
-          streak: user.stats.streak,
-          bestStreak: user.stats.bestStreak,
-          streakUpdated: activityUpdate.streak.streakUpdated
+          leveledUp: update.level.leveledUp,
+          levelsGained: update.level.levelsGained,
+          streak: update.streak.streak,
+          bestStreak: update.streak.bestStreak,
+          streakUpdated: update.streak.streakUpdated
         },
       });
     }

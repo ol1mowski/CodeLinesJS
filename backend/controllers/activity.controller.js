@@ -29,50 +29,44 @@ export const updateActivity = async (req, res, next) => {
     const user = await User.findById(userId);
     if (!user) throw new ValidationError("Nie znaleziono użytkownika");
 
-    const activityUpdate = await StreakService.updateUserActivity(userId, points > 0, {
+    const update = await LevelService.updateUserLevelAndStreak(userId, points, {
       points,
       challenges,
       timeSpent,
     });
 
-    let levelUpdate = null;
-    if (points > 0) {
-      levelUpdate = await LevelService.updateUserLevel(user, points);
-      await user.save();
-    }
-
     const levelStats = LevelService.getUserLevelStats(user);
 
     res.json({
       status: "success",
-      message: levelUpdate?.leveledUp
-        ? `Aktywność zaktualizowana! Awansowałeś na poziom ${levelUpdate.currentLevel}!`
+      message: update.level.leveledUp
+        ? `Aktywność zaktualizowana! Awansowałeś na poziom ${update.level.level}!`
         : "Aktywność zaktualizowana pomyślnie",
       data: {
         streak: {
-          current: activityUpdate.streak.streak,
-          best: activityUpdate.streak.bestStreak,
-          updated: activityUpdate.streak.streakUpdated,
-          broken: activityUpdate.streak.streakBroken,
-          daysInactive: activityUpdate.streak.daysInactive,
+          current: update.streak.streak,
+          best: update.streak.bestStreak,
+          updated: update.streak.streakUpdated,
+          broken: update.streak.streakBroken,
+          daysInactive: update.streak.daysInactive,
         },
         dailyProgress: {
-          date: activityUpdate.dailyProgress.dailyProgress.date,
-          points: activityUpdate.dailyProgress.dailyProgress.points,
-          challenges: activityUpdate.dailyProgress.dailyProgress.challenges,
-          timeSpent: activityUpdate.dailyProgress.dailyProgress.timeSpent,
+          date: update.dailyProgress.dailyProgress.date,
+          points: update.dailyProgress.dailyProgress.points,
+          challenges: update.dailyProgress.dailyProgress.challenges,
+          timeSpent: update.dailyProgress.dailyProgress.timeSpent,
         },
         level: {
           level: levelStats.level,
           points: levelStats.points,
           pointsRequired: levelStats.pointsToNextLevel,
           progress: levelStats.progress,
-          leveledUp: levelUpdate?.leveledUp || false,
-          levelsGained: levelUpdate?.levelsGained || 0,
+          leveledUp: update.level.leveledUp,
+          levelsGained: update.level.levelsGained,
         },
         stats: {
-          totalTimeSpent: activityUpdate.dailyProgress.totalTimeSpent,
-          completedChallenges: activityUpdate.dailyProgress.completedChallenges,
+          totalTimeSpent: update.dailyProgress.totalTimeSpent,
+          completedChallenges: update.dailyProgress.completedChallenges,
         },
       },
     });

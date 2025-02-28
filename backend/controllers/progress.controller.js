@@ -68,10 +68,9 @@ export const updateProgress = async (req, res, next) => {
       }
 
       const earnedPoints = lesson.points || 0;
-      const levelUpdate = await LevelService.updateUserLevel(user, earnedPoints);
-      
       const timeSpent = lesson.duration || 0;
-      await StreakService.updateUserActivity(user._id, true, {
+      
+      await LevelService.updateUserLevelAndStreak(userId, earnedPoints, {
         points: earnedPoints,
         challenges: 1,
         timeSpent: timeSpent
@@ -82,20 +81,21 @@ export const updateProgress = async (req, res, next) => {
     
     await user.save();
 
-    const levelStats = LevelService.getUserLevelStats(user);
-    const updatedPath = user.stats.learningPaths[userPathIndex];
+    const updatedUser = await User.findById(userId);
+    const levelStats = LevelService.getUserLevelStats(updatedUser);
+    const updatedPath = updatedUser.stats.learningPaths[userPathIndex];
     
     res.json({
       message: "Postęp zaktualizowany pomyślnie",
       stats: {
         points: levelStats.points,
         pointsRequired: levelStats.pointsToNextLevel,
-        xp: user.stats.xp,
+        xp: updatedUser.stats.xp,
         level: levelStats.level,
         levelProgress: levelStats.progress,
-        streak: user.stats.streak,
-        bestStreak: user.stats.bestStreak,
-        lastActive: user.stats.lastActive,
+        streak: updatedUser.stats.streak,
+        bestStreak: updatedUser.stats.bestStreak,
+        lastActive: updatedUser.stats.lastActive,
         pathProgress: {
           completedLessons: updatedPath.progress.completedLessons.length,
           totalLessons: learningPath.totalLessons,
@@ -121,43 +121,34 @@ export const updateUserProgress = async (req, res, next) => {
       throw new ValidationError("Nieprawidłowa wartość punktów");
     }
 
-    const user = await User.findById(userId);
-    if (!user) {
-      throw new ValidationError("Nie znaleziono użytkownika");
-    }
-
-    const levelUpdate = await LevelService.updateUserLevel(user, points);
-
-    const activityUpdate = await StreakService.updateUserActivity(user._id, true, {
+    const update = await LevelService.updateUserLevelAndStreak(userId, points, {
       points,
       challenges: challenges || 0,
       timeSpent: timeSpent || 0
     });
 
-    const levelStats = LevelService.getUserLevelStats(user);
-
     res.json({
-      message: levelUpdate.leveledUp 
-        ? `Punkty dodane! Awansowałeś na poziom ${levelUpdate.currentLevel}!` 
+      message: update.level.leveledUp 
+        ? `Punkty dodane! Awansowałeś na poziom ${update.level.level}!` 
         : "Punkty użytkownika zaktualizowane pomyślnie",
       data: {
         userStats: {
-          points: levelStats.points,
-          pointsRequired: levelStats.pointsToNextLevel,
-          xp: user.stats.xp,
-          level: levelStats.level,
-          levelProgress: levelStats.progress,
-          streak: user.stats.streak,
-          bestStreak: user.stats.bestStreak,
-          lastActive: user.stats.lastActive,
-          leveledUp: levelUpdate.leveledUp,
-          levelsGained: levelUpdate.levelsGained
+          points: update.level.points,
+          pointsRequired: update.level.pointsRequired,
+          xp: update.level.points,
+          level: update.level.level,
+          levelProgress: update.level.progress,
+          streak: update.streak.streak,
+          bestStreak: update.streak.bestStreak,
+          lastActive: new Date(),
+          leveledUp: update.level.leveledUp,
+          levelsGained: update.level.levelsGained
         },
         streak: {
-          current: activityUpdate.streak.streak,
-          best: activityUpdate.streak.bestStreak,
-          updated: activityUpdate.streak.streakUpdated,
-          broken: activityUpdate.streak.streakBroken
+          current: update.streak.streak,
+          best: update.streak.bestStreak,
+          updated: update.streak.streakUpdated,
+          broken: update.streak.streakBroken
         }
       }
     });

@@ -6,6 +6,7 @@ export class StreakService {
    * @returns {Object} - Informacje o aktualizacji streaka
    */
   static updateStreak(user, hasEarnedPoints = false) {
+
     if (!user.stats) {
       user.stats = {
         streak: 0,
@@ -20,19 +21,21 @@ export class StreakService {
 
     const today = new Date();
     const lastActive = user.stats.lastActive ? new Date(user.stats.lastActive) : null;
-    
+
+
     if (!hasEarnedPoints) {
       if (lastActive) {
         const lastActiveDate = new Date(lastActive.setHours(0, 0, 0, 0));
         const todayDate = new Date(today.setHours(0, 0, 0, 0));
-        
+
         if (todayDate > lastActiveDate) {
           user.stats.lastActive = today;
         }
       } else {
         user.stats.lastActive = today;
       }
-      
+
+
       return {
         streak: user.stats.streak || 0,
         bestStreak: user.stats.bestStreak || 0,
@@ -46,6 +49,8 @@ export class StreakService {
       user.stats.streak = 1;
       user.stats.bestStreak = 1;
       user.stats.lastActive = today;
+
+
       return {
         streak: 1,
         bestStreak: 1,
@@ -60,7 +65,9 @@ export class StreakService {
     const diffTime = Math.abs(todayDate - lastActiveDate);
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
+
     if (diffDays === 0) {
+
       return {
         streak: user.stats.streak || 0,
         bestStreak: user.stats.bestStreak || 0,
@@ -74,7 +81,7 @@ export class StreakService {
       user.stats.streak = (user.stats.streak || 0) + 1;
       user.stats.bestStreak = Math.max(user.stats.streak, user.stats.bestStreak || 0);
       user.stats.lastActive = today;
-      
+
       return {
         streak: user.stats.streak,
         bestStreak: user.stats.bestStreak,
@@ -86,7 +93,8 @@ export class StreakService {
 
     user.stats.streak = 1;
     user.stats.lastActive = today;
-    
+
+
     return {
       streak: 1,
       bestStreak: user.stats.bestStreak || 0,
@@ -119,18 +127,18 @@ export class StreakService {
     }
 
     const today = new Date();
-    const todayStr = today.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+    const todayStr = today.toISOString().split('T')[0];
 
     if (!user.stats.chartData) {
       user.stats.chartData = { daily: [] };
     }
-    
+
     if (!user.stats.chartData.daily) {
       user.stats.chartData.daily = [];
     }
 
     let dailyChartIndex = user.stats.chartData.daily.findIndex(d => d.date === todayStr);
-    
+
     if (dailyChartIndex >= 0) {
       user.stats.chartData.daily[dailyChartIndex].points += progress.points || 0;
       user.stats.chartData.daily[dailyChartIndex].timeSpent += progress.timeSpent || 0;
@@ -147,7 +155,7 @@ export class StreakService {
     }
 
     let dailyIndex = user.stats.daily.findIndex(d => d.date === todayStr);
-    
+
     if (dailyIndex >= 0) {
       user.stats.daily[dailyIndex].points += progress.points || 0;
       user.stats.daily[dailyIndex].challenges += progress.challenges || 0;
@@ -203,13 +211,13 @@ export class StreakService {
     if (!user.stats.chartData) {
       user.stats.chartData = { daily: [] };
     }
-    
+
     if (!user.stats.chartData.daily) {
       user.stats.chartData.daily = [];
     }
 
     let dailyChartIndex = user.stats.chartData.daily.findIndex(d => d.date === todayStr);
-    
+
     if (dailyChartIndex < 0) {
       user.stats.chartData.daily.push({
         date: todayStr,
@@ -223,7 +231,7 @@ export class StreakService {
     }
 
     let dailyIndex = user.stats.daily.findIndex(d => d.date === todayStr);
-    
+
     if (dailyIndex < 0) {
       user.stats.daily.push({
         date: todayStr,
@@ -248,21 +256,27 @@ export class StreakService {
   static async updateUserActivity(userId, hasEarnedPoints = false, progress = {}) {
     const { User } = await import('../models/user.model.js');
     const user = await User.findById(userId);
-    
+
     if (!user) {
       throw new Error('Nie znaleziono użytkownika');
     }
-    
+
     this.initializeDailyProgress(user);
-    
-    const streakUpdate = this.updateStreak(user, hasEarnedPoints);
-    
-    const dailyUpdate = this.updateDailyProgress(user, progress);
-    
     user.markModified('stats');
-    
     await user.save();
-    
+
+    const streakUpdate = this.updateStreak(user, hasEarnedPoints);
+    user.markModified('stats');
+    await user.save();
+
+    const dailyUpdate = this.updateDailyProgress(user, progress);
+
+    user.markModified('stats');
+    await user.save();
+
+    const updatedUser = await User.findById(userId);
+
+
     return {
       streak: streakUpdate,
       dailyProgress: dailyUpdate

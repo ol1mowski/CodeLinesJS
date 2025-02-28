@@ -60,6 +60,64 @@ export class LevelService {
   }
 
   /**
+   * Aktualizuje poziom użytkownika i jego streak w jednej operacji
+   * @param {string} userId - ID użytkownika
+   * @param {number} earnedPoints - Zdobyte punkty
+   * @param {Object} progress - Obiekt z informacjami o postępie
+   * @returns {Object} - Informacje o aktualizacji poziomu i streaka
+   */
+  static async updateUserLevelAndStreak(userId, earnedPoints = 0, progress = {}) {
+    const { User } = await import('../models/user.model.js');
+    const { StreakService } = await import('./streak.service.js');
+    
+    const user = await User.findById(userId);
+    
+    if (!user) {
+      throw new Error('Nie znaleziono użytkownika');
+    }
+    
+    const hasEarnedPoints = earnedPoints > 0;
+    
+    console.log('Przed aktualizacją:', { 
+      userId, 
+      streak: user.stats?.streak || 0, 
+      bestStreak: user.stats?.bestStreak || 0,
+      hasEarnedPoints
+    });
+    
+    const levelUpdate = await this.updateUserLevel(user, earnedPoints);
+    
+    user.markModified('stats');
+    await user.save();
+    
+    const activityUpdate = await StreakService.updateUserActivity(userId, hasEarnedPoints, progress);
+    
+    const updatedUser = await User.findById(userId);
+    console.log('Po aktualizacji:', { 
+      userId, 
+      streak: updatedUser.stats?.streak || 0, 
+      bestStreak: updatedUser.stats?.bestStreak || 0,
+      hasEarnedPoints,
+      activityUpdateStreak: activityUpdate.streak
+    });
+    
+    const levelStats = this.getUserLevelStats(updatedUser);
+    
+    return {
+      level: {
+        level: levelStats.level,
+        points: levelStats.points,
+        pointsRequired: levelStats.pointsToNextLevel,
+        progress: levelStats.progress,
+        leveledUp: levelUpdate.leveledUp,
+        levelsGained: levelUpdate.levelsGained
+      },
+      streak: activityUpdate.streak,
+      dailyProgress: activityUpdate.dailyProgress
+    };
+  }
+
+  /**
    @param {Object} user 
    @returns {Object}
    */
