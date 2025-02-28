@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import { User } from '../models/user.model.js';
 import { AuthError } from '../utils/errors.js';
 import { transporter } from '../config/mailer.js';
+import { StreakService } from '../services/streak.service.js';
 
 export const register = async (req, res, next) => {
   try {
@@ -87,13 +88,19 @@ export const login = async (req, res, next) => {
       throw new AuthError('Nieprawidłowe dane logowania');
     }
 
-    const token = generateToken(user);
+    await StreakService.updateUserActivity(user._id, false);
+    
+    const updatedUser = await User.findById(user._id);
+
+    const token = generateToken(updatedUser);
     res.json({ 
       token,
       user: {
-        id: user._id,
-        email: user.email,
-        username: user.username
+        id: updatedUser._id,
+        email: updatedUser.email,
+        username: updatedUser.username,
+        avatar: updatedUser.avatar,
+        stats: updatedUser.stats
       }
     });
   } catch (error) {

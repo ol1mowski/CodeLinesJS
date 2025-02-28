@@ -2,6 +2,7 @@ import { User } from "../models/user.model.js";
 import { Lesson, LearningPath } from "../models/index.js";
 import { ValidationError } from "../utils/errors.js";
 import { LevelService } from "../services/level.service.js";
+import { StreakService } from "../services/streak.service.js";
 
 export const updateProgress = async (req, res, next) => {
   try {
@@ -69,21 +70,12 @@ export const updateProgress = async (req, res, next) => {
       const earnedPoints = lesson.points || 0;
       const levelUpdate = await LevelService.updateUserLevel(user, earnedPoints);
       
-  
-      const today = new Date().toDateString();
-      const lastActive = user.stats.lastActive
-        ? new Date(user.stats.lastActive).toDateString()
-        : null;
-
-      if (today !== lastActive) {
-        user.stats.streak = (user.stats.streak || 0) + 1;
-        user.stats.bestStreak = Math.max(
-          user.stats.streak,
-          user.stats.bestStreak || 0
-        );
-      }
-
-      user.stats.lastActive = new Date();
+      const timeSpent = lesson.duration || 0;
+      await StreakService.updateUserActivity(user._id, true, {
+        points: earnedPoints,
+        challenges: 1,
+        timeSpent: timeSpent
+      });
     }
 
     user.markModified('stats.learningPaths');
@@ -102,6 +94,7 @@ export const updateProgress = async (req, res, next) => {
         level: levelStats.level,
         levelProgress: levelStats.progress,
         streak: user.stats.streak,
+        bestStreak: user.stats.bestStreak,
         lastActive: user.stats.lastActive,
         pathProgress: {
           completedLessons: updatedPath.progress.completedLessons.length,
@@ -121,7 +114,7 @@ export const updateProgress = async (req, res, next) => {
 
 export const updateUserProgress = async (req, res, next) => {
   try {
-    const { points } = req.body;
+    const { points, challenges, timeSpent } = req.body;
     const userId = req.user.userId;
 
     if (typeof points !== 'number' || points < 0) {
@@ -135,19 +128,11 @@ export const updateUserProgress = async (req, res, next) => {
 
     const levelUpdate = await LevelService.updateUserLevel(user, points);
 
-    const today = new Date().toDateString();
-    const lastActive = user.stats.lastActive
-      ? new Date(user.stats.lastActive).toDateString()
-      : null;
-
-    if (today !== lastActive) {
-      user.stats.streak = (user.stats.streak || 0) + 1;
-      user.stats.bestStreak = Math.max(user.stats.streak, user.stats.bestStreak || 0);
-    }
-
-    user.stats.lastActive = new Date();
-    user.markModified('stats');
-    await user.save();
+    const activityUpdate = await StreakService.updateUserActivity(user._id, true, {
+      points,
+      challenges: challenges || 0,
+      timeSpent: timeSpent || 0
+    });
 
     const levelStats = LevelService.getUserLevelStats(user);
 
@@ -163,9 +148,16 @@ export const updateUserProgress = async (req, res, next) => {
           level: levelStats.level,
           levelProgress: levelStats.progress,
           streak: user.stats.streak,
+          bestStreak: user.stats.bestStreak,
           lastActive: user.stats.lastActive,
           leveledUp: levelUpdate.leveledUp,
           levelsGained: levelUpdate.levelsGained
+        },
+        streak: {
+          current: activityUpdate.streak.streak,
+          best: activityUpdate.streak.bestStreak,
+          updated: activityUpdate.streak.streakUpdated,
+          broken: activityUpdate.streak.streakBroken
         }
       }
     });

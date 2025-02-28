@@ -3,6 +3,7 @@ import { User } from "../models/user.model.js";
 import { ValidationError } from "../utils/errors.js";
 import { LessonContent } from "../models/lessonContent.model.js";
 import { LevelService } from "../services/level.service.js";
+import { StreakService } from "../services/streak.service.js";
 
 export const getLessons = async (req, res, next) => {
   try {
@@ -10,7 +11,7 @@ export const getLessons = async (req, res, next) => {
     const userId = req.user.userId;
 
     const user = await User.findById(userId)
-      .select("stats.learningPaths stats.level stats.points stats.pointsToNextLevel")
+      .select("stats.learningPaths stats.level stats.points stats.pointsToNextLevel stats.streak stats.bestStreak")
       .lean();
 
     const query = {
@@ -77,7 +78,9 @@ export const getLessons = async (req, res, next) => {
         level: levelStats.level,
         points: levelStats.points,
         pointsRequired: levelStats.pointsToNextLevel,
-        levelProgress: levelStats.progress
+        levelProgress: levelStats.progress,
+        streak: user.stats?.streak || 0,
+        bestStreak: user.stats?.bestStreak || 0
       },
     });
   } catch (error) {
@@ -96,7 +99,7 @@ export const getLessonById = async (req, res, next) => {
       }).populate("requirements", "title"),
       LessonContent.findOne({ lessonSlug: id }).lean(),
       User.findById(req.user.userId)
-        .select("stats.learningPaths stats.level stats.points stats.pointsToNextLevel")
+        .select("stats.learningPaths stats.level stats.points stats.pointsToNextLevel stats.streak stats.bestStreak")
         .lean(),
     ]);
 
@@ -157,7 +160,9 @@ export const getLessonById = async (req, res, next) => {
         level: levelStats.level,
         points: levelStats.points,
         pointsRequired: levelStats.pointsToNextLevel,
-        levelProgress: levelStats.progress
+        levelProgress: levelStats.progress,
+        streak: user.stats?.streak || 0,
+        bestStreak: user.stats?.bestStreak || 0
       }
     };
 
@@ -197,7 +202,12 @@ export const completeLesson = async (req, res, next) => {
       const earnedPoints = lesson.points || 0;
       const levelUpdate = await LevelService.updateUserLevel(user, earnedPoints);
 
-      await user.save();
+      const timeSpent = lesson.duration || 0;
+      const activityUpdate = await StreakService.updateUserActivity(user._id, true, {
+        points: earnedPoints,
+        challenges: 1,
+        timeSpent: timeSpent
+      });
       
       const levelStats = LevelService.getUserLevelStats(user);
 
@@ -213,7 +223,10 @@ export const completeLesson = async (req, res, next) => {
           levelProgress: levelStats.progress,
           completedLessons: userLearningPaths.length,
           leveledUp: levelUpdate.leveledUp,
-          levelsGained: levelUpdate.levelsGained
+          levelsGained: levelUpdate.levelsGained,
+          streak: user.stats.streak,
+          bestStreak: user.stats.bestStreak,
+          streakUpdated: activityUpdate.streak.streakUpdated
         },
       });
     }
@@ -229,6 +242,8 @@ export const completeLesson = async (req, res, next) => {
         level: levelStats.level,
         levelProgress: levelStats.progress,
         completedLessons: userLearningPaths.length,
+        streak: user.stats.streak,
+        bestStreak: user.stats.bestStreak
       },
     });
   } catch (error) {
