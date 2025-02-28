@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { memo } from "react";
 import { FaRegCircle, FaCircle } from "react-icons/fa";
-import { GameDifficulty } from "../../../../types/games.types";
+import { GameDifficulty } from "../../../../../types/games.types";
 
 type GamesDifficultyProps = {
   selectedDifficulty: GameDifficulty | "all";

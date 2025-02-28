@@ -1,10 +1,10 @@
 import { motion } from "framer-motion";
 import { memo, useState } from "react";
-import { GamesHeader } from "./GamesHeader/GamesHeader.component";
-import { GamesList } from "./GamesList/GamesList.component";
-import { GamesSorting } from "./GamesSorting/GamesSorting.component";
-import { GamesSearch } from "./GamesSearch/GamesSearch.component";
-import { GamesDifficulty } from "./GamesDifficulty/GamesDifficulty.component";
+import { GamesHeader } from "./components/GamesHeader/GamesHeader.component";
+import { GamesList } from "./components/GamesList/GamesList.component";
+import { GamesSorting } from "./components/GamesSorting/GamesSorting.component";
+import { GamesSearch } from "./components/GamesSearch/GamesSearch.component";
+import { GamesDifficulty } from "./components/GamesDifficulty/GamesDifficulty.component";
 import { GameDifficulty } from "../../../types/games.types";
 
 export type ActiveCategory = "all" | "basics" | "algorithms" | "challenges" | "competitions";

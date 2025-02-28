@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../../../../Hooks/useAuth';
-import { updateUserPoints } from '../api/userApi';
+import { updateUserPoints } from '../api/userApi.api';
 
 export const useUpdatePoints = () => {
   const { token } = useAuth();
@@ -15,7 +15,7 @@ export const useUpdatePoints = () => {
 
   return { 
     updatePoints: mutation.mutate, 
-    isUpdating: mutation.isLoading,
+    isUpdating: mutation.isPending,
     error: mutation.error 
   };
 }; 

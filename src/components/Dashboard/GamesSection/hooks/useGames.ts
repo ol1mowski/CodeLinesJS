@@ -2,8 +2,6 @@ import { useState, useEffect } from 'react';
 import { Game } from '../types/api.types';
 import { fetchGames } from '../api/fetchGames.api';
 import { useAuth } from '../../../../Hooks/useAuth';
-import { useQuery } from '@tanstack/react-query';
-import { fetchGames as gamesApi } from '../api/gamesApi';
 import { GameDifficulty, SortOption } from '../types/games.types';
 
 type UseGamesReturn = {
@@ -39,10 +37,6 @@ export const useGames = (): UseGamesReturn => {
   }, []);
 
   return { games, isLoading, error };
-};
-
-export const useGamesQuery = () => {
-  return useQuery<Game[], Error>(['games'], gamesApi);
 };
 
 export const useFilteredGames = (

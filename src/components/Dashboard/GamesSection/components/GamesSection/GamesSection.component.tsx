@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { useGames } from '../../hooks/useGames';
-import { GameCard } from '../../GamesList/GameCard.component';
+import { GameCard } from '../GamesList/GameCard.component';
 
 export const GamesSection = memo(() => {
   const { games, isLoading, error } = useGames();

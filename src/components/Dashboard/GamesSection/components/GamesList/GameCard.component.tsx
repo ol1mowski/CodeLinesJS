@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { memo } from "react";
 import { FaStar, FaUsers, FaTrophy, FaPlay } from "react-icons/fa";
-import { Game } from "../../../../types/games.types";
+import { Game } from "../../../../../types/games.types";
 import { useNavigate } from 'react-router-dom';
 
 

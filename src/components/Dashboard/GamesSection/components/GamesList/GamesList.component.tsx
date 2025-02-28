@@ -3,9 +3,9 @@ import { memo } from "react";
 import { GamesListSkeleton } from "./GamesListSkeleton.component";
 import { NoGamesFound } from "./NoGamesFound.component";
 import { GameCard } from "./GameCard.component";
-import { SortOption } from "../GamesSection.component";
-import { GameDifficulty } from "../../../../types/games.types";
-import { useGamesQuery } from "../hooks/useGamesQuery";
+import { SortOption } from "../../GamesSection.component";
+import { GameDifficulty } from "../../types/games.types";
+import { useGamesQuery } from "../../hooks/useGamesQuery";
 
 
 type GamesListProps = {
