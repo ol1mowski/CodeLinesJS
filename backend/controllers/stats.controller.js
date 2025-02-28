@@ -1,6 +1,7 @@
 import { User } from '../models/user.model.js';
 import { AuthError, ValidationError } from '../utils/errors.js';
 import { LearningPath } from '../models/learningPath.model.js';
+import { LevelService } from '../services/level.service.js';
 
 export const getStats = async (req, res, next) => {
   try {
@@ -17,12 +18,10 @@ export const getStats = async (req, res, next) => {
 
     if (!user) throw new ValidationError('Nie znaleziono użytkownika');
 
-    const stats = user.stats || {};
-    const pointsToNextLevel = stats.pointsToNextLevel || calculatePointsToNextLevel(stats.level || 1);
+    const levelStats = LevelService.getUserLevelStats(user);
 
-    // Oblicz postęp w ścieżkach nauki
     const learningPathsProgress = learningPaths.map(path => {
-      const userPath = stats.learningPaths?.find(
+      const userPath = user.stats.learningPaths?.find(
         up => up.pathId.toString() === path._id.toString()
       );
 
@@ -44,24 +43,25 @@ export const getStats = async (req, res, next) => {
       status: 'success',
       data: {
         username: user.username,
-        level: stats.level || 1,
-        xp: stats.xp || 0,
-        pointsToNextLevel,
-        points: stats.points || 0,
-        streak: stats.streak || 0,
-        bestStreak: stats.bestStreak || 0,
-        lastActive: stats.lastActive || new Date(),
-        experiencePoints: stats.xp || 0,
-        nextLevelThreshold: pointsToNextLevel,
-        completedChallenges: stats.completedChallenges || 0,
-        currentStreak: stats.streak || 0,
-        averageScore: stats.averageScore || 0,
-        totalTimeSpent: stats.totalTimeSpent || 0,
-        badges: stats.badges || [],
-        unlockedFeatures: stats.unlockedFeatures || [],
+        level: levelStats.level,
+        xp: user.stats?.xp || 0,
+        pointsToNextLevel: levelStats.pointsToNextLevel,
+        points: levelStats.points,
+        levelProgress: levelStats.progress,
+        streak: user.stats?.streak || 0,
+        bestStreak: user.stats?.bestStreak || 0,
+        lastActive: user.stats?.lastActive || new Date(),
+        experiencePoints: user.stats?.xp || 0,
+        nextLevelThreshold: levelStats.pointsToNextLevel,
+        completedChallenges: user.stats?.completedChallenges || 0,
+        currentStreak: user.stats?.streak || 0,
+        averageScore: user.stats?.averageScore || 0,
+        totalTimeSpent: user.stats?.totalTimeSpent || 0,
+        badges: user.stats?.badges || [],
+        unlockedFeatures: user.stats?.unlockedFeatures || [],
         chartData: {
-          daily: stats.chartData?.daily || [],
-          progress: stats.chartData?.progress || []
+          daily: user.stats?.chartData?.daily || [],
+          progress: user.stats?.chartData?.progress || []
         },
         learningPaths: learningPathsProgress,
         summary: {
@@ -78,10 +78,6 @@ export const getStats = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
-
-const calculatePointsToNextLevel = (currentLevel) => {
-  return Math.floor(1000 * Math.pow(1.2, currentLevel - 1));
 };
 
 export const getDailyStats = async (req, res, next) => {
@@ -113,12 +109,10 @@ export const updateStats = async (req, res, next) => {
     if (!user) throw new ValidationError('Nie znaleziono użytkownika');
 
     if (!user.stats) {
-      const initialPointsToNextLevel = calculatePointsToNextLevel(1);
       user.stats = {
         points: 0,
         xp: 0,
         level: 1,
-        pointsToNextLevel: initialPointsToNextLevel,
         streak: 0,
         bestStreak: 0,
         daily: [],
@@ -135,15 +129,9 @@ export const updateStats = async (req, res, next) => {
       };
     }
 
+    let levelUpdate = null;
     if (req.body.points) {
-      user.stats.points = (user.stats.points || 0) + req.body.points;
-      user.stats.xp = (user.stats.xp || 0) + req.body.points;
-
-      while (user.stats.xp >= user.stats.pointsToNextLevel) {
-        user.stats.level += 1;
-        user.stats.xp -= user.stats.pointsToNextLevel;
-        user.stats.pointsToNextLevel = calculatePointsToNextLevel(user.stats.level);
-      }
+      levelUpdate = await LevelService.updateUserLevel(user, req.body.points);
     }
 
     const today = new Date();
@@ -162,13 +150,11 @@ export const updateStats = async (req, res, next) => {
 
     const dailyIndex = user.stats.chartData.daily.findIndex(d => d.date === todayStr);
 
-
     if (dailyIndex >= 0) {
       user.stats.chartData.daily[dailyIndex].points += req.body.points || 0;
       user.stats.chartData.daily[dailyIndex].challenges += req.body.challenges || 0;
     } else {
       user.stats.chartData.daily.push({
-
         date: todayStr,
         points: req.body.points || 0,
         challenges: req.body.challenges || 0
@@ -178,25 +164,30 @@ export const updateStats = async (req, res, next) => {
     user.stats.lastActive = today;
     await user.save();
 
+    const levelStats = LevelService.getUserLevelStats(user);
+
     res.json({
       status: 'success',
       data: {
-        points: user.stats.points,
+        points: levelStats.points,
         xp: user.stats.xp,
-        level: user.stats.level,
-        pointsToNextLevel: user.stats.pointsToNextLevel,
+        level: levelStats.level,
+        pointsToNextLevel: levelStats.pointsToNextLevel,
+        levelProgress: levelStats.progress,
         streak: user.stats.streak,
         bestStreak: user.stats.bestStreak,
         lastActive: user.stats.lastActive,
         experiencePoints: user.stats.xp,
-        nextLevelThreshold: user.stats.pointsToNextLevel,
+        nextLevelThreshold: levelStats.pointsToNextLevel,
         completedChallenges: user.stats.completedChallenges,
         currentStreak: user.stats.streak,
         averageScore: user.stats.averageScore,
         totalTimeSpent: user.stats.totalTimeSpent,
         badges: user.stats.badges,
         unlockedFeatures: user.stats.unlockedFeatures,
-        chartData: user.stats.chartData
+        chartData: user.stats.chartData,
+        leveledUp: levelUpdate?.leveledUp || false,
+        levelsGained: levelUpdate?.levelsGained || 0
       }
     });
   } catch (error) {

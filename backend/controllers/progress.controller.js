@@ -1,7 +1,7 @@
 import { User } from "../models/user.model.js";
 import { Lesson, LearningPath } from "../models/index.js";
 import { ValidationError } from "../utils/errors.js";
-import LevelService from "../services/level.service.js";
+import { LevelService } from "../services/level.service.js";
 
 export const updateProgress = async (req, res, next) => {
   try {
@@ -66,9 +66,10 @@ export const updateProgress = async (req, res, next) => {
         userPath.progress.completedAt = new Date();
       }
 
-      user.stats.points = (user.stats.points || 0) + (lesson.points || 0);
-      user.stats.xp = (user.stats.xp || 0) + (lesson.xp || 0);
+      const earnedPoints = lesson.points || 0;
+      const levelUpdate = await LevelService.updateUserLevel(user, earnedPoints);
       
+  
       const today = new Date().toDateString();
       const lastActive = user.stats.lastActive
         ? new Date(user.stats.lastActive).toDateString()
@@ -82,28 +83,24 @@ export const updateProgress = async (req, res, next) => {
         );
       }
 
-      // Sprawdzenie, czy użytkownik może awansować na kolejny poziom
-      const currentLevel = user.stats.level || 1;
-      const pointsToNextLevel = currentLevel * 100;
-
-      if (user.stats.points >= pointsToNextLevel && user.stats.level < Math.floor(user.stats.points / 100) + 1) {
-        user.stats.level = Math.floor(user.stats.points / 100) + 1;
-      }
-
-      await LevelService.updateLevel(user);
+      user.stats.lastActive = new Date();
     }
 
     user.markModified('stats.learningPaths');
     
     await user.save();
 
+    const levelStats = LevelService.getUserLevelStats(user);
     const updatedPath = user.stats.learningPaths[userPathIndex];
+    
     res.json({
       message: "Postęp zaktualizowany pomyślnie",
       stats: {
-        points: user.stats.points,
+        points: levelStats.points,
+        pointsRequired: levelStats.pointsToNextLevel,
         xp: user.stats.xp,
-        level: user.stats.level,
+        level: levelStats.level,
+        levelProgress: levelStats.progress,
         streak: user.stats.streak,
         lastActive: user.stats.lastActive,
         pathProgress: {
@@ -136,11 +133,7 @@ export const updateUserProgress = async (req, res, next) => {
       throw new ValidationError("Nie znaleziono użytkownika");
     }
 
-    const currentPoints = user.stats.points || 0;
-    const newPoints = currentPoints + points;
-    
-    user.stats.points = newPoints;
-    user.stats.xp = (user.stats.xp || 0) + points;
+    const levelUpdate = await LevelService.updateUserLevel(user, points);
 
     const today = new Date().toDateString();
     const lastActive = user.stats.lastActive
@@ -153,19 +146,26 @@ export const updateUserProgress = async (req, res, next) => {
     }
 
     user.stats.lastActive = new Date();
-
     user.markModified('stats');
-
     await user.save();
 
+    const levelStats = LevelService.getUserLevelStats(user);
+
     res.json({
-      message: "Punkty użytkownika zaktualizowane pomyślnie",
+      message: levelUpdate.leveledUp 
+        ? `Punkty dodane! Awansowałeś na poziom ${levelUpdate.currentLevel}!` 
+        : "Punkty użytkownika zaktualizowane pomyślnie",
       data: {
         userStats: {
-          points: user.stats.points,
+          points: levelStats.points,
+          pointsRequired: levelStats.pointsToNextLevel,
           xp: user.stats.xp,
+          level: levelStats.level,
+          levelProgress: levelStats.progress,
           streak: user.stats.streak,
-          lastActive: user.stats.lastActive
+          lastActive: user.stats.lastActive,
+          leveledUp: levelUpdate.leveledUp,
+          levelsGained: levelUpdate.levelsGained
         }
       }
     });

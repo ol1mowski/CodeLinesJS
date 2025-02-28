@@ -1,68 +1,79 @@
-import RewardsService from './rewards.service.js';
-
 export class LevelService {
-  static XP_PER_LEVEL = 100;
+  static XP_PER_LEVEL = 1000;
+  static LEVEL_MULTIPLIER = 1.35;
 
+  /**
+   @param {number} level 
+   @returns {number}
+   */
   static calculatePointsToNextLevel(level) {
-    return Math.floor(1000 * Math.pow(1.2, level - 1));
+    return Math.round(this.XP_PER_LEVEL * Math.pow(this.LEVEL_MULTIPLIER, level - 1));
   }
 
-  calculateLevelProgress(stats) {
-    const { experiencePoints, level } = stats;
-    let currentLevel = level;
-    let currentXP = experiencePoints;
-    let leveledUp = false;
-
-    while (currentXP >= this.calculateNextLevelThreshold(currentLevel)) {
-      currentXP -= this.calculateNextLevelThreshold(currentLevel);
-      currentLevel++;
-      leveledUp = true;
-    }
-
-    return {
-      newLevel: currentLevel,
-      remainingXP: currentXP,
-      nextLevelThreshold: this.calculateNextLevelThreshold(currentLevel),
-      leveledUp
-    };
-  }
-
-  async updateExperience(stats, earnedXP) {
-    const oldLevel = stats.level;
-    stats.experiencePoints += earnedXP;
-    const progress = this.calculateLevelProgress(stats);
-
-    if (progress.leveledUp) {
-      stats.level = progress.newLevel;
-      stats.experiencePoints = progress.remainingXP;
-      stats.nextLevelThreshold = progress.nextLevelThreshold;
-
-      const { stats: updatedStats, rewards } = await RewardsService.processLevelUpRewards(
-        stats,
-        oldLevel,
-        progress.newLevel
-      );
-
-      return {
-        stats: updatedStats,
-        levelUp: true,
-        rewards
+  /**
+   @param {Object} user 
+   @param {number} earnedPoints 
+   @returns {Object}
+   */
+  static async updateUserLevel(user, earnedPoints = 0) {
+    if (!user.stats) {
+      user.stats = {
+        points: 0,
+        xp: 0,
+        level: 1,
+        pointsToNextLevel: this.calculatePointsToNextLevel(1)
       };
     }
 
+    if (earnedPoints > 0) {
+      user.stats.points = (user.stats.points || 0) + earnedPoints;
+      user.stats.xp = (user.stats.xp || 0) + earnedPoints;
+    }
+
+    const initialLevel = user.stats.level || 1;
+    let leveledUp = false;
+    let levelsGained = 0;
+
+    if (!user.stats.pointsToNextLevel) {
+      user.stats.pointsToNextLevel = this.calculatePointsToNextLevel(user.stats.level || 1);
+    }
+
+    while (user.stats.points >= user.stats.pointsToNextLevel) {
+      user.stats.points -= user.stats.pointsToNextLevel;
+      
+      user.stats.level = (user.stats.level || 1) + 1;
+      levelsGained++;
+      leveledUp = true;
+      
+      user.stats.pointsToNextLevel = this.calculatePointsToNextLevel(user.stats.level);
+    }
+
     return {
-      stats,
-      levelUp: false,
-      rewards: null
+      leveledUp,
+      levelsGained,
+      initialLevel,
+      currentLevel: user.stats.level,
+      currentPoints: user.stats.points,
+      pointsToNextLevel: user.stats.pointsToNextLevel,
+      user
     };
   }
 
-  static async updateLevel(user) {
-    while (user.stats.xp >= user.stats.pointsToNextLevel) {
-      user.stats.xp -= user.stats.pointsToNextLevel;
-      user.stats.level += 1;
-      user.stats.pointsToNextLevel = this.calculatePointsToNextLevel(user.stats.level);
-    }
+  /**
+   @param {Object} user 
+   @returns {Object}
+   */
+  static getUserLevelStats(user) {
+    const level = user.stats?.level || 1;
+    const points = user.stats?.points || 0;
+    const pointsToNextLevel = user.stats?.pointsToNextLevel || this.calculatePointsToNextLevel(level);
+    
+    return {
+      level,
+      points,
+      pointsToNextLevel,
+      progress: Math.round((points / pointsToNextLevel) * this.XP_PER_LEVEL)
+    };
   }
 }
 

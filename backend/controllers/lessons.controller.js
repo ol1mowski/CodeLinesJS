@@ -2,6 +2,7 @@ import { Lesson } from "../models/index.js";
 import { User } from "../models/user.model.js";
 import { ValidationError } from "../utils/errors.js";
 import { LessonContent } from "../models/lessonContent.model.js";
+import { LevelService } from "../services/level.service.js";
 
 export const getLessons = async (req, res, next) => {
   try {
@@ -9,7 +10,7 @@ export const getLessons = async (req, res, next) => {
     const userId = req.user.userId;
 
     const user = await User.findById(userId)
-      .select("stats.learningPaths")
+      .select("stats.learningPaths stats.level stats.points stats.pointsToNextLevel")
       .lean();
 
     const query = {
@@ -65,12 +66,18 @@ export const getLessons = async (req, res, next) => {
       return acc;
     }, {});
 
+    const levelStats = LevelService.getUserLevelStats(user);
+
     res.json({
       lessons: groupedLessons,
       stats: {
         total: lessons.length,
         completed: usersCompletedLessons.length,
         progress: lessons.length ? Math.round((usersCompletedLessons.length / lessons.length) * 100) : 0,
+        level: levelStats.level,
+        points: levelStats.points,
+        pointsRequired: levelStats.pointsToNextLevel,
+        levelProgress: levelStats.progress
       },
     });
   } catch (error) {
@@ -89,7 +96,7 @@ export const getLessonById = async (req, res, next) => {
       }).populate("requirements", "title"),
       LessonContent.findOne({ lessonSlug: id }).lean(),
       User.findById(req.user.userId)
-        .select("stats.learningPaths stats.level")
+        .select("stats.learningPaths stats.level stats.points stats.pointsToNextLevel")
         .lean(),
     ]);
 
@@ -125,6 +132,8 @@ export const getLessonById = async (req, res, next) => {
       }
     }
     
+    const levelStats = LevelService.getUserLevelStats(user);
+    
     const response = {
       id: lesson._id,
       slug: lesson.slug,
@@ -144,6 +153,12 @@ export const getLessonById = async (req, res, next) => {
         sections: lessonContent.sections,
         quiz: lessonContent.quiz,
       },
+      userStats: {
+        level: levelStats.level,
+        points: levelStats.points,
+        pointsRequired: levelStats.pointsToNextLevel,
+        levelProgress: levelStats.progress
+      }
     };
 
     res.json(response);
@@ -151,8 +166,6 @@ export const getLessonById = async (req, res, next) => {
     next(error);
   }
 };
-
-
 
 export const completeLesson = async (req, res, next) => {
   try {
@@ -181,25 +194,40 @@ export const completeLesson = async (req, res, next) => {
     if (!isCompleted) {
       userLearningPaths.push({ _id: lesson._id, completedAt: new Date() });
 
-      user.stats.points = (user.stats.points || 0) + (lesson.points || 0);
-      user.stats.xp = (user.stats.xp || 0) + (lesson.xp || 0);
-
-      const currentLevel = user.stats.level || 1;
-      const pointsToNextLevel = currentLevel * 100;
-
-      if (user.stats.points >= pointsToNextLevel) {
-        user.stats.level = Math.floor(user.stats.points / 100) + 1;
-      }
+      const earnedPoints = lesson.points || 0;
+      const levelUpdate = await LevelService.updateUserLevel(user, earnedPoints);
 
       await user.save();
+      
+      const levelStats = LevelService.getUserLevelStats(user);
+
+      return res.json({
+        message: levelUpdate.leveledUp 
+          ? `Lekcja ukończona! Awansowałeś na poziom ${levelUpdate.currentLevel}!` 
+          : 'Lekcja ukończona',
+        stats: {
+          points: levelStats.points,
+          pointsRequired: levelStats.pointsToNextLevel,
+          xp: user.stats.xp,
+          level: levelStats.level,
+          levelProgress: levelStats.progress,
+          completedLessons: userLearningPaths.length,
+          leveledUp: levelUpdate.leveledUp,
+          levelsGained: levelUpdate.levelsGained
+        },
+      });
     }
 
+    const levelStats = LevelService.getUserLevelStats(user);
+    
     res.json({
-      message: 'Lekcja ukończona',
+      message: 'Lekcja została już wcześniej ukończona',
       stats: {
-        points: user.stats.points,
+        points: levelStats.points,
+        pointsRequired: levelStats.pointsToNextLevel,
         xp: user.stats.xp,
-        level: user.stats.level,
+        level: levelStats.level,
+        levelProgress: levelStats.progress,
         completedLessons: userLearningPaths.length,
       },
     });
