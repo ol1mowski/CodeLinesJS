@@ -274,9 +274,6 @@ export class StreakService {
     user.markModified('stats');
     await user.save();
 
-    const updatedUser = await User.findById(userId);
-
-
     return {
       streak: streakUpdate,
       dailyProgress: dailyUpdate

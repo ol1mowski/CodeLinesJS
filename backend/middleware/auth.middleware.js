@@ -1,23 +1,20 @@
 import jwt from 'jsonwebtoken';
-import { AuthError } from '../utils/errors.js';
+import { AuthError, ForbiddenError } from '../utils/errors.js';
 import { User } from '../models/user.model.js';
 
 export const authMiddleware = async (req, res, next) => {
   try {
+    let token;
     const authHeader = req.headers.authorization;
     
-    if (!authHeader) {
-      throw new AuthError('Brak tokenu autoryzacji');
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      token = authHeader.split(' ')[1];
+    } else if (req.cookies && req.cookies.jwt) {
+      token = req.cookies.jwt;
     }
-
-    if (!authHeader.startsWith('Bearer ')) {
-      throw new AuthError('Nieprawidłowy format tokenu');
-    }
-
-    const token = authHeader.split(' ')[1];
     
     if (!token) {
-      throw new AuthError('Brak tokenu');
+      throw new AuthError('Brak tokenu autoryzacji. Zaloguj się, aby uzyskać dostęp.');
     }
 
     let decoded;
@@ -25,18 +22,27 @@ export const authMiddleware = async (req, res, next) => {
       decoded = jwt.verify(token, process.env.JWT_SECRET);
     } catch (error) {
       if (error.name === 'JsonWebTokenError') {
-        throw new AuthError('Nieprawidłowy token');
+        throw new AuthError('Nieprawidłowy token. Zaloguj się ponownie.');
       }
       if (error.name === 'TokenExpiredError') {
-        await User.findByIdAndUpdate(decoded?.userId, { $set: { isActive: false } });
-        throw new AuthError('Token wygasł');
+        throw new AuthError('Token wygasł. Zaloguj się ponownie.');
       }
       throw error;
     }
 
+    const user = await User.findById(decoded.userId);
+    if (!user) {
+      throw new AuthError('Użytkownik powiązany z tym tokenem już nie istnieje.');
+    }
+
+    if (user.passwordChangedAt && user.passwordChangedAt.getTime() > decoded.iat * 1000) {
+      throw new AuthError('Hasło zostało zmienione. Zaloguj się ponownie.');
+    }
+
     req.user = {
       userId: decoded.userId,
-      email: decoded.email
+      email: decoded.email,
+      role: user.role || 'user'
     };
 
     await User.findByIdAndUpdate(decoded.userId, {
@@ -50,12 +56,16 @@ export const authMiddleware = async (req, res, next) => {
     
     if (timeToExpiry > 0) {
       setTimeout(async () => {
-        const user = await User.findById(decoded.userId);
-        
-        if (user && user.isActive) {
-          await User.findByIdAndUpdate(decoded.userId, {
-            $set: { isActive: false }
-          });
+        try {
+          const currentUser = await User.findById(decoded.userId);
+          
+          if (currentUser && currentUser.isActive) {
+            await User.findByIdAndUpdate(decoded.userId, {
+              $set: { isActive: false }
+            });
+          }
+        } catch (error) {
+          console.error('Błąd podczas dezaktywacji użytkownika:', error);
         }
       }, timeToExpiry);
     }
@@ -64,4 +74,18 @@ export const authMiddleware = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+};
+
+export const restrictTo = (...roles) => {
+  return (req, res, next) => {
+    if (!req.user) {
+      return next(new AuthError('Nie jesteś zalogowany'));
+    }
+
+    if (!roles.includes(req.user.role)) {
+      return next(new ForbiddenError('Nie masz uprawnień do wykonania tej akcji'));
+    }
+
+    next();
+  };
 };
