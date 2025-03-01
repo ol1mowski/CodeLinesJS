@@ -1,8 +1,8 @@
 {
-  "name": "backend",
+  "name": "codelinesjs-api",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "API dla platformy CodeLinesJS do nauki JavaScript",
+  "main": "server.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -10,9 +10,13 @@
     "dev": "nodemon server.js",
     "init-data": "node scripts/initLearningData.js",
     "update-stats": "node scripts/updateUserStats.js",
-    "init-paths": "node scripts/initLearningPaths.js"
+    "init-paths": "node scripts/initLearningPaths.js",
+    "vercel-build": "echo 'Build completed'"
   },
-  "keywords": [],
+  "engines": {
+    "node": ">=18.x"
+  },
+  "keywords": ["javascript", "learning", "api", "education"],
   "author": "",
   "license": "ISC",
   "dependencies": {

@@ -29,9 +29,18 @@ import progressRoutes from './routes/progress.routes.js';
 const app = express();
 const { isProduction } = config.app;
 
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: isProduction ? undefined : false,
+  crossOriginEmbedderPolicy: isProduction ? undefined : false,
+}));
 
-const limiter = rateLimit(config.rateLimit);
+const limiter = rateLimit({
+  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000,
+  max: parseInt(process.env.RATE_LIMIT_MAX) || 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: 'Zbyt wiele zapytań z tego adresu IP, spróbuj ponownie za 15 minut'
+});
 app.use('/api/', limiter);
 
 app.use(express.json({ limit: config.limits.jsonBodySize }));
@@ -39,7 +48,6 @@ app.use(express.urlencoded({ extended: true, limit: config.limits.jsonBodySize }
 app.use(cookieParser());
 
 app.use(mongoSanitize());
-
 app.use(xss());
 
 app.use(hpp({
@@ -50,7 +58,12 @@ app.use(hpp({
 
 app.use(compression());
 
-app.use(cors(config.cors));
+app.use(cors({
+  origin: isProduction ? config.cors.origin : '*',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With']
+}));
 
 app.use(responseEnhancer);
 
@@ -60,6 +73,10 @@ if (!isProduction) {
     next();
   });
 }
+
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok', environment: process.env.NODE_ENV });
+});
 
 app.use("/api/auth", authRoutes);
 app.use("/api/stats", statsRoutes);
@@ -75,18 +92,29 @@ app.use("/api/resources", resourcesRoutes);
 app.use('/api/users', usersRoutes);
 
 app.all('*', (req, res) => {
-  res.error(`Nie znaleziono trasy: ${req.originalUrl}`, 404);
+  res.status(404).json({
+    status: 'error',
+    message: `Nie znaleziono trasy: ${req.originalUrl}`
+  });
 });
 
 app.use(errorHandler);
 
-mongoose
-  .connect(config.db.uri, config.db.options)
-  .then(() => {
+const connectDB = async () => {
+  try {
+    await mongoose.connect(config.db.uri, config.db.options);
     console.log("Connected to MongoDB");
     initializeModels();
-  })
-  .catch((err) => console.error("MongoDB connection error:", err));
+  } catch (err) {
+    console.error("MongoDB connection error:", err);
+    if (isProduction) {
+      console.log("Retrying connection in 5 seconds...");
+      setTimeout(connectDB, 5000);
+    }
+  }
+};
+
+connectDB();
 
 process.on('unhandledRejection', (err) => {
   console.error('UNHANDLED REJECTION! Shutting down...', err.name, err.message);
@@ -104,6 +132,9 @@ process.on('uncaughtException', (err) => {
   }
 });
 
-const server = app.listen(config.app.port, () => {
-  console.log(`Server running on port ${config.app.port}`);
+const PORT = process.env.PORT || config.app.port || 5001;
+const server = app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
+
+export default app;
