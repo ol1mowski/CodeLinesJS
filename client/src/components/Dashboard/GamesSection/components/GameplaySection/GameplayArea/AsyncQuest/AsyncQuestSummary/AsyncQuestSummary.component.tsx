@@ -1,4 +1,4 @@
-import React, { memo, useEffect } from 'react';
+import { memo, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FaStar, FaClock } from 'react-icons/fa';
 import { AsyncChallenge } from '../../../../../types/asyncQuest.types';

@@ -3,10 +3,22 @@ import { FaUsers } from "react-icons/fa";
 import { useGroups } from "../../../../Hooks/useGroups";
 import { Link } from "react-router-dom";
 
+type Group = {
+  _id: string;
+  name: string;
+  membersCount: number;
+}
+
+type GroupsResponse = {
+  groups: Group[];
+  userGroups: Group[];
+}
+
 export const YourGroups = memo(() => {
   const { groups, isLoading } = useGroups();
 
-  const userGroups = groups?.userGroups || [];
+  const groupsData = groups as unknown as GroupsResponse;
+  const userGroups = groupsData?.userGroups || [];
 
   if (isLoading) {
     return (
@@ -47,7 +59,7 @@ export const YourGroups = memo(() => {
     <div className="bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10 p-4">
       <h2 className="text-lg font-bold text-js mb-4">Twoje grupy</h2>
       <div className="space-y-3">
-        {userGroups.map(group => (
+        {userGroups.map((group: Group) => (
           <Link
             key={group._id}
             to={`/dashboard/community/groups/${group._id}`}

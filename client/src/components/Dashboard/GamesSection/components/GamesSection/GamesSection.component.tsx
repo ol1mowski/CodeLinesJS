@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import { useGames } from '../../hooks/useGames';
 import { GameCard } from '../GamesList/GameCard.component';
+import { Game as GameCardGame } from '../../../../../types/games.types';
 
 export const GamesSection = memo(() => {
   const { games, isLoading, error } = useGames();
@@ -10,20 +11,37 @@ export const GamesSection = memo(() => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {games.map(game => (
-        <GameCard
-          key={game._id}
-          id={game._id}
-          title={game.title}
-          description={game.description}
-          difficulty={game.difficulty}
-          category={game.category}
-          isCompleted={game.isCompleted}
-          estimatedTime={game.estimatedTime}
-          rating={game.rating}
-          completions={game.completions}
-        />
-      ))}
+      {games.map(game => {
+        const gameCardProps: GameCardGame = {
+          _id: game._id,
+          id: game._id, 
+          slug: game.slug,
+          title: game.title,
+          description: game.description,
+          difficulty: game.difficulty,
+          category: game.category,
+          isCompleted: game.isCompleted,
+          rating: {
+            average: game.rating.average,
+            count: game.rating.count
+          },
+          completions: {
+            count: game.completions.count
+          },
+          rewardPoints: game.rewardPoints,
+          completedCount: game.completions.count,
+          totalPlayers: 0, 
+          thumbnailUrl: '', 
+          xpPoints: game.rewardPoints 
+        };
+
+        return (
+          <GameCard
+            key={game._id}
+            game={gameCardProps}
+          />
+        );
+      })}
     </div>
   );
 });

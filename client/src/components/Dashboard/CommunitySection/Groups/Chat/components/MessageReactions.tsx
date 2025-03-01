@@ -1,7 +1,6 @@
 import { memo } from 'react';
 import { motion } from 'framer-motion';
 import { MessageReaction } from '../../../types/messages.types';
-import type { User } from '../../../types/auth.types';
 
 type MessageReactionsProps = {
   reactions: MessageReaction[];

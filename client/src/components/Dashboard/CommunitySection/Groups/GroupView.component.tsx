@@ -2,7 +2,7 @@ import { memo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FaArrowLeft, FaUsers,  FaClock, FaCalendar, FaTag, FaSignOutAlt } from "react-icons/fa";
-import { useGroup } from "../hooks/useGroup";
+import { useGroup } from "../Hooks/useGroup";
 import { GroupChat } from "./Chat/GroupChat.component";
 import { format } from "date-fns";
 import { pl } from "date-fns/locale";
@@ -13,6 +13,14 @@ import { LeaveGroupModal } from "./Modals/LeaveGroupModal.component";
 import { useMutation } from "@tanstack/react-query";
 import { leaveGroup } from "../api/groups/groups.api";
 import toast from "react-hot-toast";
+import { useAuth } from "../../../../Hooks/useAuth";
+import { Group } from "../types/groups.types";
+
+type ExtendedGroup = Group & {
+  userRole: string;
+  createdAt: string;
+  isAdmin: boolean;
+}
 
 export const GroupView = memo(() => {
   const { groupId } = useParams<{ groupId: string }>();
@@ -20,10 +28,11 @@ export const GroupView = memo(() => {
   const { data: group, isLoading, error } = useGroup(groupId!);
   const [activeTab, setActiveTab] = useState<'chat' | 'members' | 'settings'>('chat');
   const [showLeaveModal, setShowLeaveModal] = useState(false);
+  const { token } = useAuth();
 
   const leaveGroupMutation = useMutation({
     mutationFn: async () => {
-      await leaveGroup(groupId!);
+      await leaveGroup(groupId!, token || '');
     },
     onSuccess: () => {
       navigate('/dashboard/community/groups');
@@ -53,6 +62,8 @@ export const GroupView = memo(() => {
     );
   }
 
+  const extendedGroup = group as unknown as ExtendedGroup;
+
   const renderContent = () => {
     switch (activeTab) {
       case 'chat':
@@ -62,7 +73,7 @@ export const GroupView = memo(() => {
           <GroupMembers 
             members={group.members} 
             groupId={groupId!} 
-            userRole={group.userRole} 
+            userRole={extendedGroup.userRole} 
           />
         );
       case 'settings':
@@ -95,7 +106,7 @@ export const GroupView = memo(() => {
             </div>
           </div>
 
-          {!group.isAdmin && (
+          {!extendedGroup.isAdmin && (
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -129,19 +140,19 @@ export const GroupView = memo(() => {
             <div>
               <p className="text-gray-400 text-sm">Utworzono</p>
               <p className="text-white font-medium">
-                {format(new Date(group.createdAt), 'dd MMM yyyy', { locale: pl })}
+                {format(new Date(extendedGroup.createdAt), 'dd MMM yyyy', { locale: pl })}
               </p>
             </div>
           </div>
           <div className="bg-dark/20 rounded-lg p-4 flex items-center gap-3">
             <div className="bg-js/20 rounded-lg p-2">
-              <span className="text-js font-medium uppercase">{group.userRole}</span>
+              <span className="text-js font-medium uppercase">{extendedGroup.userRole}</span>
             </div>
           </div>
         </div>
 
         <div className="flex flex-wrap gap-2">
-          {group.tags.map((tag) => (
+          {group.tags.map((tag: string) => (
             <span
               key={tag}
               className="px-3 py-1 rounded-full text-sm bg-js/10 text-js border border-js/20 
@@ -157,7 +168,7 @@ export const GroupView = memo(() => {
       <GroupTabs 
         activeTab={activeTab}
         onTabChange={setActiveTab}
-        isAdmin={group.userRole === 'admin'}
+        isAdmin={extendedGroup.userRole === 'admin'}
       />
 
       {renderContent()}

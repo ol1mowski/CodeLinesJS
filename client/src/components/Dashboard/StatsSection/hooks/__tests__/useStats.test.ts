@@ -1,10 +1,10 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { useStats } from "../useStats.hook";
-import { useAuth } from "../../../../../hooks/useAuth";
+import { useAuth } from "../../../../../Hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { beforeEach, describe, expect, vi, it } from "vitest";
 
-vi.mock("../../../../../hooks/useAuth", () => ({
+vi.mock("../../../../../Hooks/useAuth", () => ({
   useAuth: vi.fn()
 }));
 vi.mock("@tanstack/react-query", () => ({

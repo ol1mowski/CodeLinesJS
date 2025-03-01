@@ -1,14 +1,14 @@
-import React, { memo, useState, useCallback } from 'react';
+import { memo, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
-import js from 'react-syntax-highlighter/dist/esm/languages/hljs/javascript';
+import SyntaxHighlighter from 'react-syntax-highlighter';
 import { vs2015 } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { ScopeChallenge } from '../../../../../types/scopeExplorer.types';
 import { getCategoryIcon, getCategoryLabel, getDifficultyColor, getDifficultyLabel } from './ScopeExplorerGame.utils';
 import { useKeyboardShortcuts } from '../../JSTypoHunter/hooks/useKeyboardShortcuts';
 import { ScopeExplorerProgress } from '../ScopeExplorerProgress/ScopeExplorerProgress.component';
 
-SyntaxHighlighter.registerLanguage('javascript', js);
+// Obejście problemu z typowaniem
+const SyntaxHighlighterComponent = SyntaxHighlighter as any;
 
 type ScopeExplorerGameProps = {
   currentChallenge: ScopeChallenge;
@@ -30,7 +30,6 @@ export const ScopeExplorerGame = memo(({
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showExplanation, setShowExplanation] = useState(false);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
-  const [wrongAttempts, setWrongAttempts] = useState(0);
   const [showHint, setShowHint] = useState(false);
 
   const handleAnswerSelect = useCallback((answer: string) => {
@@ -46,17 +45,9 @@ export const ScopeExplorerGame = memo(({
         setSelectedAnswer(null);
         setShowExplanation(false);
         setIsCorrect(null);
-        setWrongAttempts(0);
         setShowHint(false);
       }, 1500);
     } else {
-      setWrongAttempts(prev => {
-        const newAttempts = prev + 1;
-        if (newAttempts >= 2) {
-          setShowHint(true);
-        }
-        return newAttempts;
-      });
       setTimeout(() => {
         onGameOver();
       }, 2000);
@@ -107,7 +98,7 @@ export const ScopeExplorerGame = memo(({
       </div>
 
       <div className="bg-dark-800/50 border border-js/10 rounded-lg overflow-hidden">
-        <SyntaxHighlighter
+        <SyntaxHighlighterComponent
           language="javascript"
           style={vs2015}
           customStyle={{
@@ -118,7 +109,7 @@ export const ScopeExplorerGame = memo(({
           }}
         >
           {currentChallenge.code}
-        </SyntaxHighlighter>
+        </SyntaxHighlighterComponent>
       </div>
 
       <div className="grid grid-cols-3 gap-4">

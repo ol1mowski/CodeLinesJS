@@ -1,11 +1,9 @@
 import { Group } from "../../types/groups.types";
-
-const API_URL = 'http://localhost:5001/api';
+import { API_URL } from "../../../../../config/api.config";
 
 export const groupsApi = {
-  fetchGroup: async (groupId: string): Promise<Group> => {
-    const token = sessionStorage.getItem("token") || localStorage.getItem("token");
-    const response = await fetch(`${API_URL}/groups/${groupId}`, {
+  fetchGroup: async (groupId: string, token: string): Promise<Group> => {
+    const response = await fetch(`${API_URL}groups/${groupId}`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -20,9 +18,8 @@ export const groupsApi = {
   }
 };
 
-export const leaveGroup = async (groupId: string) => {
-  const token = sessionStorage.getItem("token") || localStorage.getItem("token");
-  const response = await fetch(`${API_URL}/groups/${groupId}/leave`, {
+export const leaveGroup = async (groupId: string, token: string) => {
+  const response = await fetch(`${API_URL}groups/${groupId}/leave`, {
     method: "POST",
     headers: {
       'Authorization': `Bearer ${token}`
@@ -34,9 +31,8 @@ export const leaveGroup = async (groupId: string) => {
   }
 };
 
-export const updateGroupName = async (groupId: string, title: string) => {
-  const token = sessionStorage.getItem("token") || localStorage.getItem("token");
-  const response = await fetch(`${API_URL}/groups/${groupId}/name`, {
+export const updateGroupName = async (groupId: string, title: string, token: string) => {
+  const response = await fetch(`${API_URL}groups/${groupId}/name`, {
     method: "PUT",
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -51,9 +47,8 @@ export const updateGroupName = async (groupId: string, title: string) => {
 };
 
 
-export const updateGroupTags = async (groupId: string, tags: string[]) => {
-  const token = sessionStorage.getItem("token") || localStorage.getItem("token");
-  const response = await fetch(`${API_URL}/groups/${groupId}/tags`, {
+export const updateGroupTags = async (groupId: string, tags: string[], token: string) => {
+  const response = await fetch(`${API_URL}groups/${groupId}/tags`, {
     method: "PUT",
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -67,9 +62,8 @@ export const updateGroupTags = async (groupId: string, tags: string[]) => {
   }
 };
 
-export const deleteGroup = async (groupId: string) => {
-  const token = sessionStorage.getItem("token") || localStorage.getItem("token");
-  const response = await fetch(`${API_URL}/groups/${groupId}`, {
+export const deleteGroup = async (groupId: string, token: string) => {
+  const response = await fetch(`${API_URL}groups/${groupId}`, {
     method: "DELETE",
     headers: {
       'Authorization': `Bearer ${token}`
@@ -81,9 +75,8 @@ export const deleteGroup = async (groupId: string) => {
   }
 };
 
-export const deleteMember = async (groupId: string, memberId: string) => {
-  const token = sessionStorage.getItem("token") || localStorage.getItem("token");
-  const response = await fetch(`${API_URL}/groups/${groupId}/members/${memberId}`, {
+  export const deleteMember = async (groupId: string, memberId: string, token: string) => {
+  const response = await fetch(`${API_URL}groups/${groupId}/members/${memberId}`, {
     method: "DELETE",
     headers: {
       'Authorization': `Bearer ${token}`

@@ -1,6 +1,6 @@
-import React, { memo, useState, useCallback, useEffect } from 'react';
+import { memo, useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { GameStats } from '../../../../types/scopeExplorer.types';
+import { GameStats, ScopeChallenge } from '../../../../types/scopeExplorer.types';
 import { useGameTimer } from '../JSTypoHunter/hooks/useGameTimer';
 import { ScopeExplorerStats } from './ScopeExplorerStats/ScopeExplorerStats.component';
 import { ScopeExplorerGame } from './ScopeExplorerGame/ScopeExplorerGame.component';
@@ -8,9 +8,16 @@ import { ScopeExplorerSummary } from './ScopeExplorerSummary/ScopeExplorerSummar
 import { useGamesQuery } from '../../../../hooks/useGamesQuery';
 import { GameIntro } from '../GameIntro/GameIntro.component';
 
+
+type Game = {
+  slug: string;
+  estimatedTime: number;
+  gameData: ScopeChallenge[];
+}
+
 const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean }) => {
   const { data, isLoading, error } = useGamesQuery();
-  const gameContent = data?.games.find(game => game.slug === 'scope-explorer');
+  const gameContent = data?.games.find((game: Game) => game.slug === 'scope-explorer');
   const [isGameStarted, setIsGameStarted] = useState(false);
 
   const [gameStats, setGameStats] = useState<GameStats>({
@@ -54,9 +61,10 @@ const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean }) => {
       hoisting: { total: 0, correct: 0, points: 0 }
     };
 
-    gameContent?.gameData.forEach(challenge => {
-      initialCategoryStats[challenge.category].total++;
-      initialCategoryStats[challenge.category].points += challenge.points || 0;
+    gameContent?.gameData.forEach((challenge: ScopeChallenge) => {
+      const category = challenge.category as keyof typeof initialCategoryStats;
+      initialCategoryStats[category].total++;
+      initialCategoryStats[category].points += challenge.points || 0;
     });
 
     setGameStats(prev => ({
@@ -102,9 +110,10 @@ const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean }) => {
       hoisting: { total: 0, correct: 0, points: 0 }
     };
 
-    gameContent?.gameData.forEach(challenge => {
-      initialCategoryStats[challenge.category].total++;
-      initialCategoryStats[challenge.category].points += challenge.points || 0;
+    gameContent?.gameData.forEach((challenge: ScopeChallenge) => {
+      const category = challenge.category as keyof typeof initialCategoryStats;
+      initialCategoryStats[category].total++;
+      initialCategoryStats[category].points += challenge.points || 0;
     });
 
     setGameStats({

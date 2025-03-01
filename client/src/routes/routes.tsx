@@ -17,9 +17,9 @@ import { GameplayRouter } from "../components/Dashboard/GamesSection/components/
 
 const Home = lazy(() => import("../pages/Home"));
 const Auth = lazy(() => import("../pages/Auth"));
-const CommunityFeed = lazy(() => import("../components/Dashboard/CommunitySection/Feed/CommunityFeed.component"));
-const CommunityRanking = lazy(() => import("../components/Dashboard/CommunitySection/Ranking/CommunityRanking.component"));
-const CommunityGroups = lazy(() => import("../components/Dashboard/CommunitySection/Groups/CommunityGroups.component"));
+// const CommunityFeed = lazy(() => import("../components/Dashboard/CommunitySection/Feed/CommunityFeed.component"));
+// const CommunityRanking = lazy(() => import("../components/Dashboard/CommunitySection/Ranking/CommunityRanking.component"));
+// const CommunityGroups = lazy(() => import("../components/Dashboard/CommunitySection/Groups/CommunityGroups.component"));
 
 export const router = createBrowserRouter([
   {

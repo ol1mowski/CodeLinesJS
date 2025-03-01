@@ -1,7 +1,7 @@
 import { memo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaPaperPlane, FaSpinner, FaEdit, FaTrash, FaSmile, FaEllipsisV, FaCopy, FaFlag, FaTimes, FaExclamationTriangle } from "react-icons/fa";
-import { useAuth } from "../../../../../hooks/useAuth";
+import { useAuth } from "../../../../../Hooks/useAuth";
 import { format } from "date-fns";
 import { pl } from "date-fns/locale";
 import { Message } from "../../../../../types/messages.types";
@@ -14,6 +14,15 @@ import { useMessageMutations } from './hooks/useMessageMutations';
 import { useForm } from "react-hook-form";
 import { useMessageBubble } from "./hooks/useMessageBubble";
 import { MessageReactions } from './components/MessageReactions';
+
+type MessageWithReactions = Message & {
+  reactions?: Array<{
+    _id: string;
+    emoji: string;
+    userId: string;
+    username: string;
+  }>;
+}
 
 type GroupChatProps = {
   groupId: string;
@@ -51,11 +60,17 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
     isReporting
   } = useReportMessage(groupId);
 
+  const handleReportSubmit = (reason: string, description: string) => {
+    handleReport(reason as any, description);
+  };
+
   const {
     deleteMessageMutation: messageMutationsDeleteMessageMutation
   } = useMessageMutations(groupId);
 
   const { handleSubmit } = useForm();
+
+  const onSubmit = () => handleSendMessage();
 
   useClickOutside(() => {
     const allMessages = document.querySelectorAll('.message-bubble');
@@ -85,7 +100,7 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
     { emoji: '🤔', name: 'Zamyślenie' }
   ];
 
-  const MessageBubble = ({ message, isOwnMessage }: { message: Message; isOwnMessage: boolean }) => {
+  const MessageBubble = ({ message, isOwnMessage }: { message: MessageWithReactions; isOwnMessage: boolean }) => {
     const { 
       showActions, 
       menuRef, 
@@ -96,12 +111,12 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
       handleCopy,
       handleReport,
     } = useMessageBubble(
-      message, 
+      message as any, 
       groupId,
       user,
-      handleEdit, 
-      openDeleteModal, 
-      openReportModal
+      handleEdit as any, 
+      openDeleteModal as any, 
+      openReportModal as any
     );
 
     return (
@@ -319,7 +334,7 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
                       <motion.button
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        onClick={() => handleReport(message)}
+                        onClick={() => handleReport()}
                         className="w-full p-2.5 rounded-lg hover:bg-red-500/10 text-gray-200 text-left text-sm flex items-center gap-2"
                       >
                         <FaFlag className="text-red-500" />
@@ -409,7 +424,7 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
         </div>
 
         <form
-          onSubmit={handleSubmit(handleSendMessage)}
+          onSubmit={handleSubmit(onSubmit)}
           className="p-4 border-t border-js/10"
         >
           <div className="flex gap-2">
@@ -505,7 +520,7 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
           message={messageToReport}
           isOpen={isReportModalOpen}
           onClose={closeReportModal}
-          onSubmit={handleReport}
+          onSubmit={handleReportSubmit}
           isReporting={isReporting}
         />
       )}

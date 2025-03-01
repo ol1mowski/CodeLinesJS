@@ -27,7 +27,7 @@ export const useCodeExecution = () => {
       const mockFetch = () => Promise.resolve({ json: () => Promise.resolve({ data: 'mock data' }) });
       const mockTimeout = (cb: Function, ms: number) => setTimeout(cb, Math.min(ms, 1000));
 
-      const context = {
+      const context = { 
         console: mockConsole,
         fetch: mockFetch,
         setTimeout: mockTimeout,
@@ -40,7 +40,7 @@ export const useCodeExecution = () => {
         }
       `;
 
-        const result = await new Function('context', wrappedCode)(context);
+      await new Function('context', wrappedCode)(context);
 
       return {
         success: true,
@@ -51,7 +51,7 @@ export const useCodeExecution = () => {
       return {
         success: false,
         output: output,
-        error: error.message
+        error: (error as Error).message
       };
     } finally {
       setIsRunning(false);

@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { memo } from "react";
 import { FaTrophy, FaStar, FaCalendarDay } from "react-icons/fa";
-import { useRanking } from "../../../../hooks/useRanking";
+import { useRanking } from "../../../../Hooks/useRanking";
 
 export const RankingStats = memo(() => {
   const { data, isLoading } = useRanking();
@@ -32,32 +32,27 @@ export const RankingStats = memo(() => {
       icon: FaTrophy,
       label: "Twoja pozycja",
       value: `#${userStats?.rank || '-'}`,
-      change: userStats?.rankChange !== undefined 
-        ? userStats.rankChange > 0 
-          ? `+${userStats.rankChange}` 
-          : userStats.rankChange.toString()
-        : undefined,
       gradient: "from-js/20 to-js/30",
     },
     {
       icon: FaStar,
       label: "Poziom",
-      value: userStats?.stats.level?.toLocaleString() || '-',
-      change: userStats?.stats.level !== undefined
-        ? userStats.stats.level > 0
-          ? `+${userStats.stats.level}`
-          : userStats.stats.level.toString()
+      value: userStats?.level?.toLocaleString() || '-',
+      change: userStats?.level !== undefined
+        ? userStats.level > 0
+          ? `+${userStats.level}`
+          : userStats.level.toString()
         : undefined,
       gradient: "from-js/20 to-js/30",
     },
     {
       icon: FaCalendarDay,
       label: "Streak",
-      value: userStats?.stats.streak?.toLocaleString() || '-',
-      change: userStats?.stats.streak !== undefined
-        ? userStats.stats.streak > 0
-          ? `+${userStats.stats.streak}`
-          : userStats.stats.streak.toString()
+      value: userStats?.streak?.toLocaleString() || '-',
+      change: userStats?.streak !== undefined
+        ? userStats.streak > 0
+          ? `+${userStats.streak}`
+          : userStats.streak.toString()
         : undefined,
       gradient: "from-js/20 to-js/30",
     },

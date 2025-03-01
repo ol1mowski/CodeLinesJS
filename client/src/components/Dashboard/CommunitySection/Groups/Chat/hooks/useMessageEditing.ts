@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Message } from "../../../../../../types/messages.types";
 import { useForm } from "react-hook-form";
-import { messageValidators } from "../utils/messageValidators";
 
 type EditMessageForm = {
   editedMessage: string;

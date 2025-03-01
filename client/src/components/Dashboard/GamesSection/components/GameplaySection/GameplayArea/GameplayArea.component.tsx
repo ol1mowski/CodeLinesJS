@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, memo } from 'react';
+import { lazy, Suspense, memo } from 'react';
 import { useParams } from 'react-router-dom';
 import { GameContentProvider } from '../../../contexts/GameContentContext';
 

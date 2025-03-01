@@ -1,4 +1,4 @@
-import React, { memo, useState, useEffect, useCallback } from 'react';
+import { memo, useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GameStats } from '../../../../types/regexRaider.types';
 import { useGameTimer } from '../JSTypoHunter/hooks/useGameTimer';
@@ -6,13 +6,12 @@ import { RegexRaiderStats } from './RegexRaiderStats/RegexRaiderStats.component'
 import { RegexRaiderGame } from './RegexRaiderGame/RegexRaiderGame.component';
 import { RegexRaiderSummary } from './RegexRaiderSummary/RegexRaiderSummary.component';
 import { useGamesQuery } from '../../../../hooks/useGamesQuery';
-import { useParams } from 'react-router-dom';
 import { GameIntro } from '../GameIntro/GameIntro.component';
+import { Game } from '../../../../types/games.types';
 
 const RegexRaider = memo(({ isPaused = false }: { isPaused?: boolean }) => {
-  const { slug } = useParams();
   const { data, isLoading, error } = useGamesQuery();
-  const gameContent = data?.games.find(game => game.slug === 'regex-raider');
+  const gameContent = data?.games.find((game: Game) => game.slug === 'regex-raider');
   const [isGameStarted, setIsGameStarted] = useState(false);
 
   const [gameStats, setGameStats] = useState<GameStats>({

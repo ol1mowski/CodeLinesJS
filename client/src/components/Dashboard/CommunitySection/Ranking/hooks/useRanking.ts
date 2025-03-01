@@ -1,10 +1,13 @@
 import { useQuery, useQueryClient, QueryClient } from '@tanstack/react-query';
 
+import { useAuth } from '../../../../../Hooks/useAuth';
+import { API_URL } from '../../../../../config/api.config';
+
 const RANKING_QUERY_KEY = 'ranking';
 
 const fetchRanking = async () => {
-  const token = sessionStorage.getItem('token') || localStorage.getItem('token');
-  const response = await fetch(`http://localhost:5001/api/ranking`, {
+  const { token } = useAuth();
+  const response = await fetch(`${API_URL}ranking`, {
     headers: {
       'Authorization': `Bearer ${token}`
     }

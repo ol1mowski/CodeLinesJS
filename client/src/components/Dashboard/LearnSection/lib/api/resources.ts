@@ -1,15 +1,12 @@
-import { getAuthToken } from '../utils/auth';
+import { API_URL } from "../../../../../config/api.config";
 
-const API_URL = 'http://localhost:5001/api';
-
-export const fetchResources = async () => {
-  const token = getAuthToken();
+export const fetchResources = async (token: string) => {
   
   if (!token) {
     throw new Error('No authentication token found');
   }
 
-  const response = await fetch(`${API_URL}/resources`, {
+  const response = await fetch(`${API_URL}resources`, {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`,

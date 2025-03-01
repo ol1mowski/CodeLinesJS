@@ -1,7 +1,6 @@
 import { Suspense, lazy, ComponentType } from 'react';
-import { LoadingFallback } from './LoadingFallback.component';
 import { ErrorBoundary } from './ErrorBoundary.component';
-
+import { LoadingScreen } from '../UI/LoadingScreen/LoadingScreen.component';
 type AsyncComponentProps<T> = {
   importFn: () => Promise<{ default: ComponentType<T> }>;
   props?: T;
@@ -12,7 +11,7 @@ export function AsyncComponent<T>({ importFn, props }: AsyncComponentProps<T>) {
 
   return (
     <ErrorBoundary>
-      <Suspense fallback={<LoadingFallback />}>
+      <Suspense fallback={<LoadingScreen />}>
         <LazyComponent {...(props as any)} />
       </Suspense>
     </ErrorBoundary>

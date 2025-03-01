@@ -1,4 +1,4 @@
-import React, { memo, useState, useCallback } from 'react';
+import { memo, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Editor } from '@monaco-editor/react';
 import { CodeChallenge } from '../../../../../types/jsTypoHunter.types';

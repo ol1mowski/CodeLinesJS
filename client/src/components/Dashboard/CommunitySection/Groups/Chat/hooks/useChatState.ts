@@ -10,8 +10,8 @@ import { useClickOutside } from './useClickOutside';
 export const useChatState = (groupId: string) => {
   const { messages, hasNextPage, isFetchingNextPage, fetchNextPage } = useMessages(groupId);
   const { sendMessageMutation, editMessageMutation, deleteMessageMutation } = useMessageMutations(groupId);
-  const { editingMessageId, registerEdit, handleSubmitEdit, startEditing, cancelEditing } = useMessageEditing();
-  const { messagesEndRef, scrollToBottom } = useScrollToBottom(messages);
+  const { editingMessageId, registerEdit, startEditing, cancelEditing } = useMessageEditing();
+  const { messagesEndRef } = useScrollToBottom(messages);
   const { register: registerMessage, handleSubmit: handleSubmitMessage } = useForm<{ message: string }>();
   const [messageToDelete, setMessageToDelete] = useState<Message | null>(null);
 

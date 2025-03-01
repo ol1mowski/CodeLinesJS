@@ -1,4 +1,4 @@
-import React, { memo, useMemo, useEffect } from 'react';
+import { memo, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FaClock, FaStar, FaCode, FaCube, FaArrowUp } from 'react-icons/fa';
 import { ScopeChallenge } from '../../../../../types/scopeExplorer.types';
@@ -33,20 +33,6 @@ export const ScopeExplorerSummary = memo(({
     updatePoints(score);
   }, [score, updatePoints]);
 
-  const stats = useMemo(() => {
-    const categoryStats: Record<string, CategoryStats> = {
-      scope: { total: 0, points: 0, correct: 0 },
-      closure: { total: 0, points: 0, correct: 0 },
-      hoisting: { total: 0, points: 0, correct: 0 }
-    };
-
-    challenges.forEach(challenge => {
-      categoryStats[challenge.category].total++;
-      categoryStats[challenge.category].points += challenge.points || 0;
-    });
-
-    return categoryStats;
-  }, [challenges]);
 
   const formatTime = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);

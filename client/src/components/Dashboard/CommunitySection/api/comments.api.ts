@@ -14,7 +14,7 @@ const handleError = (error: any) => {
 };
 
 export const commentsApi = {
-  fetchComments: async (postId: string, token: string): Promise<Comment[]> => {
+  fetchComments: async (postId: string, token: string): Promise<Comment[] | undefined> => {
     try {
       const response = await fetch(`${API_URL}posts/${postId}/comments`, {
         headers: {
@@ -29,10 +29,11 @@ export const commentsApi = {
       return response.json();
     } catch (error) {
       handleError(error);
+      return undefined;
     }
   },
 
-  addComment: async (postId: string, content: string, token: string): Promise<Comment> => {
+  addComment: async (postId: string, content: string, token: string): Promise<Comment | undefined> => {
     try {
       const response = await fetch(`${API_URL}posts/${postId}/comments`, {
         method: 'POST',
@@ -50,6 +51,7 @@ export const commentsApi = {
       return response.json();
     } catch (error) {
       handleError(error);
+      return undefined;
     }
   }
 }; 

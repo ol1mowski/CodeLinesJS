@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { motion } from 'framer-motion';
 import { FaCode, FaStar, FaClock } from 'react-icons/fa';
 import { GameStats } from '../../../../../types/asyncQuest.types';

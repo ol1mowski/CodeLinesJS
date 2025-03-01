@@ -7,7 +7,7 @@ import { useState } from "react";
 import { Button } from "../../../UI/Button/Button.component";
 import { FormInput } from "../../../UI/Form/FormInput/FormInput.component";
 import { ForgotPasswordFormData, forgotPasswordSchema } from "../../../../schemas/auth.schema";
-import { useAuth } from "../../../../hooks/useAuth";
+import { useAuth } from "../../../../Hooks/useAuth";
 
 const ForgotPasswordForm = () => {
   const { forgotPassword, loading, error } = useAuth();

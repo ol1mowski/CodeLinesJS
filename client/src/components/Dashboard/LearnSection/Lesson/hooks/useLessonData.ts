@@ -8,7 +8,7 @@ import { toast } from "react-hot-toast";
 import { useLearningPaths } from '../../LearningPaths/hooks/useLearningPaths';
 
 export const useLessonData = (lessonSlug: string) => {
-  const { userId } = useAuth();
+  const { userId, token } = useAuth();
   const queryClient = useQueryClient();
   const { refetch: refetchLearningPaths } = useLearningPaths();
   const [activeSection, setActiveSection] = useState(0);
@@ -20,7 +20,7 @@ export const useLessonData = (lessonSlug: string) => {
     refetch
   } = useQuery({
     queryKey: ["lesson", lessonSlug],
-    queryFn: () => fetchLesson(lessonSlug),
+    queryFn: () => fetchLesson(lessonSlug, token!),
     enabled: !!lessonSlug,
     retry: false
   });
@@ -39,7 +39,7 @@ export const useLessonData = (lessonSlug: string) => {
 
   const updateProgressMutation = useMutation({
     mutationFn: (progress: LessonProgress) =>
-      updateLessonProgress(userId!, lessonSlug, progress),
+        updateLessonProgress(userId!, lessonSlug, progress, token!  ),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["userProgress"] });
     }
@@ -83,7 +83,8 @@ export const useLessonData = (lessonSlug: string) => {
       const result = await completeLessonMutation.mutateAsync({
         userId: userId,
         lessonId: lesson.id,
-        pathId: lesson.pathId
+        pathId: lesson.pathId,
+        token: token!
       });
       
       await refetch();

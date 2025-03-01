@@ -2,6 +2,7 @@ import React, { memo, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { RegexRaiderHint } from '../RegexRaiderHint/RegexRaiderHint.component';
 import { useGamesQuery } from '../../../../../hooks/useGamesQuery';
+import { Game } from '../../../../../types/games.types';
 
 type RegexRaiderGameProps = {
   onScoreUpdate: (points: number) => void;
@@ -17,7 +18,7 @@ export const RegexRaiderGame = memo(({
   onGameOver
 }: RegexRaiderGameProps) => {
   const { data } = useGamesQuery();
-  const gameContent = data?.games.find(game => game.slug === 'regex-raider');
+  const gameContent = data?.games.find((game: Game) => game.slug === 'regex-raider');
   
   const [userRegex, setUserRegex] = useState('');
   const [matches, setMatches] = useState<string[]>([]);

@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { GameContent } from '../types/games.type';
+import { API_URL } from '../../../../config/api.config';
+import { useAuth } from '../../../../Hooks/useAuth';
 
 type GameContentContextType = {
   gameContent: GameContent | null;
@@ -18,10 +20,10 @@ export const GameContentProvider = ({ children }: { children: React.ReactNode })
   const fetchGameContent = useCallback(async (slug: string) => {
     setIsLoading(true);
     setError(null);
+    const { token } = useAuth();
 
     try {
-      const token = sessionStorage.getItem('token') || localStorage.getItem('token');
-      const response = await fetch('http://localhost:5001/api/games', {
+      const response = await fetch(`${API_URL}/games`, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`

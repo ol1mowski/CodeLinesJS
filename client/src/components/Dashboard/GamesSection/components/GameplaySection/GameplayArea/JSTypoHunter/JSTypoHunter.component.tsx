@@ -1,4 +1,4 @@
-import React, { memo, useState, useCallback, useEffect } from 'react';
+import { memo, useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GameStats } from '../../../../types/jsTypoHunter.types';
 import { JSTypoHunterStats } from './JSTypoHunterStats/JSTypoHunterStats.component';
@@ -7,7 +7,7 @@ import { useGameTimer } from './hooks/useGameTimer';
 import { useGamesQuery } from '../../../../hooks/useGamesQuery';
 import { GameIntro } from '../GameIntro/GameIntro.component';
 import { JSTypoHunterSummary } from './JSTypoHunterSummary/JSTypoHunterSummary.component';
-
+import { Game } from '../../../../types/games.types';
 const getDifficultyPoints = (difficulty: 'easy' | 'medium' | 'hard'): number => {
   switch (difficulty) {
     case 'easy':
@@ -23,7 +23,7 @@ const getDifficultyPoints = (difficulty: 'easy' | 'medium' | 'hard'): number => 
 
 const JSTypoHunter = memo(({ isPaused = false }: { isPaused?: boolean }) => {
   const { data, isLoading, error } = useGamesQuery();
-  const gameContent = data?.games.find(game => game.slug === 'js-typo-hunter');
+  const gameContent = data?.games.find((game: Game) => game.slug === 'js-typo-hunter');
   const [isGameStarted, setIsGameStarted] = useState(false);
 
   const [gameStats, setGameStats] = useState<GameStats>({
