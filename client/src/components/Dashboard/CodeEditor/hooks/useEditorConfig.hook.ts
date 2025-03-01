@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
 import { editor } from 'monaco-editor';
-import { jsSnippets } from '../constants/snippets';
 
 export const useEditorConfig = () => {
 
@@ -32,11 +31,7 @@ export const useEditorConfig = () => {
   const setupEditor = useCallback((monaco: any) => {
     monaco.languages.registerCompletionItemProvider('javascript', {
       provideCompletionItems: () => ({
-        suggestions: jsSnippets.map(snippet => ({
-          ...snippet,
-          kind: monaco.languages.CompletionItemKind.Snippet,
-          insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-        })),
+        suggestions: [],
       }),
     });
   }, []);

@@ -1,7 +1,7 @@
 import { Editor } from "@monaco-editor/react";
 import { FaSpinner } from "react-icons/fa";
 
-const EditorComponent = ({ code, onChange, onMount, isEditorReady }) => (
+const EditorComponent = ({ code, onChange, onMount, isEditorReady }: { code: string; onChange: (value: string | undefined) => void; onMount: () => void; isEditorReady: boolean }) => (
   <div className="h-[calc(100%-4rem)] rounded overflow-hidden relative">
     {!isEditorReady && (
       <div className="absolute inset-0 flex items-center justify-center bg-dark/50">

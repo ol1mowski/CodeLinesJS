@@ -56,7 +56,7 @@ export const CodeEditor = memo(() => {
         <EditorComponent
           code={code}
           onChange={handleEditorChange}
-          onMount={handleEditorDidMount}
+          onMount={() => handleEditorDidMount(null)}
           isEditorReady={isEditorReady}
         />
         <ConsoleComponent
