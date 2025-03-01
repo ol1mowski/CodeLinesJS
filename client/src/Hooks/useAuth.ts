@@ -21,6 +21,9 @@ type AuthState = {
     password: string,
     rememberMe?: boolean
   ) => Promise<void>;
+  forgotPassword: (email: string) => Promise<string>;
+  register: (email: string, password: string, username: string) => Promise<void>;
+  loginWithGoogle: (credentialResponse: any, rememberMe?: boolean) => Promise<void>;
 };
 
 export const useAuth = (): AuthState => {

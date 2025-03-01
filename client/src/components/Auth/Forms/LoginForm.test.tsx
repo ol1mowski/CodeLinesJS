@@ -1,7 +1,18 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import LoginForm from './LoginForm/LoginForm.component';
 
+vi.mock('../../../Hooks/useAuth', () => ({
+  useAuth: vi.fn(() => ({
+    login: vi.fn(),
+    loading: false,
+    error: null
+  }))
+}));
+
+vi.mock('./LoginForm/GoogleLoginButton.component', () => ({
+  GoogleLoginButton: () => <div data-testid="google-login-button">Google Login</div>
+}));
 
 describe('LoginForm', () => {
   it('validates required fields', async () => {
@@ -19,15 +30,17 @@ describe('LoginForm', () => {
   it('validates email format', async () => {
     render(<LoginForm />);
     
-    const emailInput = screen.getByRole('textbox', { name: /email/i });
-    const submitButton = screen.getByRole('button', { name: /zaloguj/i });
-    
+    const emailInput = screen.getByPlaceholderText('twoj@email.com');
     fireEvent.change(emailInput, { target: { value: 'invalid-email' } });
+    
+    const passwordInput = screen.getByPlaceholderText('••••••••');
+    fireEvent.change(passwordInput, { target: { value: 'password123' } });
+    
+    const submitButton = screen.getByRole('button', { name: /zaloguj/i });
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      const errorMessage = screen.getByText('Nieprawidłowy format email');
-      expect(errorMessage).toBeInTheDocument();
+      expect(screen.getByText('Nieprawidłowy format email')).toBeInTheDocument();
     });
   });
 }); 

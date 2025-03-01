@@ -1,6 +1,6 @@
 import { AuthState } from '../types';
 
-const API_URL = 'http://localhost:5001/api/auth';
+const API_URL = 'https://www.codelinesjs.pl/api/auth';
 
 export const useForgotPasswordAction = (state: AuthState) => {
   const { setLoading, setError } = state;

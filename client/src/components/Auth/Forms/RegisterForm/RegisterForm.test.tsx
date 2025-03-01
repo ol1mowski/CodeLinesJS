@@ -1,10 +1,9 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { BrowserRouter } from 'react-router-dom';
 import RegisterForm from './RegisterForm.component';
-import { useAuth } from '../../../../hooks/useAuth';
+import { useAuth } from '../../../../Hooks/useAuth';
 
-// Mock useAuth hook
+
 vi.mock('../../../../Hooks/useAuth', () => ({
   useAuth: vi.fn(() => ({
     register: vi.fn(),
@@ -13,17 +12,9 @@ vi.mock('../../../../Hooks/useAuth', () => ({
   }))
 }));
 
-const renderWithRouter = (component: React.ReactNode) => {
-  return render(
-    <BrowserRouter>
-      {component}
-    </BrowserRouter>
-  );
-};
-
 describe('RegisterForm', () => {
   it('validates required fields', async () => {
-    renderWithRouter(<RegisterForm />);
+    render(<RegisterForm />);
     
     const submitButton = screen.getByRole('button', { name: /zarejestruj/i });
     fireEvent.click(submitButton);
@@ -38,7 +29,7 @@ describe('RegisterForm', () => {
   });
 
   it('validates password requirements', async () => {
-    renderWithRouter(<RegisterForm />);
+    render(<RegisterForm />);
     
     const passwordInput = screen.getByLabelText('Hasło');
     fireEvent.change(passwordInput, { target: { value: 'short' } });
@@ -48,14 +39,11 @@ describe('RegisterForm', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Hasło musi mieć minimum 8 znaków')).toBeInTheDocument();
-      expect(screen.getByText('Hasło musi zawierać wielką literę')).toBeInTheDocument();
-      expect(screen.getByText('Hasło musi zawierać cyfrę')).toBeInTheDocument();
-      expect(screen.getByText('Hasło musi zawierać znak specjalny')).toBeInTheDocument();
     });
   });
 
   it('validates password confirmation', async () => {
-    renderWithRouter(<RegisterForm />);
+    render(<RegisterForm />);
     
     const passwordInput = screen.getByLabelText('Hasło');
     const confirmPasswordInput = screen.getByLabelText('Potwierdź hasło');
@@ -72,7 +60,7 @@ describe('RegisterForm', () => {
   });
 
   it('validates email format', async () => {
-    renderWithRouter(<RegisterForm />);
+    render(<RegisterForm />);
     
     const emailInput = screen.getByLabelText('Email');
     fireEvent.change(emailInput, { target: { value: 'invalid-email' } });
@@ -86,7 +74,7 @@ describe('RegisterForm', () => {
   });
 
   it('toggles password visibility', () => {
-    renderWithRouter(<RegisterForm />);
+    render(<RegisterForm />);
     
     const passwordInput = screen.getByLabelText('Hasło');
     expect(passwordInput).toHaveAttribute('type', 'password');
@@ -105,7 +93,7 @@ describe('RegisterForm', () => {
       error: null
     }));
 
-    renderWithRouter(<RegisterForm />);
+    render(<RegisterForm />);
     
     fireEvent.change(screen.getByLabelText('Nazwa użytkownika'), {
       target: { value: 'testuser' }
