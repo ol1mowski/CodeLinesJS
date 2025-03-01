@@ -1,15 +1,15 @@
 import jwt from 'jsonwebtoken';
 import { User } from '../models/user.model.js';
 import { AuthError } from '../utils/errors.js';
-import { transporter } from '../config/mailer.js';
+import { transporter, createEmailTemplate } from '../config/mailer.js';
 import { StreakService } from '../services/streak.service.js';
 
 export const register = async (req, res, next) => {
   try {
     const { email, password, username } = req.body;
 
-    const existingUser = await User.findOne({ 
-      $or: [{ email }, { username }] 
+    const existingUser = await User.findOne({
+      $or: [{ email }, { username }]
     });
 
     if (existingUser) {
@@ -38,7 +38,7 @@ export const register = async (req, res, next) => {
     });
 
     const token = jwt.sign(
-      { 
+      {
         userId: user._id,
         email: user.email,
         username: user.username
@@ -47,7 +47,44 @@ export const register = async (req, res, next) => {
       { expiresIn: '24h' }
     );
 
-    res.status(201).json({ 
+    try {
+      const welcomeContent = `
+        <p>Cześć ${username}!</p>
+        <p>Witamy w społeczności CodeLinesJS! 🎉</p>
+        <p>Twoje konto zostało pomyślnie utworzone i jesteś gotowy, aby rozpocząć swoją przygodę z JavaScript.</p>
+        <div class="code-block">
+          const user = {
+            name: "${username}",
+            level: "Początkujący",
+            goal: "Zostać JavaScript Ninja!"
+          };
+          
+          console.log("Witaj " + user.name + "! Twoja przygoda się zaczyna!");
+        </div>
+        <p>Co możesz teraz zrobić?</p>
+        <ul>
+          <li>Uzupełnij swój profil</li>
+          <li>Rozpocznij naukę od podstawowych lekcji</li>
+          <li>Rozwiązuj interaktywne wyzwania</li>
+        </ul>
+        <div style="text-align: center;">
+          <a href="${process.env.FRONTEND_URL}/dashboard" class="btn">Przejdź do dashboardu</a>
+        </div>
+        <p>Jeśli masz jakiekolwiek pytania, nie wahaj się skontaktować z naszym zespołem wsparcia.</p>
+        <p>Powodzenia w nauce!</p>
+      `;
+
+      await transporter.sendMail({
+        from: `"CodeLinesJS" <${process.env.EMAIL_USER}>`,
+        to: email,
+        subject: "Witaj w CodeLinesJS!",
+        html: createEmailTemplate('Witaj w CodeLinesJS!', welcomeContent)
+      });
+    } catch (emailError) {
+      console.error('Błąd wysyłania emaila powitalnego:', emailError);
+    }
+
+    res.status(201).json({
       token,
       user: {
         id: user._id,
@@ -65,9 +102,9 @@ export const register = async (req, res, next) => {
 
 const generateToken = (user) => {
   return jwt.sign(
-    { 
+    {
       userId: user._id,
-      email: user.email 
+      email: user.email
     },
     process.env.JWT_SECRET,
     { expiresIn: '24h' }
@@ -89,11 +126,11 @@ export const login = async (req, res, next) => {
     }
 
     await StreakService.updateUserActivity(user._id, false);
-    
+
     const updatedUser = await User.findById(user._id);
 
     const token = generateToken(updatedUser);
-    res.json({ 
+    res.json({
       token,
       user: {
         id: updatedUser._id,
@@ -111,16 +148,16 @@ export const login = async (req, res, next) => {
 export const forgotPassword = async (req, res, next) => {
   try {
     const { email } = req.body;
-    
+
     if (!email) {
-      return res.status(400).json({ 
-        error: 'Email jest wymagany' 
+      return res.status(400).json({
+        error: 'Email jest wymagany'
       });
     }
 
     if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-      return res.status(400).json({ 
-        error: 'Nieprawidłowy format emaila' 
+      return res.status(400).json({
+        error: 'Nieprawidłowy format emaila'
       });
     }
 
@@ -141,24 +178,94 @@ export const forgotPassword = async (req, res, next) => {
     await user.save();
 
     const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
-    
+
+    const emailContent = `
+      <p>Cześć ${user.username || 'Użytkowniku'}!</p>
+      <p>Otrzymaliśmy prośbę o reset hasła dla Twojego konta w CodeLinesJS.</p>
+      <p>Aby zresetować hasło, kliknij poniższy przycisk:</p>
+      <div style="text-align: center;">
+        <a href="${resetUrl}" class="btn">Zresetuj hasło</a>
+      </div>
+      <p>Jeśli przycisk nie działa, skopiuj i wklej poniższy link do przeglądarki:</p>
+      <div class="code-block">${resetUrl}</div>
+      <p>Link wygaśnie za godzinę ze względów bezpieczeństwa.</p>
+      <p><strong>Nie prosiłeś o reset hasła?</strong> Jeśli to nie Ty prosiłeś o reset hasła, zignoruj tę wiadomość lub skontaktuj się z naszym zespołem wsparcia.</p>
+    `;
+
     await transporter.sendMail({
-      from: '"Nazwa Twojej Aplikacji" <' + process.env.SMTP_USER + '>',
+      from: `"CodeLinesJS" <${process.env.EMAIL_USER}>`,
       to: email,
-      subject: "Reset hasła",
-      html: `
-        <h1>Reset hasła</h1>
-        <p>Cześć!</p>
-        <p>Otrzymaliśmy prośbę o reset hasła dla Twojego konta.</p>
-        <p>Kliknij w poniższy link, aby zresetować hasło:</p>
-        <a href="${resetUrl}">Reset hasła</a>
-        <p>Link wygaśnie za godzinę.</p>
-        <p>Jeśli nie prosiłeś o reset hasła, zignoruj tę wiadomość.</p>
-      `
+      subject: "Reset hasła w CodeLinesJS",
+      html: createEmailTemplate('Reset hasła', emailContent)
     });
 
-    res.json({ 
+    res.json({
       message: 'Wysłano email do resetowania hasła'
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const resetPassword = async (req, res, next) => {
+  try {
+    const { token, password } = req.body;
+
+    if (!token || !password) {
+      return res.status(400).json({
+        error: 'Token i nowe hasło są wymagane'
+      });
+    }
+
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (error) {
+      throw new AuthError('Nieprawidłowy lub wygasły token');
+    }
+
+    const user = await User.findOne({
+      _id: decoded.userId,
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: Date.now() }
+    });
+
+    if (!user) {
+      throw new AuthError('Nieprawidłowy lub wygasły token');
+    }
+
+    user.password = password;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
+
+    try {
+      const confirmationContent = `
+        <p>Cześć ${user.username || 'Użytkowniku'}!</p>
+        <p>Twoje hasło zostało pomyślnie zmienione.</p>
+        <p>Jeśli to nie Ty dokonałeś tej zmiany, natychmiast skontaktuj się z naszym zespołem wsparcia.</p>
+        <div class="code-block">
+          // Twoje hasło zostało zaktualizowane
+          console.log("Bezpieczeństwo na pierwszym miejscu! 🔒");
+        </div>
+        <div style="text-align: center;">
+          <a href="${process.env.FRONTEND_URL}/login" class="btn">Zaloguj się</a>
+        </div>
+        <p>Dziękujemy za korzystanie z CodeLinesJS!</p>
+      `;
+
+      await transporter.sendMail({
+        from: `"CodeLinesJS" <${process.env.EMAIL_USER}>`,
+        to: user.email,
+        subject: "Hasło zostało zmienione",
+        html: createEmailTemplate('Potwierdzenie zmiany hasła', confirmationContent)
+      });
+    } catch (emailError) {
+      console.error('Błąd wysyłania emaila potwierdzającego zmianę hasła:', emailError);
+    }
+
+    res.json({
+      message: 'Hasło zostało pomyślnie zmienione'
     });
   } catch (error) {
     next(error);
@@ -180,7 +287,7 @@ export const verifyToken = async (req, res) => {
 export const googleAuth = async (req, res, next) => {
   try {
     const { idToken, userData, rememberMe } = req.body;
-    
+
     if (!idToken || !userData) {
       throw new AuthError('Nieprawidłowe dane uwierzytelniające');
     }
@@ -222,15 +329,31 @@ export const googleAuth = async (req, res, next) => {
       });
 
       try {
+        const welcomeContent = `
+          <p>Cześć ${name || username}!</p>
+          <p>Witamy w społeczności CodeLinesJS! 🎉</p>
+          <p>Twoje konto zostało pomyślnie utworzone i jesteś gotowy, aby rozpocząć swoją przygodę z JavaScript.</p>
+          <div class="code-block">
+            console.log("Witaj w CodeLinesJS!");
+          </div>
+          <p>Co możesz teraz zrobić?</p>
+          <ul>
+            <li>Rozpocznij naukę od podstawowych lekcji</li>
+            <li>Rozwiązuj interaktywne wyzwania</li>
+            <li>Dołącz do naszej społeczności programistów</li>
+          </ul>
+          <div style="text-align: center;">
+            <a href="${process.env.FRONTEND_URL}/dashboard" class="btn">Przejdź do dashboardu</a>
+          </div>
+          <p>Jeśli masz jakiekolwiek pytania, nie wahaj się skontaktować z naszym zespołem wsparcia.</p>
+          <p>Powodzenia w nauce!</p>
+        `;
+
         await transporter.sendMail({
-          from: process.env.SMTP_USER,
+          from: `"CodeLinesJS" <${process.env.EMAIL_USER}>`,
           to: email,
           subject: "Witaj w CodeLinesJS!",
-          html: `
-            <h1>Witaj ${name || username}!</h1>
-            <p>Twoje konto zostało pomyślnie utworzone.</p>
-            <p>Możesz teraz rozpocząć naukę JavaScript poprzez interaktywne wyzwania!</p>
-          `
+          html: createEmailTemplate('Witaj w CodeLinesJS!', welcomeContent)
         });
       } catch (emailError) {
         console.error('Błąd wysyłania emaila powitalnego:', emailError);
@@ -242,7 +365,7 @@ export const googleAuth = async (req, res, next) => {
     }
 
     const token = jwt.sign(
-      { 
+      {
         userId: user._id,
         email: user.email,
         username: user.username,
@@ -252,7 +375,7 @@ export const googleAuth = async (req, res, next) => {
       { expiresIn: rememberMe ? '30d' : '24h' }
     );
 
-    res.json({ 
+    res.json({
       token,
       user: {
         id: user._id,
