@@ -29,6 +29,8 @@ import progressRoutes from './routes/progress.routes.js';
 const app = express();
 const { isProduction } = config.app;
 
+app.set('trust proxy', 1);
+
 app.use(helmet({
   contentSecurityPolicy: isProduction ? undefined : false,
   crossOriginEmbedderPolicy: isProduction ? undefined : false,
