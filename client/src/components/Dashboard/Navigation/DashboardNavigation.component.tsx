@@ -90,6 +90,7 @@ export const DashboardNavigation = () => {
 
         <div className="pt-4 border-t border-js/10">
           <NavigationButton
+            id="logout"
             icon={<FaSignOutAlt />}
             label="Wyloguj się"
             isExpanded={isExpanded}

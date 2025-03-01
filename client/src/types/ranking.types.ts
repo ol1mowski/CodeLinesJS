@@ -8,6 +8,7 @@ export type RankingStats = {
   completedChallenges: number;
   challengesChange: number;
   accuracy: number;
+  winStreak: number;
 }
 
 export type RankingUserStats = {
@@ -31,5 +32,6 @@ export type RankingUser = {
   points: number;
   level: number;
   badges: RankingBadge[];
+  streak: number;
   stats: RankingStats;
 } 

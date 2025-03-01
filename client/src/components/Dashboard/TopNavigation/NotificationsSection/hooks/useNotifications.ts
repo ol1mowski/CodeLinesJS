@@ -1,16 +1,19 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { API_URL } from "../../../../../config/api.config";
+import { useAuth } from "../../../../../Hooks/useAuth";
 
 export const useNotifications = () => {
+  const { token } = useAuth();
   const queryClient = useQueryClient();
 
   const markAsRead = useMutation({
     mutationFn: async (notificationId: string) => {
       const response = await fetch(
-        `http://localhost:5001/api/dashboard/notifications/${notificationId}/read`,
+        `${API_URL}/dashboard/notifications/${notificationId}/read`,
         { 
           method: 'PATCH',
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
           }
         }

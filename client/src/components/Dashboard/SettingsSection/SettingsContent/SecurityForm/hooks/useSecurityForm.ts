@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { securitySchema, type SecurityFormData } from "../schema/security.schema";
 import { useMutation } from "@tanstack/react-query";
 import { updatePassword } from "../../../api/security";
-import { useAuth } from "../../../../../../hooks/useAuth";
+import { useAuth } from "../../../../../../Hooks/useAuth";
 
 type UseSecurityFormProps = {
   onSuccess?: () => void;

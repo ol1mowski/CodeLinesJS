@@ -3,7 +3,7 @@ export type GameDifficulty = "easy" | "medium" | "hard";
 export type Game = {
   _id: string;
   slug: string;
-  id: number;
+  id: string;
   rating: {
     average: number;
     count: number;

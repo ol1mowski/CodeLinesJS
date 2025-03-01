@@ -1,15 +1,12 @@
-import { getAuthToken } from '../utils/auth';
+import { API_URL } from "../../../../../config/api.config";
 
-const API_URL = 'http://localhost:5001/api';
-
-export const fetchLearningPaths = async () => {
-  const token = getAuthToken();
+export const fetchLearningPaths = async (token: string) => {
   
   if (!token) {
     throw new Error('No authentication token found');
   }
 
-  const response = await fetch(`${API_URL}/learning-paths`, {
+  const response = await fetch(`${API_URL}Learning-paths`, {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`,
@@ -27,14 +24,13 @@ export const fetchLearningPaths = async () => {
   return data;
 };
 
-export const fetchLearningPathProgress = async (userId: string, pathId: string) => {
-  const token = getAuthToken();
+export const fetchLearningPathProgress = async (userId: string, pathId: string, token: string) => {
 
   if (!token) {
     throw new Error('No authentication token found');
   }
 
-  const response = await fetch(`${API_URL}/users/${userId}/paths/${pathId}/progress`, {
+  const response = await fetch(`${API_URL}users/${userId}/paths/${pathId}/progress`, {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`,

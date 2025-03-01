@@ -42,7 +42,7 @@ export const LessonsList = memo(
   ({ lessons, filter, userData }: LessonsListProps) => {
     const processedLessons = lessons.map((lesson) => ({
       ...lesson,
-      isLocked: lesson.requiredLevel > userData.userLevel,
+      isLocked: lesson.requiredLevel ? lesson.requiredLevel > userData.userLevel : false,
     }));
 
     if (processedLessons.length === 0) {

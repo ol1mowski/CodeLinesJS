@@ -1,12 +1,8 @@
-import { getAuthToken } from '../utils/auth';
-
 import type { Lesson } from "../../types/lesson.types";
+import { API_URL } from "../../../../../config/api.config";
 
-const API_URL = "http://localhost:5001/api";
-
-export const fetchLesson = async (lessonId: string): Promise<Lesson> => {
-  const token = getAuthToken();
-  const response = await fetch(`${API_URL}/lessons/${lessonId}`, {
+export const fetchLesson = async (lessonId: string, token: string): Promise<Lesson> => {
+  const response = await fetch(`${API_URL}lessons/${lessonId}`, {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`,
@@ -27,19 +23,20 @@ export const fetchLesson = async (lessonId: string): Promise<Lesson> => {
 export const completeLesson = async ({
   userId,
   lessonId,
-  pathId
+  pathId,
+  token
 }: {
   userId: string;
   lessonId: string;
   pathId?: string;
+  token: string;
 }) => {
-  const token = getAuthToken();
 
   if (!token) {
     throw new Error('No authentication token found');
   }
 
-  const response = await fetch(`${API_URL}/lessons/${lessonId}/complete`, {
+  const response = await fetch(`${API_URL}lessons/${lessonId}/complete`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -57,14 +54,13 @@ export const completeLesson = async ({
   return response.json();
 };
 
-export const fetchLessons = async () => {   
-  const token = getAuthToken();
+export const fetchLessons = async (token: string) => {   
   
   if (!token) {
     throw new Error('No authentication token found');
   }
 
-  const response = await fetch(`${API_URL}/lessons`, {
+  const response = await fetch(`${API_URL}lessons`, {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`,

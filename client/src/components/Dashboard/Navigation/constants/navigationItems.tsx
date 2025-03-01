@@ -1,4 +1,4 @@
-import { FaChartBar, FaGamepad, FaUsers, FaCog, FaBook, FaCode, FaHome } from "react-icons/fa";
+import { FaChartBar, FaGamepad, FaCog, FaBook, FaCode, FaHome } from "react-icons/fa";
 import { NavigationItem } from "../types/navigation.types";
 
 export const navigationItems: NavigationItem[] = [

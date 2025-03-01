@@ -1,11 +1,9 @@
 import { LessonProgress } from "../../types/lesson.types";
+import { API_URL } from "../../../../../config/api.config";
 
-const API_URL = 'http://localhost:5001/api';
 
-const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-
-export const fetchUserProgress = async (userId: string) => {
-  const response = await fetch(`${API_URL}/users/${userId}/progress`, {
+export const fetchUserProgress = async (userId: string, token: string) => {
+  const response = await fetch(`${API_URL}users/${userId}/progress`, {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`,
@@ -18,8 +16,8 @@ export const fetchUserProgress = async (userId: string) => {
   return data;
 };
 
-export const fetchLessonProgress = async (userId: string, lessonId: string) => {
-  const response = await fetch(`${API_URL}/users/${userId}/lessons/${lessonId}/progress`, {
+export const fetchLessonProgress = async (userId: string, lessonId: string, token: string) => {
+    const response = await fetch(`${API_URL}users/${userId}/lessons/${lessonId}/progress`, {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`,
@@ -31,9 +29,9 @@ export const fetchLessonProgress = async (userId: string, lessonId: string) => {
   return response.json();
 };
 
-export const updateLessonProgress = async (userId: string, lessonId: string, progress: LessonProgress) => {
+export const updateLessonProgress = async (userId: string, lessonId: string, progress: LessonProgress, token: string) => {
   const response = await fetch(
-    `${API_URL}/users/${userId}/lessons/${lessonId}/progress`,
+    `${API_URL}users/${userId}/lessons/${lessonId}/progress`,
     {
       method: 'PUT',
       headers: {

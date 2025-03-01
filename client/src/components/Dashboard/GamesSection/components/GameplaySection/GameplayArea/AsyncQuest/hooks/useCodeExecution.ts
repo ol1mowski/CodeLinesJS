@@ -40,7 +40,7 @@ export const useCodeExecution = () => {
         }
       `;
 
-        const result = await new Function('context', wrappedCode)(context);
+      await new Function('context', wrappedCode)(context);
 
       return {
         success: true,

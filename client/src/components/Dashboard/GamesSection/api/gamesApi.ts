@@ -1,8 +1,8 @@
 import { GamesResponse } from '../types/games.types';
-
+import { API_URL } from '../../../../config/api.config';
 export const fetchGames = async (): Promise<GamesResponse> => {
   try {
-    const response = await fetch('/api/games');
+    const response = await fetch(`${API_URL}games`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }

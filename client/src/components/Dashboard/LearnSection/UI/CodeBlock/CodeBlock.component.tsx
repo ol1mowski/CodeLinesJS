@@ -3,6 +3,9 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { FaCopy } from "react-icons/fa";
 
+// Obejście problemu z typowaniem
+const SyntaxHighlighterComponent = SyntaxHighlighter as any;
+
 type CodeBlockProps = {
   code: string;
   language: string;
@@ -26,7 +29,7 @@ export const CodeBlock = memo(({ code, language, showLineNumbers = true, classNa
         <FaCopy className="w-4 h-4" />
       </button>
       
-      <SyntaxHighlighter
+      <SyntaxHighlighterComponent
         language={language}
         style={atomDark}
         showLineNumbers={showLineNumbers}
@@ -43,7 +46,7 @@ export const CodeBlock = memo(({ code, language, showLineNumbers = true, classNa
         }}
       >
         {code}
-      </SyntaxHighlighter>
+      </SyntaxHighlighterComponent>
     </div>
   );
 });
