@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Message } from '../../../../../types/messages.types';
+import { Message } from '../../../../../../types/messages.types';
 
 export const useDeleteModal = (onDelete: (messageId: string) => void) => {
   const [messageToDelete, setMessageToDelete] = useState<Message | null>(null);

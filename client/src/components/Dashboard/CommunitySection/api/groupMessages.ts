@@ -1,12 +1,7 @@
 import { Message, MessagesResponse } from "../../../../types/messages.types";
 import toast from "react-hot-toast";
-
-const BASE_URL = 'http://localhost:5001';
-
-const getToken = () => {
-  return sessionStorage.getItem('token') || localStorage.getItem('token');
-};
-
+import { useAuth } from "../../../../Hooks/useAuth";
+import { API_URL } from "../../../../config/api.config";
 const handleNetworkError = (error: any) => {
   if (!navigator.onLine) {
     toast.error('Brak połączenia z internetem');
@@ -23,9 +18,9 @@ export const fetchGroupMessages = async (
   page: number = 1, 
   limit: number = 50
 ): Promise<MessagesResponse> => {
-  const token = getToken();
+  const { token } = useAuth();
   const response = await fetch(
-    `${BASE_URL}/api/groups/${groupId}/messages?page=${page}&limit=${limit}`,
+    `${API_URL}groups/${groupId}/messages?page=${page}&limit=${limit}`,
     {
       headers: {
         'Authorization': `Bearer ${token}`
@@ -43,10 +38,10 @@ export const fetchGroupMessages = async (
 export const sendGroupMessage = async (
   groupId: string, 
   content: string
-): Promise<{ status: string; data: { message: Message } }> => {
+): Promise<{ status: string; data: { message: Message } } | undefined> => {
   try {
-    const token = getToken();
-    const response = await fetch(`${BASE_URL}/api/groups/${groupId}/messages`, {
+    const { token } = useAuth();
+    const response = await fetch(`${API_URL}groups/${groupId}/messages`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -70,10 +65,10 @@ export const editGroupMessage = async (
   groupId: string,
   messageId: string,
   content: string
-): Promise<{ status: string; data: { message: Message } }> => {
-  const token = getToken();
+): Promise<{ status: string; data: { message: Message } } | undefined> => {
+  const { token } = useAuth();
   const response = await fetch(
-    `${BASE_URL}/api/groups/${groupId}/messages/${messageId}`,
+    `${API_URL}groups/${groupId}/messages/${messageId}`,
     {
       method: 'PUT',
       headers: {
@@ -94,10 +89,10 @@ export const editGroupMessage = async (
 export const deleteGroupMessage = async (
   groupId: string,
   messageId: string
-): Promise<{ status: string; message: string }> => {
-  const token = getToken();
+): Promise<{ status: string; message: string } | undefined> => {
+  const { token } = useAuth();
   const response = await fetch(
-    `${BASE_URL}/api/groups/${groupId}/messages/${messageId}`,
+    `${API_URL}groups/${groupId}/messages/${messageId}`,
     {
       method: 'DELETE',
       headers: {
@@ -120,11 +115,11 @@ export const reportGroupMessage = async (
     reason: string;
     description: string;
   }
-): Promise<{ status: string; message: string }> => {
+): Promise<{ status: string; message: string } | undefined> => {
   try {
-    const token = getToken();
+    const { token } = useAuth();
     const response = await fetch(
-      `${BASE_URL}/api/groups/${groupId}/messages/${messageId}/report`,
+      `${API_URL}groups/${groupId}/messages/${messageId}/report`,
       {
         method: 'POST',
         headers: {
@@ -151,11 +146,11 @@ export const addMessageReaction = async (
   messageId: string,
   reaction: string,
   action: 'add' | 'remove' = 'add'
-): Promise<{ status: string; message: string }> => {
+): Promise<{ status: string; message: string } | undefined> => {
   try {
-    const token = getToken();
+    const { token } = useAuth();
     const response = await fetch(
-      `${BASE_URL}/api/groups/${groupId}/messages/${messageId}/reactions`,
+      `${API_URL}groups/${groupId}/messages/${messageId}/reactions`,
       {
         method: action === 'add' ? 'POST' : 'DELETE',
         headers: {

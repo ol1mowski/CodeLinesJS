@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Message } from '../../../../../../types/messages.types';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaTimes, FaExclamationTriangle, FaSpinner } from 'react-icons/fa';

@@ -39,7 +39,7 @@ export const RankingList = () => {
 
   return (
     <div className="space-y-4">
-      {users?.map((user, index) => (
+      {users?.map((user: any, index: number) => (
         <motion.div
           key={index}
           initial={{ opacity: 0, y: 20 }}

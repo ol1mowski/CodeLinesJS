@@ -9,15 +9,27 @@ import { Group } from "../../../../types/groups.types";
 import { useGroups } from "../../../../Hooks/useGroups";
 import { useGroupsSearch } from "./context/GroupsSearchContext";
 
+type ExtendedGroup = Omit<Group, 'id'> & {
+  _id: string;
+}
+
+type GroupsResponse = {
+  groups: ExtendedGroup[];
+  userGroups: ExtendedGroup[];
+}
 
 export const GroupsList = memo(() => {
-  const { groups, isLoading, joinGroup, isJoining } = useGroups();
+  const { groups, isLoading, joinGroup } = useGroups();
   const { searchQuery, selectedTags } = useGroupsSearch();
+  
+  const isJoining = false; 
 
   const filteredGroups = useMemo(() => {
     if (!groups) return [];
     
-    return groups?.groups?.filter(group => {
+    const groupsData = groups as unknown as GroupsResponse;
+    
+    return groupsData.groups?.filter((group: ExtendedGroup) => {
       const matchesSearch = searchQuery.toLowerCase().trim() === '' || 
         group.name.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
         group.description.toLowerCase().includes(searchQuery.toLowerCase().trim());
@@ -26,9 +38,9 @@ export const GroupsList = memo(() => {
         selectedTags.every(tag => group.tags.includes(tag));
 
       return matchesSearch && matchesTags;
-    }).map(group => ({
+    }).map((group: ExtendedGroup) => ({
       ...group,
-      isJoined: groups.userGroups.some(userGroup => userGroup._id === group._id)
+      isJoined: groupsData.userGroups.some((userGroup: ExtendedGroup) => userGroup._id === group._id)
     }));
   }, [groups, searchQuery, selectedTags]);
 
@@ -68,7 +80,7 @@ export const GroupsList = memo(() => {
 
   return (
     <div className="space-y-4">
-      {filteredGroups.map((group) => (
+      {filteredGroups.map((group: ExtendedGroup) => (
         <GroupCard 
           key={group._id} 
           group={group} 
@@ -86,7 +98,7 @@ const GroupCard = memo(({
   onJoin,
   isJoining
 }: { 
-  group: Group;
+  group: ExtendedGroup;
   onJoin: (groupId: string) => void;
   isJoining: boolean;
 }) => {

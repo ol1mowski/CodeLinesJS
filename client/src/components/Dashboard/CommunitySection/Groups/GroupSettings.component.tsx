@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import { deleteGroup, updateGroupName, updateGroupTags } from "../api/groups/groups.api";
 import { EditTagsModal } from "./Modals/EditTagsModal.component";
 import { DeleteGroupModal } from "./Modals/DeleteGroupModal.component";
+import { useAuth } from "../../../../Hooks/useAuth";
 
 type GroupSettingsProps = {
   group: {
@@ -23,6 +24,7 @@ export const GroupSettings = memo(({ group }: GroupSettingsProps) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { token } = useAuth();
   const { register, handleSubmit } = useForm({
     defaultValues: {
       name: group.name
@@ -31,7 +33,7 @@ export const GroupSettings = memo(({ group }: GroupSettingsProps) => {
 
   const updateGroupMutation = useMutation({
     mutationFn: async (data: { name: string }) => {
-      await updateGroupName(group._id, data.name);
+      await updateGroupName(group._id, data.name, token || '');
     },
     onSuccess: () => {
       setIsEditing(false);
@@ -42,7 +44,7 @@ export const GroupSettings = memo(({ group }: GroupSettingsProps) => {
 
   const updateTagsMutation = useMutation({
     mutationFn: async (tags: string[]) => {
-      await updateGroupTags(group._id, tags);
+      await updateGroupTags(group._id, tags, token || '');
     },
     onSuccess: () => {
       setIsEditingTags(false);
@@ -53,7 +55,7 @@ export const GroupSettings = memo(({ group }: GroupSettingsProps) => {
 
   const deleteGroupMutation = useMutation({
     mutationFn: async () => {
-      await deleteGroup(group._id);
+      await deleteGroup(group._id, token || '');
     },
     onSuccess: () => {
       navigate('/dashboard/community/groups');

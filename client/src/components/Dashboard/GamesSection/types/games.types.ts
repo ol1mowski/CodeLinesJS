@@ -5,6 +5,7 @@ export type SortOption = 'newest' | 'popular' | 'difficulty' | 'xp';
 
 export interface Game {
   _id: string;
+  slug: string;
   title: string;
   description: string;
   difficulty: GameDifficulty;

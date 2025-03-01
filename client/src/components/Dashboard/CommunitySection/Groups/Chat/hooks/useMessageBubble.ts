@@ -3,7 +3,6 @@ import { Message } from '../../../types/messages.types';
 import { useMessageActionsMenu } from './useMessageActionsMenu';
 import { useMessageReactions } from './useMessageReactions';
 import toast from 'react-hot-toast';
-import { User } from '../../../../../../types/auth.types';
 
 export const useMessageBubble = (
   message: Message,

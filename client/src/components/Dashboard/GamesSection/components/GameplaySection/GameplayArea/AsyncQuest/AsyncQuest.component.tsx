@@ -1,16 +1,17 @@
-import React, { memo, useState, useEffect } from 'react';
+import { memo, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { GameStats } from '../../../../types/asyncQuest.types';
+import { GameStats, AsyncChallenge } from '../../../../types/asyncQuest.types';
 import { useGameTimer } from '../JSTypoHunter/hooks/useGameTimer';
 import { AsyncQuestStats } from './AsyncQuestStats/AsyncQuestStats.component';
 import { AsyncQuestSummary } from './AsyncQuestSummary/AsyncQuestSummary.component';
 import { AsyncQuestGame } from './AsyncQuestGame/AsyncQuestGame.component';
 import { useGamesQuery } from '../../../../hooks/useGamesQuery';
 import { GameIntro } from '../GameIntro/GameIntro.component';
+import { Game } from '../../../../types/games.types';
 
 const AsyncQuest = memo(({ isPaused = false }: { isPaused?: boolean }) => {
   const { data, isLoading, error } = useGamesQuery();
-  const gameContent = data?.games.find(game => game.slug === 'async-quest');
+  const gameContent = data?.games.find((game: Game) => game.slug === 'async-quest');
   const [isGameStarted, setIsGameStarted] = useState(false);
 
   const [gameStats, setGameStats] = useState<GameStats>({
@@ -102,7 +103,7 @@ const AsyncQuest = memo(({ isPaused = false }: { isPaused?: boolean }) => {
       callbacks: { total: 0, correct: 0, points: 0 }
     };
 
-    gameContent?.gameData.forEach(challenge => {
+    gameContent?.gameData.forEach((challenge: AsyncChallenge) => {
       if (challenge.category) {
         initialCategoryStats[challenge.category].total++;
       }

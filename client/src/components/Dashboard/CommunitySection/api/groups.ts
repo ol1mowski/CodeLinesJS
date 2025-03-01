@@ -1,20 +1,14 @@
 import { Message } from "react-hook-form";
 import { Group } from "../../../../types/groups.types";
+import { API_URL } from "../../../../config/api.config";
 
-const getToken = () => {
-  return sessionStorage.getItem('token') || localStorage.getItem('token');
-};
-
-
-export const checkGroupNameAvailability = async (name: string): Promise<boolean> => {
+export const checkGroupNameAvailability = async (name: string, token: string): Promise<boolean> => {
   try {
 
-    const token = getToken();
-
-    const response = await fetch(`http://localhost:5001/api/groups/check-name`, {
+    const response = await fetch(`${API_URL}groups/check-name`, {
       method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/json", 
         "Authorization": `Bearer ${token}`
       },
       body: JSON.stringify({ name })
@@ -38,10 +32,9 @@ export const createGroup = async (groupData: {
   name: string;
   description: string;
   tags: string[];
-}) => {
+}, token: string) => {
   try {
-    const token = getToken();
-    const response = await fetch(`http://localhost:5001/api/groups`, {
+    const response = await fetch(`${API_URL}groups`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -66,8 +59,12 @@ export const createGroup = async (groupData: {
   }
 };
 
-export const fetchGroups = async (): Promise<Group[]> => {
-  const response = await fetch('http://localhost:5001/api/groups');
+export const fetchGroups = async (token: string): Promise<Group[]> => {
+  const response = await fetch(`${API_URL}groups`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
   if (!response.ok) {
     throw new Error('Failed to fetch groups');
   }
@@ -76,10 +73,9 @@ export const fetchGroups = async (): Promise<Group[]> => {
   return data;
 };
 
-export const joinGroup = async (groupId: string): Promise<void> => {
-  const token = getToken();
+export const joinGroup = async (groupId: string, token: string): Promise<void> => {
   
-  const response = await fetch(`http://localhost:5001/api/groups/${groupId}/join`, {
+  const response = await fetch(`${API_URL}groups/${groupId}/join`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -96,9 +92,8 @@ export const joinGroup = async (groupId: string): Promise<void> => {
   }
 };
 
-export const fetchGroupMessages = async (groupId: string): Promise<Message[]> => {
-  const token = getToken();
-  const response = await fetch(`http://localhost:5001/api/groups/${groupId}/messages`, {
+export const fetchGroupMessages = async (groupId: string, token: string): Promise<Message[]> => {
+  const response = await fetch(`${API_URL}groups/${groupId}/messages`, {
     headers: {
       'Authorization': `Bearer ${token}`
     }
@@ -111,9 +106,8 @@ export const fetchGroupMessages = async (groupId: string): Promise<Message[]> =>
   return response.json();
 };
 
-export const sendGroupMessage = async (groupId: string, content: string): Promise<Message> => {
-  const token = getToken();
-  const response = await fetch(`http://localhost:5001/api/groups/${groupId}/messages`, {
+export const sendGroupMessage = async (groupId: string, content: string, token: string): Promise<Message> => {
+  const response = await fetch(`${API_URL}groups/${groupId}/messages`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

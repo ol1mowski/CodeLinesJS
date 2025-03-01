@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 type User = {
   id: string;
+  _id: string;
   email: string;
   username: string;
 };

@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { DeleteMemberModal } from "./Modals/DeleteMemberModal.component";
 import { deleteMember } from "../api/groups/groups.api";
-
+import { useAuth } from "../../../../Hooks/useAuth";
 type GroupMembersProps = {
   members: Array<{
     _id: string;
@@ -18,14 +18,15 @@ type GroupMembersProps = {
 };
 
 export const GroupMembers = memo(({ members, groupId, userRole }: GroupMembersProps) => {
-
+  const { token } = useAuth();
   const [memberToDelete, setMemberToDelete] = useState<{ id: string; username: string } | null>(null);
   const queryClient = useQueryClient();
   const isAdmin = userRole === 'admin';
 
   const removeMemberMutation = useMutation({
+
     mutationFn: async (memberId: string) => {
-      await deleteMember(groupId, memberId);
+      await deleteMember(groupId, memberId, token || '');
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['group', groupId] });
@@ -71,17 +72,17 @@ export const GroupMembers = memo(({ members, groupId, userRole }: GroupMembersPr
                     <span className="font-medium text-gray-200">
                       {member.username}
                     </span>
-                    {member.isAdmin && (
+                    {member.role === 'admin' && (
                       <FaCrown className="text-yellow-500 text-sm" />
                     )}
                   </div>
                   <span className="text-xs text-gray-400 capitalize">
-                    {member.isAdmin ? 'admin' : 'member'}
+                    {member.role === 'admin' ? 'admin' : 'member'}
                   </span>
                 </div>
               </div>
 
-              {isAdmin && !member.isAdmin && (
+              {isAdmin && member.role !== 'admin' && (
                 <div className="flex items-center gap-2">
                   <motion.button
                     whileHover={{ scale: 1.1 }}

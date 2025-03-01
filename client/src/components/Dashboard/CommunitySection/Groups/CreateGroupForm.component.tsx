@@ -9,6 +9,7 @@ import Select from 'react-select';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { createPortal } from 'react-dom';
+import { useAuth } from "../../../../Hooks/useAuth";
 
 export const AVAILABLE_TAGS = [
   { value: 'javascript', label: 'JavaScript' },
@@ -48,6 +49,7 @@ type CreateGroupFormProps = {
 };
 
 export const CreateGroupForm = memo(({ isOpen, onClose }: CreateGroupFormProps) => {
+  const { token } = useAuth();
   const queryClient = useQueryClient();
   const {
     control,
@@ -66,8 +68,8 @@ export const CreateGroupForm = memo(({ isOpen, onClose }: CreateGroupFormProps) 
     }
   });
 
-  const checkNameMutation = useMutation({
-    mutationFn: checkGroupNameAvailability,
+  const checkNameMutation = useMutation({   
+    mutationFn: (name: string) => checkGroupNameAvailability(name, token || ''),
     onSuccess: (isAvailable) => {
       if (!isAvailable) {
         setError('name', {
@@ -86,7 +88,7 @@ export const CreateGroupForm = memo(({ isOpen, onClose }: CreateGroupFormProps) 
         name: data.name,
         description: data.description,
         tags: data.tags.map(tag => tag.value)
-      });
+      }, token || '');
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["groups"] });
@@ -134,7 +136,7 @@ export const CreateGroupForm = memo(({ isOpen, onClose }: CreateGroupFormProps) 
             onClick={onClose}
           />
           
-          <form onSubmit={handleSubmit(onSubmit)} className="fixed inset-0 overflow-hidden">
+          <form onSubmit={handleSubmit(onSubmit as any)} className="fixed inset-0 overflow-hidden">
             <motion.div
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
