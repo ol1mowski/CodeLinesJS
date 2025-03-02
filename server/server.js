@@ -67,6 +67,8 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With']
 }));
 
+console.log(isProduction ? config.cors.origin : '*');
+
 app.use(responseEnhancer);
 
 if (!isProduction) {
