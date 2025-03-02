@@ -41,24 +41,38 @@ export const useAuth = (): AuthState => {
       const tokenSessionStorage = sessionStorage.getItem('token');
       if (tokenLocalStorage || tokenSessionStorage) {
         try {
-          const response = await fetch(`${API_URL}auth/verify`, {
+          // Usuwam www. z adresu API, ponieważ może to powodować problemy z CORS
+          const apiUrl = API_URL.replace('www.', '');
+          console.log('Sprawdzanie tokenu:', `${apiUrl}auth/verify`);
+          
+          const response = await fetch(`${apiUrl}auth/verify`, {
             headers: {
-              Authorization: `Bearer ${tokenLocalStorage || tokenSessionStorage}`
-            }
+              'Authorization': `Bearer ${tokenLocalStorage || tokenSessionStorage}`,
+              'Accept': 'application/json'
+            },
+            // Usuwam credentials: 'include', ponieważ powoduje to problemy z CORS
+            mode: 'cors' // Jawnie określamy tryb CORS
           });
           
+          console.log('Odpowiedź weryfikacji:', response.status, response.statusText);
+          
           if (response.ok) {
+            console.log('Token zweryfikowany pomyślnie');
             setIsAuthenticated(true);
           } else {
+            console.warn('Weryfikacja tokenu nieudana, usuwanie tokenu');
             localStorage.removeItem('token');
             sessionStorage.removeItem('token');
             setIsAuthenticated(false);
           }
         } catch (error) {
+          console.error('Błąd podczas weryfikacji tokenu:', error);
           localStorage.removeItem('token');
           sessionStorage.removeItem('token');
           setIsAuthenticated(false);
         }
+      } else {
+        console.log('Brak tokenu do weryfikacji');
       }
       setIsLoading(false);
     };

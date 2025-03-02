@@ -13,7 +13,7 @@ export const useAuthCheck = (state: ReturnType<typeof useAuthState>) => {
         try {
           const response = await fetch(`${API_URL}auth/verify`, {
             headers: {
-              Authorization: `Bearer ${token}`
+              'Authorization': `Bearer ${token}`
             }
           });
           

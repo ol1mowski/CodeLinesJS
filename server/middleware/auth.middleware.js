@@ -4,23 +4,32 @@ import { User } from '../models/user.model.js';
 
 export const authMiddleware = async (req, res, next) => {
   try {
+    console.log('Headers:', JSON.stringify(req.headers));
+    console.log('Authorization header:', req.headers.authorization);
+    console.log('Cookies:', req.cookies);
+    
     let token;
     const authHeader = req.headers.authorization;
     
     if (authHeader && authHeader.startsWith('Bearer ')) {
       token = authHeader.split(' ')[1];
+      console.log('Token z nagłówka Authorization:', token.substring(0, 10) + '...');
     } else if (req.cookies && req.cookies.jwt) {
       token = req.cookies.jwt;
+      console.log('Token z ciasteczka:', token.substring(0, 10) + '...');
     }
     
     if (!token) {
+      console.log('Brak tokenu w żądaniu');
       throw new AuthError('Brak tokenu autoryzacji. Zaloguj się, aby uzyskać dostęp.');
     }
 
     let decoded;
     try {
       decoded = jwt.verify(token, process.env.JWT_SECRET);
+      console.log('Token zdekodowany pomyślnie:', decoded);
     } catch (error) {
+      console.log('Błąd weryfikacji tokenu:', error.name, error.message);
       if (error.name === 'JsonWebTokenError') {
         throw new AuthError('Nieprawidłowy token. Zaloguj się ponownie.');
       }
@@ -32,10 +41,13 @@ export const authMiddleware = async (req, res, next) => {
 
     const user = await User.findById(decoded.userId);
     if (!user) {
+      console.log('Nie znaleziono użytkownika dla ID:', decoded.userId);
       throw new AuthError('Użytkownik powiązany z tym tokenem już nie istnieje.');
     }
+    console.log('Znaleziono użytkownika:', user.email);
 
     if (user.passwordChangedAt && user.passwordChangedAt.getTime() > decoded.iat * 1000) {
+      console.log('Hasło zmienione po wygenerowaniu tokenu');
       throw new AuthError('Hasło zostało zmienione. Zaloguj się ponownie.');
     }
 
@@ -44,6 +56,7 @@ export const authMiddleware = async (req, res, next) => {
       email: decoded.email,
       role: user.role || 'user'
     };
+    console.log('Użytkownik dodany do req.user:', req.user);
 
     await User.findByIdAndUpdate(decoded.userId, {
       $set: { 

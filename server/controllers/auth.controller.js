@@ -272,77 +272,22 @@ export const resetPassword = async (req, res, next) => {
   }
 };
 
-export const verifyToken = async (req, res, next) => {
+export const verifyToken = async (req, res) => {
   try {
-    const authHeader = req.headers.authorization;
+    console.log('verifyToken - req.user:', req.user);
+    console.log('verifyToken - headers:', JSON.stringify(req.headers));
     
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ 
-        status: 'error',
-        message: 'Brak tokenu autoryzacyjnego' 
-      });
-    }
-    
-    const token = authHeader.split(' ')[1];
-    
-    if (!token) {
-      return res.status(401).json({ 
-        status: 'error',
-        message: 'Brak tokenu autoryzacyjnego' 
-      });
-    }
-    
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    
-    const user = await User.findById(decoded.userId).select('-password');
-    
+    const user = await User.findById(req.user.userId).select('-password');
     if (!user) {
-      return res.status(401).json({ 
-        status: 'error',
-        message: 'Użytkownik nie znaleziony' 
-      });
+      console.log('verifyToken - użytkownik nie znaleziony dla ID:', req.user.userId);
+      return res.status(401).json({ error: 'Użytkownik nie znaleziony' });
     }
     
-    req.user = user;
-    
-    return res.status(200).json({
-      status: 'success',
-      data: {
-        user: {
-          id: user._id,
-          email: user.email,
-          username: user.username,
-          avatar: user.avatar,
-          stats: user.stats,
-          profile: user.profile,
-          preferences: user.preferences,
-          accountType: user.accountType,
-          isEmailVerified: user.isEmailVerified,
-          createdAt: user.createdAt
-        }
-      }
-    });
-    
+    console.log('verifyToken - użytkownik znaleziony:', user.email);
+    res.json(user);
   } catch (error) {
-    if (error.name === 'JsonWebTokenError') {
-      return res.status(401).json({ 
-        status: 'error',
-        message: 'Nieprawidłowy token' 
-      });
-    }
-    
-    if (error.name === 'TokenExpiredError') {
-      return res.status(401).json({ 
-        status: 'error',
-        message: 'Token wygasł' 
-      });
-    }
-    
-    console.error('Błąd weryfikacji tokenu:', error);
-    return res.status(500).json({ 
-      status: 'error',
-      message: 'Błąd serwera podczas weryfikacji tokenu' 
-    });
+    console.error('verifyToken - błąd:', error);
+    res.status(401).json({ error: 'Nieprawidłowy token' });
   }
 };
 

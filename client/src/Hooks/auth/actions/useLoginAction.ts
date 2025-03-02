@@ -17,13 +17,38 @@ export const useLoginAction = (state: AuthState) => {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch(`${API_URL}auth/login`, {
+      
+      // Usuwam www. z adresu API, ponieważ może to powodować problemy z CORS
+      const apiUrl = API_URL.replace('www.', '');
+      console.log('Próba logowania do:', `${apiUrl}auth/login`);
+      
+      const response = await fetch(`${apiUrl}auth/login`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        // Usuwam credentials: 'include', ponieważ powoduje to problemy z CORS
+        mode: 'cors', // Jawnie określamy tryb CORS
         body: JSON.stringify({ email, password, rememberMe }),
       });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error);
+      
+      console.log('Odpowiedź serwera:', response.status, response.statusText);
+      
+      let data;
+      try {
+        data = await response.json();
+      } catch (e) {
+        console.error('Błąd parsowania JSON:', e);
+        throw new Error('Nieprawidłowa odpowiedź serwera');
+      }
+      
+      if (!response.ok) {
+        console.error('Błąd logowania:', data);
+        throw new Error(data.error || 'Nieznany błąd logowania');
+      }
+      
+      console.log('Logowanie udane, token:', data.token ? 'otrzymany' : 'brak');
       
       if (rememberMe) {
         localStorage.setItem('token', data.token);
@@ -34,6 +59,7 @@ export const useLoginAction = (state: AuthState) => {
       setIsAuthenticated(true);
       navigate('/dashboard');
     } catch (err) {
+      console.error('Błąd podczas logowania:', err);
       setError(err instanceof Error ? err.message : 'Wystąpił błąd podczas logowania');
       setIsAuthenticated(false);
     } finally {

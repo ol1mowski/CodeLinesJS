@@ -17,16 +17,38 @@ export const useGoogleLoginAction = (state: AuthState) => {
     try {
       setLoading(true);
       setError(null);
+      console.log('Próba logowania przez Google do:', `${API_URL}auth/google`);
+      
       const response = await fetch(`${API_URL}auth/google`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        credentials: 'include', // Dodajemy obsługę ciasteczek
+        mode: 'cors', // Jawnie określamy tryb CORS
         body: JSON.stringify({ 
           credential: credentialResponse.credential,
           rememberMe
         }),
       });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error);
+      
+      console.log('Odpowiedź serwera:', response.status, response.statusText);
+      
+      let data;
+      try {
+        data = await response.json();
+      } catch (e) {
+        console.error('Błąd parsowania JSON:', e);
+        throw new Error('Nieprawidłowa odpowiedź serwera');
+      }
+      
+      if (!response.ok) {
+        console.error('Błąd logowania przez Google:', data);
+        throw new Error(data.error || 'Nieznany błąd logowania przez Google');
+      }
+      
+      console.log('Logowanie przez Google udane, token:', data.token ? 'otrzymany' : 'brak');
       
       if (rememberMe) {
         localStorage.setItem('token', data.token);
@@ -37,6 +59,7 @@ export const useGoogleLoginAction = (state: AuthState) => {
       setIsAuthenticated(true);
       navigate('/dashboard');
     } catch (err) {
+      console.error('Błąd podczas logowania przez Google:', err);
       setError(err instanceof Error ? err.message : 'Wystąpił błąd podczas logowania przez Google');
       setIsAuthenticated(false);
     } finally {
