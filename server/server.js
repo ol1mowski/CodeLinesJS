@@ -61,7 +61,7 @@ app.use(hpp({
 app.use(compression());
 
 app.use(cors({
-  origin: '*',
+  origin: isProduction ? config.cors.origin : '*',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With']
