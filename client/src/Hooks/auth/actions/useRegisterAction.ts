@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { AuthState } from '../types';
-
-const API_URL = 'http://localhost:5001/api/auth';
+import { API_URL } from '../../../config/api.config';
 
 export const useRegisterAction = (state: AuthState) => {
   const navigate = useNavigate();
@@ -11,7 +10,7 @@ export const useRegisterAction = (state: AuthState) => {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch(`${API_URL}/register`, {
+      const response = await fetch(`${API_URL}auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, username }),
@@ -22,7 +21,7 @@ export const useRegisterAction = (state: AuthState) => {
       localStorage.setItem('token', data.token);
       setIsAuthenticated(true);
       
-      const userResponse = await fetch(`${API_URL}/verify`, {
+      const userResponse = await fetch(`${API_URL}auth/verify`, {
         headers: { Authorization: `Bearer ${data.token}` }
       });
       

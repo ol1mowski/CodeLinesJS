@@ -1,10 +1,9 @@
 import { useEffect } from 'react';
 import { useAuthState } from './useAuthState';
-
-const API_URL = 'http://localhost:5001/api/auth';
+import { API_URL } from '../../config/api.config';
 
 export const useAuthCheck = (state: ReturnType<typeof useAuthState>) => {
-  const { setIsAuthenticated, setUser, setIsLoading } = state;
+  const { setIsAuthenticated, setIsLoading } = state;
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -12,32 +11,28 @@ export const useAuthCheck = (state: ReturnType<typeof useAuthState>) => {
       const tokenSessionStorage = sessionStorage.getItem('token');
       if (tokenLocalStorage || tokenSessionStorage) {
         try {
-          const response = await fetch(`${API_URL}/verify`, {
+          const response = await fetch(`${API_URL}auth/verify`, {
             headers: {
               Authorization: `Bearer ${tokenLocalStorage || tokenSessionStorage}`
             }
           });
           
           if (response.ok) {
-            const userData = await response.json();
-            setUser(userData);
             setIsAuthenticated(true);
           } else {
             localStorage.removeItem('token');
             sessionStorage.removeItem('token');
             setIsAuthenticated(false);
-            setUser(null);
           }
         } catch (error) {
           localStorage.removeItem('token');
           sessionStorage.removeItem('token');
           setIsAuthenticated(false);
-          setUser(null);
         }
       }
       setIsLoading(false);
     };
     
     checkAuth();
-  }, [setIsAuthenticated, setUser, setIsLoading]);
+  }, [setIsAuthenticated, setIsLoading]);
 }; 

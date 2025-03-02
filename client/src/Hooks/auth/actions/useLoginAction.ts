@@ -4,13 +4,13 @@ import { API_URL } from '../../../config/api.config';
 
 export const useLoginAction = (state: AuthState) => {
   const navigate = useNavigate();
-  const { setLoading, setError, setIsAuthenticated, setUser } = state;
+  const { setLoading, setError, setIsAuthenticated } = state;
 
   const login = async (email: string, password: string, rememberMe: boolean = false) => {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch(`${API_URL}login`, {
+      const response = await fetch(`${API_URL}auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, rememberMe }),
@@ -20,14 +20,11 @@ export const useLoginAction = (state: AuthState) => {
       
       if (rememberMe) {
         localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
       } else {
         sessionStorage.setItem('token', data.token);
-        sessionStorage.setItem('user', JSON.stringify(data.user));
       }
       
       setIsAuthenticated(true);
-      setUser(data.user);
       navigate('/dashboard');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Wystąpił błąd podczas logowania');

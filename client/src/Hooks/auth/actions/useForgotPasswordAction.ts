@@ -1,6 +1,5 @@
 import { AuthState } from '../types';
-
-const API_URL = 'https://www.codelinesjs.pl/api/auth';
+import { API_URL } from '../../../config/api.config';
 
 export const useForgotPasswordAction = (state: AuthState) => {
   const { setLoading, setError } = state;
@@ -9,7 +8,7 @@ export const useForgotPasswordAction = (state: AuthState) => {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch(`${API_URL}/forgot-password`, {
+      const response = await fetch(`${API_URL}auth/forgot-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),

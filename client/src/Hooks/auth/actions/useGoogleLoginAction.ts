@@ -18,7 +18,7 @@ export const useGoogleLoginAction = (state: AuthState) => {
         picture: string;
       }>(credentialResponse.credential);
       
-      const response = await fetch(`${API_URL}/auth/google-auth`, {
+      const response = await fetch(`${API_URL}auth/google-auth`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
