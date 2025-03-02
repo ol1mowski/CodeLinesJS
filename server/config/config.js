@@ -2,6 +2,13 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+const allowedOrigins = [
+  'https://codelinesjs.pl',
+  'https://www.codelinesjs.pl',
+  'http://localhost:3000',
+  'http://localhost:5173'
+];
+
 const config = {
   app: {
     env: process.env.NODE_ENV || 'development',
@@ -26,16 +33,18 @@ const config = {
 
   cors: {
     origin: process.env.NODE_ENV === 'production' 
-      ? process.env.FRONTEND_URL 
-      : 'http://localhost:3000',
+      ? allowedOrigins
+      : '*',
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With']
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With'],
+    exposedHeaders: ['Content-Length', 'X-Requested-With'],
+    maxAge: 86400 
   },
 
   rateLimit: {
-    windowMs: 15 * 60 * 1000, 
-    max: 100, 
+    windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, 
+    max: parseInt(process.env.RATE_LIMIT_MAX) || 100, 
     standardHeaders: true,
     legacyHeaders: false,
     message: 'Zbyt wiele zapytań z tego adresu IP, spróbuj ponownie za 15 minut'
@@ -60,4 +69,4 @@ const config = {
   }
 };
 
-export default config; 
+export default config;
