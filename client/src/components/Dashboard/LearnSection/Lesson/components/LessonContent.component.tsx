@@ -11,7 +11,7 @@ type LessonContentProps = {
   progress: number;
   onSectionComplete: (sectionId: string) => void;
   onQuizComplete: (points: number) => void;
-  onLessonComplete: () => void;
+  onLessonComplete: () => Promise<void>;
 };
 
 export const LessonContent = memo(
@@ -47,7 +47,7 @@ export const LessonContent = memo(
             currentSection={activeSection}
             totalSections={totalSections}
             progress={progress}
-            isCompleted={lesson.isCompleted}
+            isCompleted={lesson.isCompleted || false}
             onComplete={onLessonComplete}
           />
         </LessonLayout>

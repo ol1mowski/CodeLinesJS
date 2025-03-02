@@ -89,11 +89,13 @@ export const useProgress = (lessonId: string, userId: string) => {
         totalPoints
       });
 
+      const completedSectionsAsStrings = completedSections.map(section => section.toString());
+
       const result = await updateUserProgress({
         lessonId,
         points: totalPoints,
         isCompleted: true,
-        completedSections: completedSections
+        completedSections: completedSectionsAsStrings
       });
 
       console.log('Wynik zapisywania postępu:', result);

@@ -1,4 +1,3 @@
-import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { NotificationsButton } from '../NotificationsButton.component';
@@ -20,7 +19,7 @@ describe('NotificationsButton', () => {
   });
 
   it('displays the badge with the number of unread notifications', () => {
-    (useDashboardData as jest.Mock).mockReturnValue({
+    (useDashboardData as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
       data: { unreadCount: 5 },
       isLoading: false
     });
@@ -30,7 +29,7 @@ describe('NotificationsButton', () => {
   });
 
   it('displays "9+" when there are more than 9 unread notifications', () => {
-    (useDashboardData as jest.Mock).mockReturnValue({
+    (useDashboardData as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
       data: { unreadCount: 10 },
       isLoading: false
     });
@@ -40,7 +39,7 @@ describe('NotificationsButton', () => {
   });
 
   it('does not display the badge when there are no unread notifications', () => {
-    (useDashboardData as jest.Mock).mockReturnValue({
+    (useDashboardData as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
       data: { unreadCount: 0 },
       isLoading: false
     });
@@ -50,7 +49,7 @@ describe('NotificationsButton', () => {
   });
 
   it('opens and closes the dropdown on click', async () => {
-    (useDashboardData as jest.Mock).mockReturnValue({
+    (useDashboardData as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
       data: { unreadCount: 0 },
       isLoading: false
     });

@@ -4,11 +4,10 @@ import { type FilterType } from "../types/filter.types";
 
 
 type LessonsHeaderProps = {
-  filter: FilterType;
   onFilterChange: (filter: FilterType) => void;
 };
 
-export const LessonsHeader = memo(({ filter, onFilterChange }: LessonsHeaderProps) => {
+export const LessonsHeader = memo(({ onFilterChange }: LessonsHeaderProps) => {
   return (
     <div className="flex justify-between items-center">
       <div>
@@ -19,7 +18,7 @@ export const LessonsHeader = memo(({ filter, onFilterChange }: LessonsHeaderProp
           Wybierz interesującą Cię lekcję i rozpocznij naukę
         </p>
       </div>
-      <LessonsFilter activeFilter={filter} onFilterChange={onFilterChange} />
+      <LessonsFilter onFilterChange={onFilterChange} />
     </div>
   );
 });

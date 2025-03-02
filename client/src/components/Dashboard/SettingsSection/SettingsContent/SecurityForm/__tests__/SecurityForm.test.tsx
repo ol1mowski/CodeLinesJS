@@ -1,4 +1,3 @@
-import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -56,18 +55,15 @@ describe('SecurityForm', () => {
         reset: mockReset,
         register: vi.fn(),
         formState: { 
-          isSubmitting: false,
+          isSubmitting: true,
           errors: {
             currentPassword: undefined,
             newPassword: undefined,
             confirmPassword: undefined
           }
         },
-        handleSubmit: (fn: any) => (e: any) => {
-          e.preventDefault();
-          return fn();
-        },
-      },
+        handleSubmit: vi.fn(),
+      } as any,
       onSubmit: mockOnSubmit,
       isUpdating: false,
     });
@@ -129,7 +125,7 @@ describe('SecurityForm', () => {
           }
         },
         handleSubmit: vi.fn(),
-      },
+      } as any,
       onSubmit: vi.fn(),
       isUpdating: false,
     });

@@ -1,12 +1,12 @@
 import { memo, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { LessonsFilter } from "../../../../Lessons/LessonsFilter.component";
 import { useLessons } from "../hooks/useLessons";
-import { LoadingSpinner } from "../../../../components/UI/LoadingSpinner.component";
-import { ErrorMessage } from "../../../../components/ErrorMessage.component";
+import { ErrorMessage } from "../../../../UI/ErrorMessage/ErrorMessage.component";
 import { FaBookOpen, FaSadTear, FaSearch } from "react-icons/fa";
-import type { FilterType } from "../../../../types/filter.types";
-import { LessonsList } from "./LessonsList.component";
+import type { FilterType } from "../../types/filter.types";
+import { LessonsList } from "../../Lessons/LessonsList.component";
+import { LoadingScreen } from "../../../../UI/LoadingScreen/LoadingScreen.component";
+import { LessonsFilter } from "../../Lessons/LessonsFilter.component";
 
 const getDifficultyLabel = (filter: string) => {
   switch (filter) {
@@ -29,8 +29,7 @@ export const Lessons = memo(() => {
     error,
     refetch,
     isEmpty,
-    userProgress,
-    userId
+    userProgress
   } = useLessons();
 
   useEffect(() => {
@@ -58,13 +57,12 @@ export const Lessons = memo(() => {
     return (
       <ErrorMessage 
         message="Nie udało się pobrać listy lekcji. Spróbuj ponownie później."
-        onRetry={refetch}
       />
     );
   }
 
   if (isLoading) {
-    return <LoadingSpinner />;
+    return <LoadingScreen />;
   }
 
   if (isEmpty) {
@@ -105,7 +103,6 @@ export const Lessons = memo(() => {
         </p>
         <div className="mt-8">
           <LessonsFilter 
-            activeFilter={filter} 
             onFilterChange={handleFilterChange}
             className="justify-center"
           />
@@ -118,9 +115,12 @@ export const Lessons = memo(() => {
     <>
       <LessonsList 
         lessons={filteredLessons}
-        userId={userId}
+        userId="current-user"
         filter={filter}
-        userLevel={userProgress.userLevel}
+        userData={{
+          userLevel: userProgress.userLevel,
+          requiredLevel: 1
+        }}
       />
     </>
   );

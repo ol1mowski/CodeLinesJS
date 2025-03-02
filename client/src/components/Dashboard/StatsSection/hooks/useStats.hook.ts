@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { UserStats } from '../../../../types/stats.types';
-import { useAuth } from '../../../../hooks/useAuth';
+import { useAuth } from '../../../../Hooks/useAuth';
 import { fetchStats } from '../api/fetchStats.api';
 
 export const useStats = () => {

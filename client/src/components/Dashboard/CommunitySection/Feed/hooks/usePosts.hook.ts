@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { fetchPosts, deletePost as apiDeletePost, updatePost as apiUpdatePost } from '../../api/posts.api';
-import { useAuth } from '../../../../../hooks/useAuth';
+import { useAuth } from '../../../../../Hooks/useAuth';
 import { Post as PostType } from '../../types/post.types';
 export const usePosts = () => {
   const { token } = useAuth()

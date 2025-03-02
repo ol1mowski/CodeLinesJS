@@ -2,7 +2,7 @@ import { memo } from "react";
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { fetchActiveUsers } from "../api/fetchActiveUsers.api";
-import { useAuth } from "../../../../hooks/useAuth";
+import { useAuth } from "../../../../Hooks/useAuth";
 
 type User = {
   users: {

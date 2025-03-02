@@ -15,6 +15,7 @@ export type Post = {
     isLiked: boolean;
   };
   commentsCount: number;
+  isLiked: boolean;
 };
 
 export type Comment = {

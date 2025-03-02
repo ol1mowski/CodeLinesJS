@@ -6,18 +6,42 @@ import { LearningPaths } from "../LearningPaths/LearningPaths.component";
 import { Lessons } from "../Lessons/Lessons.component";
 import { Resources } from "../Resources/Resources.component";
 import { SectionTitle } from "../../../UI/SectionTitle/SectionTitle.component";
-
+import { useAuth } from "../../../../Hooks/useAuth";
 
 type TabType = "paths" | "lessons" | "resources";
+const LearnTabs = ({ activeTab, onTabChange }: { activeTab: TabType; onTabChange: (tab: TabType) => void }) => {
+  const tabs = [
+    { id: "paths", label: "Ścieżki nauki" },
+    { id: "lessons", label: "Lekcje" },
+    { id: "resources", label: "Materiały" }
+  ];
+
+  return (
+    <div className="flex space-x-4 border-b border-js/10 pb-2">
+      {tabs.map(tab => (
+        <button
+          key={tab.id}
+          onClick={() => onTabChange(tab.id as TabType)}
+          className={`px-4 py-2 rounded-t-lg font-medium transition-colors ${
+            activeTab === tab.id ? "text-js border-b-2 border-js" : "text-gray-400 hover:text-gray-300"
+          }`}
+        >
+          {tab.label}
+        </button>
+      ))}
+    </div>
+  );
+};
 
 export const LearnSection = memo(() => {
   const [activeTab, setActiveTab] = useState<TabType>("paths");
   const userId = "current-user";
+  const { token } = useAuth();
 
-  const { data: userProgress } = useQuery({
+  useQuery({
     queryKey: ['userProgress', userId],
-    queryFn: () => fetchUserProgress(userId),
-    enabled: activeTab === "lessons"
+    queryFn: () => fetchUserProgress(userId, token || ''),
+    enabled: activeTab === "lessons" && !!token
   });
 
   const containerVariants = {
@@ -37,7 +61,7 @@ export const LearnSection = memo(() => {
       case "paths":
         return <LearningPaths />;
       case "lessons":
-        return <Lessons progress={userProgress?.data} />;
+        return <Lessons />;
       case "resources":
         return <Resources />;
       default:

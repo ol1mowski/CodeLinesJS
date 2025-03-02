@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fetchPreferences, updatePreferences } from '../api/preferences';
 import type { PreferencesData } from '../types/settings';
-import { useAuth } from '../../../../hooks/useAuth';
+import { useAuth } from '../../../../Hooks/useAuth';
 
 export const PREFERENCES_QUERY_KEY = ['preferences'];
 

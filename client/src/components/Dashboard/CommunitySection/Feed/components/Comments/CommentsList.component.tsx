@@ -30,13 +30,13 @@ const CommentItem = memo(({ comment }: { comment: Comment }) => (
     className="flex gap-3"
   >
     <div className="w-10 h-10 rounded-full bg-js flex items-center justify-center">
-      <span className='text-dark font-bold text-xl'>{comment.author.username[0]}</span>
+      <span className='text-dark font-bold text-xl'>{comment.author.name[0]}</span>
     </div>
     <div className="flex-1">
       <div className="bg-dark/20 rounded-lg p-3">
         <div className="flex items-center gap-2 mb-1">
           <span className="font-medium text-gray-200">
-            {comment.author.username}
+            {comment.author.name}
           </span>
           <span className="text-xs text-gray-400">
             {formatDistanceToNow(new Date(comment.createdAt), {

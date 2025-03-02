@@ -34,7 +34,7 @@ export const LessonMainContent = memo(({
         <div className="space-y-8">
           <LessonHeader
             title={lesson.title}
-            duration={lesson.duration}
+            duration={String(lesson.duration)}
             difficulty={lesson.difficulty}
             xp={lesson.points}
           />

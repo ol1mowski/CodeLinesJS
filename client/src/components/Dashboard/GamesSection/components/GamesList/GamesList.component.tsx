@@ -4,8 +4,9 @@ import { GamesListSkeleton } from "./GamesListSkeleton.component";
 import { NoGamesFound } from "./NoGamesFound.component";
 import { GameCard } from "./GameCard.component";
 import { SortOption } from "../../GamesSection.component";
-import { GameDifficulty } from "../../types/games.types";
+import { Game as DashboardGame, GameDifficulty } from "../../types/games.types";
 import { useGamesQuery } from "../../hooks/useGamesQuery";
+import { Game } from "../../../../../types/games.types";
 
 
 type GamesListProps = {
@@ -30,12 +31,12 @@ export const GamesList = memo(({ sortBy, searchQuery, selectedDifficulty }: Game
   if (!data?.games) return null;
 
   const filteredGames = data.games
-    .filter(game => 
+    .filter((game: DashboardGame) => 
       (selectedDifficulty === "all" || game.difficulty === selectedDifficulty) &&
       (game.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
        game.description.toLowerCase().includes(searchQuery.toLowerCase()))
     )
-    .sort((a, b) => {
+    .sort((a: DashboardGame, b: DashboardGame) => {
       switch (sortBy) {
         case "newest":
           return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
@@ -61,9 +62,33 @@ export const GamesList = memo(({ sortBy, searchQuery, selectedDifficulty }: Game
       transition={{ duration: 0.3 }}
       className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6"
     >
-      {filteredGames.map((game) => (
-        <GameCard key={game._id} game={game} className="w-full" />
-      ))}
+      {filteredGames.map((dashboardGame: DashboardGame) => {
+        // Mapowanie do wymaganego typu Game
+        const game: Game = {
+          _id: dashboardGame._id,
+          id: dashboardGame._id,
+          slug: dashboardGame.slug,
+          title: dashboardGame.title,
+          description: dashboardGame.description,
+          difficulty: dashboardGame.difficulty,
+          category: "game",
+          isCompleted: false,
+          rating: {
+            average: 0,
+            count: 0
+          },
+          completions: dashboardGame.completions,
+          completedCount: dashboardGame.completions.count,
+          totalPlayers: 0,
+          thumbnailUrl: "",
+          rewardPoints: dashboardGame.rewardPoints,
+          xpPoints: dashboardGame.rewardPoints
+        };
+        
+        return (
+          <GameCard key={game._id} game={game} />
+        );
+      })}
     </motion.div>
   );
 });

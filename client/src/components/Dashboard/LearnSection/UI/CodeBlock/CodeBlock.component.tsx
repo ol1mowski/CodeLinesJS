@@ -3,7 +3,6 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { FaCopy } from "react-icons/fa";
 
-// Obejście problemu z typowaniem
 const SyntaxHighlighterComponent = SyntaxHighlighter as any;
 
 type CodeBlockProps = {

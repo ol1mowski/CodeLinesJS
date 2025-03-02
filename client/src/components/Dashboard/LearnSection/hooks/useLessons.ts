@@ -3,10 +3,11 @@ import { fetchLessons } from "../lib/api/lessons";
 import type { Lesson } from "../types/lesson.types";
 import { useState, useMemo } from "react";
 import type { FilterType } from "../types/filter.types";
+import { useAuth } from "../../../../Hooks/useAuth";
 
 type Category = 'javascript' | 'react';
 
-type LessonsResponse = {
+export type LessonsResponse = {
   lessons: Record<Category, Lesson[]>;
   stats: {
     total: number;
@@ -28,27 +29,29 @@ const getDifficultyLabel = (filter: FilterType) => {
 export const useLessons = () => {
   const [filter, setFilter] = useState<FilterType>("all");
   const [category] = useState<Category>("javascript");
+  const { token } = useAuth();
 
   const {
     data,
     isLoading,
     error,
     refetch
-  } = useQuery<LessonsResponse>({
+  } = useQuery<LessonsResponse, Error>({
     queryKey: ['lessons'],
-    queryFn: fetchLessons,
+    queryFn: () => fetchLessons(token || ''),
     retry: 2,
     staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: true,
+    enabled: !!token
   });
 
   const allLessons = data?.lessons?.[category] ?? [];
-  const stats = data?.stats ?? { total: 0, completed: 0, progress: 0 };
+  const lessonStats = data?.stats ?? { total: 0, completed: 0, progress: 0 };
 
   const filteredLessons = useMemo(() =>
     filter === "all" 
       ? allLessons 
-      : allLessons.filter(lesson => lesson.difficulty === filter),
+      : allLessons.filter((lesson: Lesson) => lesson.difficulty === filter),
     [allLessons, filter]
   );
 
@@ -82,5 +85,6 @@ export const useLessons = () => {
     hasNoLessonsForFilter,
     filterState,
     requiredLevel: data?.requiredLevel,
+    stats: lessonStats
   };
 }; 

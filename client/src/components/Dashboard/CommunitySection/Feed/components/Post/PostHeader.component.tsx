@@ -1,4 +1,3 @@
-import React from 'react';
 import { FaRegEdit, FaTrashAlt } from 'react-icons/fa';
 import { memo } from "react";
 import { formatDistanceToNow } from "date-fns";

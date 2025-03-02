@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { commentsApi } from '../../api/comments.api';
-import { useAuth } from '../../../../../hooks/useAuth';
+import { useAuth } from '../../../../../Hooks/useAuth';
 import { CommentFormData } from '../../types/comments.types';
 import toast from 'react-hot-toast';
 
