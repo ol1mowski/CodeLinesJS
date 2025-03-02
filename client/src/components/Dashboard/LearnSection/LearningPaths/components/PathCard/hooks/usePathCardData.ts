@@ -11,7 +11,9 @@ export const usePathCardData = (path: LearningPath) => {
     isLocked: path.isLocked,
     requiredLevel: path.requiredLevel,
     progress: {
-      completed: Number(path.progress?.completed?.length) || 0,
+      completed: Array.isArray(path.progress?.completed) 
+        ? path.progress.completed.length 
+        : Number(path.progress?.completed) || 0,
       total: Number(path.progress?.total) || 0,
       percentage: Number(path.progress?.percentage) || 0
     },

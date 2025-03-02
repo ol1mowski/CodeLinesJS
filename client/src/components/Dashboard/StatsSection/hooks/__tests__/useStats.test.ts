@@ -20,11 +20,14 @@ describe("useStats", () => {
     vi.mocked(useAuth).mockReturnValue({
       token: "fake-token",
       isAuthenticated: true,
-      user: { id: "1", email: "test@example.com", username: "testuser" },
+      user: { id: "1", _id: "1", email: "test@example.com", username: "testuser" },
       loading: false,
       error: null,
       logout: vi.fn(),
-      login: vi.fn()
+      login: vi.fn(),
+      forgotPassword: vi.fn(),
+      register: vi.fn(),
+      loginWithGoogle: vi.fn()
     });
     const mockStats = { total: 100, completed: 50 };
     vi.mocked(useQuery).mockReturnValue({
@@ -71,7 +74,10 @@ describe("useStats", () => {
       loading: false,
       error: null,
       logout: vi.fn(),
-      login: vi.fn()
+      login: vi.fn(),
+      forgotPassword: vi.fn(),
+      register: vi.fn(),
+      loginWithGoogle: vi.fn()
     });
 
     vi.mocked(useQuery).mockReturnValue({
@@ -106,11 +112,14 @@ describe("useStats", () => {
     vi.mocked(useAuth).mockReturnValue({
       token: "fake-token",
       isAuthenticated: true,
-      user: { id: "1", email: "test@example.com", username: "testuser" },
+      user: { id: "1", _id: "1", email: "test@example.com", username: "testuser" },
       loading: false,
       error: null,
       logout: vi.fn(),
-      login: vi.fn()
+      login: vi.fn(),
+      forgotPassword: vi.fn(),
+      register: vi.fn(),
+      loginWithGoogle: vi.fn()
     });
 
     const mockError = new Error("Brak autoryzacji");
@@ -153,11 +162,14 @@ describe("useStats", () => {
     vi.mocked(useAuth).mockReturnValue({
       token: "fake-token",
       isAuthenticated: true,
-      user: { id: "1", email: "test@example.com", username: "testuser" },
+      user: { id: "1", _id: "1", email: "test@example.com", username: "testuser" },
       loading: false,
       error: null,
       logout: vi.fn(),
-      login: vi.fn()
+      login: vi.fn(),
+      forgotPassword: vi.fn(),
+      register: vi.fn(),
+      loginWithGoogle: vi.fn()
     });
 
     const mockError = new Error("Błąd sieci");

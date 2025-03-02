@@ -1,4 +1,4 @@
-import React, { memo, useState, useCallback } from "react";
+import { memo, useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import { PostHeader } from "./components/Post/PostHeader.component";
 import { PostContent } from "./components/Post/PostContent.component";
@@ -6,10 +6,9 @@ import { PostActions } from "./components/Post/PostActions.component";
 import { Comments } from "./Comments.component";
 import { useLikePost } from "./hooks/useLikePost.hook";
 import { usePosts } from "./hooks/usePosts.hook";
-import { Post as PostType } from "../types/post.types";
 
 type PostProps = {
-  post: PostType;
+  post: any;
 };
 
 export const Post = memo(({ post }: PostProps) => {
@@ -44,7 +43,7 @@ export const Post = memo(({ post }: PostProps) => {
     >
       <PostHeader 
         author={post.author} 
-        createdAt={post.createdAt} 
+        createdAt={post.createdAt.toString()} 
         onEdit={handleEdit}
         onDelete={handleDelete}
       />
@@ -68,7 +67,7 @@ export const Post = memo(({ post }: PostProps) => {
       <PostActions
         isLiked={post.isLiked}
         likesCount={post.likes.count}
-        commentsCount={post.comments.length}
+        commentsCount={post.commentsCount}
         onLike={handleLike}
         onCommentClick={toggleComments}
         isLikeLoading={isLiking}

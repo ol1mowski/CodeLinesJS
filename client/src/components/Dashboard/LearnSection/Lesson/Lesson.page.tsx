@@ -20,7 +20,6 @@ export const LessonPage = () => {
     isNotFound,
     activeSection,
     progress,
-    handleSectionChange,
     handleSectionComplete,
     handleQuizComplete,
     handleLessonComplete,
@@ -46,8 +45,7 @@ export const LessonPage = () => {
     <LessonContent
       lesson={lesson}
       activeSection={activeSection}
-      progress={progress || 0}
-      onSectionChange={handleSectionChange}
+      progress={typeof progress === 'number' ? progress : 0}
       onSectionComplete={handleSectionComplete}
       onQuizComplete={handleQuizComplete}
       onLessonComplete={handleLessonComplete}

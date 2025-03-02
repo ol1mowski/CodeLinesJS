@@ -1,19 +1,19 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { DashboardNavigation } from '../DashboardNavigation.component';
-import { useNavigation } from '../../../../hooks/useNavigation';
-import { useAuth } from '../../../../hooks/useAuth';
+import { useNavigation } from '../../../../Hooks/useNavigation';
+import { useAuth } from '../../../../Hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 
 vi.mock('react-router-dom', () => ({
   useNavigate: vi.fn(),
 }));
 
-vi.mock('../../../../hooks/useNavigation', () => ({
+vi.mock('../../../Hooks/useNavigation', () => ({
   useNavigation: vi.fn(),
 }));
 
-vi.mock('../../../../hooks/useAuth', () => ({
+vi.mock('../../../Hooks/useAuth', () => ({
   useAuth: vi.fn(),
 }));
 

@@ -33,7 +33,6 @@ export const Lessons = memo(() => {
   return (
     <div className="space-y-6">
       <LessonsHeader 
-        filter={filter}
         onFilterChange={setFilter}
       />
       <LessonsList 

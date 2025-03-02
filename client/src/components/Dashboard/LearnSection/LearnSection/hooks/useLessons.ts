@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchLessons } from '../../lib/api/lessons';
 import type { FilterType } from '../../types/filter.types';
 import type { Lesson } from '../../types/lesson.types';
+import { useAuth } from '../../../../../Hooks/useAuth';
 
 type Category = 'javascript' | 'react';
 
@@ -18,17 +19,19 @@ export type LessonsResponse = {
 export const useLessons = (initialFilter: FilterType = 'all') => {
   const [filter, setFilter] = useState<FilterType>(initialFilter);
   const [category] = useState<Category>('javascript');
+  const { token } = useAuth();
 
   const { 
     data, 
     isLoading, 
     error,
     refetch 
-  } = useQuery<LessonsResponse>({
+  } = useQuery<LessonsResponse, Error>({
     queryKey: ['lessons', filter],
-    queryFn: () => fetchLessons(),
+    queryFn: () => fetchLessons(token || ''),
     retry: 2,
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
+    enabled: !!token
   });
 
   const allLessons = data?.lessons?.[category] ?? [];

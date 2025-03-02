@@ -20,7 +20,7 @@ export type LessonSection = {
     quiz?: QuizQuestion[];
 }
 
-type QuizResult = {
+export type QuizResult = {
     completed: boolean;
     correctAnswers: number;
     totalQuestions: number;
@@ -36,6 +36,7 @@ export type LessonProgress = {
 export type Lesson = {
     id: string;
     slug: string;
+    completedSections: string[];
     title: string;
     description: string;
     duration: number;

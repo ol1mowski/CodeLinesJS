@@ -21,7 +21,7 @@ describe('TopNavigation', () => {
   });
 
   it('displays the loading state', () => {
-    (useUserProfile as jest.Mock).mockReturnValue({
+    (useUserProfile as ReturnType<typeof vi.fn>).mockReturnValue({
       data: undefined,
       isLoading: true,
       error: null,
@@ -33,7 +33,7 @@ describe('TopNavigation', () => {
   });
 
   it('displays the default username when there is no data', () => {
-    (useUserProfile as jest.Mock).mockReturnValue({
+    (useUserProfile as ReturnType<typeof vi.fn>).mockReturnValue({
       data: null,
       isLoading: false,
       error: null,
@@ -45,7 +45,7 @@ describe('TopNavigation', () => {
   });
 
   it('displays the username when the data is available', () => {
-    (useUserProfile as jest.Mock).mockReturnValue({
+    (useUserProfile as ReturnType<typeof vi.fn>).mockReturnValue({
       data: { username: 'TestUser' },
       isLoading: false,
       error: null,

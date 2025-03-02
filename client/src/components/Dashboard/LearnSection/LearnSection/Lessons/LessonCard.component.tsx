@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { memo } from "react";
 import { FaClock, FaStar, FaChevronRight, FaLock, FaCheck } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import type { Lesson } from "../../../types/lesson.types";
+import type { Lesson } from "../../types/lesson.types";
 
 type LessonCardProps = {
   lesson: Lesson;

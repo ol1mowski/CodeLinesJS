@@ -28,7 +28,13 @@ export const LearningPaths = memo(() => {
 
   return (
     <div className="space-y-8">
-      <StatsSection stats={userStats} />
+      <StatsSection stats={userStats || {
+        completedPaths: 0,
+        totalPaths: 0,
+        totalPoints: 0,
+        pathsInProgress: 0,
+        recentActivity: []
+      }} />
       
       <section>
         <header className="flex items-center justify-between mb-6">

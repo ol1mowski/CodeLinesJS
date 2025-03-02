@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import { DeleteMemberModal } from "./Modals/DeleteMemberModal.component";
 import { deleteMember } from "../api/groups/groups.api";
 import { useAuth } from "../../../../Hooks/useAuth";
+
 type GroupMembersProps = {
   members: Array<{
     _id: string;

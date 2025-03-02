@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHook } from '@testing-library/react';
 import { useFormatDate } from '../useFormatDate.hook';
 
 describe('useFormatDate', () => {

@@ -1,4 +1,3 @@
-import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { PasswordFields } from '../PasswordFields.component';
@@ -29,7 +28,7 @@ describe('PasswordFields', () => {
       confirmPassword: { message: 'Hasła nie są identyczne' }
     };
 
-    render(<PasswordFields form={mockForm as any} errors={errorsWithMessages} />);
+    render(<PasswordFields form={mockForm as any} errors={errorsWithMessages as any} />);
     
     expect(screen.getByText('Wymagane pole')).toBeInTheDocument();
     expect(screen.getByText('Hasło jest za krótkie')).toBeInTheDocument();

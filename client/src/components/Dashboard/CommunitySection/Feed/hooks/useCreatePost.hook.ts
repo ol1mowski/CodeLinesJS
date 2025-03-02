@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createPost } from '../../api/posts.api';
-import { useAuth } from '../../../../../hooks/useAuth';
+import { useAuth } from '../../../../../Hooks/useAuth';
 import toast from 'react-hot-toast';
 
 const MAX_CHARS = 500;

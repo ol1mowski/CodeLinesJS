@@ -3,12 +3,12 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ProfileForm } from '../ProfileForm.component';
-import { useAuth } from '../../../../../../hooks/useAuth';
+import { useAuth } from '../../../../../../Hooks/useAuth';
 import { useProfile } from '../../../hooks/useProfile';
 import { toast } from 'react-hot-toast';
 import { expect, vi, describe, beforeEach, afterEach, it } from 'vitest';
 
-vi.mock('../../../../../../hooks/useAuth');
+vi.mock('../../../../../../Hooks/useAuth');
 vi.mock('../../../hooks/useProfile');
 vi.mock('react-hot-toast', () => ({
   toast: {
@@ -47,21 +47,27 @@ describe('ProfileForm', () => {
       isAuthenticated: true,
       user: {
         id: '1',
+        _id: '1',
         username: 'testuser',
         email: 'test@example.com'
       },
       loading: false,
       error: null,
       logout: vi.fn(),
-      login: vi.fn()
+      login: vi.fn(),
+      forgotPassword: vi.fn(),
+      register: vi.fn(),
+      loginWithGoogle: vi.fn()
     });
     vi.mocked(useProfile).mockReturnValue({
       profile: mockProfile,
       isLoading: false,
+      bio: 'Test bio',
+      error: null,
       updateProfile: {
         mutateAsync: vi.fn(),
         isPending: false
-      }
+      } as any
     });
   });
 
@@ -84,10 +90,12 @@ describe('ProfileForm', () => {
     vi.mocked(useProfile).mockReturnValue({
       profile: undefined,
       isLoading: true,
+      bio: '',
+      error: null,
       updateProfile: {
         mutateAsync: vi.fn(),
         isPending: false
-      }
+      } as any
     });
 
     render(<ProfileForm />, { wrapper });
@@ -107,10 +115,12 @@ describe('ProfileForm', () => {
     vi.mocked(useProfile).mockReturnValue({
       profile: mockProfile,
       isLoading: false,
+      bio: 'Test bio',
+      error: null,
       updateProfile: {
         mutateAsync: vi.fn().mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100))),
         isPending: true
-      }
+      } as any
     });
 
     render(<ProfileForm />, { wrapper });
