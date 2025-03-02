@@ -60,14 +60,55 @@ app.use(hpp({
 
 app.use(compression());
 
-app.use(cors({
-  origin: isProduction ? config.cors.origin : '*',
+const corsOptions = {
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      'https://codelinesjs.pl',
+      'https://www.codelinesjs.pl',
+      'http://localhost:3000',
+      'http://localhost:5173'
+    ];
+    
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, origin);
+    } else {
+      console.log('CORS blocked for:', origin);
+      callback(null, false);
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With']
-}));
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With'],
+  exposedHeaders: ['Content-Length', 'X-Requested-With'],
+  maxAge: 86400
+};
+
+app.use(cors(corsOptions));
+
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin && corsOptions.origin(origin, (err, allowed) => allowed)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  
+  next();
+});
 
 app.use(responseEnhancer);
+
+app.use((req, res, next) => {
+  console.log('Request origin:', req.headers.origin);
+  console.log('Request method:', req.method);
+  console.log('Request path:', req.path);
+  next();
+});
 
 if (!isProduction) {
   app.use((req, res, next) => {
