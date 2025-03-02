@@ -11,21 +11,19 @@
     {
       "src": "/api/(.*)",
       "methods": ["OPTIONS"],
+      "status": 200,
       "headers": {
-        "Access-Control-Allow-Origin": "https://code-lines-js-frontend.vercel.app",
+        "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
-        "Access-Control-Allow-Headers": "X-Requested-With, Content-Type, Authorization, Accept",
-        "Access-Control-Allow-Credentials": "true"
-      },
-      "status": 200
+        "Access-Control-Allow-Headers": "*"
+      }
     },
     {
       "src": "/api/(.*)",
       "headers": {
-        "Access-Control-Allow-Origin": "https://code-lines-js-frontend.vercel.app",
+        "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
-        "Access-Control-Allow-Headers": "X-Requested-With, Content-Type, Authorization, Accept",
-        "Access-Control-Allow-Credentials": "true"
+        "Access-Control-Allow-Headers": "*"
       },
       "continue": true
     },

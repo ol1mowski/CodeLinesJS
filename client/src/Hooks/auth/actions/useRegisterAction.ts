@@ -1,10 +1,17 @@
 import { useNavigate } from 'react-router-dom';
-import { AuthState } from '../types';
 import { API_URL } from '../../../config/api.config';
+
+// Definiuję typ AuthState bezpośrednio tutaj, aby uniknąć cyklicznych importów
+type AuthState = {
+  setLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
+  setIsAuthenticated: (isAuthenticated: boolean) => void;
+  setUser?: (user: any | null) => void;
+};
 
 export const useRegisterAction = (state: AuthState) => {
   const navigate = useNavigate();
-  const { setLoading, setError, setIsAuthenticated, setUser } = state;
+  const { setLoading, setError, setIsAuthenticated } = state;
 
   const register = async (email: string, password: string, username: string) => {
     try {
@@ -18,18 +25,8 @@ export const useRegisterAction = (state: AuthState) => {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error);
       
-      localStorage.setItem('token', data.token);
+      sessionStorage.setItem('token', data.token);
       setIsAuthenticated(true);
-      
-      const userResponse = await fetch(`${API_URL}auth/verify`, {
-        headers: { Authorization: `Bearer ${data.token}` }
-      });
-      
-      if (userResponse.ok) {
-        const userData = await userResponse.json();
-        setUser(userData);
-      }
-      
       navigate('/dashboard');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Wystąpił błąd podczas rejestracji');

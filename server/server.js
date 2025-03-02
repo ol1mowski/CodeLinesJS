@@ -32,8 +32,9 @@ const { isProduction } = config.app;
 app.set('trust proxy', 1);
 
 app.use(helmet({
-  contentSecurityPolicy: isProduction ? undefined : false,
-  crossOriginEmbedderPolicy: isProduction ? undefined : false,
+  contentSecurityPolicy: false,
+  crossOriginEmbedderPolicy: false,
+  crossOriginResourcePolicy: false
 }));
 
 const limiter = rateLimit({
@@ -60,41 +61,19 @@ app.use(hpp({
 
 app.use(compression());
 
-const corsOptions = {
-  origin: function (origin, callback) {
-    const allowedOrigins = [
-      'https://codelinesjs.pl',
-      'https://www.codelinesjs.pl',
-      'https://code-lines-js.vercel.app',
-      'http://localhost:3000',
-      'http://localhost:5173'
-    ];
-    
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, origin);
-    } else {
-      console.log('CORS blocked for:', origin);
-      callback(null, false);
-    }
-  },
-  credentials: true,
+app.use(cors({
+  origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With'],
+  allowedHeaders: '*',
   exposedHeaders: ['Content-Length', 'X-Requested-With'],
+  credentials: false,
   maxAge: 86400
-};
-
-app.use(cors(corsOptions));
+}));
 
 app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  
-  if (origin && corsOptions.origin(origin, (err, allowed) => allowed)) {
-    res.header('Access-Control-Allow-Origin', origin);
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
-    res.header('Access-Control-Allow-Credentials', 'true');
-  }
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS');
+  res.header('Access-Control-Allow-Headers', '*');
   
   if (req.method === 'OPTIONS') {
     return res.status(200).end();

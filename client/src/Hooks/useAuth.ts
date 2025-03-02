@@ -1,7 +1,8 @@
 import { useAuthState } from "./auth/useAuthState";
 import { useAuthActions } from "./auth/useAuthActions";
-import { useAuthCheck } from "./auth/useAuthCheck";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../config/api.config";
 
 type User = {
   id: string;
@@ -31,7 +32,39 @@ export const useAuth = (): AuthState => {
   const state = useAuthState();
   const actions = useAuthActions(state);
   const navigate = useNavigate();
-  useAuthCheck(state);
+  const { setIsAuthenticated, setIsLoading } = state;
+  
+  // Przeniesiona logika z useAuthCheck bezpośrednio do useAuth
+  useEffect(() => {
+    const checkAuth = async () => {
+      const tokenLocalStorage = localStorage.getItem('token');
+      const tokenSessionStorage = sessionStorage.getItem('token');
+      if (tokenLocalStorage || tokenSessionStorage) {
+        try {
+          const response = await fetch(`${API_URL}auth/verify`, {
+            headers: {
+              Authorization: `Bearer ${tokenLocalStorage || tokenSessionStorage}`
+            }
+          });
+          
+          if (response.ok) {
+            setIsAuthenticated(true);
+          } else {
+            localStorage.removeItem('token');
+            sessionStorage.removeItem('token');
+            setIsAuthenticated(false);
+          }
+        } catch (error) {
+          localStorage.removeItem('token');
+          sessionStorage.removeItem('token');
+          setIsAuthenticated(false);
+        }
+      }
+      setIsLoading(false);
+    };
+    
+    checkAuth();
+  }, [setIsAuthenticated, setIsLoading]);
 
   const logout = () => {
     localStorage.removeItem("token");
@@ -43,6 +76,6 @@ export const useAuth = (): AuthState => {
     ...actions,
     ...state,
     logout,
-    token: localStorage.getItem("token") || sessionStorage.getItem("token"),
+    token: localStorage.getItem("token") || sessionStorage.getItem("token")
   };
 };

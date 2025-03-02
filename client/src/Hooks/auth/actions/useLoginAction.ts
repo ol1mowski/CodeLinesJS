@@ -1,6 +1,13 @@
 import { useNavigate } from 'react-router-dom';
-import { AuthState } from '../types';
 import { API_URL } from '../../../config/api.config';
+
+// Definiuję typ AuthState bezpośrednio tutaj, aby uniknąć cyklicznych importów
+type AuthState = {
+  setLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
+  setIsAuthenticated: (isAuthenticated: boolean) => void;
+  setUser?: (user: any | null) => void;
+};
 
 export const useLoginAction = (state: AuthState) => {
   const navigate = useNavigate();

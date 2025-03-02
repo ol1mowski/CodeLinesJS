@@ -1,5 +1,10 @@
 import { useNavigate } from 'react-router-dom';
-import { AuthState } from '../types';
+
+// Definiuję typ AuthState bezpośrednio tutaj, aby uniknąć cyklicznych importów
+type AuthState = {
+  setIsAuthenticated: (isAuthenticated: boolean) => void;
+  setUser?: (user: any | null) => void;
+};
 
 export const useLogoutAction = (state: AuthState) => {
   const navigate = useNavigate();
@@ -7,8 +12,9 @@ export const useLogoutAction = (state: AuthState) => {
 
   const logout = () => {
     localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
     setIsAuthenticated(false);
-    setUser(null);
+    if (setUser) setUser(null);
     navigate('/logowanie');
   };
 

@@ -2,13 +2,6 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const allowedOrigins = [
-  'https://codelinesjs.pl',
-  'https://www.codelinesjs.pl',
-  'http://localhost:3000',
-  'http://localhost:5173'
-];
-
 const config = {
   app: {
     env: process.env.NODE_ENV || 'development',
@@ -32,14 +25,12 @@ const config = {
   },
 
   cors: {
-    origin: process.env.NODE_ENV === 'production' 
-      ? allowedOrigins
-      : '*',
-    credentials: true,
+    origin: '*',
+    credentials: false,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With'],
+    allowedHeaders: '*',
     exposedHeaders: ['Content-Length', 'X-Requested-With'],
-    maxAge: 86400 
+    maxAge: 86400
   },
 
   rateLimit: {
