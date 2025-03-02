@@ -61,13 +61,11 @@ app.use(hpp({
 app.use(compression());
 
 app.use(cors({
-  origin: isProduction ? config.cors.origin : '*',
+  origin: '*',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With']
 }));
-
-console.log(isProduction ? config.cors.origin : '*');
 
 app.use(responseEnhancer);
 
