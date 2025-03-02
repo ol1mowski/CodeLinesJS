@@ -65,6 +65,7 @@ const corsOptions = {
     const allowedOrigins = [
       'https://codelinesjs.pl',
       'https://www.codelinesjs.pl',
+      'https://code-lines-js.vercel.app',
       'http://localhost:3000',
       'http://localhost:5173'
     ];
@@ -87,12 +88,13 @@ app.use(cors(corsOptions));
 
 app.use((req, res, next) => {
   const origin = req.headers.origin;
+  
   if (origin && corsOptions.origin(origin, (err, allowed) => allowed)) {
     res.header('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+    res.header('Access-Control-Allow-Credentials', 'true');
   }
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
-  res.header('Access-Control-Allow-Credentials', 'true');
   
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
