@@ -64,7 +64,17 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
-app.use(express.static(path.join(__dirname, 'public')));
+// Serwowanie plików statycznych z odpowiednimi typami MIME
+app.use(express.static(path.join(__dirname, 'public'), {
+  setHeaders: (res, path) => {
+    if (path.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript');
+    } else if (path.endsWith('.css')) {
+      res.setHeader('Content-Type', 'text/css');
+    }
+  }
+}));
+
 app.use(express.json({ limit: config.limits.jsonBodySize }));
 app.use(express.urlencoded({ extended: true, limit: config.limits.jsonBodySize }));
 app.use(cookieParser());
@@ -108,7 +118,29 @@ app.use("/api/lessons", lessonsRoutes);
 app.use("/api/resources", resourcesRoutes);
 app.use('/api/users', usersRoutes);
 
-app.use((req, res, next) => {
+// Obsługa wszystkich pozostałych ścieżek - musi być na końcu
+app.get('*', (req, res) => {
+  // Sprawdź, czy żądanie dotyczy pliku statycznego
+  if (req.path.startsWith('/assets/') || req.path.endsWith('.js') || req.path.endsWith('.css') || req.path.endsWith('.png') || req.path.endsWith('.svg')) {
+    const filePath = path.join(__dirname, 'public', req.path);
+    console.log('Próba serwowania pliku statycznego:', filePath);
+    
+    // Ustaw odpowiedni Content-Type
+    if (req.path.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript');
+    } else if (req.path.endsWith('.css')) {
+      res.setHeader('Content-Type', 'text/css');
+    }
+    
+    return res.sendFile(filePath, (err) => {
+      if (err) {
+        console.error('Błąd serwowania pliku statycznego:', err);
+        return res.status(404).send('Nie znaleziono pliku');
+      }
+    });
+  }
+  
+  // Dla wszystkich innych ścieżek serwuj index.html
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
