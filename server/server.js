@@ -68,18 +68,44 @@ app.use(hpp({
 app.use(compression());
 
 app.use(cors({
-  origin: '*',
+  origin: function(origin, callback) {
+    const allowedOrigins = [
+      'https://codelinesjs.pl',
+      'https://www.codelinesjs.pl',
+      'http://localhost:3000',
+      'http://localhost:5173'
+    ];
+    
+    // Pozwól na żądania bez origin (np. z Postmana)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1 || origin === undefined) {
+      callback(null, true);
+    } else {
+      console.log('Odrzucone przez CORS:', origin);
+      callback(null, true); // Tymczasowo pozwalamy na wszystkie, ale logujemy odrzucone
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: '*',
   exposedHeaders: ['Content-Length', 'X-Requested-With'],
-  credentials: false,
+  credentials: true,
   maxAge: 86400
 }));
 
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
+  const host = req.headers.host;
+  
+  // Logowanie dla debugowania
+  console.log('Host:', host);
+  console.log('Origin:', req.headers.origin);
+  console.log('Referer:', req.headers.referer);
+  
+  // Ustaw nagłówki CORS dla każdego żądania
+  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS');
   res.header('Access-Control-Allow-Headers', '*');
+  res.header('Access-Control-Allow-Credentials', 'true');
   
   if (req.method === 'OPTIONS') {
     return res.status(200).end();

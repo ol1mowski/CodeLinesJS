@@ -16,7 +16,12 @@
   "engines": {
     "node": ">=18.x"
   },
-  "keywords": ["javascript", "learning", "api", "education"],
+  "keywords": [
+    "javascript",
+    "learning",
+    "api",
+    "education"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
