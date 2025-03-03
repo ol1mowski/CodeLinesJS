@@ -67,47 +67,45 @@ app.use(hpp({
 
 app.use(compression());
 
-app.use(cors({
-  origin: function(origin, callback) {
-    const allowedOrigins = [
-      'https://codelinesjs.pl',
-      'https://www.codelinesjs.pl',
-      'http://localhost:3000',
-      'http://localhost:5173'
-    ];
-    
-    // Pozwól na żądania bez origin (np. z Postmana)
-    if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.indexOf(origin) !== -1 || origin === undefined) {
-      callback(null, true);
-    } else {
-      console.log('Odrzucone przez CORS:', origin);
-      callback(null, true); // Tymczasowo pozwalamy na wszystkie, ale logujemy odrzucone
-    }
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: '*',
-  exposedHeaders: ['Content-Length', 'X-Requested-With'],
-  credentials: true,
-  maxAge: 86400
-}));
+app.options('*', (req, res) => {
+  console.log('Obsługa żądania OPTIONS bezpośrednio');
+  
+  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Max-Age', '86400');
+  
+  res.status(200).end();
+});
 
 app.use((req, res, next) => {
   const host = req.headers.host;
   
-  // Logowanie dla debugowania
   console.log('Host:', host);
   console.log('Origin:', req.headers.origin);
   console.log('Referer:', req.headers.referer);
   
-  // Ustaw nagłówki CORS dla każdego żądania
-  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+  const allowedOrigins = [
+    'https://codelinesjs.pl',
+    'https://www.codelinesjs.pl',
+    'http://localhost:3000',
+    'http://localhost:5173'
+  ];
+  
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  } else {
+    res.header('Access-Control-Allow-Origin', '*');
+  }
+  
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS');
-  res.header('Access-Control-Allow-Headers', '*');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
   res.header('Access-Control-Allow-Credentials', 'true');
   
   if (req.method === 'OPTIONS') {
+    console.log('Obsługa żądania OPTIONS');
     return res.status(200).end();
   }
   
