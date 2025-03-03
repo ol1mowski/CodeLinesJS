@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import mongoose from "mongoose";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
@@ -34,6 +35,19 @@ const app = express();
 const isProduction = process.env.NODE_ENV === 'production';
 
 app.set('trust proxy', 1);
+
+// Konfiguracja CORS - musi być przed innymi middleware
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  credentials: false,
+  preflightContinue: false,
+  optionsSuccessStatus: 204
+}));
+
+// Obsługa żądań OPTIONS
+app.options('*', cors());
 
 app.use(helmet({
   contentSecurityPolicy: false,

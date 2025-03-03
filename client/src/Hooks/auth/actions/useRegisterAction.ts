@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { API_URL } from '../../../config/api.config';
 
-// Definiuję typ AuthState bezpośrednio tutaj, aby uniknąć cyklicznych importów
 type AuthState = {
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
@@ -17,21 +16,22 @@ export const useRegisterAction = (state: AuthState) => {
     try {
       setLoading(true);
       setError(null);
-      console.log('Próba rejestracji do:', `${API_URL}auth/register`);
-      
-      const response = await fetch(`${API_URL}auth/register`, {
+
+      const apiUrl = API_URL.replace('www.', '');
+      console.log('Próba rejestracji do:', `${apiUrl}auth/register`);
+
+      const response = await fetch(`${apiUrl}auth/register`, {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
-        credentials: 'include', // Dodajemy obsługę ciasteczek
-        mode: 'cors', // Jawnie określamy tryb CORS
+        mode: 'cors',
         body: JSON.stringify({ email, password, username }),
       });
-      
+
       console.log('Odpowiedź serwera:', response.status, response.statusText);
-      
+
       let data;
       try {
         data = await response.json();
@@ -39,14 +39,14 @@ export const useRegisterAction = (state: AuthState) => {
         console.error('Błąd parsowania JSON:', e);
         throw new Error('Nieprawidłowa odpowiedź serwera');
       }
-      
+
       if (!response.ok) {
         console.error('Błąd rejestracji:', data);
         throw new Error(data.error || 'Nieznany błąd rejestracji');
       }
-      
+
       console.log('Rejestracja udana, token:', data.token ? 'otrzymany' : 'brak');
-      
+
       sessionStorage.setItem('token', data.token);
       setIsAuthenticated(true);
       navigate('/dashboard');

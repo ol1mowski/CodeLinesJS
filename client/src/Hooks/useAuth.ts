@@ -1,6 +1,6 @@
 import { useAuthState } from "./auth/useAuthState";
 import { useAuthActions } from "./auth/useAuthActions";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../config/api.config";
 
@@ -13,6 +13,7 @@ type User = {
 
 type AuthState = {
   isAuthenticated: boolean;
+  isAuthChecking: boolean;
   user: User | null;
   token: string | null;
   loading: boolean;
@@ -32,64 +33,92 @@ export const useAuth = (): AuthState => {
   const state = useAuthState();
   const actions = useAuthActions(state);
   const navigate = useNavigate();
-  const { setIsAuthenticated, setIsLoading } = state;
-  
-  // Przeniesiona logika z useAuthCheck bezpośrednio do useAuth
-  useEffect(() => {
-    const checkAuth = async () => {
-      const tokenLocalStorage = localStorage.getItem('token');
-      const tokenSessionStorage = sessionStorage.getItem('token');
-      if (tokenLocalStorage || tokenSessionStorage) {
-        try {
-          // Usuwam www. z adresu API, ponieważ może to powodować problemy z CORS
-          const apiUrl = API_URL.replace('www.', '');
-          console.log('Sprawdzanie tokenu:', `${apiUrl}auth/verify`);
-          
-          const response = await fetch(`${apiUrl}auth/verify`, {
-            headers: {
-              'Authorization': `Bearer ${tokenLocalStorage || tokenSessionStorage}`,
-              'Accept': 'application/json'
-            },
-            // Usuwam credentials: 'include', ponieważ powoduje to problemy z CORS
-            mode: 'cors' // Jawnie określamy tryb CORS
-          });
-          
-          console.log('Odpowiedź weryfikacji:', response.status, response.statusText);
-          
-          if (response.ok) {
-            console.log('Token zweryfikowany pomyślnie');
-            setIsAuthenticated(true);
-          } else {
-            console.warn('Weryfikacja tokenu nieudana, usuwanie tokenu');
-            localStorage.removeItem('token');
-            sessionStorage.removeItem('token');
-            setIsAuthenticated(false);
-          }
-        } catch (error) {
-          console.error('Błąd podczas weryfikacji tokenu:', error);
-          localStorage.removeItem('token');
-          sessionStorage.removeItem('token');
-          setIsAuthenticated(false);
-        }
-      } else {
-        console.log('Brak tokenu do weryfikacji');
+
+  const [isAuthChecking, setIsAuthChecking] = useState(true);
+
+  const checkAuth = async () => {
+    try {
+      setIsAuthChecking(true);
+      const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+
+      if (!token) {
+        console.log("Brak tokenu w localStorage lub sessionStorage");
+        state.setIsAuthenticated(false);
+        return;
       }
-      setIsLoading(false);
-    };
-    
+
+      const apiUrl = API_URL.replace('www.', '');
+      console.log("Sprawdzanie tokenu:", `${apiUrl}auth/verify`);
+
+      const response = await fetch(`${apiUrl}auth/verify`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Accept': 'application/json'
+        },
+        mode: 'cors'
+      });
+
+      console.log("Odpowiedź weryfikacji tokenu:", response.status, response.statusText);
+
+      if (response.status === 429) {
+        const errorText = await response.text();
+        console.error('Zbyt wiele żądań:', errorText);
+        throw new Error('Zbyt wiele prób weryfikacji. Spróbuj ponownie za chwilę.');
+      }
+
+      let data;
+      try {
+        const text = await response.text();
+        if (!text) {
+          throw new Error('Pusta odpowiedź serwera');
+        }
+        
+        data = JSON.parse(text);
+      } catch (e) {
+        console.error('Błąd parsowania JSON:', e);
+        throw new Error('Nieprawidłowa odpowiedź serwera');
+      }
+
+      if (!response.ok) {
+        console.error("Błąd weryfikacji tokenu:", data);
+        throw new Error(data.error || "Nieznany błąd weryfikacji tokenu");
+      }
+
+      console.log("Token zweryfikowany, użytkownik:", data.user ? "zalogowany" : "brak");
+      state.setUser(data.user);
+      state.setIsAuthenticated(true);
+    } catch (err) {
+      console.error("Błąd podczas weryfikacji tokenu:", err);
+      state.setError(err instanceof Error ? err.message : "Wystąpił błąd podczas weryfikacji tokenu");
+      state.setIsAuthenticated(false);
+      localStorage.removeItem("token");
+      sessionStorage.removeItem("token");
+    } finally {
+      setIsAuthChecking(false);
+    }
+  };
+
+  useEffect(() => {
     checkAuth();
-  }, [setIsAuthenticated, setIsLoading]);
+  }, []);
 
   const logout = () => {
     localStorage.removeItem("token");
     sessionStorage.removeItem("token");
-    navigate("/logowanie");
+    state.setIsAuthenticated(false);
+    state.setUser(null);
+    navigate("/");
   };
 
   return {
-    ...actions,
     ...state,
+    isAuthChecking,
     logout,
-    token: localStorage.getItem("token") || sessionStorage.getItem("token")
+    login: actions.login,
+    register: actions.register,
+    loginWithGoogle: actions.loginWithGoogle,
+    forgotPassword: actions.forgotPassword,
+    token: localStorage.getItem("token") || sessionStorage.getItem("token"),
   };
 };

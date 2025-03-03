@@ -1,6 +1,5 @@
 import { API_URL } from '../../../config/api.config';
 
-// Definiuję typ AuthState bezpośrednio tutaj, aby uniknąć cyklicznych importów
 type AuthState = {
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
@@ -13,16 +12,17 @@ export const useForgotPasswordAction = (state: AuthState) => {
     try {
       setLoading(true);
       setError(null);
-      console.log('Próba resetowania hasła do:', `${API_URL}auth/forgot-password`);
       
-      const response = await fetch(`${API_URL}auth/forgot-password`, {
+      const apiUrl = API_URL.replace('www.', '');
+      console.log('Próba resetowania hasła do:', `${apiUrl}auth/forgot-password`);
+      
+      const response = await fetch(`${apiUrl}auth/forgot-password`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
-        credentials: 'include', // Dodajemy obsługę ciasteczek
-        mode: 'cors', // Jawnie określamy tryb CORS
+        mode: 'cors',
         body: JSON.stringify({ email }),
       });
       

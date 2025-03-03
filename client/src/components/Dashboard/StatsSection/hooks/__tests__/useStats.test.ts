@@ -20,6 +20,7 @@ describe("useStats", () => {
     vi.mocked(useAuth).mockReturnValue({
       token: "fake-token",
       isAuthenticated: true,
+      isAuthChecking: false,
       user: { id: "1", _id: "1", email: "test@example.com", username: "testuser" },
       loading: false,
       error: null,
@@ -70,6 +71,7 @@ describe("useStats", () => {
     vi.mocked(useAuth).mockReturnValue({
       token: null,
       isAuthenticated: false,
+      isAuthChecking: false,
       user: null,
       loading: false,
       error: null,
@@ -112,6 +114,7 @@ describe("useStats", () => {
     vi.mocked(useAuth).mockReturnValue({
       token: "fake-token",
       isAuthenticated: true,
+      isAuthChecking: false,
       user: { id: "1", _id: "1", email: "test@example.com", username: "testuser" },
       loading: false,
       error: null,
@@ -162,6 +165,7 @@ describe("useStats", () => {
     vi.mocked(useAuth).mockReturnValue({
       token: "fake-token",
       isAuthenticated: true,
+      isAuthChecking: false,
       user: { id: "1", _id: "1", email: "test@example.com", username: "testuser" },
       loading: false,
       error: null,

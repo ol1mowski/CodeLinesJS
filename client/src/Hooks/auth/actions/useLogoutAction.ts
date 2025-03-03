@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom';
 
-// Definiuję typ AuthState bezpośrednio tutaj, aby uniknąć cyklicznych importów
 type AuthState = {
   setIsAuthenticated: (isAuthenticated: boolean) => void;
   setUser?: (user: any | null) => void;

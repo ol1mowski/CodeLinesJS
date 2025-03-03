@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { API_URL } from '../../../config/api.config';
 
-// Definiuję typ AuthState bezpośrednio tutaj, aby uniknąć cyklicznych importów
 type AuthState = {
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
@@ -17,16 +16,17 @@ export const useGoogleLoginAction = (state: AuthState) => {
     try {
       setLoading(true);
       setError(null);
-      console.log('Próba logowania przez Google do:', `${API_URL}auth/google`);
       
-      const response = await fetch(`${API_URL}auth/google`, {
+      const apiUrl = API_URL.replace('www.', '');
+      console.log('Próba logowania przez Google do:', `${apiUrl}auth/google`);
+      
+      const response = await fetch(`${apiUrl}auth/google`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
-        credentials: 'include', // Dodajemy obsługę ciasteczek
-        mode: 'cors', // Jawnie określamy tryb CORS
+        mode: 'cors',
         body: JSON.stringify({ 
           credential: credentialResponse.credential,
           rememberMe

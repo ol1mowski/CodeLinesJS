@@ -45,6 +45,7 @@ describe('ProfileForm', () => {
     vi.mocked(useAuth).mockReturnValue({
       token: 'test-token',
       isAuthenticated: true,
+      isAuthChecking: false,
       user: {
         id: '1',
         _id: '1',

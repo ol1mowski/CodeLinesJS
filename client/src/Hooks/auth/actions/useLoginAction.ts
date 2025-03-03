@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { API_URL } from '../../../config/api.config';
 
-// Definiuję typ AuthState bezpośrednio tutaj, aby uniknąć cyklicznych importów
 type AuthState = {
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
@@ -18,7 +17,6 @@ export const useLoginAction = (state: AuthState) => {
       setLoading(true);
       setError(null);
       
-      // Usuwam www. z adresu API, ponieważ może to powodować problemy z CORS
       const apiUrl = API_URL.replace('www.', '');
       console.log('Próba logowania do:', `${apiUrl}auth/login`);
       
@@ -28,19 +26,29 @@ export const useLoginAction = (state: AuthState) => {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
-        // Usuwam credentials: 'include', ponieważ powoduje to problemy z CORS
-        mode: 'cors', // Jawnie określamy tryb CORS
+        mode: 'cors',
         body: JSON.stringify({ email, password, rememberMe }),
       });
       
       console.log('Odpowiedź serwera:', response.status, response.statusText);
       
+      if (response.status === 429) {
+        const errorText = await response.text();
+        console.error('Zbyt wiele żądań:', errorText);
+        throw new Error('Zbyt wiele prób logowania. Spróbuj ponownie za chwilę.');
+      }
+      
       let data;
       try {
-        data = await response.json();
+        const text = await response.text();
+        if (!text) {
+          throw new Error('Pusta odpowiedź serwera');
+        }
+        
+        data = JSON.parse(text);
       } catch (e) {
         console.error('Błąd parsowania JSON:', e);
-        throw new Error('Nieprawidłowa odpowiedź serwera');
+        throw new Error('Nieprawidłowa odpowiedź serwera. Spróbuj ponownie później.');
       }
       
       if (!response.ok) {

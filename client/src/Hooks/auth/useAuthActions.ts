@@ -4,7 +4,6 @@ import { useForgotPasswordAction } from './actions/useForgotPasswordAction';
 import { useLogoutAction } from './actions/useLogoutAction';
 import { useGoogleLoginAction } from './actions/useGoogleLoginAction';
 
-// Definiuję typ AuthState bezpośrednio tutaj, aby uniknąć cyklicznych importów
 type AuthState = {
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
