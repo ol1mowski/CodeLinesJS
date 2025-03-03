@@ -1,58 +1,15 @@
 {
   "version": 2,
-  "name": "codelinesjs-api",
   "builds": [
     {
       "src": "server.js",
       "use": "@vercel/node"
-    },
-    {
-      "src": "public/**",
-      "use": "@vercel/static"
     }
   ],
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "server.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/public/$1",
-      "continue": true
-    },
-    {
       "src": "/(.*)",
       "dest": "server.js"
-    }
-  ],
-  "headers": [
-    {
-      "source": "/api/(.*)",
-      "headers": [
-        { "key": "Access-Control-Allow-Credentials", "value": "true" },
-        { "key": "Access-Control-Allow-Origin", "value": "*" },
-        { "key": "Access-Control-Allow-Methods", "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT" },
-        { "key": "Access-Control-Allow-Headers", "value": "*" }
-      ]
-    }
-  ],
-  "env": {
-    "NODE_ENV": "production"
-  },
-  "trailingSlash": false,
-  "cleanUrls": true,
-  "redirects": [
-    {
-      "source": "/(.*)",
-      "has": [
-        {
-          "type": "host",
-          "value": "www.codelinesjs.pl"
-        }
-      ],
-      "destination": "https://codelinesjs.pl/$1",
-      "permanent": true
     }
   ]
 }

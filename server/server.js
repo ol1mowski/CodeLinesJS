@@ -4,8 +4,8 @@ import mongoose from "mongoose";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import mongoSanitize from "express-mongo-sanitize";
-import xss from "xss-clean";
-import hpp from "hpp";
+// import xss from "xss-clean";
+// import hpp from "hpp";
 import compression from "compression";
 import cookieParser from "cookie-parser";
 import path from 'path';
@@ -32,7 +32,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const { isProduction } = config.app;
+const isProduction = process.env.NODE_ENV === 'production';
 
 app.set('trust proxy', 1);
 
@@ -57,13 +57,8 @@ app.use(express.urlencoded({ extended: true, limit: config.limits.jsonBodySize }
 app.use(cookieParser());
 
 app.use(mongoSanitize());
-app.use(xss());
-
-app.use(hpp({
-  whitelist: [
-    'points', 'level', 'streak', 'limit', 'page', 'sort'
-  ]
-}));
+// app.use(xss());
+// app.use(hpp());
 
 app.use(compression());
 
