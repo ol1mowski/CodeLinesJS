@@ -1,5 +1,4 @@
 import express from "express";
-import cors from "cors";
 import mongoose from "mongoose";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
@@ -61,26 +60,6 @@ app.use(mongoSanitize());
 // app.use(hpp());
 
 app.use(compression());
-
-// Obsługa żądań OPTIONS
-app.options('*', (req, res) => {
-  console.log('Obsługa żądania OPTIONS bezpośrednio');
-  
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.header('Access-Control-Max-Age', '86400'); // 24 godziny
-  
-  res.status(200).end();
-});
-
-app.use(cors({
-  origin: '*',
-  credentials: false,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
-}));
 
 app.use(responseEnhancer);
 
