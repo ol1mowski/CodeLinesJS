@@ -8,6 +8,8 @@ import xss from "xss-clean";
 import hpp from "hpp";
 import compression from "compression";
 import cookieParser from "cookie-parser";
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 import config from "./config/config.js";
 import { responseEnhancer } from "./utils/response.js";
@@ -25,6 +27,9 @@ import resourcesRoutes from './routes/resources.routes.js';
 import usersRoutes from './routes/users.routes.js';
 import gamesRoutes from './routes/games.routes.js';
 import progressRoutes from './routes/progress.routes.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const { isProduction } = config.app;
@@ -46,6 +51,7 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json({ limit: config.limits.jsonBodySize }));
 app.use(express.urlencoded({ extended: true, limit: config.limits.jsonBodySize }));
 app.use(cookieParser());
@@ -115,11 +121,8 @@ app.use("/api/lessons", lessonsRoutes);
 app.use("/api/resources", resourcesRoutes);
 app.use('/api/users', usersRoutes);
 
-app.all('*', (req, res) => {
-  res.status(404).json({
-    status: 'error',
-    message: `Nie znaleziono trasy: ${req.originalUrl}`
-  });
+app.use((req, res, next) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 app.use(errorHandler);

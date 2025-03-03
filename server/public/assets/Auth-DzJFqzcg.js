@@ -1,0 +1,1 @@
+import{j as r,r as t}from"./vendor-react-vjBZjf4A.js";import{L as s,g as o}from"./app-components-xMl63V6x.js";import"./vendor-other-Dz7oXl8k.js";import"./vendor-framer-motion-I1SoX3Sb.js";import"./vendor-charts-DAWAqp4E.js";const n=()=>r.jsx(t.Suspense,{fallback:r.jsx(s,{}),children:r.jsx(o,{})});export{n as default};
