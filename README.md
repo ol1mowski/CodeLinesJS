@@ -11,7 +11,6 @@
 <img width="1440" alt="Screenshot 2025-02-21 at 18 00 56" src="https://github.com/user-attachments/assets/1aeae37b-cdd9-4ff4-9e70-4eed53e8ec66" />
 
 
-
 ## 🚀 O Projekcie
 
 CodeLinesJS to innowacyjna platforma edukacyjna, która przekształca naukę JavaScript w fascynującą przygodę. Łącząc elementy grywalizacji z praktyczną nauką programowania, tworzymy unikalne doświadczenie edukacyjne dla początkujących i średniozaawansowanych programistów.
