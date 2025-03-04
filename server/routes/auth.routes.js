@@ -6,14 +6,12 @@ import { asyncHandler } from '../utils/asyncHandler.js';
 
 const router = express.Router();
 
-// Endpoint testowy do sprawdzenia nagłówków
 router.get('/test-headers', (req, res) => {
   console.log('Test Headers - wszystkie nagłówki:', JSON.stringify(req.headers));
   console.log('Test Headers - authorization:', req.headers.authorization);
   console.log('Test Headers - x-vercel-proxy-signature:', req.headers['x-vercel-proxy-signature']);
   console.log('Test Headers - forwarded:', req.headers.forwarded);
   
-  // Sprawdź, czy token jest w którymś z nagłówków
   let token;
   let tokenSource = 'nie znaleziono';
   const authHeader = req.headers.authorization;

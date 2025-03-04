@@ -1,20 +1,11 @@
 export class LevelService {
   static XP_PER_LEVEL = 1000;
   static LEVEL_MULTIPLIER = 1.35;
-
-  /**
-   @param {number} level 
-   @returns {number}
-   */
+  
   static calculatePointsToNextLevel(level) {
     return Math.round(this.XP_PER_LEVEL * Math.pow(this.LEVEL_MULTIPLIER, level - 1));
   }
 
-  /**
-   @param {Object} user 
-   @param {number} earnedPoints 
-   @returns {Object}
-   */
   static async updateUserLevel(user, earnedPoints = 0) {
     if (!user.stats) {
       user.stats = {
@@ -59,13 +50,6 @@ export class LevelService {
     };
   }
 
-  /**
-   * Aktualizuje poziom użytkownika i jego streak w jednej operacji
-   * @param {string} userId - ID użytkownika
-   * @param {number} earnedPoints - Zdobyte punkty
-   * @param {Object} progress - Obiekt z informacjami o postępie
-   * @returns {Object} - Informacje o aktualizacji poziomu i streaka
-   */
   static async updateUserLevelAndStreak(userId, earnedPoints = 0, progress = {}) {
     const { User } = await import('../models/user.model.js');
     const { StreakService } = await import('./streak.service.js');
@@ -117,10 +101,6 @@ export class LevelService {
     };
   }
 
-  /**
-   @param {Object} user 
-   @returns {Object}
-   */
   static getUserLevelStats(user) {
     const level = user.stats?.level || 1;
     const points = user.stats?.points || 0;

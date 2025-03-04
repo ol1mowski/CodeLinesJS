@@ -36,18 +36,14 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 app.set('trust proxy', 1);
 
-// Konfiguracja CORS - musi być przed innymi middleware
 app.use(cors({
-  origin: '*',
+  origin: config.cors.origin,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   credentials: false,
   preflightContinue: false,
   optionsSuccessStatus: 204
 }));
-
-// Obsługa żądań OPTIONS
-app.options('*', cors());
 
 app.use(helmet({
   contentSecurityPolicy: false,
@@ -64,7 +60,6 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
-// Serwowanie plików statycznych z odpowiednimi typami MIME
 app.use(express.static(path.join(__dirname, 'public'), {
   setHeaders: (res, path) => {
     if (path.endsWith('.js')) {
@@ -87,20 +82,6 @@ app.use(compression());
 
 app.use(responseEnhancer);
 
-app.use((req, res, next) => {
-  console.log('Request origin:', req.headers.origin);
-  console.log('Request method:', req.method);
-  console.log('Request path:', req.path);
-  next();
-});
-
-if (!isProduction) {
-  app.use((req, res, next) => {
-    console.log(`${req.method} ${req.originalUrl}`);
-    next();
-  });
-}
-
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok', environment: process.env.NODE_ENV });
 });
@@ -118,14 +99,11 @@ app.use("/api/lessons", lessonsRoutes);
 app.use("/api/resources", resourcesRoutes);
 app.use('/api/users', usersRoutes);
 
-// Obsługa wszystkich pozostałych ścieżek - musi być na końcu
 app.get('*', (req, res) => {
-  // Sprawdź, czy żądanie dotyczy pliku statycznego
   if (req.path.startsWith('/assets/') || req.path.endsWith('.js') || req.path.endsWith('.css') || req.path.endsWith('.png') || req.path.endsWith('.svg')) {
     const filePath = path.join(__dirname, 'public', req.path);
     console.log('Próba serwowania pliku statycznego:', filePath);
     
-    // Ustaw odpowiedni Content-Type
     if (req.path.endsWith('.js')) {
       res.setHeader('Content-Type', 'application/javascript');
     } else if (req.path.endsWith('.css')) {
@@ -140,7 +118,6 @@ app.get('*', (req, res) => {
     });
   }
   
-  // Dla wszystkich innych ścieżek serwuj index.html
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 

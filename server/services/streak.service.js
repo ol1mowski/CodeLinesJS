@@ -1,10 +1,4 @@
 export class StreakService {
-  /**
-   * Aktualizuje streak użytkownika na podstawie jego ostatniej aktywności
-   * @param {Object} user - Obiekt użytkownika z bazy danych
-   * @param {boolean} hasEarnedPoints - Czy użytkownik zdobył punkty w danym dniu
-   * @returns {Object} - Informacje o aktualizacji streaka
-   */
   static updateStreak(user, hasEarnedPoints = false) {
 
     if (!user.stats) {
@@ -104,15 +98,6 @@ export class StreakService {
     };
   }
 
-  /**
-   * Aktualizuje dzienny postęp użytkownika
-   * @param {Object} user - Obiekt użytkownika z bazy danych
-   * @param {Object} progress - Obiekt z informacjami o postępie
-   * @param {number} progress.points - Zdobyte punkty
-   * @param {number} progress.challenges - Ukończone wyzwania
-   * @param {number} progress.timeSpent - Czas spędzony na nauce (w minutach)
-   * @returns {Object} - Informacje o aktualizacji dziennego postępu
-   */
   static updateDailyProgress(user, progress = {}) {
     if (!user.stats) {
       user.stats = {
@@ -187,11 +172,6 @@ export class StreakService {
     };
   }
 
-  /**
-   * Inicjalizuje dzienny postęp użytkownika, jeśli nie istnieje wpis na dzisiaj
-   * @param {Object} user - Obiekt użytkownika z bazy danych
-   * @returns {Object} - Informacje o inicjalizacji dziennego postępu
-   */
   static initializeDailyProgress(user) {
     if (!user.stats) {
       user.stats = {
@@ -246,13 +226,6 @@ export class StreakService {
     };
   }
 
-  /**
-   * Aktualizuje streak i dzienny postęp użytkownika w jednej operacji
-   * @param {string} userId - ID użytkownika
-   * @param {boolean} hasEarnedPoints - Czy użytkownik zdobył punkty (wpływa na aktualizację streaka)
-   * @param {Object} progress - Obiekt z informacjami o postępie
-   * @returns {Object} - Informacje o aktualizacji streaka i dziennego postępu
-   */
   static async updateUserActivity(userId, hasEarnedPoints = false, progress = {}) {
     const { User } = await import('../models/user.model.js');
     const user = await User.findById(userId);
