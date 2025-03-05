@@ -4,8 +4,8 @@ import mongoose from "mongoose";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import mongoSanitize from "express-mongo-sanitize";
-// import xss from "xss-clean";
-// import hpp from "hpp";
+import xss from "xss-clean";
+import hpp from "hpp";
 import compression from "compression";
 import cookieParser from "cookie-parser";
 import path from 'path';
@@ -75,8 +75,8 @@ app.use(express.urlencoded({ extended: true, limit: config.limits.jsonBodySize }
 app.use(cookieParser());
 
 app.use(mongoSanitize());
-// app.use(xss());
-// app.use(hpp());
+app.use(xss());
+app.use(hpp());
 
 app.use(compression());
 

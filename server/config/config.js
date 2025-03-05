@@ -9,7 +9,6 @@ const config = {
     frontendUrl: process.env.FRONTEND_URL || 'http://localhost:3000',
     isProduction: process.env.NODE_ENV === 'production',
   },
-
   db: {
     uri: process.env.MONGODB_URI,
     options: {
@@ -45,6 +44,7 @@ const config = {
 
   email: {
     host: process.env.EMAIL_HOST,
+    sendgridApiKey: process.env.SENDGRID_API_KEY,
     port: process.env.EMAIL_PORT,
     user: process.env.EMAIL_USER,
     password: process.env.EMAIL_PASSWORD,

@@ -1,18 +1,33 @@
-import nodemailer from 'nodemailer';
+import sgMail from '@sendgrid/mail';
 import config from './config.js';
 
-export const transporter = nodemailer.createTransport({
-  host: config.email.host,
-  port: parseInt(config.email.port, 10),
-  secure: parseInt(config.email.port, 10) === 465,
-  auth: {
-    user: config.email.user,
-    pass: config.email.password,
-  },
-  tls: {
-    rejectUnauthorized: process.env.NODE_ENV === 'production'
+sgMail.setApiKey(config.email.sendgridApiKey);
+                
+export const sendEmail = async (options) => {
+  const msg = {
+    to: options.to,
+    from: options.from || config.email.from,
+    subject: options.subject,
+    html: options.html,
+  };
+  
+  try {
+    await sgMail.send(msg);
+    return { success: true };
+  } catch (error) {
+    console.error('Błąd podczas wysyłania e-maila:', error);
+    if (error.response) {
+      console.error(error.response.body);
+    }
+    return { success: false, error };
   }
-}); 
+};
+
+export const transporter = {
+  sendMail: async (options) => {
+    return sendEmail(options);
+  }
+};
 
 export const createEmailTemplate = (title, content) => {
   return `
