@@ -2,8 +2,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ForgotPasswordFormData, forgotPasswordSchema } from "../../../../schemas/auth.schema";
 import { useAuth } from "../../../../Hooks/useAuth";
-import { useFormStatus } from "../../hooks/useFormStatus.hook";
+import { useFormStatus } from "../../../Auth/hooks/useFormStatus.hook";
 
+/**
+ * Hook do obsługi logiki formularza resetowania hasła
+ */
 export const useForgotPasswordForm = () => {
   const { forgotPassword, loading, error } = useAuth();
   const formStatus = useFormStatus({ initialError: error });
@@ -24,11 +27,7 @@ export const useForgotPasswordForm = () => {
       formStatus.setSuccess(message);
       reset();
     } catch (error) {
-      if (error instanceof Error) {
-        formStatus.setError(error.message);
-      } else {
-        formStatus.setError("Wystąpił nieznany błąd podczas wysyłania linku resetującego hasło");
-      }
+      formStatus.handleError(error);
     }
   };
 

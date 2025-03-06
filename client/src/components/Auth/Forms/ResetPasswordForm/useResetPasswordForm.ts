@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { ResetPasswordFormData, resetPasswordSchema } from "../../../../schemas/auth.schema";
 import { useAuth } from "../../../../Hooks/useAuth";
-import { useFormStatus } from "../../hooks/useFormStatus.hook";
+import { useFormStatus } from "../../../Auth/hooks/useFormStatus.hook";
 
 export const useResetPasswordForm = () => {
   const { token } = useParams<{ token: string }>();
@@ -30,7 +30,7 @@ export const useResetPasswordForm = () => {
       setTokenError(true);
       formStatus.setError("Token resetowania hasła jest nieprawidłowy. Sprawdź, czy link jest poprawny.");
     }
-  }, [token]);
+  }, [token, formStatus]);
 
   const onSubmit = async (data: ResetPasswordFormData) => {
     if (!token) {
@@ -43,16 +43,14 @@ export const useResetPasswordForm = () => {
       const message = await resetPassword(token, data.password, data.confirmPassword);
       formStatus.setSuccess(message);
       reset();
-    } catch (err) {
-      if (err instanceof Error) {
-        if (err.message.includes("token")) {
-          formStatus.setError(err.message);
-          setTokenError(true);
-        } else {
-          formStatus.setError(err.message);
-        }
-      } else {
-        formStatus.setError("Wystąpił nieznany błąd podczas resetowania hasła. Spróbuj ponownie później.");
+    } catch (error) {
+      const errorMessage = formStatus.handleError(error);
+      
+      if (typeof errorMessage === 'string' && 
+          (errorMessage.includes("token") || 
+           errorMessage.includes("Token") || 
+           errorMessage.includes("wygasł"))) {
+        setTokenError(true);
       }
     }
   };

@@ -32,25 +32,20 @@ export const useGoogleLoginAction = (state: AuthState) => {
         }),
       });
       
-      console.log('Odpowiedź serwera:', response.status, response.statusText);
       
       let data;
       try {
         const text = await response.text();
-        console.log('Treść odpowiedzi serwera:', text);
         data = JSON.parse(text);
       } catch (e) {
-        console.error('Błąd parsowania JSON:', e);
         throw new Error('Nieprawidłowa odpowiedź serwera');
       }
       
       if (!response.ok) {
-        console.error('Błąd logowania przez Google:', data);
         throw new Error(data.error || 'Nieznany błąd logowania przez Google');
       }
       
-      console.log('Logowanie przez Google udane, token:', data.token ? 'otrzymany' : 'brak');
-      
+        
       if (rememberMe) {
         localStorage.setItem('token', data.token);
       } else {

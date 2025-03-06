@@ -28,9 +28,20 @@ export const useForgotPasswordAction = (state: AuthState) => {
       
       console.log('Odpowiedź serwera:', response.status, response.statusText);
       
+      if (response.status === 429) {
+        throw new Error('Zbyt wiele prób resetowania hasła. Spróbuj ponownie za chwilę.');
+      } else if (response.status === 404) {
+        throw new Error('Nie znaleziono użytkownika o podanym adresie email.');
+      }
+
       let data;
       try {
-        data = await response.json();
+        const text = await response.text();
+        if (!text) {
+          throw new Error('Pusta odpowiedź serwera');
+        }
+        
+        data = JSON.parse(text);
       } catch (e) {
         console.error('Błąd parsowania JSON:', e);
         throw new Error('Nieprawidłowa odpowiedź serwera');
@@ -38,7 +49,14 @@ export const useForgotPasswordAction = (state: AuthState) => {
       
       if (!response.ok) {
         console.error('Błąd resetowania hasła:', data);
-        throw new Error(data.error || 'Nieznany błąd resetowania hasła');
+        
+        if (data.message && typeof data.message === 'string') {
+          throw new Error(data.message);
+        } else if (data.error && typeof data.error === 'string') {
+          throw new Error(data.error);
+        } else {
+          throw new Error('Nieznany błąd resetowania hasła');
+        }
       }
       
       console.log('Resetowanie hasła udane');
@@ -46,8 +64,15 @@ export const useForgotPasswordAction = (state: AuthState) => {
       return data.message || 'Link do resetowania hasła został wysłany na Twój adres email.';
     } catch (err) {
       console.error('Błąd podczas resetowania hasła:', err);
-      setError(err instanceof Error ? err.message : 'Wystąpił błąd podczas wysyłania linku resetującego hasło');
-      throw err;
+      
+      if (err instanceof Error) {
+        setError(err.message);
+        throw err;
+      } else {
+        const errorMessage = 'Wystąpił błąd podczas wysyłania linku resetującego hasło';
+        setError(errorMessage);
+        throw new Error(errorMessage);
+      }
     } finally {
       setLoading(false);
     }

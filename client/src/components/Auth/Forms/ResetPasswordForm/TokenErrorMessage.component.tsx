@@ -6,7 +6,12 @@ type TokenErrorMessageProps = {
   errorMessage: string | null;
 };
 
+/**
+ * Komponent wyświetlający błąd tokenu resetowania hasła
+ */
 export const TokenErrorMessage = ({ errorMessage }: TokenErrorMessageProps) => {
+  const defaultMessage = "Nieprawidłowy lub wygasły token resetowania hasła. Sprawdź, czy link jest poprawny lub spróbuj ponownie zresetować hasło.";
+  
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -17,7 +22,7 @@ export const TokenErrorMessage = ({ errorMessage }: TokenErrorMessageProps) => {
         <FaExclamationTriangle className="mr-2 mt-0.5 flex-shrink-0" />
         <div>
           <p className="font-semibold mb-1">Błąd tokenu resetowania hasła</p>
-          <p>{errorMessage}</p>
+          <p>{errorMessage || defaultMessage}</p>
         </div>
       </div>
       <div className="text-center mt-6">

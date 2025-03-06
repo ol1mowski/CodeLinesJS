@@ -75,7 +75,7 @@ export const register = async (req, res, next) => {
       `;
 
       await transporter.sendMail({
-        from: `"CodeLinesJS" <${process.env.EMAIL_USER}>`,
+        from: `CodeLinesJS <${process.env.EMAIL_USER}>`,
         to: email,
         subject: "Witaj w CodeLinesJS!",
         html: createEmailTemplate('Witaj w CodeLinesJS!', welcomeContent)
@@ -193,7 +193,7 @@ export const forgotPassword = async (req, res, next) => {
     `;
 
     await transporter.sendMail({
-      from: `"CodeLinesJS" <${process.env.EMAIL_USER}>`,
+      from: `CodeLinesJS <${process.env.EMAIL_USER}>`,
       to: email,
       subject: "Reset hasła w CodeLinesJS",
       html: createEmailTemplate('Reset hasła', emailContent)
@@ -384,7 +384,7 @@ export const googleAuth = async (req, res, next) => {
         `;
 
         await transporter.sendMail({
-          from: `"CodeLinesJS" <${process.env.EMAIL_USER}>`,
+          from: `CodeLinesJS <${process.env.EMAIL_USER}>`,
           to: email,
           subject: "Witaj w CodeLinesJS!",
           html: createEmailTemplate('Witaj w CodeLinesJS!', welcomeContent)

@@ -7,6 +7,9 @@ import { PasswordInput } from "../../../UI/Form/PasswordInput/PasswordInput.comp
 import { PrivacyPolicyCheckbox } from "./PrivacyPolicyCheckbox.component";
 import { useRegisterForm } from "./useRegisterForm";
 
+/**
+ * Komponent formularza rejestracji
+ */
 const RegisterForm = () => {
   const { 
     register, 
@@ -18,7 +21,7 @@ const RegisterForm = () => {
 
   return (
     <FormWrapper onSubmit={handleSubmit}>
-      <ErrorAlert message={errorMessage || ""} />
+      {errorMessage && <ErrorAlert message={errorMessage} title="Błąd rejestracji" />}
 
       <FormInput
         type="text"

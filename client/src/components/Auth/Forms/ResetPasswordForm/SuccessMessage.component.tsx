@@ -10,7 +10,7 @@ export const SuccessMessage = ({ message }: SuccessMessageProps) => {
   
   return (
     <>
-      <SuccessAlert message={message} />
+      <SuccessAlert message={message} title="Hasło zostało zmienione" />
       <div className="text-center mt-4">
         <p className="text-gray-400 mb-2">Za chwilę zostaniesz przekierowany do strony logowania.</p>
         <Link to="/logowanie" className="text-js hover:underline">

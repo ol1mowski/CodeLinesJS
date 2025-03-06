@@ -18,7 +18,6 @@ export const useRegisterAction = (state: AuthState) => {
       setError(null);
 
       const apiUrl = API_URL.replace('www.', '');
-      console.log('Próba rejestracji do:', `${apiUrl}auth/register`);
 
       const response = await fetch(`${apiUrl}auth/register`, {
         method: 'POST',
@@ -30,28 +29,50 @@ export const useRegisterAction = (state: AuthState) => {
         body: JSON.stringify({ email, password, username }),
       });
 
-      console.log('Odpowiedź serwera:', response.status, response.statusText);
+      if (response.status === 429) {
+        throw new Error('Zbyt wiele prób rejestracji. Spróbuj ponownie za chwilę.');
+      } else if (response.status === 409) {
+        throw new Error('Użytkownik o podanym adresie email lub nazwie użytkownika już istnieje.');
+      } else if (response.status === 400) {
+        throw new Error('Nieprawidłowe dane rejestracji. Sprawdź poprawność wprowadzonych danych.');
+      }
 
       let data;
       try {
-        data = await response.json();
+        const text = await response.text();
+        if (!text) {
+          throw new Error('Pusta odpowiedź serwera');
+        }
+        
+        data = JSON.parse(text);
       } catch (e) {
-        console.error('Błąd parsowania JSON:', e);
-        throw new Error('Nieprawidłowa odpowiedź serwera');
+        throw new Error('Nieprawidłowa odpowiedź serwera. Spróbuj ponownie później.');
       }
 
       if (!response.ok) {
-        console.error('Błąd rejestracji:', data);
-        throw new Error(data.error || 'Nieznany błąd rejestracji');
+        if (data.error && typeof data.error === 'string') {
+          throw new Error(data.error);
+        } else if (data.message && typeof data.message === 'string') {
+          throw new Error(data.message);
+        } else if (data.errors) {
+          const errorMessages = Object.values(data.errors).flat().filter(Boolean);
+          if (errorMessages.length > 0) {
+            throw new Error(errorMessages.join('. '));
+          }
+        }
+        
+        throw new Error('Nieznany błąd rejestracji. Spróbuj ponownie później.');
       }
 
-      console.log('Rejestracja udana, token:', data.token ? 'otrzymany' : 'brak');
-
       sessionStorage.setItem('token', data.token);
+      
+      if (state.setUser && data.user) {
+        state.setUser(data.user);
+      }
+      
       setIsAuthenticated(true);
       navigate('/dashboard');
     } catch (err) {
-      console.error('Błąd podczas rejestracji:', err);
       setError(err instanceof Error ? err.message : 'Wystąpił błąd podczas rejestracji');
       setIsAuthenticated(false);
     } finally {

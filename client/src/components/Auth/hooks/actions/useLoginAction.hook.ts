@@ -18,7 +18,6 @@ export const useLoginAction = (state: AuthState) => {
       setError(null);
       
       const apiUrl = API_URL.replace('www.', '');
-      console.log('Próba logowania do:', `${apiUrl}auth/login`);
       
       const response = await fetch(`${apiUrl}auth/login`, {
         method: 'POST',
@@ -29,14 +28,7 @@ export const useLoginAction = (state: AuthState) => {
         mode: 'cors',
         body: JSON.stringify({ email, password, rememberMe }),
       });
-      
-      console.log('Odpowiedź serwera:', response.status, response.statusText);
-      
-      if (response.status === 429) {
-        const errorText = await response.text();
-        console.error('Zbyt wiele żądań:', errorText);
-        throw new Error('Zbyt wiele prób logowania. Spróbuj ponownie za chwilę.');
-      }
+    
       
       let data;
       try {
@@ -47,16 +39,18 @@ export const useLoginAction = (state: AuthState) => {
         
         data = JSON.parse(text);
       } catch (e) {
-        console.error('Błąd parsowania JSON:', e);
         throw new Error('Nieprawidłowa odpowiedź serwera. Spróbuj ponownie później.');
       }
       
       if (!response.ok) {
-        console.error('Błąd logowania:', data);
-        throw new Error(data.error || 'Nieznany błąd logowania');
+        if (data.error && typeof data.error === 'string') {
+          throw new Error(data.error);
+        } else if (data.message && typeof data.message === 'string') {
+          throw new Error(data.message);
+        } else {
+          throw new Error('Nieznany błąd logowania. Spróbuj ponownie później.');
+        }
       }
-      
-      console.log('Logowanie udane, token:', data.token ? 'otrzymany' : 'brak');
       
       if (rememberMe) {
         localStorage.setItem('token', data.token);
@@ -64,10 +58,13 @@ export const useLoginAction = (state: AuthState) => {
         sessionStorage.setItem('token', data.token);
       }
       
+      if (state.setUser && data.user) {
+        state.setUser(data.user);
+      }
+      
       setIsAuthenticated(true);
       navigate('/dashboard');
     } catch (err) {
-      console.error('Błąd podczas logowania:', err);
       setError(err instanceof Error ? err.message : 'Wystąpił błąd podczas logowania');
       setIsAuthenticated(false);
     } finally {

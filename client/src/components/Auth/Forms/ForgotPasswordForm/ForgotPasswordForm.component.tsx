@@ -6,6 +6,9 @@ import { ErrorAlert } from "../../../UI/Alerts/ErrorAlert.component";
 import { SuccessAlert } from "../../../UI/Alerts/SuccessAlert.component";
 import { useForgotPasswordForm } from "./useForgotPasswordForm";
 
+/**
+ * Komponent formularza do resetowania hasła
+ */
 const ForgotPasswordForm = () => {
   const { 
     register, 
@@ -18,8 +21,8 @@ const ForgotPasswordForm = () => {
 
   return (
     <FormWrapper onSubmit={handleSubmit}>
-      <ErrorAlert message={errorMessage || ""} />
-      <SuccessAlert message={successMessage || ""} />
+      {errorMessage && <ErrorAlert message={errorMessage} title="Błąd resetowania hasła" />}
+      {successMessage && <SuccessAlert message={successMessage} />}
 
       {!successMessage && (
         <>
