@@ -20,6 +20,12 @@ export const useGoogleLoginAction = (state: AuthState) => {
       setLoading(true);
       setError(null);
 
+      if (!credentialResponse.credential) {
+        setError('Nie udało się uzyskać tokenu uwierzytelniającego z Google. Spróbuj ponownie.');
+        setIsAuthenticated(false);
+        return;
+      }
+
       const response = await httpClient.post("auth/google-login", {
         credential: credentialResponse.credential,
         rememberMe,
