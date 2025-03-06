@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { API_URL } from '../../../config/api.config';
 
-// Definiuję typ AuthState bezpośrednio tutaj, aby uniknąć cyklicznych importów
 type AuthState = {
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
@@ -31,7 +30,6 @@ export const useResetPasswordAction = (state: AuthState) => {
       
       console.log('Odpowiedź serwera:', response.status, response.statusText);
       
-      // Obsługa błędu 429 (Too Many Requests)
       if (response.status === 429) {
         const errorText = await response.text();
         console.error('Zbyt wiele żądań:', errorText);
@@ -40,13 +38,11 @@ export const useResetPasswordAction = (state: AuthState) => {
       
       let data;
       try {
-        // Sprawdzamy, czy odpowiedź jest pusta
         const text = await response.text();
         if (!text) {
           throw new Error('Pusta odpowiedź serwera');
         }
         
-        // Próbujemy sparsować JSON
         data = JSON.parse(text);
       } catch (e) {
         console.error('Błąd parsowania JSON:', e);
@@ -57,10 +53,8 @@ export const useResetPasswordAction = (state: AuthState) => {
         console.error('Błąd resetowania hasła:', data);
         throw new Error(data.error || 'Nieznany błąd resetowania hasła');
       }
+
       
-      console.log('Resetowanie hasła udane');
-      
-      // Po udanym zresetowaniu hasła przekierowujemy do strony logowania
       setTimeout(() => {
         navigate('/logowanie');
       }, 3000);

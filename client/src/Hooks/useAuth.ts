@@ -27,6 +27,7 @@ type AuthState = {
   forgotPassword: (email: string) => Promise<string>;
   register: (email: string, password: string, username: string) => Promise<void>;
   loginWithGoogle: (credentialResponse: any, rememberMe?: boolean) => Promise<void>;
+  resetPassword: (token: string, password: string) => Promise<string>;
 };
 
 export const useAuth = (): AuthState => {
@@ -119,6 +120,7 @@ export const useAuth = (): AuthState => {
     register: actions.register,
     loginWithGoogle: actions.loginWithGoogle,
     forgotPassword: actions.forgotPassword,
+    resetPassword: actions.resetPassword,
     token: localStorage.getItem("token") || sessionStorage.getItem("token"),
   };
 };
