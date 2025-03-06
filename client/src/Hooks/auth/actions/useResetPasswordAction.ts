@@ -12,11 +12,14 @@ export const useResetPasswordAction = (state: AuthState) => {
 
   const resetPassword = async (token: string, password: string): Promise<string> => {
     try {
+      if (!token || token.length < 10) {
+        throw new Error('Nieprawidłowy token resetowania hasła. Sprawdź, czy link jest poprawny.');
+      }
+
       setLoading(true);
       setError(null);
       
       const apiUrl = API_URL.replace('www.', '');
-      console.log('Próba resetowania hasła do:', `${apiUrl}auth/reset-password`);
       
       const response = await fetch(`${apiUrl}auth/reset-password`, {
         method: 'POST',
@@ -28,12 +31,15 @@ export const useResetPasswordAction = (state: AuthState) => {
         body: JSON.stringify({ token, password }),
       });
       
-      console.log('Odpowiedź serwera:', response.status, response.statusText);
       
       if (response.status === 429) {
-        const errorText = await response.text();
-        console.error('Zbyt wiele żądań:', errorText);
         throw new Error('Zbyt wiele prób resetowania hasła. Spróbuj ponownie za chwilę.');
+      } else if (response.status === 401 || response.status === 403) {
+        throw new Error('Token resetowania hasła wygasł lub jest nieprawidłowy. Spróbuj ponownie zresetować hasło.');
+      } else if (response.status === 404) {
+        throw new Error('Nie znaleziono użytkownika powiązanego z tym tokenem. Sprawdź, czy link jest poprawny.');
+      } else if (response.status >= 500) {
+        throw new Error('Wystąpił błąd serwera. Spróbuj ponownie później.');
       }
       
       let data;
@@ -42,18 +48,26 @@ export const useResetPasswordAction = (state: AuthState) => {
         if (!text) {
           throw new Error('Pusta odpowiedź serwera');
         }
-        
         data = JSON.parse(text);
       } catch (e) {
-        console.error('Błąd parsowania JSON:', e);
         throw new Error('Nieprawidłowa odpowiedź serwera. Spróbuj ponownie później.');
       }
       
       if (!response.ok) {
-        console.error('Błąd resetowania hasła:', data);
-        throw new Error(data.error || 'Nieznany błąd resetowania hasła');
+        
+        if (data.error && typeof data.error === 'string') {
+          if (data.error.includes('token')) {
+            throw new Error('Token resetowania hasła wygasł lub jest nieprawidłowy. Spróbuj ponownie zresetować hasło.');
+          } else if (data.error.includes('hasło')) {
+            throw new Error(data.error || 'Hasło nie spełnia wymagań bezpieczeństwa.');
+          } else {
+            throw new Error(data.error);
+          }
+        } else {
+          throw new Error('Nieznany błąd resetowania hasła. Spróbuj ponownie później.');
+        }
       }
-
+    
       
       setTimeout(() => {
         navigate('/logowanie');
@@ -61,7 +75,6 @@ export const useResetPasswordAction = (state: AuthState) => {
       
       return data.message || 'Hasło zostało pomyślnie zmienione. Za chwilę zostaniesz przekierowany do strony logowania.';
     } catch (err) {
-      console.error('Błąd podczas resetowania hasła:', err);
       setError(err instanceof Error ? err.message : 'Wystąpił błąd podczas resetowania hasła');
       throw err;
     } finally {

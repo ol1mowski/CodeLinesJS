@@ -14,6 +14,7 @@ import { LessonPage } from "../components/Dashboard/LearnSection/Lesson/Lesson.p
 // import { GroupView } from "../components/Dashboard/CommunitySection/Groups/GroupView.component";
 import { GameplayRouter } from "../components/Dashboard/GamesSection/components/GameplayRouter/GameplayRouter.component";
 // import { CommunityProvider } from "../components/Dashboard/CommunitySection/context/CommunityContext";
+import { ResetPasswordPage } from "../components/Auth/ResetPasswordPage";
 
 const Home = lazy(() => import("../pages/Home"));
 const Auth = lazy(() => import("../pages/Auth"));
@@ -30,6 +31,10 @@ export const router = createBrowserRouter([
   {
     path: "/logowanie",
     element: <Auth />,
+  },
+  {
+    path: "/reset-password/:token",
+    element: <ResetPasswordPage />,
   },
   {
     path: "/dashboard",

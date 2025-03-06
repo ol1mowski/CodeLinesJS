@@ -43,13 +43,11 @@ export const useAuth = (): AuthState => {
       const token = localStorage.getItem("token") || sessionStorage.getItem("token");
 
       if (!token) {
-        console.log("Brak tokenu w localStorage lub sessionStorage");
         state.setIsAuthenticated(false);
         return;
       }
 
       const apiUrl = API_URL.replace('www.', '');
-      console.log("Sprawdzanie tokenu:", `${apiUrl}auth/verify`);
 
       const response = await fetch(`${apiUrl}auth/verify`, {
         method: "GET",
@@ -60,11 +58,7 @@ export const useAuth = (): AuthState => {
         mode: 'cors'
       });
 
-      console.log("Odpowiedź weryfikacji tokenu:", response.status, response.statusText);
-
-      if (response.status === 429) {
-        const errorText = await response.text();
-        console.error('Zbyt wiele żądań:', errorText);
+      if (response.status === 429) {  
         throw new Error('Zbyt wiele prób weryfikacji. Spróbuj ponownie za chwilę.');
       }
 
@@ -77,12 +71,10 @@ export const useAuth = (): AuthState => {
         
         data = JSON.parse(text);
       } catch (e) {
-        console.error('Błąd parsowania JSON:', e);
         throw new Error('Nieprawidłowa odpowiedź serwera');
       }
 
       if (!response.ok) {
-        console.error("Błąd weryfikacji tokenu:", data);
         throw new Error(data.error || "Nieznany błąd weryfikacji tokenu");
       }
 

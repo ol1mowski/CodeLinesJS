@@ -209,11 +209,26 @@ export const forgotPassword = async (req, res, next) => {
 
 export const resetPassword = async (req, res, next) => {
   try {
-    const { token, password } = req.body;
+    const { token, password, confirmPassword } = req.body;
 
     if (!token || !password) {
       return res.status(400).json({
-        error: 'Token i nowe hasło są wymagane'
+        status: 'error',
+        message: 'Token i nowe hasło są wymagane'
+      });
+    }
+
+    if (password !== confirmPassword) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Hasła nie są identyczne'
+      });
+    }
+
+    if (password.length < 8) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Hasło musi mieć co najmniej 8 znaków'
       });
     }
 
@@ -221,7 +236,11 @@ export const resetPassword = async (req, res, next) => {
     try {
       decoded = jwt.verify(token, process.env.JWT_SECRET);
     } catch (error) {
-      throw new AuthError('Nieprawidłowy lub wygasły token');
+      console.error('Błąd weryfikacji tokenu:', error);
+      return res.status(400).json({
+        status: 'error',
+        message: 'Nieprawidłowy lub wygasły token resetowania hasła'
+      });
     }
 
     const user = await User.findOne({
@@ -231,43 +250,51 @@ export const resetPassword = async (req, res, next) => {
     });
 
     if (!user) {
-      throw new AuthError('Nieprawidłowy lub wygasły token');
+      return res.status(400).json({
+        status: 'error',
+        message: 'Token resetowania hasła jest nieprawidłowy lub wygasł'
+      });
     }
 
     user.password = password;
     user.resetPasswordToken = undefined;
     user.resetPasswordExpires = undefined;
+    
+    user.passwordChangedAt = new Date();
+    
     await user.save();
 
     try {
-      const confirmationContent = `
-        <p>Cześć ${user.username || 'Użytkowniku'}!</p>
-        <p>Twoje hasło zostało pomyślnie zmienione.</p>
-        <p>Jeśli to nie Ty dokonałeś tej zmiany, natychmiast skontaktuj się z naszym zespołem wsparcia.</p>
-        <div class="code-block">
-          // Twoje hasło zostało zaktualizowane
-          console.log("Bezpieczeństwo na pierwszym miejscu! 🔒");
-        </div>
-        <div style="text-align: center;">
-          <a href="${process.env.FRONTEND_URL}/login" class="btn">Zaloguj się</a>
-        </div>
-        <p>Dziękujemy za korzystanie z CodeLinesJS!</p>
-      `;
-
-      await transporter.sendMail({
-        from: `"CodeLinesJS" <${process.env.EMAIL_USER}>`,
+      await sendEmail({
         to: user.email,
         subject: "Hasło zostało zmienione",
-        html: createEmailTemplate('Potwierdzenie zmiany hasła', confirmationContent)
+        html: createEmailTemplate('Potwierdzenie zmiany hasła', `
+          <p>Cześć ${user.username || 'Użytkowniku'}!</p>
+          <p>Twoje hasło zostało pomyślnie zmienione.</p>
+          <p>Jeśli to nie Ty dokonałeś tej zmiany, natychmiast skontaktuj się z naszym zespołem wsparcia.</p>
+          <div style="text-align: center;">
+            <a href="${process.env.FRONTEND_URL}/login" class="btn">Zaloguj się</a>
+          </div>
+        `)
       });
     } catch (emailError) {
       console.error('Błąd wysyłania emaila potwierdzającego zmianę hasła:', emailError);
     }
 
-    res.json({
-      message: 'Hasło zostało pomyślnie zmienione'
+    const authToken = generateToken(user);
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Hasło zostało pomyślnie zmienione',
+      token: authToken,
+      user: {
+        id: user._id,
+        email: user.email,
+        username: user.username
+      }
     });
   } catch (error) {
+    console.error('Błąd resetowania hasła:', error);
     next(error);
   }
 };

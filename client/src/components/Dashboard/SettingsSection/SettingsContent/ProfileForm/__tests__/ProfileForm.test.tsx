@@ -46,6 +46,7 @@ describe('ProfileForm', () => {
       token: 'test-token',
       isAuthenticated: true,
       isAuthChecking: false,
+      resetPassword: vi.fn(),
       user: {
         id: '1',
         _id: '1',

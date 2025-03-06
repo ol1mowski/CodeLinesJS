@@ -98,3 +98,20 @@ export const validatePasswordChange = validate([
       return true;
     })
 ]);
+
+export const validateResetPassword = validate([
+  body('token')
+    .notEmpty().withMessage('Token resetowania hasła jest wymagany'),
+  body('password')
+    .notEmpty().withMessage('Nowe hasło jest wymagane')
+    .isLength({ min: 8 }).withMessage('Hasło musi mieć co najmniej 8 znaków')
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).withMessage('Hasło musi zawierać co najmniej jedną małą literę, jedną wielką literę i jedną cyfrę'),
+  body('confirmPassword')
+    .notEmpty().withMessage('Potwierdzenie hasła jest wymagane')
+    .custom((value, { req }) => {
+      if (value !== req.body.password) {
+        throw new Error('Hasła nie są identyczne');
+      }
+      return true;
+    })
+]);
