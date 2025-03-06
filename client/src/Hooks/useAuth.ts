@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../config/api.config";
-import { useAuthState } from "../hooks/useAuthState.hook";
+import { useAuthState } from "../hooks/useAuthState.hook";  
 import { useAuthActions } from "../components/Auth/hooks/useAuthActions.hook";
 
 type User = {
