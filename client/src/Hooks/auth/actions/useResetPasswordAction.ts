@@ -16,12 +16,12 @@ export const useResetPasswordAction = (state: AuthState) => {
         throw new Error('Nieprawidłowy token resetowania hasła. Sprawdź, czy link jest poprawny.');
       }
 
-      setLoading(true);
-      setError(null);
-
       if (password !== confirmPassword) {
         throw new Error('Hasła nie są identyczne. Upewnij się, że oba pola zawierają to samo hasło.');
       }
+
+      setLoading(true);
+      setError(null);
       
       const apiUrl = API_URL.replace('www.', '');
       
@@ -35,8 +35,9 @@ export const useResetPasswordAction = (state: AuthState) => {
         body: JSON.stringify({ token, password, confirmPassword }),
       });
       
-      
       if (response.status === 429) {
+        const errorText = await response.text();
+        console.error('Zbyt wiele żądań:', errorText);
         throw new Error('Zbyt wiele prób resetowania hasła. Spróbuj ponownie za chwilę.');
       } else if (response.status === 401 || response.status === 403) {
         throw new Error('Token resetowania hasła wygasł lub jest nieprawidłowy. Spróbuj ponownie zresetować hasło.');
@@ -58,12 +59,13 @@ export const useResetPasswordAction = (state: AuthState) => {
       }
       
       if (!response.ok) {
-        
         if (data.error && typeof data.error === 'string') {
           if (data.error.includes('token')) {
             throw new Error('Token resetowania hasła wygasł lub jest nieprawidłowy. Spróbuj ponownie zresetować hasło.');
           } else if (data.error.includes('hasło')) {
             throw new Error(data.error || 'Hasło nie spełnia wymagań bezpieczeństwa.');
+          } else if (data.error.includes('identyczne')) {
+            throw new Error('Hasła nie są identyczne. Upewnij się, że oba pola zawierają to samo hasło.');
           } else {
             throw new Error(data.error);
           }
@@ -71,7 +73,6 @@ export const useResetPasswordAction = (state: AuthState) => {
           throw new Error('Nieznany błąd resetowania hasła. Spróbuj ponownie później.');
         }
       }
-    
       
       setTimeout(() => {
         navigate('/logowanie');
@@ -79,6 +80,7 @@ export const useResetPasswordAction = (state: AuthState) => {
       
       return data.message || 'Hasło zostało pomyślnie zmienione. Za chwilę zostaniesz przekierowany do strony logowania.';
     } catch (err) {
+      console.error('Błąd podczas resetowania hasła:', err);
       setError(err instanceof Error ? err.message : 'Wystąpił błąd podczas resetowania hasła');
       throw err;
     } finally {
