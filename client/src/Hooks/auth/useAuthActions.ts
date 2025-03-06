@@ -3,6 +3,7 @@ import { useRegisterAction } from './actions/useRegisterAction';
 import { useForgotPasswordAction } from './actions/useForgotPasswordAction';
 import { useLogoutAction } from './actions/useLogoutAction';
 import { useGoogleLoginAction } from './actions/useGoogleLoginAction';
+import { useResetPasswordAction } from './actions/useResetPasswordAction';
 
 type AuthState = {
   setLoading: (loading: boolean) => void;
@@ -21,6 +22,7 @@ export const useAuthActions = (state: AuthState) => {
   const forgotPassword = useForgotPasswordAction(state);
   const logout = useLogoutAction(state);
   const loginWithGoogle = useGoogleLoginAction(state);
+  const resetPassword = useResetPasswordAction(state);
 
-  return { login, register, forgotPassword, logout, loginWithGoogle };
+  return { login, register, forgotPassword, logout, loginWithGoogle, resetPassword };
 }; 
