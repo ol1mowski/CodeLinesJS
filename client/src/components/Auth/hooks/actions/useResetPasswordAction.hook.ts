@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { API_URL } from '../../../../config/api.config';
+import { httpClient } from '../../../../api/httpClient.api';
 
 type AuthState = {
   setLoading: (loading: boolean) => void;
@@ -23,57 +23,31 @@ export const useResetPasswordAction = (state: AuthState) => {
       setLoading(true);
       setError(null);
       
-      const apiUrl = API_URL.replace('www.', '');
-      
-      const response = await fetch(`${apiUrl}auth/reset-password`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        mode: 'cors',
-        body: JSON.stringify({ token, password, confirmPassword }),
+      const response = await httpClient.post<{ message: string }>('auth/reset-password', {
+        token,
+        password,
+        confirmPassword
       });
       
-      if (response.status === 429) {
-        throw new Error('Zbyt wiele prób resetowania hasła. Spróbuj ponownie za chwilę.');
-      } else if (response.status === 401 || response.status === 403) {
-        throw new Error('Token resetowania hasła wygasł lub jest nieprawidłowy. Spróbuj ponownie zresetować hasło.');
-      } else if (response.status === 404) {
-        throw new Error('Nie znaleziono użytkownika powiązanego z tym tokenem. Sprawdź, czy link jest poprawny.');
-      } else if (response.status >= 500) {
-        throw new Error('Wystąpił błąd serwera. Spróbuj ponownie później.');
-      }
-    
-      let data;
-      try {
-        const text = await response.text();
-        if (!text) {
-          throw new Error('Pusta odpowiedź serwera');
-        }
-        data = JSON.parse(text);
-      } catch (e) {
-        throw new Error('Nieprawidłowa odpowiedź serwera. Spróbuj ponownie później.');
-      }
-      
-      if (!response.ok) {
-        if (data.message && typeof data.message === 'string') {
-          throw new Error(data.message);
-        } else if (data.error && typeof data.error === 'string') {
-          throw new Error(data.error);
-        } else {
-          throw new Error('Nieznany błąd resetowania hasła. Spróbuj ponownie później.');
-        }
+      if (response.error) {
+        throw new Error(response.error);
       }
       
       setTimeout(() => {
         navigate('/logowanie');
       }, 3000);
       
-      return data.message || 'Hasło zostało pomyślnie zmienione. Za chwilę zostaniesz przekierowany do strony logowania.';
+      return response.data?.message || 'Hasło zostało pomyślnie zmienione. Za chwilę zostaniesz przekierowany do strony logowania.';
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Wystąpił błąd podczas resetowania hasła');
-      throw err;
+        
+      if (err instanceof Error) {
+        setError(err.message);
+        throw err;
+      } else {
+        const errorMessage = 'Wystąpił nieznany błąd podczas resetowania hasła';
+        setError(errorMessage);
+        throw new Error(errorMessage);
+      }
     } finally {
       setLoading(false);
     }

@@ -1,5 +1,5 @@
-import { useNavigate } from 'react-router-dom';
-import { API_URL } from '../../../../config/api.config';
+import { useNavigate } from "react-router-dom";
+import { httpClient } from "../../../../api/httpClient.api";
 
 type AuthState = {
   setLoading: (loading: boolean) => void;
@@ -10,52 +10,51 @@ type AuthState = {
 
 export const useGoogleLoginAction = (state: AuthState) => {
   const navigate = useNavigate();
-  const { setLoading, setError, setIsAuthenticated } = state;
+  const { setLoading, setError, setIsAuthenticated, setUser } = state;
 
-  const loginWithGoogle = async (credentialResponse: any, rememberMe: boolean = false) => {
+  const loginWithGoogle = async (
+    credentialResponse: any,
+    rememberMe: boolean = false
+  ) => {
     try {
       setLoading(true);
       setError(null);
-      
-      const apiUrl = API_URL.replace('www.', '');
-      
-      const response = await fetch(`${apiUrl}auth/google`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        mode: 'cors',
-        body: JSON.stringify({ 
-          credential: credentialResponse.credential,
-          rememberMe
-        }),
+
+      const response = await httpClient.post("auth/google-login", {
+        credential: credentialResponse.credential,
+        rememberMe,
       });
-      
-      
-      let data;
-      try {
-        const text = await response.text();
-        data = JSON.parse(text);
-      } catch (e) {
-        throw new Error('Nieprawidłowa odpowiedź serwera');
+
+      if (response.error) {
+        throw new Error(response.error);
       }
-      
-      if (!response.ok) {
-        throw new Error(data.error || 'Nieznany błąd logowania przez Google');
+
+      if (!response.data) {
+        throw new Error(
+          "Nieznany błąd logowania przez Google. Spróbuj ponownie później."
+        );
       }
-      
-        
+
+      const { token, user } = response.data;
+
       if (rememberMe) {
-        localStorage.setItem('token', data.token);
+        localStorage.setItem("token", token);
       } else {
-        sessionStorage.setItem('token', data.token);
+        sessionStorage.setItem("token", token);
       }
-      
+
+      if (setUser && user) {
+        setUser(user);
+      }
+
       setIsAuthenticated(true);
-      navigate('/dashboard');
+      navigate("/dashboard");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Wystąpił błąd podczas logowania przez Google');
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Wystąpił błąd podczas logowania przez Google"
+      );
       setIsAuthenticated(false);
     } finally {
       setLoading(false);
@@ -63,4 +62,4 @@ export const useGoogleLoginAction = (state: AuthState) => {
   };
 
   return loginWithGoogle;
-}; 
+};
