@@ -26,6 +26,7 @@ describe("useStats", () => {
       error: null,
       logout: vi.fn(),
       login: vi.fn(),
+      resetPassword: vi.fn(),
       forgotPassword: vi.fn(),
       register: vi.fn(),
       loginWithGoogle: vi.fn()
@@ -76,6 +77,7 @@ describe("useStats", () => {
       loading: false,
       error: null,
       logout: vi.fn(),
+      resetPassword: vi.fn(),
       login: vi.fn(),
       forgotPassword: vi.fn(),
       register: vi.fn(),
@@ -112,6 +114,7 @@ describe("useStats", () => {
 
   it("Should handle authorization error", async () => {
     vi.mocked(useAuth).mockReturnValue({
+      resetPassword: vi.fn(),
       token: "fake-token",
       isAuthenticated: true,
       isAuthChecking: false,
@@ -164,6 +167,7 @@ describe("useStats", () => {
   it("Should retry fetching data on other errors", async () => {
     vi.mocked(useAuth).mockReturnValue({
       token: "fake-token",
+      resetPassword: vi.fn(),
       isAuthenticated: true,
       isAuthChecking: false,
       user: { id: "1", _id: "1", email: "test@example.com", username: "testuser" },
