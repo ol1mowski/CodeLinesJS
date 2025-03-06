@@ -10,7 +10,7 @@ export const useResetPasswordAction = (state: AuthState) => {
   const navigate = useNavigate();
   const { setLoading, setError } = state;
 
-  const resetPassword = async (token: string, password: string): Promise<string> => {
+  const resetPassword = async (token: string, password: string, confirmPassword: string): Promise<string> => {
     try {
       if (!token || token.length < 10) {
         throw new Error('Nieprawidłowy token resetowania hasła. Sprawdź, czy link jest poprawny.');
@@ -18,17 +18,21 @@ export const useResetPasswordAction = (state: AuthState) => {
 
       setLoading(true);
       setError(null);
+
+      if (password !== confirmPassword) {
+        throw new Error('Hasła nie są identyczne. Upewnij się, że oba pola zawierają to samo hasło.');
+      }
       
       const apiUrl = API_URL.replace('www.', '');
       
-      const response = await fetch(`${apiUrl}auth/reset-password`, {
+      const response = await fetch(`http://localhost:5001/api/auth/reset-password`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
         mode: 'cors',
-        body: JSON.stringify({ token, password }),
+        body: JSON.stringify({ token, password, confirmPassword }),
       });
       
       

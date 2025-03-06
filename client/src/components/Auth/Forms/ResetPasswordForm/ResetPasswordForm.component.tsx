@@ -30,7 +30,6 @@ const ResetPasswordForm = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [tokenError, setTokenError] = useState<boolean>(false);
 
-  // Sprawdzamy, czy token jest prawidłowy
   useEffect(() => {
     if (!token) {
       setTokenError(true);
@@ -49,13 +48,12 @@ const ResetPasswordForm = () => {
     
     try {
       setErrorMessage(null);
-      const message = await resetPassword(token, data.password);
+      const message = await resetPassword(token, data.password, data.confirmPassword);
       setSuccessMessage(message);
-      reset(); // Resetujemy formularz po udanym resecie hasła
+      reset(); 
     } catch (err) {
       setSuccessMessage(null);
       if (err instanceof Error) {
-        // Obsługa konkretnych błędów
         if (err.message.includes("token")) {
           setErrorMessage("Token resetowania hasła wygasł lub jest nieprawidłowy. Spróbuj ponownie zresetować hasło.");
           setTokenError(true);
@@ -63,6 +61,8 @@ const ResetPasswordForm = () => {
           setErrorMessage("Zbyt wiele prób resetowania hasła. Poczekaj chwilę i spróbuj ponownie.");
         } else if (err.message.includes("serwera")) {
           setErrorMessage("Wystąpił problem z serwerem. Spróbuj ponownie później.");
+        } else if (err.message.includes("identyczne")) {
+          setErrorMessage("Hasła nie są identyczne. Upewnij się, że oba pola zawierają to samo hasło.");
         } else {
           setErrorMessage(err.message);
         }
