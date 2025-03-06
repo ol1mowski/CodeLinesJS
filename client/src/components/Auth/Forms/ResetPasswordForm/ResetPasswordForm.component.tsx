@@ -9,11 +9,10 @@ import { Button } from "../../../UI/Button/Button.component";
 import { FormInput } from "../../../UI/Form/FormInput/FormInput.component";
 import { ResetPasswordFormData, resetPasswordSchema } from "../../../../schemas/auth.schema";
 import { useAuth } from "../../../../Hooks/useAuth";
-import { ErrorMessage } from "../../../UI/ErrorMessage/ErrorMessage.component";
 
 const ResetPasswordForm = () => {
   const { token } = useParams<{ token: string }>();
-  const { resetPassword, loading, error } = useAuth();
+  const { resetPassword, loading, error: authError } = useAuth();
   const {
     register,
     handleSubmit,
@@ -29,6 +28,12 @@ const ResetPasswordForm = () => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [tokenError, setTokenError] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (authError) {
+      setErrorMessage(authError);
+    }
+  }, [authError]);
 
   useEffect(() => {
     if (!token) {
@@ -50,7 +55,7 @@ const ResetPasswordForm = () => {
       setErrorMessage(null);
       const message = await resetPassword(token, data.password, data.confirmPassword);
       setSuccessMessage(message);
-      reset(); 
+      reset();
     } catch (err) {
       setSuccessMessage(null);
       if (err instanceof Error) {
@@ -103,8 +108,6 @@ const ResetPasswordForm = () => {
       onSubmit={handleSubmit(onSubmit)}
       className="space-y-6"
     >
-      {error && <ErrorMessage message={error} />}
-      
       {errorMessage && (
         <motion.div
           initial={{ opacity: 0 }}
