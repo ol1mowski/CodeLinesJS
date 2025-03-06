@@ -1,9 +1,9 @@
-import { useLoginAction } from './actions/useLoginAction';
-import { useRegisterAction } from './actions/useRegisterAction';
-import { useForgotPasswordAction } from './actions/useForgotPasswordAction';
-import { useLogoutAction } from './actions/useLogoutAction';
-import { useGoogleLoginAction } from './actions/useGoogleLoginAction';
-import { useResetPasswordAction } from './actions/useResetPasswordAction';
+import { useLoginAction } from './actions/useLoginAction.hook';
+import { useRegisterAction } from './actions/useRegisterAction.hook';
+import { useForgotPasswordAction } from './actions/useForgotPasswordAction.hook';
+import { useLogoutAction } from './actions/useLogoutAction.hook';
+import { useGoogleLoginAction } from './actions/useGoogleLoginAction.hook';
+import { useResetPasswordAction } from './actions/useResetPasswordAction.hook';
 
 type AuthState = {
   setLoading: (loading: boolean) => void;

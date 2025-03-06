@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { motion } from "framer-motion";
 
-import { useAuthBackground } from "./useAuthBackground.hook";
+import { useAuthBackground } from "./hooks/useAuthBackground.hook";
 
 
 export const AuthBackground = () => {

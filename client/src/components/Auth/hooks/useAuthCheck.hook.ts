@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
-import { useAuthState } from './useAuthState';
-import { API_URL } from '../../config/api.config';
-import { useAuth } from '../useAuth';
+import { useAuthState } from './useAuthState.hook';
+import { API_URL } from '../../../config/api.config';
+import { useAuth } from '../../../Hooks/useAuth';
 
 export const useAuthCheck = (state: ReturnType<typeof useAuthState>) => {
   const { setIsAuthenticated, setIsLoading } = state;
