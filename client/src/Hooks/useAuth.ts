@@ -78,11 +78,9 @@ export const useAuth = (): AuthState => {
         throw new Error(data.error || "Nieznany błąd weryfikacji tokenu");
       }
 
-      console.log("Token zweryfikowany, użytkownik:", data.user ? "zalogowany" : "brak");
       state.setUser(data.user);
       state.setIsAuthenticated(true);
     } catch (err) {
-      console.error("Błąd podczas weryfikacji tokenu:", err);
       state.setError(err instanceof Error ? err.message : "Wystąpił błąd podczas weryfikacji tokenu");
       state.setIsAuthenticated(false);
       localStorage.removeItem("token");

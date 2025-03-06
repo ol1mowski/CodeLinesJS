@@ -18,7 +18,6 @@ export const useGoogleLoginAction = (state: AuthState) => {
       setError(null);
       
       const apiUrl = API_URL.replace('www.', '');
-      console.log('Próba logowania przez Google do:', `${apiUrl}auth/google`);
       
       const response = await fetch(`${apiUrl}auth/google`, {
         method: 'POST',
@@ -37,7 +36,9 @@ export const useGoogleLoginAction = (state: AuthState) => {
       
       let data;
       try {
-        data = await response.json();
+        const text = await response.text();
+        console.log('Treść odpowiedzi serwera:', text);
+        data = JSON.parse(text);
       } catch (e) {
         console.error('Błąd parsowania JSON:', e);
         throw new Error('Nieprawidłowa odpowiedź serwera');
@@ -59,7 +60,6 @@ export const useGoogleLoginAction = (state: AuthState) => {
       setIsAuthenticated(true);
       navigate('/dashboard');
     } catch (err) {
-      console.error('Błąd podczas logowania przez Google:', err);
       setError(err instanceof Error ? err.message : 'Wystąpił błąd podczas logowania przez Google');
       setIsAuthenticated(false);
     } finally {
