@@ -42,6 +42,21 @@ export const forgotPasswordSchema = z.object({
     .email("Nieprawidłowy format email"),
 });
 
+export const resetPasswordSchema = z.object({
+  password: z
+    .string()
+    .min(8, "Hasło musi mieć minimum 8 znaków")
+    .regex(/[A-Z]/, "Hasło musi zawierać przynajmniej jedną wielką literę")
+    .regex(/[a-z]/, "Hasło musi zawierać przynajmniej jedną małą literę")
+    .regex(/[0-9]/, "Hasło musi zawierać przynajmniej jedną cyfrę"),
+  confirmPassword: z
+    .string()
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Hasła muszą być identyczne",
+  path: ["confirmPassword"]
+});
+
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type RegisterFormData = z.infer<typeof registerSchema>;
-export type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>; 
+export type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
+export type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>; 
