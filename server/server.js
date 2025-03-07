@@ -45,6 +45,13 @@ app.use(cors({
   optionsSuccessStatus: 204
 }));
 
+
+app.use((req, res, next) => {
+  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+  res.setHeader('Cross-Origin-Embedder-Policy', 'unsafe-none');
+  next();
+});
+
 app.use(helmet({
   contentSecurityPolicy: false,
   crossOriginEmbedderPolicy: false,
@@ -102,8 +109,7 @@ app.use('/api/users', usersRoutes);
 app.get('*', (req, res) => {
   if (req.path.startsWith('/assets/') || req.path.endsWith('.js') || req.path.endsWith('.css') || req.path.endsWith('.png') || req.path.endsWith('.svg')) {
     const filePath = path.join(__dirname, 'public', req.path);
-    console.log('Próba serwowania pliku statycznego:', filePath);
-    
+  
     if (req.path.endsWith('.js')) {
       res.setHeader('Content-Type', 'application/javascript');
     } else if (req.path.endsWith('.css')) {
@@ -112,7 +118,6 @@ app.get('*', (req, res) => {
     
     return res.sendFile(filePath, (err) => {
       if (err) {
-        console.error('Błąd serwowania pliku statycznego:', err);
         return res.status(404).send('Nie znaleziono pliku');
       }
     });

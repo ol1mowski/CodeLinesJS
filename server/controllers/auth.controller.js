@@ -3,6 +3,8 @@ import { User } from '../models/user.model.js';
 import { AuthError } from '../utils/errors.js';
 import { transporter, createEmailTemplate } from '../config/mailer.js';
 import { StreakService } from '../services/streak.service.js';
+import bcryptjs from 'bcryptjs';
+import mongoose from 'mongoose';
 
 export const register = async (req, res, next) => {
   try {
@@ -271,9 +273,9 @@ export const resetPassword = async (req, res, next) => {
     user.password = password;
     user.resetPasswordToken = undefined;
     user.resetPasswordExpires = undefined;
-    
+
     user.passwordChangedAt = new Date();
-    
+
     await user.save();
 
     try {
@@ -315,13 +317,13 @@ export const verifyToken = async (req, res) => {
   try {
     console.log('verifyToken - req.user:', req.user);
     console.log('verifyToken - headers:', JSON.stringify(req.headers));
-    
+
     const user = await User.findById(req.user.userId).select('-password');
     if (!user) {
       console.log('verifyToken - użytkownik nie znaleziony dla ID:', req.user.userId);
       return res.status(401).json({ error: 'Użytkownik nie znaleziony' });
     }
-    
+
     console.log('verifyToken - użytkownik znaleziony:', user.email);
     res.json(user);
   } catch (error) {
@@ -331,7 +333,11 @@ export const verifyToken = async (req, res) => {
 };
 
 export const googleAuth = async (req, res, next) => {
+
   try {
+    res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+    res.setHeader('Cross-Origin-Embedder-Policy', 'unsafe-none');
+
     const { credential, rememberMe } = req.body;
 
     if (!credential) {
@@ -341,94 +347,163 @@ export const googleAuth = async (req, res, next) => {
       });
     }
 
-    const decodedToken = jwt.decode(credential);
-    
-    if (!decodedToken) {
+    let decodedToken;
+    try {
+      decodedToken = jwt.decode(credential);
+      if (!decodedToken) {
+        return res.status(400).json({
+          status: 'error',
+          message: 'Nieprawidłowy token Google'
+        });
+      }
+    } catch (decodeError) {
+      console.error('googleAuth - błąd dekodowania tokenu:', decodeError);
       return res.status(400).json({
         status: 'error',
-        message: 'Nieprawidłowy token Google'
+        message: 'Nie można zdekodować tokenu Google',
+        error: decodeError.message
       });
     }
+
 
     const { email, name, picture, sub } = decodedToken;
 
-    if (!email) {
+    if (!email || !sub) {
       return res.status(400).json({
         status: 'error',
-        message: 'Brak adresu email w tokenie Google'
+        message: 'Brak wymaganych danych w tokenie Google (email lub sub)'
       });
     }
 
-    let user = await User.findOne({ email });
-
-    if (!user) {
-      const baseUsername = name?.split(' ')[0]?.toLowerCase() || email.split('@')[0];
-      let username = baseUsername;
-      let counter = 1;
-
-      while (await User.findOne({ username })) {
-        username = `${baseUsername}${counter}`;
-        counter++;
-      }
-
-      user = await User.create({
-        email,
-        username,
-        avatar: picture,
-        isEmailVerified: true,
-        accountType: 'google',
-        googleId: sub,
-        profile: {
-          displayName: name,
-          bio: '',
-          socialLinks: {}
-        },
-        preferences: {
-          emailNotifications: true,
-          theme: 'dark',
-          language: 'pl'
-        },
-        stats: {
-          points: 0,
-          completedLessons: [],
-          lastActive: new Date()
-        }
+    try {
+      let user = await User.findOne({
+        $or: [
+          { email },
+          { googleId: sub }
+        ]
       });
+
+
+      if (!user) {
+        try {
+          const baseUsername = name?.split(' ')[0]?.toLowerCase() || email.split('@')[0];
+          let username = baseUsername;
+          let counter = 1;
+
+          while (await User.findOne({ username })) {
+            username = `${baseUsername}${counter}`;
+            counter++;
+          }
+
+          const randomPassword = Math.random().toString(36).slice(-10) + Math.random().toString(36).slice(-10);
+          const hashedPassword = await bcryptjs.hash(randomPassword, 10);
+
+          const newUserData = {
+            email,
+            username,
+            password: hashedPassword,
+            avatar: picture,
+            isEmailVerified: true,
+            accountType: 'google',
+            googleId: sub,
+            profile: {
+              displayName: name || username,
+              bio: '',
+              socialLinks: {}
+            },
+            preferences: {
+              emailNotifications: true,
+              theme: 'dark',
+              language: 'pl'
+            },
+            stats: {
+              points: 0,
+              completedLessons: [],
+              lastActive: new Date()
+            },
+            createdAt: new Date(),
+            updatedAt: new Date()
+          };
+
+          const result = await mongoose.connection.collection('users').insertOne(newUserData);
+
+          user = await User.findById(result.insertedId);
+
+          if (!user) {
+            throw new Error('Nie udało się utworzyć użytkownika Google');
+          }
+
+          try {
+            await sendWelcomeEmail(user);
+          } catch (emailError) {
+            console.error('googleAuth - błąd wysyłania emaila powitalnego:', emailError);
+          }
+        } catch (createError) {
+          console.error('googleAuth - błąd tworzenia użytkownika Google:', createError);
+          return res.status(400).json({
+            status: 'error',
+            message: 'Nie udało się utworzyć konta Google',
+            error: createError.message
+          });
+        }
+      } else if (user.accountType !== 'google') {
+        const updateResult = await mongoose.connection.collection('users').updateOne(
+          { _id: user._id },
+          {
+            $set: {
+              accountType: 'google',
+              googleId: sub,
+              isEmailVerified: true,
+              avatar: picture || user.avatar,
+              updatedAt: new Date()
+            }
+          }
+        );
+
+        user = await User.findById(user._id);
+      } else {
+        await mongoose.connection.collection('users').updateOne(
+          { _id: user._id },
+          {
+            $set: {
+              lastLogin: new Date(),
+              updatedAt: new Date()
+            }
+          }
+        );
+      }
 
       try {
-        await sendWelcomeEmail(user);
-      } catch (emailError) {
-        console.error('Błąd wysyłania emaila powitalnego:', emailError);
+        await StreakService.updateLoginStreak(user._id);
+      } catch (streakError) {
+        console.error('googleAuth - błąd aktualizacji streaka:', streakError);
       }
-    } else if (user.accountType !== 'google') {
-      user.accountType = 'google';
-      user.googleId = sub;
-      user.isEmailVerified = true;
-      if (picture && !user.avatar) {
-        user.avatar = picture;
-      }
-      await user.save();
-    }
 
-    const expiresIn = rememberMe ? '30d' : '24h';
-    const token = generateToken(user, expiresIn);
-    
-    res.status(200).json({
-      status: 'success',
-      token,
-      expiresIn,
-      user: {
-        id: user._id,
-        email: user.email,
-        username: user.username,
-        avatar: user.avatar,
-        profile: user.profile,
-        preferences: user.preferences,
-        stats: user.stats
-      }
-    });
+      const expiresIn = rememberMe ? '30d' : '24h';
+      const token = generateToken(user, expiresIn);
+
+      return res.status(200).json({
+        status: 'success',
+        token,
+        expiresIn,
+        user: {
+          id: user._id,
+          email: user.email,
+          username: user.username,
+          avatar: user.avatar,
+          profile: user.profile,
+          preferences: user.preferences,
+          stats: user.stats
+        }
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: 'error',
+        message: 'Wystąpił błąd podczas logowania przez Google',
+        error: error.message
+      });
+    }
   } catch (error) {
-    console.error('Błąd logowania przez Google:', error);
     next(error);
   }
 }; 

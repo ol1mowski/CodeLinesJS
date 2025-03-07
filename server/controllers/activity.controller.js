@@ -3,10 +3,6 @@ import { AuthError, ValidationError } from "../utils/errors.js";
 import { StreakService } from "../services/streak.service.js";
 import { LevelService } from "../services/level.service.js";
 
-/**
- * Aktualizuje aktywność użytkownika (streak i dzienny postęp)
- * @route POST /api/activity/update
- */
 export const updateActivity = async (req, res, next) => {
   try {
     const userId = req.user?.userId;
