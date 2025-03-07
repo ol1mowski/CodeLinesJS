@@ -333,11 +333,10 @@ export const verifyToken = async (req, res) => {
 };
 
 export const googleAuth = async (req, res, next) => {
-
   try {
     res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
     res.setHeader('Cross-Origin-Embedder-Policy', 'unsafe-none');
-
+    
     const { credential, rememberMe } = req.body;
 
     if (!credential) {
@@ -350,6 +349,7 @@ export const googleAuth = async (req, res, next) => {
     let decodedToken;
     try {
       decodedToken = jwt.decode(credential);
+      
       if (!decodedToken) {
         return res.status(400).json({
           status: 'error',
@@ -357,14 +357,12 @@ export const googleAuth = async (req, res, next) => {
         });
       }
     } catch (decodeError) {
-      console.error('googleAuth - błąd dekodowania tokenu:', decodeError);
       return res.status(400).json({
         status: 'error',
         message: 'Nie można zdekodować tokenu Google',
         error: decodeError.message
       });
     }
-
 
     const { email, name, picture, sub } = decodedToken;
 
@@ -376,13 +374,12 @@ export const googleAuth = async (req, res, next) => {
     }
 
     try {
-      let user = await User.findOne({
+      let user = await User.findOne({ 
         $or: [
           { email },
           { googleId: sub }
         ]
       });
-
 
       if (!user) {
         try {
@@ -397,7 +394,7 @@ export const googleAuth = async (req, res, next) => {
 
           const randomPassword = Math.random().toString(36).slice(-10) + Math.random().toString(36).slice(-10);
           const hashedPassword = await bcryptjs.hash(randomPassword, 10);
-
+          
           const newUserData = {
             email,
             username,
@@ -426,7 +423,7 @@ export const googleAuth = async (req, res, next) => {
           };
 
           const result = await mongoose.connection.collection('users').insertOne(newUserData);
-
+          
           user = await User.findById(result.insertedId);
 
           if (!user) {
@@ -436,10 +433,8 @@ export const googleAuth = async (req, res, next) => {
           try {
             await sendWelcomeEmail(user);
           } catch (emailError) {
-            console.error('googleAuth - błąd wysyłania emaila powitalnego:', emailError);
           }
         } catch (createError) {
-          console.error('googleAuth - błąd tworzenia użytkownika Google:', createError);
           return res.status(400).json({
             status: 'error',
             message: 'Nie udało się utworzyć konta Google',
@@ -449,26 +444,26 @@ export const googleAuth = async (req, res, next) => {
       } else if (user.accountType !== 'google') {
         const updateResult = await mongoose.connection.collection('users').updateOne(
           { _id: user._id },
-          {
-            $set: {
+          { 
+            $set: { 
               accountType: 'google',
               googleId: sub,
               isEmailVerified: true,
               avatar: picture || user.avatar,
               updatedAt: new Date()
-            }
+            } 
           }
         );
-
+        
         user = await User.findById(user._id);
       } else {
         await mongoose.connection.collection('users').updateOne(
           { _id: user._id },
-          {
-            $set: {
+          { 
+            $set: { 
               lastLogin: new Date(),
               updatedAt: new Date()
-            }
+            } 
           }
         );
       }
@@ -476,12 +471,11 @@ export const googleAuth = async (req, res, next) => {
       try {
         await StreakService.updateLoginStreak(user._id);
       } catch (streakError) {
-        console.error('googleAuth - błąd aktualizacji streaka:', streakError);
       }
 
       const expiresIn = rememberMe ? '30d' : '24h';
       const token = generateToken(user, expiresIn);
-
+      
       return res.status(200).json({
         status: 'success',
         token,

@@ -104,8 +104,7 @@ export const validateResetPassword = validate([
     .notEmpty().withMessage('Token resetowania hasła jest wymagany'),
   body('password')
     .notEmpty().withMessage('Nowe hasło jest wymagane')
-    .isLength({ min: 8 }).withMessage('Hasło musi mieć co najmniej 8 znaków')
-    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).withMessage('Hasło musi zawierać co najmniej jedną małą literę, jedną wielką literę i jedną cyfrę'),
+    .isLength({ min: 6 }).withMessage('Hasło musi mieć co najmniej 6 znaków'),
   body('confirmPassword')
     .notEmpty().withMessage('Potwierdzenie hasła jest wymagane')
     .custom((value, { req }) => {
@@ -114,4 +113,9 @@ export const validateResetPassword = validate([
       }
       return true;
     })
+]);
+
+export const validateGoogleAuth = validate([
+  body('credential')
+    .notEmpty().withMessage('Token Google jest wymagany')
 ]);
