@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useState } from "react";
 import { GoogleLogin } from '@react-oauth/google';
 import { useAuth } from "../../../../Hooks/useAuth";
 
@@ -8,9 +8,14 @@ type GoogleLoginButtonProps = {
 
 export const GoogleLoginButton = memo(({ rememberMe }: GoogleLoginButtonProps) => {
   const { loginWithGoogle } = useAuth();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleSuccess = (credentialResponse: any) => {
     loginWithGoogle(credentialResponse, rememberMe);
+  };
+
+  const handleError = () => {
+    setErrorMessage("Logowanie przez Google nie powiodło się. Spróbuj ponownie później.");
   };
 
   return (
@@ -26,12 +31,16 @@ export const GoogleLoginButton = memo(({ rememberMe }: GoogleLoginButtonProps) =
         </div>
       </div>
 
-      <div className="flex justify-center">
+      {errorMessage && (
+        <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+          {errorMessage}
+        </div>
+      )}
+
+      <div className="flex flex-col items-center">
         <GoogleLogin
           onSuccess={handleSuccess}
-          onError={() => {
-            console.error('Login Failed');
-          }}
+          onError={handleError}
           theme="filled_black"
           shape="pill"
           text="continue_with"
