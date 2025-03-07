@@ -100,44 +100,56 @@ export const register = async (req, res, next) => {
   }
 };
 
-const generateToken = (user) => {
+const generateToken = (user, expiresIn = '24h') => {
   return jwt.sign(
     {
       userId: user._id,
-      email: user.email
+      email: user.email,
+      username: user.username,
+      accountType: user.accountType
     },
     process.env.JWT_SECRET,
-    { expiresIn: '24h' }
+    { expiresIn }
   );
 };
 
 export const login = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, rememberMe } = req.body;
 
     const user = await User.findOne({ email });
     if (!user) {
       throw new AuthError('Nieprawidłowe dane logowania');
     }
 
-    const isMatch = await user.comparePassword(password);
-    if (!isMatch) {
+    if (user.accountType === 'google') {
+      throw new AuthError('To konto używa logowania przez Google. Użyj przycisku "Zaloguj przez Google".');
+    }
+
+    const isPasswordValid = await user.comparePassword(password);
+    if (!isPasswordValid) {
       throw new AuthError('Nieprawidłowe dane logowania');
     }
 
-    await StreakService.updateUserActivity(user._id, false);
+    user.lastLogin = new Date();
+    await user.save();
 
-    const updatedUser = await User.findById(user._id);
+    const expiresIn = rememberMe ? '30d' : '24h';
+    const token = generateToken(user, expiresIn);
 
-    const token = generateToken(updatedUser);
+    await StreakService.updateLoginStreak(user._id);
+
     res.json({
       token,
+      expiresIn,
       user: {
-        id: updatedUser._id,
-        email: updatedUser.email,
-        username: updatedUser.username,
-        avatar: updatedUser.avatar,
-        stats: updatedUser.stats
+        id: user._id,
+        email: user.email,
+        username: user.username,
+        avatar: user.avatar,
+        profile: user.profile,
+        preferences: user.preferences,
+        stats: user.stats
       }
     });
   } catch (error) {
@@ -320,18 +332,37 @@ export const verifyToken = async (req, res) => {
 
 export const googleAuth = async (req, res, next) => {
   try {
-    const { idToken, userData, rememberMe } = req.body;
+    const { credential, rememberMe } = req.body;
 
-    if (!idToken || !userData) {
-      throw new AuthError('Nieprawidłowe dane uwierzytelniające');
+    if (!credential) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Brak danych uwierzytelniających Google'
+      });
     }
 
-    const { email, name, picture } = userData;
+    const decodedToken = jwt.decode(credential);
+    
+    if (!decodedToken) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Nieprawidłowy token Google'
+      });
+    }
+
+    const { email, name, picture, sub } = decodedToken;
+
+    if (!email) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Brak adresu email w tokenie Google'
+      });
+    }
 
     let user = await User.findOne({ email });
 
     if (!user) {
-      const baseUsername = name?.split(' ')[0].toLowerCase() || email.split('@')[0];
+      const baseUsername = name?.split(' ')[0]?.toLowerCase() || email.split('@')[0];
       let username = baseUsername;
       let counter = 1;
 
@@ -346,6 +377,7 @@ export const googleAuth = async (req, res, next) => {
         avatar: picture,
         isEmailVerified: true,
         accountType: 'google',
+        googleId: sub,
         profile: {
           displayName: name,
           bio: '',
@@ -353,7 +385,8 @@ export const googleAuth = async (req, res, next) => {
         },
         preferences: {
           emailNotifications: true,
-          theme: 'dark'
+          theme: 'dark',
+          language: 'pl'
         },
         stats: {
           points: 0,
@@ -363,64 +396,39 @@ export const googleAuth = async (req, res, next) => {
       });
 
       try {
-        const welcomeContent = `
-          <p>Cześć ${name || username}!</p>
-          <p>Witamy w społeczności CodeLinesJS! 🎉</p>
-          <p>Twoje konto zostało pomyślnie utworzone i jesteś gotowy, aby rozpocząć swoją przygodę z JavaScript.</p>
-          <div class="code-block">
-            console.log("Witaj w CodeLinesJS!");
-          </div>
-          <p>Co możesz teraz zrobić?</p>
-          <ul>
-            <li>Rozpocznij naukę od podstawowych lekcji</li>
-            <li>Rozwiązuj interaktywne wyzwania</li>
-            <li>Dołącz do naszej społeczności programistów</li>
-          </ul>
-          <div style="text-align: center;">
-            <a href="${process.env.FRONTEND_URL}/dashboard" class="btn">Przejdź do dashboardu</a>
-          </div>
-          <p>Jeśli masz jakiekolwiek pytania, nie wahaj się skontaktować z naszym zespołem wsparcia.</p>
-          <p>Powodzenia w nauce!</p>
-        `;
-
-        await transporter.sendMail({
-          from: `CodeLinesJS <${process.env.EMAIL_USER}>`,
-          to: email,
-          subject: "Witaj w CodeLinesJS!",
-          html: createEmailTemplate('Witaj w CodeLinesJS!', welcomeContent)
-        });
+        await sendWelcomeEmail(user);
       } catch (emailError) {
         console.error('Błąd wysyłania emaila powitalnego:', emailError);
       }
-    } else {
-      user.lastLogin = new Date();
-      user.avatar = picture || user.avatar;
+    } else if (user.accountType !== 'google') {
+      user.accountType = 'google';
+      user.googleId = sub;
+      user.isEmailVerified = true;
+      if (picture && !user.avatar) {
+        user.avatar = picture;
+      }
       await user.save();
     }
 
-    const token = jwt.sign(
-      {
-        userId: user._id,
-        email: user.email,
-        username: user.username,
-        accountType: user.accountType
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: rememberMe ? '30d' : '24h' }
-    );
-
-    res.json({
+    const expiresIn = rememberMe ? '30d' : '24h';
+    const token = generateToken(user, expiresIn);
+    
+    res.status(200).json({
+      status: 'success',
       token,
+      expiresIn,
       user: {
         id: user._id,
         email: user.email,
         username: user.username,
         avatar: user.avatar,
-        isNewUser: !user.lastLogin,
+        profile: user.profile,
+        preferences: user.preferences,
         stats: user.stats
       }
     });
   } catch (error) {
+    console.error('Błąd logowania przez Google:', error);
     next(error);
   }
 }; 
