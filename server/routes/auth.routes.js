@@ -57,6 +57,6 @@ router.post('/login', validateAuth, asyncHandler(login));
 router.post('/forgot-password', validateEmail, asyncHandler(forgotPassword));
 router.post('/reset-password', validateResetPassword, asyncHandler(resetPassword));
 router.get('/verify', authMiddleware, asyncHandler(verifyToken));
-router.post('/google-auth', asyncHandler(googleAuth));
+router.post('/google-login', asyncHandler(googleAuth));
 
 export default router; 
