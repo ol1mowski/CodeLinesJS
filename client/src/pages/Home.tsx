@@ -3,14 +3,14 @@ import { FeaturesSection } from '../components/Features/FeaturesSection.componen
 import { ChallengesSection } from '../components/Challenges/ChallengesSection.component';
 import { ProgressSection } from '../components/Progress/ProgressSection.component';
 import { CommunitySection } from '../components/Community/CommunitySection.component';
-import { CallToActionSection } from '../components/CallToAction/CallToActionSection.component';
+import { HeroSection } from '../components/Hero/Hero.component';
 import { Footer } from '../components/Footer/Footer.component';
 
 const Home = () => {
   return (
     <div className="bg-gray-900">
       <Header />
-      <CallToActionSection />
+      <HeroSection />
       <FeaturesSection />
       <ChallengesSection />
       <ProgressSection />

@@ -6,7 +6,7 @@ export const Description = () => (
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true }}
     transition={{ delay: 0.1 }}
-    className="text-lg md:text-xl text-gray-300 font-inter mb-8 max-w-2xl"
+    className="w-full m-auto text-lg text-center md:text-xl xl:ml-0 lg:text-left text-gray-300 font-inter mb-8 max-w-2xl"
   >
     Podejmij wyzwanie i zostań mistrzem JavaScript poprzez wciągającą grę.
     Rozwiązuj zagadki, zdobywaj osiągnięcia i rywalizuj z innymi graczami.

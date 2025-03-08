@@ -5,7 +5,7 @@ import { Description } from './components/Description.component';
 import { ActionButtons } from './components/ActionButtons.component';
 import { StatsGrid } from './components/StatsGrid.component';
 
-export const CallToActionContent = memo(() => (
+export const HeroContent = memo(() => (
   <div className="w-screen xl:w-1/2 px-4 md:px-0">
     <motion.div className="text-center xl:text-left">
       <MainHeading />
@@ -16,4 +16,4 @@ export const CallToActionContent = memo(() => (
   </div>
 ));
 
-CallToActionContent.displayName = 'CallToActionContent';
+HeroContent.displayName = 'HeroContent';

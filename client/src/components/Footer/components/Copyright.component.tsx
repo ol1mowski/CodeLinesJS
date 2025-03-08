@@ -16,6 +16,6 @@ export const Copyright = () => (
     >
       Oliwier Markiewicz
     </a>
-    <p>Wszelkie prawa zastrzeżone.</p>
+    . <span>Wszelkie prawa zastrzeżone.</span>
   </motion.p>
 ); 

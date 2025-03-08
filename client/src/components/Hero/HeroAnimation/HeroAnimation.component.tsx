@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { CodeEditor } from "./CodeEditor/CodeEditor.component";
 
-export const CallToActionAnimation = () => {
+export const HeroAnimation = () => {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
