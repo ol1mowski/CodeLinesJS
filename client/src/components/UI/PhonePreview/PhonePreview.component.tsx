@@ -1,23 +1,13 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 
-interface PhonePreviewProps {
-  /** Pozycja telefonu (lewa lub prawa) */
+type PhonePreviewProps = {
   position?: 'left' | 'right';
-  /** Tytuł wyświetlany na ekranie telefonu */
   title: string;
-  /** Dodatkowe klasy CSS */
   className?: string;
-  /** Czy pokazywać ramkę telefonu (dla wersji mobilnej) */
   showFrame?: boolean;
-  /** Czy telefon jest w pozycji absolutnej */
   isAbsolute?: boolean;
 }
 
-/**
- * Komponent podglądu telefonu z animacją
- * Wyświetla mockup smartfona z możliwością dostosowania pozycji i wyglądu
- */
 export const PhonePreview: React.FC<PhonePreviewProps> = ({
   position = 'right',
   title,
@@ -25,20 +15,16 @@ export const PhonePreview: React.FC<PhonePreviewProps> = ({
   showFrame = false,
   isAbsolute = true
 }) => {
-  // Określenie kierunku animacji i rotacji w zależności od pozycji
   const initialX = position === 'right' ? 50 : -50;
   const rotate = position === 'right' ? 12 : -12;
   const rotateY = position === 'right' ? -10 : 10;
   
-  // Określenie pozycji elementów dekoracyjnych
   const glowPositions = position === 'right' 
     ? { top: { right: '-5px' }, bottom: { left: '-5px' } }
     : { top: { left: '-5px' }, bottom: { right: '-5px' } };
 
-  // Komponent telefonu
   const PhoneFrame = () => (
     <div className="relative w-[220px] md:w-[240px] lg:w-[260px]">
-      {/* Ramka telefonu */}
       <div 
         className="relative z-10 w-full aspect-[9/19] bg-black rounded-[30px] border-[6px] border-gray-800 shadow-2xl overflow-hidden"
         style={{ 
@@ -46,10 +32,8 @@ export const PhonePreview: React.FC<PhonePreviewProps> = ({
           boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 20px rgba(247, 223, 30, 0.2)"
         }}
       >
-        {/* Notch */}
         <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-1/3 h-6 bg-black rounded-b-xl z-20"></div>
         
-        {/* Zawartość ekranu */}
         <div className="w-full h-full bg-gradient-to-br from-[#2a2a2a] to-[#1a1a1a] flex items-center justify-center">
           <div className="text-center p-4">
             <div className="w-14 h-14 bg-[#f7df1e] rounded-xl flex items-center justify-center mx-auto mb-3">
@@ -62,11 +46,9 @@ export const PhonePreview: React.FC<PhonePreviewProps> = ({
           </div>
         </div>
         
-        {/* Efekt odbicia */}
         <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-white/10 to-transparent opacity-30 rounded-[30px] z-20 pointer-events-none"></div>
       </div>
       
-      {/* Elementy dekoracyjne */}
       {isAbsolute && (
         <>
           <div 
@@ -82,7 +64,6 @@ export const PhonePreview: React.FC<PhonePreviewProps> = ({
     </div>
   );
 
-  // Wersja dla małych ekranów (bez animacji rotacji)
   if (showFrame) {
     return (
       <div className={className}>
@@ -106,7 +87,6 @@ export const PhonePreview: React.FC<PhonePreviewProps> = ({
     );
   }
 
-  // Wersja z animacją dla większych ekranów
   return (
     <motion.div
       initial={{ opacity: 0, x: initialX, rotate: 0 }}

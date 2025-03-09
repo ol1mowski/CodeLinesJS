@@ -9,7 +9,7 @@ export const TheorySection = () => (
     className="min-h-screen w-full bg-gradient-to-b from-[#1a1a1a] via-[#242424] to-[#1a1a1a] py-12 md:py-16 relative overflow-hidden"
     aria-labelledby="theory-title"
   >
-    <SectionBackground />
+    <SectionBackground glowPosition="left" />
 
     <Container className="relative z-10">
       <div className="flex flex-col items-center gap-8 md:gap-12">
