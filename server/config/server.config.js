@@ -3,8 +3,6 @@ import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import mongoSanitize from "express-mongo-sanitize";
-import xss from "xss-clean";
-import hpp from "hpp";
 import compression from "compression";
 import cookieParser from "cookie-parser";
 import config from "./config.js";
@@ -12,7 +10,6 @@ import { responseEnhancer } from "../utils/response.js";
 import { cacheMiddleware } from "../utils/cache.js";
 
 export const configureServer = (app) => {
-  const isProduction = process.env.NODE_ENV === 'production';
   
   app.set('trust proxy', 1);
   
@@ -60,7 +57,7 @@ export const configureServer = (app) => {
       directives: {
         defaultSrc: ["'self'"],
         scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://accounts.google.com", "https://*.gstatic.com"],
-        connectSrc: ["'self'", "https://accounts.google.com", "https://*.googleapis.com", "https://codelinesjs.pl", "https://www.codelinesjs.pl"],
+        connectSrc: ["'self'", "https://accounts.google.com", "https://*.googleapis.com", "https://codelinesjs.pl", "https://www.codelinesjs.pl", "http://localhost:*"],
         frameSrc: ["'self'", "https://accounts.google.com"],
         imgSrc: ["'self'", "data:", "https://*.googleusercontent.com", "https://*.gstatic.com"],
         styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://accounts.google.com"],

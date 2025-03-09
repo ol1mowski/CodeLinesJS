@@ -59,6 +59,8 @@ router.options('/google-login', (req, res) => {
   res.setHeader('Access-Control-Max-Age', '86400');
   res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
   res.setHeader('Cross-Origin-Embedder-Policy', 'unsafe-none');
+  res.setHeader('Permissions-Policy', 'identity-credentials-get=(self "https://accounts.google.com")');
+  res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com https://*.gstatic.com; connect-src 'self' https://accounts.google.com https://*.googleapis.com https://codelinesjs.pl https://www.codelinesjs.pl http://localhost:*; frame-src 'self' https://accounts.google.com; img-src 'self' data: https://*.googleusercontent.com https://*.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com; font-src 'self' https://fonts.gstatic.com");
   res.status(204).end();
 });
 
