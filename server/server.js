@@ -6,7 +6,6 @@ import { configureGoogleSignIn } from "./middleware/google.middleware.js";
 import { configureStaticFiles } from "./middleware/static.middleware.js";
 import { errorHandler } from "./middleware/error.middleware.js";
 
-
 const app = express();
 
 configureServer(app);
