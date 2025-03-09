@@ -27,7 +27,7 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
             w-full py-3 
             ${icon ? 'pl-10' : 'pl-4'} 
             ${rightIcon ? 'pr-10' : 'pr-4'}
-            bg-dark/20 backdrop-blur-xl border rounded-lg 
+            bg-dark/20 border rounded-lg 
             text-gray-200 placeholder-gray-500
             focus:outline-none focus:ring-2
             shadow-sm

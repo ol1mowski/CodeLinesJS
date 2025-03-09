@@ -47,7 +47,6 @@ const LoginForm = () => {
         icon={<FaEnvelope />}
         error={errors.email?.message}
         {...register("email")}
-        className="bg-dark/20 backdrop-blur-xl"
       />
 
       <FormInput
@@ -57,7 +56,6 @@ const LoginForm = () => {
         icon={<FaLock />}
         error={errors.password?.message}
         {...register("password")}
-        className="bg-dark/20 backdrop-blur-xl"
         rightIcon={
           <button
             type="button"
