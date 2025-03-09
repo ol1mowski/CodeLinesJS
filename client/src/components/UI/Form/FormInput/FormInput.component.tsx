@@ -6,12 +6,13 @@ type FormInputProps = {
   error?: string;
   icon?: React.ReactNode;
   rightIcon?: React.ReactNode;
+  className?: string;
 } & React.InputHTMLAttributes<HTMLInputElement>;
 
 export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
-  ({ label, error, icon, rightIcon, ...props }, ref) => (
+  ({ label, error, icon, rightIcon, className = "", ...props }, ref) => (
     <div className="space-y-1">
-      <label className="block text-sm font-medium text-gray-400">
+      <label className="block text-sm font-medium text-gray-300">
         {label}
       </label>
       <div className="relative">
@@ -23,17 +24,19 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
         <input
           ref={ref}
           className={`
-            w-full py-2 
-            ${icon ? 'pl-10' : 'pl-3'} 
-            ${rightIcon ? 'pr-10' : 'pr-3'}
-            bg-dark/50 border rounded-lg 
+            w-full py-3 
+            ${icon ? 'pl-10' : 'pl-4'} 
+            ${rightIcon ? 'pr-10' : 'pr-4'}
+            bg-dark/20 backdrop-blur-xl border rounded-lg 
             text-gray-200 placeholder-gray-500
-            focus:outline-none focus:ring-1
-            transition-colors
+            focus:outline-none focus:ring-2
+            shadow-sm
+            transition-all duration-200
             ${error 
               ? 'border-red-500/50 focus:border-red-500/50 focus:ring-red-500/20' 
-              : 'border-yellow-500/20 focus:border-yellow-500/50 focus:ring-yellow-500/20 hover:border-yellow-500/30'
+              : 'border-js/20 focus:border-js/50 focus:ring-js/20 hover:border-js/30'
             }
+            ${className}
           `}
           {...props}
         />
@@ -42,12 +45,15 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
             {rightIcon}
           </div>
         )}
+        
+        {/* Efekt podświetlenia przy focusie */}
+        <div className="absolute inset-0 rounded-lg pointer-events-none bg-js/5 opacity-0 transition-opacity duration-300 peer-focus:opacity-100"></div>
       </div>
       {error && (
         <motion.p
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-sm text-red-400"
+          className="text-sm text-red-400 mt-1"
         >
           {error}
         </motion.p>

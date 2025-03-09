@@ -20,17 +20,6 @@ export const GoogleLoginButton = memo(({ rememberMe }: GoogleLoginButtonProps) =
 
   return (
     <>
-      <div className="relative my-6">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-js/20"></div>
-        </div>
-        <div className="relative flex justify-center text-sm">
-          <span className="px-2 bg-dark/50 text-gray-400">
-            Lub kontynuuj przez
-          </span>
-        </div>
-      </div>
-
       {errorMessage && (
         <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
           {errorMessage}
@@ -49,7 +38,7 @@ export const GoogleLoginButton = memo(({ rememberMe }: GoogleLoginButtonProps) =
           context="signin"
           type="standard"
           size="large"
-          width="300"
+          width="100%"
         />
       </div>
     </>

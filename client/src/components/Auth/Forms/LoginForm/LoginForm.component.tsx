@@ -36,7 +36,7 @@ const LoginForm = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       onSubmit={handleSubmit(onSubmit)}
-      className="space-y-6"
+      className="space-y-5"
     >
       {error && <ErrorMessage message={error} />}
 
@@ -47,6 +47,7 @@ const LoginForm = () => {
         icon={<FaEnvelope />}
         error={errors.email?.message}
         {...register("email")}
+        className="bg-dark/20 backdrop-blur-xl"
       />
 
       <FormInput
@@ -56,22 +57,36 @@ const LoginForm = () => {
         icon={<FaLock />}
         error={errors.password?.message}
         {...register("password")}
+        className="bg-dark/20 backdrop-blur-xl"
         rightIcon={
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="focus:outline-none text-gray-400 hover:text-gray-500 transition-colors"
+            className="focus:outline-none text-gray-400 hover:text-js transition-colors"
           >
             {showPassword ? <FaEyeSlash /> : <FaEye />}
           </button>
         }
       />
 
-      <RememberMeCheckbox register={register} />
+      <div className="flex items-center justify-between">
+        <RememberMeCheckbox register={register} />
+      </div>
       
-      <Button type="submit" className="w-full" disabled={loading}>
-        {loading ? "Logowanie..." : "Zaloguj się"}
-      </Button>
+      <div className="pt-2">
+        <Button 
+          type="submit" 
+          className="w-full bg-js hover:bg-js/90 text-black font-bold py-3 transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-js/20" 
+          disabled={loading}
+        >
+          {loading ? "Logowanie..." : "Zaloguj się"}
+        </Button>
+      </div>
+
+      <div className="relative flex items-center justify-center my-4">
+        <div className="border-t border-gray-600 w-full"></div>
+        <span className="bg-dark/50 px-3 text-sm text-gray-400 absolute">lub</span>
+      </div>
 
       <GoogleLoginButton rememberMe={rememberMe} />
     </motion.form>

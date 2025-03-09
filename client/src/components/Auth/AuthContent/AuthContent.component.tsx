@@ -16,21 +16,21 @@ export const AuthContent = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="w-full bg-dark/50 backdrop-blur-lg rounded-2xl p-8 border border-js/20"
+      className="w-full max-w-md bg-dark/30 backdrop-blur-xl rounded-2xl p-8 border border-js/20 shadow-xl shadow-black/20"
       role="main"
       aria-label="Formularz autoryzacji"
     >
-      <div className="flex flex-col justify-center items-center mb-8">
+      <div className="flex flex-col justify-center items-center mb-6">
         <span className="block text-2xl bg-[#f7df1e] text-black px-2 py-1 rounded">JS</span>
         <h2 className="mt-2 text-xl font-bold text-js">
           CodeLinesJS
         </h2>
       </div>
 
-      <h1 className="text-3xl font-bold text-center text-js mb-8">
-        {authMode === "login" && "Logowanie"}
-        {authMode === "register" && "Rejestracja"}
-        {authMode === "forgot" && "Reset hasła"}
+      <h1 className="text-2xl md:text-3xl font-bold text-center text-js mb-6">
+        {authMode === "login" && "Zaloguj się"}
+        {authMode === "register" && "Dołącz do nas"}
+        {authMode === "forgot" && "Odzyskaj hasło"}
       </h1>
 
       <AuthTabs activeTab={authMode} onTabChange={setAuthMode} />
@@ -42,6 +42,10 @@ export const AuthContent = () => {
           {authMode === "forgot" && <ForgotPasswordForm key="forgot" />}
         </AnimatePresence>
       </Suspense>
+      
+      <div className="mt-6 text-center text-sm text-gray-400">
+        <p>Logując się, akceptujesz nasz <a href="#" className="text-js hover:underline">Regulamin</a> oraz <a href="#" className="text-js hover:underline">Politykę Prywatności</a>.</p>
+      </div>
     </motion.div>
   );
 };
