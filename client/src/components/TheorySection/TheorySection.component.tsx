@@ -2,7 +2,6 @@ import { Container } from "../UI/Container/Container.component";
 import { SectionBackground } from "../UI/SectionBackground/SectionBackground.component";
 import { TheoryContent } from "./components/TheoryContent/TheoryContent.component";
 import { SectionHeader } from "../UI/SectionHeader/SectionHeader.component";
-import { ScrollIndicator } from "../UI/ScrollIndicator/ScrollIndicator.component";
 
 export const TheorySection = () => (
   <section
@@ -23,7 +22,5 @@ export const TheorySection = () => (
         <TheoryContent />
       </div>
     </Container>
-
-    <ScrollIndicator targetId="practice" />
   </section>
 ); 

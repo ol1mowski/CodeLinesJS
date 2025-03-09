@@ -1,34 +1,24 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { FaArrowRight } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
-interface CallToActionProps {
-  /** Tekst przycisku */
+type CallToActionProps = {
   text: string;
-  /** Opis pod przyciskiem */
   description?: string;
-  /** Link do przekierowania (może być URL lub ID sekcji) */
   href: string;
-  /** Czy link jest zewnętrzny */
   isExternal?: boolean;
-  /** Dodatkowe klasy CSS */
   className?: string;
-  /** Ikona (domyślnie strzałka) */
   icon?: React.ReactNode;
 }
 
-/**
- * Komponent przycisku Call-to-Action z animacją
- */
-export const CallToAction: React.FC<CallToActionProps> = ({
+export const CallToAction = ({
   text,
   description,
   href,
   isExternal = false,
   className = '',
   icon = <FaArrowRight />
-}) => {
+}: CallToActionProps) => {
   const isAnchor = href.startsWith('#');
   
   const ButtonContent = () => (

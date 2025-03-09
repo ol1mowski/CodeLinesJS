@@ -3,7 +3,6 @@ import { Container } from "../UI/Container/Container.component";
 import { SectionBackground } from "../UI/SectionBackground/SectionBackground.component";
 import { PracticeContent } from "./components/PracticeContent/PracticeContent.component";
 import { SectionHeader } from "../UI/SectionHeader/SectionHeader.component";
-import { ScrollIndicator } from "../UI/ScrollIndicator/ScrollIndicator.component";
 
 export const PracticeSection: React.FC = () => (
   <section 
@@ -24,7 +23,5 @@ export const PracticeSection: React.FC = () => (
         <PracticeContent />
       </div>
     </Container>
-    
-    <ScrollIndicator targetId="challenges" />
   </section>
 ); 
