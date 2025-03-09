@@ -5,6 +5,7 @@ import { ProgressSection } from '../components/Progress/ProgressSection.componen
 import { CommunitySection } from '../components/Community/CommunitySection.component';
 import { CollaborateSection } from '../components/Collaborate/CollaborateSection.component';
 import { LearningPathSection } from '../components/LearningPath/LearningPathSection.component';
+import { PracticeSection } from '../components/PracticeSection/PracticeSection.component';
 import { HeroSection } from '../components/Hero/Hero.component';
 import { Footer } from '../components/Footer/Footer.component';
 
@@ -15,6 +16,7 @@ const Home = () => {
       <HeroSection />
       <FeaturesSection />
       <LearningPathSection />
+      <PracticeSection />
       <ChallengesSection />
       <ProgressSection />
       <CommunitySection />
