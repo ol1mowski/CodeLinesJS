@@ -21,7 +21,7 @@ const Auth = lazy(() => import("../pages/Auth"));
 
 const LazyLoadWrapper = ({ children }: { children: React.ReactNode }) => (
   <Suspense fallback={<LoadingScreen />}>
-    {children}
+    {children}i
   </Suspense>
 );
 
