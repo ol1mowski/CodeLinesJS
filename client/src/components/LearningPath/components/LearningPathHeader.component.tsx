@@ -8,9 +8,9 @@ export const LearningPathHeader = () => (
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       viewport={{ once: true }}
-      className="mb-4"
+      className="mb-2"
     >
-      <div className="px-4 py-2 bg-[#f7df1e]/10 border border-[#f7df1e]/20 rounded-full text-[#f7df1e] font-semibold text-sm inline-block">
+      <div className="px-4 py-1.5 bg-[#f7df1e]/10 border border-[#f7df1e]/20 rounded-full text-[#f7df1e] font-semibold text-sm inline-block">
         Krok 1: Teoria
       </div>
     </motion.div>
