@@ -1,107 +1,90 @@
 import { createBrowserRouter } from "react-router-dom";
-import { lazy } from "react";
-import Dashboard from "../components/Dashboard/Dashboard.component";
-import { ProtectedRoute } from "../components/ProtectedRoute/ProtectedRoute.component";
-import { ErrorPage } from "../components/ErrorPage/ErrorPage.component";
-import { StatsSection } from "../components/Dashboard/StatsSection/StatsSection.component";
-import { DashboardContent } from "../components/Dashboard/DashboardContent/DashboardContent.component";
-import { LearnSection } from "../components/Dashboard/LearnSection/LearnSection.component";
-// import { CommunitySection } from "../components/Dashboard/CommunitySection/CommunitySection.component";
-import { SettingsSection } from "../components/Dashboard/SettingsSection/SettingsSection.component";
-import { GamesSection } from "../components/Dashboard/GamesSection/GamesSection.component";
-import { CodeEditor } from "../components/Dashboard/CodeEditor/CodeEditor.component";
-import { LessonPage } from "../components/Dashboard/LearnSection/Lesson/Lesson.page";
-// import { GroupView } from "../components/Dashboard/CommunitySection/Groups/GroupView.component";
-import { GameplayRouter } from "../components/Dashboard/GamesSection/components/GameplayRouter/GameplayRouter.component";
-// import { CommunityProvider } from "../components/Dashboard/CommunitySection/context/CommunityContext";
-import { ResetPasswordPage } from "../components/Auth/ResetPasswordPage";
+import { lazy, Suspense } from "react";
+import { LoadingScreen } from "../components/UI/LoadingScreen/LoadingScreen.component";
+
+const ErrorPage = lazy(() => import("../components/ErrorPage/ErrorPage.component").then(module => ({ default: module.ErrorPage })));
+const Dashboard = lazy(() => import("../components/Dashboard/Dashboard.component"));
+const ProtectedRoute = lazy(() => import("../components/ProtectedRoute/ProtectedRoute.component").then(module => ({ default: module.ProtectedRoute })));
+const DashboardContent = lazy(() => import("../components/Dashboard/DashboardContent/DashboardContent.component").then(module => ({ default: module.DashboardContent })));
+const StatsSection = lazy(() => import("../components/Dashboard/StatsSection/StatsSection.component").then(module => ({ default: module.StatsSection })));
+const LearnSection = lazy(() => import("../components/Dashboard/LearnSection/LearnSection.component").then(module => ({ default: module.LearnSection })));
+const LessonPage = lazy(() => import("../components/Dashboard/LearnSection/Lesson/Lesson.page").then(module => ({ default: module.LessonPage })));
+const SettingsSection = lazy(() => import("../components/Dashboard/SettingsSection/SettingsSection.component").then(module => ({ default: module.SettingsSection })));
+const GamesSection = lazy(() => import("../components/Dashboard/GamesSection/GamesSection.component").then(module => ({ default: module.GamesSection })));
+const GameplayRouter = lazy(() => import("../components/Dashboard/GamesSection/components/GameplayRouter/GameplayRouter.component").then(module => ({ default: module.GameplayRouter })));
+const CodeEditor = lazy(() => import("../components/Dashboard/CodeEditor/CodeEditor.component").then(module => ({ default: module.CodeEditor })));
+const ResetPasswordPage = lazy(() => import("../components/Auth/ResetPasswordPage").then(module => ({ default: module.ResetPasswordPage })));
+
 
 const Home = lazy(() => import("../pages/Home"));
 const Auth = lazy(() => import("../pages/Auth"));
-// const CommunityFeed = lazy(() => import("../components/Dashboard/CommunitySection/Feed/CommunityFeed.component"));
-// const CommunityRanking = lazy(() => import("../components/Dashboard/CommunitySection/Ranking/CommunityRanking.component"));
-// const CommunityGroups = lazy(() => import("../components/Dashboard/CommunitySection/Groups/CommunityGroups.component"));
+
+const LazyLoadWrapper = ({ children }: { children: React.ReactNode }) => (
+  <Suspense fallback={<LoadingScreen />}>
+    {children}
+  </Suspense>
+);
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <Home />,
-    errorElement: <ErrorPage />
+    element: <LazyLoadWrapper><Home /></LazyLoadWrapper>,
+    errorElement: <LazyLoadWrapper><ErrorPage /></LazyLoadWrapper>
   },
   {
     path: "/logowanie",
-    element: <Auth />,
+    element: <LazyLoadWrapper><Auth /></LazyLoadWrapper>,
   },
   {
     path: "/reset-password/:token",
-    element: <ResetPasswordPage />,
+    element: <LazyLoadWrapper><ResetPasswordPage /></LazyLoadWrapper>,
   },
   {
     path: "/dashboard",
     element: (
-      <ProtectedRoute>
-        <Dashboard />
-      </ProtectedRoute>
+      <LazyLoadWrapper>
+        <ProtectedRoute>
+          <Dashboard />
+        </ProtectedRoute>
+      </LazyLoadWrapper>
     ),
     children: [
       {
         index: true,
-        element: <DashboardContent />
+        element: <LazyLoadWrapper><DashboardContent /></LazyLoadWrapper>
       },
       {
         path: "stats",
-        element: <StatsSection />
+        element: <LazyLoadWrapper><StatsSection /></LazyLoadWrapper>
       },
       {
         path: "learn",
-        element: <LearnSection />,
+        element: <LazyLoadWrapper><LearnSection /></LazyLoadWrapper>,
       },
       {
         path: "learn/lesson/:lessonSlug",
-        element: <LessonPage />
+        element: <LazyLoadWrapper><LessonPage /></LazyLoadWrapper>
       },
-      // {
-      //   path: "community",
-      //   element: (
-      //     <CommunityProvider>
-      //       <CommunitySection />
-      //     </CommunityProvider>
-      //   ),
-      //   children: [
-      //     {
-      //       index: true,
-      //       element: <CommunityFeed />
-      //     },
-      //     {
-      //       path: "ranking",
-      //       element: <CommunityRanking />
-      //     },
-      //     {
-      //       path: "groups",
-      //       element: <CommunityGroups />,
-      //       children: [
-      //         {
-      //           path: ":groupId",
-      //           element: <GroupView />
-      //         }
-      //       ]
-      //     }
-      //   ]
-      // },
       {
         path: "settings",
-        element: <SettingsSection />
+        element: <LazyLoadWrapper><SettingsSection /></LazyLoadWrapper>
       },
       {
         path: "play",
-        element: <GamesSection />,
+        element: <LazyLoadWrapper><GamesSection /></LazyLoadWrapper>,
       },
-      { path: "play/:slug", element: <GameplayRouter /> },
-      { path: "code", element: <CodeEditor /> },
+      { 
+        path: "play/:slug", 
+        element: <LazyLoadWrapper><GameplayRouter /></LazyLoadWrapper> 
+      },
+      { 
+        path: "code", 
+        element: <LazyLoadWrapper><CodeEditor /></LazyLoadWrapper> 
+      },
     ]
   },
   {
     path: "*",
-    element: <ErrorPage />,
+    element: <LazyLoadWrapper><ErrorPage /></LazyLoadWrapper>,
   },
 ]);

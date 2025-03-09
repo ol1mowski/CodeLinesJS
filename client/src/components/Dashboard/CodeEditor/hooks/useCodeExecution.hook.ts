@@ -29,7 +29,12 @@ export const useCodeExecution = () => {
 
         (async () => {
           try {
-            eval(code);
+            const safeExecute = new Function('console', `
+              "use strict";
+              ${code}
+            `);
+            
+            safeExecute(console);
             setOutput(logs);
             clearTimeout(timeoutId);
             resolve();

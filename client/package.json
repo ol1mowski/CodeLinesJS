@@ -6,12 +6,15 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:prod": "tsc -b && vite build --mode production",
+    "build:analyze": "tsc -b && vite build --mode production --outDir dist-analyze",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui"
+    "test:e2e:ui": "playwright test --ui",
+    "clean": "rimraf dist"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
@@ -61,10 +64,14 @@
     "globals": "^15.14.0",
     "jsdom": "^25.0.1",
     "postcss": "^8.4.49",
+    "rimraf": "^6.0.1",
+    "rollup-plugin-visualizer": "^5.14.0",
     "tailwindcss": "^3.4.17",
+    "terser": "^5.39.0",
     "typescript": "~5.6.2",
     "typescript-eslint": "^8.18.2",
     "vite": "^6.0.5",
+    "vite-plugin-compression": "^0.5.1",
     "vitest": "^2.1.9"
   }
 }
