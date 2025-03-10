@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import { lazy, Suspense } from "react";
-import { LoadingScreen } from "../components/UI/LoadingScreen/LoadingScreen.component";
+import { LoadingSpinner } from "../components/UI/LoadingSpinner/LoadingSpinner.component";
 
 const ErrorPage = lazy(() => import("../components/ErrorPage/ErrorPage.component").then(module => ({ default: module.ErrorPage })));
 const Dashboard = lazy(() => import("../components/Dashboard/Dashboard.component"));
@@ -15,13 +15,13 @@ const GameplayRouter = lazy(() => import("../components/Dashboard/GamesSection/c
 const CodeEditor = lazy(() => import("../components/Dashboard/CodeEditor/CodeEditor.component").then(module => ({ default: module.CodeEditor })));
 const ResetPasswordPage = lazy(() => import("../components/Auth/ResetPasswordPage").then(module => ({ default: module.ResetPasswordPage })));
 
-
 const Home = lazy(() => import("../pages/Home"));
 const Auth = lazy(() => import("../pages/Auth"));
+const PrivacyPolicy = lazy(() => import("../pages/PrivacyPolicy"));
 
 const LazyLoadWrapper = ({ children }: { children: React.ReactNode }) => (
-  <Suspense fallback={<LoadingScreen />}>
-    {children}i
+  <Suspense fallback={<LoadingSpinner fullScreen text="Ładowanie strony..." />}>
+    {children}
   </Suspense>
 );
 
@@ -38,6 +38,10 @@ export const router = createBrowserRouter([
   {
     path: "/reset-password/:token",
     element: <LazyLoadWrapper><ResetPasswordPage /></LazyLoadWrapper>,
+  },
+  {
+    path: "/polityka-prywatnosci",
+    element: <LazyLoadWrapper><PrivacyPolicy /></LazyLoadWrapper>,
   },
   {
     path: "/dashboard",
