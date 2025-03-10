@@ -2,13 +2,20 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { CodeLine } from '../types';
 import { TYPING_INTERVAL } from '../constants';
 import { codeLines } from '../data/codeExample';
+import { useMobileDetect } from '../../../../../hooks/useMobileDetect';
 
 export const useCodeAnimation = () => {
   const [currentLineIndex, setCurrentLineIndex] = useState(0);
   const [visibleLines, setVisibleLines] = useState<CodeLine[]>([]);
   const [isAnimationComplete, setIsAnimationComplete] = useState(false);
+  const isMobile = useMobileDetect();
 
-  const memoizedCodeLines = useMemo(() => codeLines, []);
+  const memoizedCodeLines = useMemo(() => {
+    if (isMobile) {
+      return codeLines.filter((_, index) => index % 2 === 0 || index < 3);
+    }
+    return codeLines;
+  }, [isMobile]);
 
   const resetAnimation = useCallback(() => {
     if (isAnimationComplete) {
@@ -19,6 +26,8 @@ export const useCodeAnimation = () => {
   }, [isAnimationComplete]);
 
   useEffect(() => {
+    const interval = isMobile ? TYPING_INTERVAL / 1.5 : TYPING_INTERVAL;
+    
     const typingInterval = setInterval(() => {
       if (currentLineIndex < memoizedCodeLines.length) {
         setVisibleLines(prev => [...prev, memoizedCodeLines[currentLineIndex]]);
@@ -27,10 +36,10 @@ export const useCodeAnimation = () => {
         clearInterval(typingInterval);
         setIsAnimationComplete(true);
       }
-    }, TYPING_INTERVAL);
+    }, interval);
 
     return () => clearInterval(typingInterval);
-  }, [currentLineIndex, memoizedCodeLines]);
+  }, [currentLineIndex, memoizedCodeLines, isMobile]);
 
   return {
     visibleLines,

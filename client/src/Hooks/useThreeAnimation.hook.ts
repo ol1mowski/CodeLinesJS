@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
+import { useMobileDetect } from "./useMobileDetect";
 
 const setupCamera = () => {
   const camera = new THREE.PerspectiveCamera(
@@ -21,7 +22,7 @@ const setupRenderer = (canvas: HTMLCanvasElement) => {
   return renderer;
 };
 
-const createCodeStructure = () => {
+const createCodeStructure = (isMobile: boolean) => {
   const codeStructure = new THREE.Group();
 
   const jsGeometry = new THREE.BoxGeometry(7, 7, 7);
@@ -35,13 +36,13 @@ const createCodeStructure = () => {
   });
   const jsCube = new THREE.Mesh(jsGeometry, jsMaterial);
   
-  const codeSymbols = ["{", "}", "()", "=>", "[]", ";;"];
+  const codeSymbols = isMobile ? ["{", "}", "=>"] : ["{", "}", "()", "=>", "[]", ";;"];
   const orbitRadius = 8;
 
   codeSymbols.forEach((_, index) => {
     const angle = (index / codeSymbols.length) * Math.PI * 2;
     const symbol = new THREE.Mesh(
-      new THREE.TorusGeometry(1, 0.5, 20, 36),
+      new THREE.TorusGeometry(1, isMobile ? 0.3 : 0.5, isMobile ? 12 : 20, isMobile ? 24 : 36),
       new THREE.MeshPhongMaterial({
         color: "#6366f1",
         emissive: "#4338ca",
@@ -60,13 +61,18 @@ const createCodeStructure = () => {
   return codeStructure;
 };
 
-const setupLights = (scene: THREE.Scene) => {
-  const lights = [
-    new THREE.DirectionalLight("#ffffff", 1.5),
-    new THREE.AmbientLight("#818cf8", 0.7),
-    new THREE.PointLight("#4c1d95", 1),
-    new THREE.PointLight("#6366f1", 0.8),
-  ];
+const setupLights = (scene: THREE.Scene, isMobile: boolean) => {
+  const lights = isMobile 
+    ? [
+        new THREE.DirectionalLight("#ffffff", 1.5),
+        new THREE.AmbientLight("#818cf8", 0.7),
+      ]
+    : [
+        new THREE.DirectionalLight("#ffffff", 1.5),
+        new THREE.AmbientLight("#818cf8", 0.7),
+        new THREE.PointLight("#4c1d95", 1),
+        new THREE.PointLight("#6366f1", 0.8),
+      ];
   lights.forEach((light) => scene.add(light));
 };
 
@@ -74,7 +80,8 @@ const createResizeHandler =
   (
     camera: THREE.PerspectiveCamera,
     renderer: THREE.WebGLRenderer,
-    codeStructure: THREE.Group
+    codeStructure: THREE.Group,
+    isMobile: boolean
   ) =>
   () => {
     const width = window.innerWidth;
@@ -86,6 +93,14 @@ const createResizeHandler =
     if (width < 640) {
       camera.position.z = 25;
       codeStructure.scale.set(0.7, 0.7, 0.7);
+      
+      if (isMobile) {
+        codeStructure.children.forEach((child, index) => {
+          if (index % 2 !== 0 && index < codeStructure.children.length - 1) {
+            child.visible = false;
+          }
+        });
+      }
     } else if (width < 1024) {
       camera.position.z = 20;
       codeStructure.scale.set(0.85, 0.85, 0.85);
@@ -106,21 +121,24 @@ const createAnimationLoop =
     scene: THREE.Scene,
     camera: THREE.PerspectiveCamera,
     renderer: THREE.WebGLRenderer,
-    codeStructure: THREE.Group
+    codeStructure: THREE.Group,
+    isMobile: boolean
   ) => {
     function animate() {
       requestAnimationFrame(animate);
       
-      codeStructure.rotation.y += 0.003;
+      codeStructure.rotation.y += isMobile ? 0.001 : 0.003;
 
       codeStructure.children.forEach((symbol, index) => {
         if (symbol !== codeStructure.children[codeStructure.children.length - 1]) {
           const time = Date.now() * 0.001;
           const offset = index * (Math.PI * 2 / (codeStructure.children.length - 1));
 
-          symbol.position.y = Math.sin(time + offset) * 1.5;
-          symbol.rotation.x += 0.02;
-          symbol.rotation.z += 0.05;
+          if (!isMobile || index % 2 === 0) {
+            symbol.position.y = Math.sin(time + offset) * (isMobile ? 0.8 : 1.5);
+            symbol.rotation.x += isMobile ? 0.01 : 0.02;
+            symbol.rotation.z += isMobile ? 0.02 : 0.05;
+          }
         }
       });
 
@@ -144,6 +162,7 @@ const cleanup =
 
 export const useThreeAnimation = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const isMobile = useMobileDetect();
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -151,20 +170,20 @@ export const useThreeAnimation = () => {
     const scene = new THREE.Scene();
     const camera = setupCamera();
     const renderer = setupRenderer(canvasRef.current);
-    const codeStructure = createCodeStructure();
+    const codeStructure = createCodeStructure(isMobile);
 
-    setupLights(scene);
+    setupLights(scene, isMobile);
     scene.add(codeStructure);
 
-    const handleResize = createResizeHandler(camera, renderer, codeStructure);
-    const animate = createAnimationLoop(scene, camera, renderer, codeStructure);
+    const handleResize = createResizeHandler(camera, renderer, codeStructure, isMobile);
+    const animate = createAnimationLoop(scene, camera, renderer, codeStructure, isMobile);
 
     window.addEventListener("resize", handleResize);
     handleResize();
     animate();
 
     return cleanup(scene, codeStructure, handleResize);
-  }, []);
+  }, [isMobile]);
 
   return canvasRef;
 };

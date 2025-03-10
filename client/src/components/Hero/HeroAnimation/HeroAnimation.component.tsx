@@ -1,14 +1,19 @@
-import { motion } from "framer-motion";
+import { MobileWrapper } from "../../UI/MobileWrapper/MobileWrapper.component";
 import { CodeEditor } from "./CodeEditor/CodeEditor.component";
+import { useMobileDetect } from "../../../hooks/useMobileDetect";
 
 export const HeroAnimation = () => {
+  const isMobile = useMobileDetect();
+  
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      whileInView={{ opacity: 1, scale: 1 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.8 }}
+    <MobileWrapper
       className="w-full xl:w-1/2 relative px-4 md:px-0 h-[45vh] flex items-center"
+      motionProps={{
+        initial: { opacity: 0, scale: 0.9 },
+        whileInView: { opacity: 1, scale: 1 },
+        viewport: { once: true },
+        transition: { duration: isMobile ? 0.3 : 0.8 }
+      }}
     >
       <div className="rounded-xl border border-[#f7df1e]/20 bg-[#1E1E1E] overflow-hidden shadow-2xl w-full h-full flex flex-col">
         <div className="bg-[#2D2D2D] px-4 py-3 flex items-center gap-2 border-b border-black/50">
@@ -24,6 +29,6 @@ export const HeroAnimation = () => {
           <CodeEditor />
         </div>
       </div>
-    </motion.div>
+    </MobileWrapper>
   );
 }; 
