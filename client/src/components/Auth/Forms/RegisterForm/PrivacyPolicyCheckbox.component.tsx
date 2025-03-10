@@ -1,7 +1,7 @@
 import { memo } from "react";
 import { UseFormRegisterReturn } from "react-hook-form";
 import { motion } from "framer-motion";
-
+import { Link } from "react-router-dom";
 type PrivacyPolicyCheckboxProps = {
   register: UseFormRegisterReturn;
   error?: string;
@@ -24,14 +24,14 @@ export const PrivacyPolicyCheckbox = memo(({ register, error }: PrivacyPolicyChe
       />
       <span className="text-sm text-gray-400 group-hover:text-gray-300 transition-colors">
         Akceptuję{" "}
-        <a
-          href="/privacy-policy"
+        <Link 
+          to="/polityka-prywatnosci"
           className="text-js hover:text-js/80 underline transition-colors"
           target="_blank"
           rel="noopener noreferrer"
         >
           politykę prywatności
-        </a>
+        </Link>
       </span>
     </label>
     {error && (

@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, lazy, Suspense } from "react";
 import { AuthTabs } from "./AuthTabs.component";
+import { Link } from "react-router-dom";
 
 type AuthMode = "login" | "register" | "forgot";
 
@@ -44,7 +45,7 @@ export const AuthContent = () => {
       </Suspense>
       
       <div className="mt-6 text-center text-sm text-gray-400">
-        <p>Logując się, akceptujesz nasz <a href="#" className="text-js hover:underline">Regulamin</a> oraz <a href="#" className="text-js hover:underline">Politykę Prywatności</a>.</p>
+        <p>Logując się, akceptujesz <Link to="/polityka-prywatnosci" className="text-js hover:underline">Politykę Prywatności</Link>.</p>
       </div>
     </motion.div>
   );
