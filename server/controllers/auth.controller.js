@@ -139,8 +139,6 @@ export const login = async (req, res, next) => {
     const expiresIn = rememberMe ? '30d' : '24h';
     const token = generateToken(user, expiresIn);
 
-    await StreakService.updateLoginStreak(user._id);
-
     res.json({
       token,
       expiresIn,
@@ -466,11 +464,6 @@ export const googleAuth = async (req, res, next) => {
             } 
           }
         );
-      }
-
-      try {
-        await StreakService.updateLoginStreak(user._id);
-      } catch (streakError) {
       }
 
       const expiresIn = rememberMe ? '30d' : '24h';
