@@ -1,5 +1,5 @@
 import express from 'express';
-import { register, login, forgotPassword, resetPassword, verifyToken, googleAuth } from '../controllers/auth.controller.js';
+import { register, login, forgotPassword, resetPassword, verifyToken, googleAuth } from '../controllers/auth/index.js';
 import { validateAuth, validateEmail, validateRegistration, validateResetPassword, validateGoogleAuth } from '../middleware/validate.middleware.js';
 import { authMiddleware } from '../middleware/auth.middleware.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
