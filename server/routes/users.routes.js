@@ -6,7 +6,7 @@ import {
   getUserStats,
   updateUserStats,
   getUserProgress
-} from '../controllers/users.controller.js';
+} from '../controllers/users/index.js';
 
 const router = Router();
 

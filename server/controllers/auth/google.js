@@ -142,12 +142,6 @@ export const googleAuth = async (req, res, next) => {
         );
       }
 
-      try {
-        await StreakService.updateLoginStreak(user._id);
-      } catch (streakError) {
-        console.error('Błąd aktualizacji serii logowań:', streakError);
-      }
-
       const expiresIn = rememberMe ? '30d' : '24h';
       const token = generateToken(user, expiresIn);
       
