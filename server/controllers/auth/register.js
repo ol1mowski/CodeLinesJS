@@ -1,4 +1,5 @@
 import { User } from '../../models/user.model.js';
+import { LearningPath } from '../../models/learningPath.model.js';
 import { AuthError } from '../../utils/errors.js';
 import { generateToken, sendWelcomeEmail } from './utils.js';
 
@@ -13,6 +14,8 @@ export const register = async (req, res, next) => {
     if (existingUser) {
       throw new AuthError('Użytkownik już istnieje');
     }
+
+    const learningPaths = await LearningPath.find({});
 
     const user = await User.create({
       email,
@@ -31,7 +34,23 @@ export const register = async (req, res, next) => {
       stats: {
         points: 0,
         completedLessons: [],
-        lastActive: new Date()
+        lastActive: new Date(),
+        learningPaths: [
+          {
+            pathId: learningPaths[0]._id,
+            status: "active",
+            progress: {
+              completedLessons: [
+                
+              ],
+              totalLessons: 0,
+              lastLesson: '',
+              lastActivity: new Date(),
+              startedAt: new Date(),
+              completedAt: new Date(),
+            },
+          },
+        ],
       }
     });
 
