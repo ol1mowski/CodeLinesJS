@@ -73,15 +73,14 @@ export const useLessonData = (lessonSlug: string) => {
   };
   
   const handleLessonComplete = async () => {
-    if (!userId || !lessonSlug || !lesson) {
-      console.error('Brak wymaganych danych:', { userId, lessonSlug, lesson });
+    if (!lessonSlug || !lesson) {
+      console.error('Brak wymaganych danych:', { lessonSlug, lesson });
       return Promise.reject(new Error('Brak wymaganych danych'));
     }
 
     try {
       
       const result = await completeLessonMutation.mutateAsync({
-        userId: userId,
         lessonId: lesson.id,
         pathId: lesson.pathId,
         token: token!

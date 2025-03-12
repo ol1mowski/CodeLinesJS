@@ -3,7 +3,6 @@ import { User } from "../models/user.model.js";
 import { ValidationError } from "../utils/errors.js";
 import { LessonContent } from "../models/lessonContent.model.js";
 import { LevelService } from "../services/level.service.js";
-import { StreakService } from "../services/streak.service.js";
 
 export const getLessons = async (req, res, next) => {
   try {
@@ -176,6 +175,7 @@ export const completeLesson = async (req, res, next) => {
   try {
     const { id } = req.params;
     const userId = req.user.userId;
+    
 
     const [lesson, user] = await Promise.all([
       Lesson.findOne({ _id: id }),
@@ -196,6 +196,7 @@ export const completeLesson = async (req, res, next) => {
       (completedLesson) => completedLesson._id.toString() === lesson._id.toString()
     );
 
+
     if (!isCompleted) {
       userLearningPaths.push({ _id: lesson._id, completedAt: new Date() });
 
@@ -207,6 +208,8 @@ export const completeLesson = async (req, res, next) => {
         challenges: 1,
         timeSpent: timeSpent
       });
+
+      await user.save();
       
       const levelStats = LevelService.getUserLevelStats(user);
 

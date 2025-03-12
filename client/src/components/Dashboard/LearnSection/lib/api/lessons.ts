@@ -21,12 +21,10 @@ export const fetchLesson = async (lessonId: string, token: string): Promise<Less
 };
 
 export const completeLesson = async ({
-  userId,
   lessonId,
   pathId,
   token
 }: {
-  userId: string;
   lessonId: string;
   pathId?: string;
   token: string;
@@ -42,7 +40,7 @@ export const completeLesson = async ({
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ userId, pathId })
+    body: JSON.stringify({ pathId })
   });
 
   if (!response.ok) {
