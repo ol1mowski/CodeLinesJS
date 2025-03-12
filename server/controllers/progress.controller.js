@@ -2,7 +2,6 @@ import { User } from "../models/user.model.js";
 import { Lesson, LearningPath } from "../models/index.js";
 import { ValidationError } from "../utils/errors.js";
 import { LevelService } from "../services/level.service.js";
-import { StreakService } from "../services/streak.service.js";
 
 export const updateProgress = async (req, res, next) => {
   try {

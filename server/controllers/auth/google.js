@@ -2,7 +2,6 @@ import jwt from 'jsonwebtoken';
 import bcryptjs from 'bcryptjs';
 import mongoose from 'mongoose';
 import { User } from '../../models/user.model.js';
-import { StreakService } from '../../services/streak.service.js';
 import { generateToken, sendWelcomeEmail } from './utils.js';
 
 export const googleAuth = async (req, res, next) => {
@@ -89,7 +88,23 @@ export const googleAuth = async (req, res, next) => {
             stats: {
               points: 0,
               completedLessons: [],
-              lastActive: new Date()
+              lastActive: new Date(),
+              learningPaths: [
+                {
+                  pathId: learningPaths[0]._id,
+                  status: "active",
+                  progress: {
+                    completedLessons: [
+                      
+                    ],
+                    totalLessons: 0,
+                    lastLesson: '',
+                    lastActivity: new Date(),
+                    startedAt: new Date(),
+                    completedAt: new Date(),
+                  },
+                },
+              ],
             },
             createdAt: new Date(),
             updatedAt: new Date()
@@ -116,7 +131,7 @@ export const googleAuth = async (req, res, next) => {
           });
         }
       } else if (user.accountType !== 'google') {
-        const updateResult = await mongoose.connection.collection('users').updateOne(
+         await mongoose.connection.collection('users').updateOne(
           { _id: user._id },
           { 
             $set: { 

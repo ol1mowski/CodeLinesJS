@@ -56,13 +56,14 @@ export const configureServer = (app) => {
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://accounts.google.com", "https://*.gstatic.com", "https://cdn.jsdelivr.net"],
-        connectSrc: ["'self'", "https://accounts.google.com", "https://*.googleapis.com", "https://codelinesjs.pl", "https://www.codelinesjs.pl", "http://localhost:*"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://accounts.google.com", "https://*.gstatic.com", "https://cdn.jsdelivr.net", "https://*.jsdelivr.net"],
+        scriptSrcElem: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://accounts.google.com", "https://*.gstatic.com", "https://cdn.jsdelivr.net", "https://*.jsdelivr.net"],
+        connectSrc: ["'self'", "https://accounts.google.com", "https://*.googleapis.com", "https://codelinesjs.pl", "https://www.codelinesjs.pl", "http://localhost:*", "https://fonts.gstatic.com", "https://*.jsdelivr.net"],
         frameSrc: ["'self'", "https://accounts.google.com"],
-        imgSrc: ["'self'", "data:", "https://*.googleusercontent.com", "https://*.gstatic.com"],
-        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://accounts.google.com", "https://cdn.jsdelivr.net"],
-        fontSrc: ["'self'", "https://fonts.gstatic.com"],
-        workerSrc: ["'self'", "blob:"],
+        imgSrc: ["'self'", "data:", "https://*.googleusercontent.com", "https://*.gstatic.com", "https://*.jsdelivr.net"],
+        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://accounts.google.com", "https://cdn.jsdelivr.net", "https://*.jsdelivr.net"],
+        fontSrc: ["'self'", "https://fonts.gstatic.com", "https://*.jsdelivr.net", "data:"],
+        workerSrc: ["'self'", "blob:", "https://*.jsdelivr.net"],
       }
     },
     permissionsPolicy: {
@@ -71,9 +72,17 @@ export const configureServer = (app) => {
       }
     },
     crossOriginEmbedderPolicy: false,
-    crossOriginResourcePolicy: false,
+    crossOriginResourcePolicy: { policy: "cross-origin" },
     crossOriginOpenerPolicy: false
   }));
+  
+  // Dodaj nagłówki CORS dla fontów
+  app.use((req, res, next) => {
+    if (req.url.includes('fonts.gstatic.com') || req.url.match(/\.(woff|woff2|ttf|eot)$/)) {
+      res.setHeader('Access-Control-Allow-Origin', '*');
+    }
+    next();
+  });
   
   app.use(compression());
   
