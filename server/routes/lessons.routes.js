@@ -2,18 +2,18 @@ import { Router } from 'express';
 import { authMiddleware } from '../middleware/auth.middleware.js';
 import { updateProgress } from '../controllers/progress.controller.js';
 import {
-  getLessons,
-  getLessonById,
-  completeLesson,
-} from '../controllers/lessons.controller.js';
+  getLessonsController,
+  getLessonByIdController,
+  completeLessonController,
+} from '../controllers/lessons/index.js';
 
 const router = Router();
 
-router.get('/', authMiddleware, getLessons);
+router.get('/', authMiddleware, getLessonsController);
 
-router.get('/:id', authMiddleware, getLessonById);
+router.get('/:id', authMiddleware, getLessonByIdController);
 
-router.post('/:id/complete', authMiddleware, completeLesson);
+router.post('/:id/complete', authMiddleware, completeLessonController);
 
 router.put('/:id/progress', authMiddleware, updateProgress);
 

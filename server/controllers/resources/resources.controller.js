@@ -1,6 +1,5 @@
-import { Resource } from '../models/index.js';
-import { User } from '../models/user.model.js';
-import { ValidationError } from '../utils/errors.js';
+import { Resource } from '../../models/index.js';
+import { User } from '../../models/user.model.js';
 
 export const getResources = async (req, res, next) => {
   try {

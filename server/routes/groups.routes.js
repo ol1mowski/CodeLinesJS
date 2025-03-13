@@ -13,13 +13,13 @@ import {
   leaveGroup
 } from '../controllers/groups/index.js';
 import {
-  getMessages,
-  sendMessage,
-  editMessage,
-  deleteMessage,
-  addReaction,
-  reportMessage
-} from '../controllers/groupMessages.controller.js';
+  getMessagesController,
+  sendMessageController,
+  editMessageController,
+  deleteMessageController,
+  addReactionController,
+  reportMessageController
+} from '../controllers/groups/groupMessages/index.js';
 
 const router = Router();
 
@@ -33,11 +33,11 @@ router.put('/:groupId/tags', authMiddleware, updateGroupTags);
 router.delete('/:groupId', authMiddleware, deleteGroup);
 router.delete('/:groupId/members/:memberId', authMiddleware, removeMember);
 router.post('/:groupId/leave', authMiddleware, leaveGroup);
-router.get('/:groupId/messages', authMiddleware, getMessages);
-router.post('/:groupId/messages', authMiddleware, sendMessage);
-router.put('/:groupId/messages/:messageId', authMiddleware, editMessage);
-router.delete('/:groupId/messages/:messageId', authMiddleware, deleteMessage);
-router.post('/:groupId/messages/:messageId/reactions', authMiddleware, addReaction);
-router.post('/:groupId/messages/:messageId/report', authMiddleware, reportMessage);
+router.get('/:groupId/messages', authMiddleware, getMessagesController);
+router.post('/:groupId/messages', authMiddleware, sendMessageController);
+router.put('/:groupId/messages/:messageId', authMiddleware, editMessageController);
+router.delete('/:groupId/messages/:messageId', authMiddleware, deleteMessageController);
+router.post('/:groupId/messages/:messageId/reactions', authMiddleware, addReactionController);
+router.post('/:groupId/messages/:messageId/report', authMiddleware, reportMessageController);
 
 export default router; 

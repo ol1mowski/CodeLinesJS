@@ -1,4 +1,4 @@
-import { Message } from '../../models/message.model.js';
+import { Message } from '../../../models/message.model.js';
 
 export const reportMessageController = async (req, res, next) => {
   try {

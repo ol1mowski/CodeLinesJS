@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { authMiddleware } from '../middleware/auth.middleware.js';
 import {
   getResources,
-} from '../controllers/resources.controller.js';
+} from '../controllers/resources/resources.controller.js';
 
 const router = Router();
 

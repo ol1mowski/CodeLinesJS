@@ -1,5 +1,5 @@
-import { Message } from '../../models/message.model.js';
-import { Group } from '../../models/group.model.js';
+import { Message } from '../../../models/message.model.js';
+import { Group } from '../../../models/group.model.js';
 
 const groupReactions = (reactions = []) => {
   const summary = {};
