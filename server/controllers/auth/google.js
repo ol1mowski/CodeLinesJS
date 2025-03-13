@@ -2,13 +2,14 @@ import jwt from 'jsonwebtoken';
 import bcryptjs from 'bcryptjs';
 import mongoose from 'mongoose';
 import { User } from '../../models/user.model.js';
+import { LearningPath } from '../../models/index.js';
 import { generateToken, sendWelcomeEmail } from './utils.js';
 
 export const googleAuth = async (req, res, next) => {
   try {
     res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
     res.setHeader('Cross-Origin-Embedder-Policy', 'unsafe-none');
-    
+
     const { credential, rememberMe } = req.body;
 
     if (!credential) {
@@ -21,7 +22,7 @@ export const googleAuth = async (req, res, next) => {
     let decodedToken;
     try {
       decodedToken = jwt.decode(credential);
-      
+
       if (!decodedToken) {
         return res.status(400).json({
           status: 'error',
@@ -46,7 +47,7 @@ export const googleAuth = async (req, res, next) => {
     }
 
     try {
-      let user = await User.findOne({ 
+      let user = await User.findOne({
         $or: [
           { email },
           { googleId: sub }
@@ -55,6 +56,11 @@ export const googleAuth = async (req, res, next) => {
 
       if (!user) {
         try {
+
+          const defaultLearningPath = await LearningPath.findOne({ isDefault: true }) ||
+            await LearningPath.findOne({}) ||
+            { _id: new mongoose.Types.ObjectId() };
+
           const baseUsername = name?.split(' ')[0]?.toLowerCase() || email.split('@')[0];
           let username = baseUsername;
           let counter = 1;
@@ -66,7 +72,7 @@ export const googleAuth = async (req, res, next) => {
 
           const randomPassword = Math.random().toString(36).slice(-10) + Math.random().toString(36).slice(-10);
           const hashedPassword = await bcryptjs.hash(randomPassword, 10);
-          
+
           const newUserData = {
             email,
             username,
@@ -91,12 +97,10 @@ export const googleAuth = async (req, res, next) => {
               lastActive: new Date(),
               learningPaths: [
                 {
-                  pathId: learningPaths[0]._id,
+                  pathId: defaultLearningPath._id,
                   status: "active",
                   progress: {
-                    completedLessons: [
-                      
-                    ],
+                    completedLessons: [],
                     totalLessons: 0,
                     lastLesson: '',
                     lastActivity: new Date(),
@@ -111,7 +115,7 @@ export const googleAuth = async (req, res, next) => {
           };
 
           const result = await mongoose.connection.collection('users').insertOne(newUserData);
-          
+
           user = await User.findById(result.insertedId);
 
           if (!user) {
@@ -131,35 +135,35 @@ export const googleAuth = async (req, res, next) => {
           });
         }
       } else if (user.accountType !== 'google') {
-         await mongoose.connection.collection('users').updateOne(
+        await mongoose.connection.collection('users').updateOne(
           { _id: user._id },
-          { 
-            $set: { 
+          {
+            $set: {
               accountType: 'google',
               googleId: sub,
               isEmailVerified: true,
               avatar: picture || user.avatar,
               updatedAt: new Date()
-            } 
+            }
           }
         );
-        
+
         user = await User.findById(user._id);
       } else {
         await mongoose.connection.collection('users').updateOne(
           { _id: user._id },
-          { 
-            $set: { 
+          {
+            $set: {
               lastLogin: new Date(),
               updatedAt: new Date()
-            } 
+            }
           }
         );
       }
 
       const expiresIn = rememberMe ? '30d' : '24h';
       const token = generateToken(user, expiresIn);
-      
+
       return res.status(200).json({
         status: 'success',
         token,
