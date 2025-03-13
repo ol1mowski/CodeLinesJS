@@ -4,7 +4,7 @@ import {
   getStats, 
   updateStats, 
   getDailyStats,
-} from '../controllers/stats.controller.js';
+} from '../controllers/stats/index.js';
 
 const router = Router();
 

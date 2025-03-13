@@ -11,7 +11,7 @@ import {
   deleteGroup,
   removeMember,
   leaveGroup
-} from '../controllers/groups.controller.js';
+} from '../controllers/groups/index.js';
 import {
   getMessages,
   sendMessage,

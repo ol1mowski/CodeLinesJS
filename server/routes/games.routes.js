@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { authMiddleware } from '../middleware/auth.middleware.js';
-import { getGames, getGameBySlug } from '../controllers/games.controller.js';
+import { getGames, getGameBySlug } from '../controllers/games/index.js';
 
 const router = Router();
 
