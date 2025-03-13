@@ -1,5 +1,19 @@
+import {
+  getSettingsController,
+  updateProfileController,
+  changePasswordController,
+  updateNotificationsController,
+  updateAppearanceController
+} from './settings/index.js';
+
 import { User } from '../models/user.model.js';
 import { AuthError, ValidationError } from '../utils/errors.js';
+
+export const getSettings = getSettingsController;
+export const updateProfile = updateProfileController;
+export const changePassword = changePasswordController;
+export const updateNotifications = updateNotificationsController;
+export const updateAppearance = updateAppearanceController;
 
 export const getProfile = async (req, res, next) => {
   try {
@@ -22,82 +36,6 @@ export const getProfile = async (req, res, next) => {
         streak: user.stats.streak
       }
     });
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const updateProfile = async (req, res, next) => {
-  try {
-    const { username, email, profile } = req.body;
-    
-    if (username) {
-      const existingUser = await User.findOne({ 
-        username, 
-        _id: { $ne: req.user.userId } 
-      });
-      if (existingUser) {
-        throw new ValidationError('Nazwa użytkownika jest już zajęta');
-      }
-    }
-    
-    if (email) {
-      const existingUser = await User.findOne({ 
-        email, 
-        _id: { $ne: req.user.userId } 
-      });
-      if (existingUser) {
-        throw new ValidationError('Email jest już zajęty');
-      }
-    }
-
-    const updatedUser = await User.findByIdAndUpdate(
-      req.user.userId,
-      {
-        $set: {
-          username: username || undefined,
-          email: email || undefined,
-          'profile.bio': profile?.bio
-        }
-      },
-      { 
-        new: true,
-        runValidators: true 
-      }
-    );
-
-    if (!updatedUser) {
-      throw new AuthError('Użytkownik nie znaleziony');
-    }
-    
-    res.json({
-      username: updatedUser.username,
-      email: updatedUser.email,
-      profile: updatedUser.profile,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const changePassword = async (req, res, next) => {
-  try {
-    const { currentPassword, newPassword } = req.body;
-    
-    const user = await User.findById(req.user.userId);
-    if (!user) {
-      throw new AuthError('Użytkownik nie znaleziony');
-    }
-    
-    const isMatch = await user.comparePassword(currentPassword);
-    if (!isMatch) {
-      throw new AuthError('Nieprawidłowe obecne hasło');
-    }
-    
-    user.password = newPassword;
-    await user.save();
-    
-    res.json({ message: 'Hasło zostało zmienione' });
   } catch (error) {
     next(error);
   }

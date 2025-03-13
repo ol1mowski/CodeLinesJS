@@ -1,19 +1,19 @@
 import express from 'express';
 import { authMiddleware } from '../middleware/auth.middleware.js';
 import { 
-  getPosts, 
-  createPost, 
-  likePost, 
-  getComments,
-  addComment 
-} from '../controllers/posts.controller.js';
+  getPostsController, 
+  createPostController, 
+  likePostController, 
+  getCommentsController,
+  addCommentController   
+} from '../controllers/posts/index.js';
 
 const router = express.Router();
 
-router.get('/', authMiddleware, getPosts);
-router.post('/', authMiddleware, createPost);
-router.put('/:id/like', authMiddleware, likePost);
-router.get('/:id/comments', getComments);
-router.post('/:id/comments', authMiddleware, addComment);
+router.get('/', authMiddleware, getPostsController);
+router.post('/', authMiddleware, createPostController);
+router.put('/:id/like', authMiddleware, likePostController);
+router.get('/:id/comments', getCommentsController);
+router.post('/:id/comments', authMiddleware, addCommentController);
 
 export default router; 

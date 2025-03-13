@@ -7,6 +7,7 @@ import { likePostController } from './likePost.js';
 import { savePostController } from './savePost.js';
 import { addCommentController } from './addComment.js';
 import { deleteCommentController } from './deleteComment.js';
+import { getCommentsController } from './getComments.js';
 
 export {
   getPostsController,
@@ -15,6 +16,7 @@ export {
   updatePostController,
   deletePostController,
   likePostController,
+  getCommentsController,
   savePostController,
   addCommentController,
   deleteCommentController

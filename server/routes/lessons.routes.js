@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { authMiddleware } from '../middleware/auth.middleware.js';
-import { updateProgress } from '../controllers/progress.controller.js';
+import { updateProgressController } from '../controllers/progress/index.js';
 import {
   getLessonsController,
   getLessonByIdController,
@@ -15,6 +15,6 @@ router.get('/:id', authMiddleware, getLessonByIdController);
 
 router.post('/:id/complete', authMiddleware, completeLessonController);
 
-router.put('/:id/progress', authMiddleware, updateProgress);
+router.put('/:id/progress', authMiddleware, updateProgressController);
 
 export default router; 

@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import { authMiddleware } from '../middleware/auth.middleware.js';
-import { updateProgress, updateUserProgress } from '../controllers/progress.controller.js';
+import { updateProgressController, updateUserProgressController } from '../controllers/progress/index.js';
 
 const router = Router();
 
-router.put('/:id/progress', authMiddleware, updateProgress);
-router.put('/points', authMiddleware, updateUserProgress);
+router.put('/:id/progress', authMiddleware, updateProgressController);
+router.put('/points', authMiddleware, updateUserProgressController);
 
 export default router; 

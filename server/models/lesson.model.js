@@ -59,3 +59,5 @@ export const lessonSchema = new mongoose.Schema({
   timestamps: true,
   versionKey: false
 }); 
+
+export const Lesson = mongoose.model('Lesson', lessonSchema);
