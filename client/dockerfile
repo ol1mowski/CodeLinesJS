@@ -1,0 +1,19 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+RUN npm ci
+
+COPY vite.config.ts tsconfig.json tsconfig.node.json ./
+COPY postcss.config.js tailwind.config.js ./
+
+COPY public/ ./public/
+COPY src/ ./src/
+COPY index.html ./
+
+RUN npm run build:prod
+
+EXPOSE 3000
+
+CMD ["npm", "run", "dev"]
