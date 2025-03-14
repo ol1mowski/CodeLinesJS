@@ -16,42 +16,113 @@ export const register = async (req, res, next) => {
     }
 
     const learningPaths = await LearningPath.find({});
+    const defaultLearningPath = learningPaths.length > 0 ? learningPaths[0] : null;
 
     const user = await User.create({
       email,
       password,
       username,
       accountType: 'local',
+      isEmailVerified: false,
       profile: {
+        displayName: username,
         bio: '',
-        socialLinks: {}
+        socialLinks: {
+          github: '',
+          linkedin: '',
+          twitter: ''
+        }
       },
       preferences: {
         emailNotifications: true,
         theme: 'dark',
         language: 'pl'
       },
+      groups: [],
       stats: {
         points: 0,
-        completedLessons: [],
+        level: 1,
+        xp: 0,
+        streak: 0,
+        pointsToNextLevel: 1000,
+        bestStreak: 0,
         lastActive: new Date(),
-        learningPaths: [
+        experiencePoints: 0,
+        nextLevelThreshold: 1000,
+        completedChallenges: 0,
+        currentStreak: 0,
+        averageScore: 0,
+        totalTimeSpent: 0,
+        badges: [{
+          name: 'Nowy użytkownik',
+          icon: '🎉',
+          earnedAt: new Date(),
+          description: 'Odznaka za dołączenie do platformy'
+        }],
+        unlockedFeatures: [],
+        chartData: {
+          daily: [{
+            date: new Date().toISOString().split('T')[0],
+            points: 0,
+            timeSpent: 0
+          }],
+          progress: [{
+            name: 'Początek nauki',
+            progress: 0,
+            timeSpent: 0
+          }]
+        },
+        learningPaths: defaultLearningPath ? [
           {
-            pathId: learningPaths[0]._id,
+            pathId: defaultLearningPath._id,
             status: "active",
             progress: {
-              completedLessons: [
-                
-              ],
-              totalLessons: 0,
-              lastLesson: '',
+              completedLessons: [],
+              totalLessons: defaultLearningPath.totalLessons || 0,
+
               lastActivity: new Date(),
               startedAt: new Date(),
-              completedAt: new Date(),
-            },
+              completedAt: new Date()
+            }
+          }
+        ] : [],
+        categories: [
+          {
+            name: "javascript",
+            progress: 0,
+            level: 1
           },
+          {
+            name: "react",
+            progress: 0,
+            level: 1
+          },
+          {
+            name: "node",
+            progress: 0,
+            level: 1
+          },
+          {
+            name: "database",
+            progress: 0,
+            level: 1
+          },
+          {
+            name: "testing",
+            progress: 0,
+            level: 1
+          }
         ],
-      }
+        daily: [
+          {
+            date: new Date().toISOString().split('T')[0],
+            points: 0,
+            challenges: 0
+          }
+        ]
+      },
+      lastLogin: new Date(),
+      isActive: true
     });
 
     const token = generateToken(user);
@@ -68,7 +139,6 @@ export const register = async (req, res, next) => {
         id: user._id,
         email: user.email,
         username: user.username,
-        avatar: user.avatar,
         isNewUser: true,
         stats: user.stats
       }

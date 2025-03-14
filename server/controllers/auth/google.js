@@ -56,7 +56,6 @@ export const googleAuth = async (req, res, next) => {
 
       if (!user) {
         try {
-
           const defaultLearningPath = await LearningPath.findOne({ isDefault: true }) ||
             await LearningPath.findOne({}) ||
             { _id: new mongoose.Types.ObjectId() };
@@ -84,32 +83,103 @@ export const googleAuth = async (req, res, next) => {
             profile: {
               displayName: name || username,
               bio: '',
-              socialLinks: {}
+              socialLinks: {
+                github: '',
+                linkedin: '',
+                twitter: ''
+              }
             },
             preferences: {
               emailNotifications: true,
               theme: 'dark',
               language: 'pl'
             },
+            groups: [],
             stats: {
               points: 0,
-              completedLessons: [],
+              level: 1,
+              xp: 0,
+              streak: 0,
+              pointsToNextLevel: 1000,
+              bestStreak: 0,
               lastActive: new Date(),
+              experiencePoints: 0,
+              nextLevelThreshold: 1000,
+              completedChallenges: 0,
+              currentStreak: 0,
+              averageScore: 0,
+              totalTimeSpent: 0,
+              badges: [{
+                name: 'Użytkownik Google',
+                icon: '🌐',
+                earnedAt: new Date(),
+                description: 'Odznaka za rejestrację przez Google'
+              }],
+              unlockedFeatures: [],
+              chartData: {
+                daily: [{
+                  date: new Date().toISOString().split('T')[0],
+                  points: 0,
+                  timeSpent: 0
+                }],
+                progress: [{
+                  name: 'Początek nauki',
+                  progress: 0,
+                  timeSpent: 0
+                }]
+              },
               learningPaths: [
                 {
                   pathId: defaultLearningPath._id,
                   status: "active",
                   progress: {
                     completedLessons: [],
-                    totalLessons: 0,
-                    lastLesson: '',
+                    totalLessons: defaultLearningPath.totalLessons || 0,
                     lastActivity: new Date(),
                     startedAt: new Date(),
-                    completedAt: new Date(),
-                  },
-                },
+                    completedAt: '',
+                  }
+                }
               ],
+              categories: [
+                {
+                  name: "javascript",
+                  progress: 0,
+                  level: 1
+                },
+                {
+                  name: "react",
+                  progress: 0,
+                  level: 1
+                },
+                {
+                  name: "node",
+                  progress: 0,
+                  level: 1
+                },
+                {
+                  name: "database",
+                  progress: 0,
+                  level: 1
+                },
+                {
+                  name: "testing",
+                  progress: 0,
+                  level: 1
+                }
+              ],
+              daily: [
+                {
+                  date: new Date().toISOString().split('T')[0],
+                  points: 0,
+                  challenges: 0
+                }
+              ]
             },
+            resetPasswordToken: '',
+            resetPasswordExpires: '',
+            lastLogin: new Date(),
+            isActive: true,
             createdAt: new Date(),
             updatedAt: new Date()
           };
