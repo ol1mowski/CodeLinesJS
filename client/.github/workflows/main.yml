@@ -1,0 +1,126 @@
+# name: CI/CD CodeLinesJS
+
+# on:
+#   push:
+#     branches: [ main, develop ]
+#   pull_request:
+#     branches: [ main, develop ]
+
+# jobs:
+#   test:
+#     name: Testing and linting
+#     runs-on: ubuntu-latest
+    
+#     steps:
+#       - name: Checkout kodu
+#         uses: actions/checkout@v3
+        
+#       - name: Setup Node.js
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: '18'
+#           cache: 'npm'
+          
+#         - name: Installing dependencies
+#         run: npm ci
+        
+#         - name: Running linting
+#         run: npm run lint
+        
+#       - name: Running tests
+#         run: npm test
+        
+#   build:
+#     name: Building application
+#     needs: test
+#     runs-on: ubuntu-latest
+    
+#     steps:
+#       - name: Checkout kodu
+#         uses: actions/checkout@v3
+        
+#       - name: Konfiguracja Node.js
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: '18'
+#           cache: 'npm'
+          
+#       - name: Installing dependencies
+#         run: npm ci
+        
+#       - name: Building application
+#         run: npm run build
+        
+#       - name: Archiwizacja artefaktów
+#         uses: actions/upload-artifact@v3
+#         with:
+#           name: build-files
+#           path: .next/
+#           retention-days: 7
+          
+#   deploy:
+#     name: Deploying to production
+#     needs: build
+#     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+#     runs-on: ubuntu-latest
+    
+#     steps:
+#       - name: Checkout kodu
+#         uses: actions/checkout@v3
+        
+#       - name: Konfiguracja Node.js
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: '18'
+#           cache: 'npm'
+          
+#       - name: Downloading artifacts
+#         uses: actions/download-artifact@v3
+#         with:
+#           name: build-files
+#           path: .next/
+          
+#       - name: Installing dependencies
+#         run: npm ci
+        
+#       - name: Deploying to Vercel
+#         uses: amondnet/vercel-action@v20
+#         with:
+#           vercel-token: ${{ secrets.VERCEL_TOKEN }}
+#           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+#           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+#           vercel-args: '--prod'
+          
+      
+#   deploy-staging:
+#     name: Deploying to staging environment
+#     needs: build
+#     if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+#     runs-on: ubuntu-latest
+    
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v3
+        
+#       - name: Setup Node.js
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: '18'
+#           cache: 'npm'
+          
+#       - name: Downloading artifacts
+#         uses: actions/download-artifact@v3
+#         with:
+#           name: build-files
+#           path: .next/
+          
+#       - name: Installing dependencies
+#         run: npm ci
+        
+#       - name: Deploying to Vercel (staging)
+#         uses: amondnet/vercel-action@v20
+#         with:
+#           vercel-token: ${{ secrets.VERCEL_TOKEN }}
+#           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+#           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+#           vercel-args: '--preview' 
