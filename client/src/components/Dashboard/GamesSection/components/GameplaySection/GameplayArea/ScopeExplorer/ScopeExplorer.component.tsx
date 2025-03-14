@@ -55,13 +55,15 @@ const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean }) => {
   }, [timeElapsed]);
 
   useEffect(() => {
+    if (!gameContent?.gameData) return;
+    
     const initialCategoryStats = {
       scope: { total: 0, correct: 0, points: 0 },
       closure: { total: 0, correct: 0, points: 0 },
       hoisting: { total: 0, correct: 0, points: 0 }
     };
 
-    gameContent?.gameData.forEach((challenge: ScopeChallenge) => {
+    gameContent.gameData.forEach((challenge: ScopeChallenge) => {
       const category = challenge.category as keyof typeof initialCategoryStats;
       initialCategoryStats[category].total++;
       initialCategoryStats[category].points += challenge.points || 0;
@@ -69,6 +71,8 @@ const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean }) => {
 
     setGameStats(prev => ({
       ...prev,
+      totalLevels: gameContent.gameData.length,
+      maxTime: gameContent.estimatedTime ? gameContent.estimatedTime * 60 : 300,
       categoryStats: initialCategoryStats
     }));
   }, [gameContent]);
@@ -90,10 +94,10 @@ const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean }) => {
 
   const handleLevelComplete = useCallback(() => {
     const nextLevel = gameStats.currentLevel + 1;
-    if (nextLevel > (gameContent?.gameData.length || 0)) {
+    if (nextLevel > (gameContent?.gameData?.length || 0)) {
       setIsGameOver(true);
       setFinalTime(timeElapsed);
-      resetTimer();
+      stopTimer();
       return;
     }
 
@@ -101,16 +105,18 @@ const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean }) => {
       ...prev,
       currentLevel: nextLevel
     }));
-  }, [gameStats.currentLevel, resetTimer, timeElapsed, gameContent]);
+  }, [gameStats.currentLevel, timeElapsed, gameContent?.gameData?.length, stopTimer]);
 
   const handleRestart = useCallback(() => {
+    if (!gameContent?.gameData) return;
+    
     const initialCategoryStats = {
       scope: { total: 0, correct: 0, points: 0 },
       closure: { total: 0, correct: 0, points: 0 },
       hoisting: { total: 0, correct: 0, points: 0 }
     };
 
-    gameContent?.gameData.forEach((challenge: ScopeChallenge) => {
+    gameContent.gameData.forEach((challenge: ScopeChallenge) => {
       const category = challenge.category as keyof typeof initialCategoryStats;
       initialCategoryStats[category].total++;
       initialCategoryStats[category].points += challenge.points || 0;
@@ -118,10 +124,10 @@ const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean }) => {
 
     setGameStats({
       currentLevel: 1,
-      totalLevels: gameContent?.gameData.length || 0,
+      totalLevels: gameContent.gameData.length,
       score: 0,
       timeElapsed: 0,
-      maxTime: gameContent?.estimatedTime ? gameContent.estimatedTime * 60 : 300,
+      maxTime: gameContent.estimatedTime ? gameContent.estimatedTime * 60 : 300,
       correctAnswers: 0,
       categoryStats: initialCategoryStats
     });

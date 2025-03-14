@@ -13,7 +13,7 @@ export const JSTypoHunterStats = memo(({ stats }: JSTypoHunterStatsProps) => {
     const remainingSeconds = seconds % 60;
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
-
+  
   return (
     <motion.div
       initial={{ opacity: 0, y: -20 }}

@@ -8,6 +8,7 @@ import { useGamesQuery } from '../../../../hooks/useGamesQuery';
 import { GameIntro } from '../GameIntro/GameIntro.component';
 import { JSTypoHunterSummary } from './JSTypoHunterSummary/JSTypoHunterSummary.component';
 import { Game } from '../../../../types/games.types';
+
 const getDifficultyPoints = (difficulty: 'easy' | 'medium' | 'hard'): number => {
   switch (difficulty) {
     case 'easy':
