@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { useMobileDetect } from '../../../hooks/useMobileDetect';
 
 type PhonePreviewProps = {
   position?: 'left' | 'right';
@@ -15,6 +16,7 @@ export const PhonePreview: React.FC<PhonePreviewProps> = ({
   showFrame = false,
   isAbsolute = true
 }) => {
+  const isMobile = useMobileDetect();
   const initialX = position === 'right' ? 50 : -50;
   const rotate = position === 'right' ? 12 : -12;
   const rotateY = position === 'right' ? -10 : 10;
@@ -83,6 +85,14 @@ export const PhonePreview: React.FC<PhonePreviewProps> = ({
             </div>
           </div>
         </div>
+      </div>
+    );
+  }
+
+  if (isMobile) {
+    return (
+      <div className={className} style={{ perspective: "1000px" }}>
+        <PhoneFrame />
       </div>
     );
   }

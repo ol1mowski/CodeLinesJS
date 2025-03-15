@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { FaArrowRight } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import { useMobileDetect } from '../../../hooks/useMobileDetect';
 
 type CallToActionProps = {
   text: string;
@@ -20,6 +21,7 @@ export const CallToAction = ({
   icon = <FaArrowRight />
 }: CallToActionProps) => {
   const isAnchor = href.startsWith('#');
+  const isMobile = useMobileDetect();
   
   const ButtonContent = () => (
     <>
@@ -27,6 +29,53 @@ export const CallToAction = ({
       <span className="ml-2">{icon}</span>
     </>
   );
+
+  const renderButton = () => {
+    if (isExternal) {
+      return (
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-[#f7df1e] text-black font-bold rounded-lg hover:bg-[#f7df1e]/90 transition-all shadow-lg shadow-[#f7df1e]/25"
+        >
+          <ButtonContent />
+        </a>
+      );
+    } else if (isAnchor) {
+      return (
+        <a
+          href={href}
+          className="inline-flex items-center gap-2 px-6 py-3 bg-[#f7df1e] text-black font-bold rounded-lg hover:bg-[#f7df1e]/90 transition-all shadow-lg shadow-[#f7df1e]/25"
+        >
+          <ButtonContent />
+        </a>
+      );
+    } else {
+      return (
+        <Link
+          to={href}
+          className="inline-flex items-center gap-2 px-6 py-3 bg-[#f7df1e] text-black font-bold rounded-lg hover:bg-[#f7df1e]/90 transition-all shadow-lg shadow-[#f7df1e]/25"
+        >
+          <ButtonContent />
+        </Link>
+      );
+    }
+  };
+
+  if (isMobile) {
+    return (
+      <div className={`pt-2 ${className}`}>
+        {renderButton()}
+        
+        {description && (
+          <p className="mt-3 text-gray-400 text-sm">
+            {description}
+          </p>
+        )}
+      </div>
+    );
+  }
 
   return (
     <motion.div
@@ -36,30 +85,7 @@ export const CallToAction = ({
       viewport={{ once: true }}
       className={`pt-2 ${className}`}
     >
-      {isExternal ? (
-        <a
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 px-6 py-3 bg-[#f7df1e] text-black font-bold rounded-lg hover:bg-[#f7df1e]/90 transition-all shadow-lg shadow-[#f7df1e]/25"
-        >
-          <ButtonContent />
-        </a>
-      ) : isAnchor ? (
-        <a
-          href={href}
-          className="inline-flex items-center gap-2 px-6 py-3 bg-[#f7df1e] text-black font-bold rounded-lg hover:bg-[#f7df1e]/90 transition-all shadow-lg shadow-[#f7df1e]/25"
-        >
-          <ButtonContent />
-        </a>
-      ) : (
-        <Link
-          to={href}
-          className="inline-flex items-center gap-2 px-6 py-3 bg-[#f7df1e] text-black font-bold rounded-lg hover:bg-[#f7df1e]/90 transition-all shadow-lg shadow-[#f7df1e]/25"
-        >
-          <ButtonContent />
-        </Link>
-      )}
+      {renderButton()}
       
       {description && (
         <p className="mt-3 text-gray-400 text-sm">

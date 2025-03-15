@@ -1,8 +1,11 @@
 import { motion } from 'framer-motion';
 import { FaGamepad, FaTrophy, FaUsers } from 'react-icons/fa';
 import { FeatureItem } from './FeatureItem.component';
+import { useMobileDetect } from '../../../../../hooks/useMobileDetect';
 
 export const FeaturesList = () => {
+  const isMobile = useMobileDetect();
+  
   const features = [
     {
       icon: <FaGamepad />,
@@ -23,6 +26,24 @@ export const FeaturesList = () => {
       delay: 0.4,
     },
   ];
+
+  if (isMobile) {
+    return (
+      <div className="space-y-5">
+        <div className="space-y-4">
+          {features.map((feature, index) => (
+            <FeatureItem 
+              key={index} 
+              icon={feature.icon} 
+              title={feature.title} 
+              description={feature.description} 
+              delay={feature.delay} 
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <motion.div
