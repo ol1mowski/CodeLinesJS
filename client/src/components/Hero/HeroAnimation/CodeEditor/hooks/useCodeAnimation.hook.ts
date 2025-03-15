@@ -26,7 +26,14 @@ export const useCodeAnimation = () => {
   }, [isAnimationComplete]);
 
   useEffect(() => {
-    const interval = isMobile ? TYPING_INTERVAL / 1.5 : TYPING_INTERVAL;
+    if (isMobile) {
+      setVisibleLines(memoizedCodeLines);
+      setCurrentLineIndex(memoizedCodeLines.length);
+      setIsAnimationComplete(true);
+      return;
+    }
+
+    const interval = TYPING_INTERVAL;
     
     const typingInterval = setInterval(() => {
       if (currentLineIndex < memoizedCodeLines.length) {

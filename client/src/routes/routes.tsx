@@ -2,7 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import { LoadingSpinner } from "../components/UI/LoadingSpinner/LoadingSpinner.component";
 
-const CommunitySection = lazy(() => import("../components/Community/CommunitySection.component").then(module => ({ default: module.CommunitySection })));
+const CommunitySection = lazy(() => import("../components/Dashboard/CommunitySection/CommunitySection.component").then(module => ({ default: module.CommunitySection })));
 const ErrorPage = lazy(() => import("../components/ErrorPage/ErrorPage.component").then(module => ({ default: module.ErrorPage })));
 const Dashboard = lazy(() => import("../components/Dashboard/Dashboard.component"));
 const ProtectedRoute = lazy(() => import("../components/ProtectedRoute/ProtectedRoute.component").then(module => ({ default: module.ProtectedRoute })));

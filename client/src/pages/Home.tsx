@@ -6,6 +6,7 @@ import { TheorySection } from '../components/TheorySection/TheorySection.compone
 import { PracticeSection } from '../components/PracticeSection/PracticeSection.component';
 import { HeroSection } from '../components/Hero/Hero.component';
 import { Footer } from '../components/Footer/Footer.component';
+import { CommunitySection } from '../components/Community/CommunitySection.component';
 
 const Home = () => {
   return (
@@ -16,6 +17,7 @@ const Home = () => {
       <TheorySection />
       <PracticeSection />
       <ChallengesSection />
+      <CommunitySection />
       <ProgressSection />
       <Footer />
     </div>
