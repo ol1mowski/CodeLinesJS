@@ -14,7 +14,6 @@ type AnimatedCodeLineProps = {
 export const AnimatedCodeLine = ({ lineNumber, code, showCursor }: AnimatedCodeLineProps) => {
   const isMobile = useMobileDetect();
   
-  // Na urządzeniach mobilnych nie pokazujemy kursora i nie używamy animacji
   return (
     <MobileWrapper
       className="whitespace-pre relative"
