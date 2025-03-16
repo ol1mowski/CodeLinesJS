@@ -8,12 +8,14 @@ export const useStatsCards = (stats: UserStats | undefined) => {
         
     return [
       {
+        id: 'completed-lessons',
         icon: FaTrophy,
         label: "Ukończone Lekcje",
         value: stats.data.completedChallenges?.toString() || '0',
         gradient: "from-amber-500 to-orange-500"
       },
       {
+        id: 'current-streak',
         icon: FaFire,
         label: "Aktualny Streak",
         value: `${stats.data.streak || 0} dni`,

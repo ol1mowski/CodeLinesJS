@@ -26,7 +26,7 @@ export const BadgesGrid = memo(({ badges }: BadgesGridProps) => {
         className="grid grid-cols-2 sm:grid-cols-3 gap-4"
       >
         {badges.map((badge) => (
-          <BadgeCard key={badge.id} badge={badge} />
+          <BadgeCard key={badge.name} badge={badge} />
         ))}
       </motion.div>
     </div>

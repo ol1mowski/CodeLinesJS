@@ -60,8 +60,8 @@ export const StatsOverview = memo(({ stats, isLoading, error }: StatsOverviewPro
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {statsCards.map((card, index) => (
-          <StatCard key={index} {...card} />
+        {statsCards.map((card) => (
+          <StatCard key={card.id} {...card} />
         ))}
       </div>
 

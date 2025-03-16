@@ -4,12 +4,12 @@ import { IconType } from "react-icons";
 import { statsSectionStyles as styles } from "../style/StatsSection.styles";
 
 type StatCardProps = {
+  id: string;
   icon: IconType;
   label: string;
   value: string | number;
   subValue?: string;
   gradient: string;
-
 };
 
 const item = {

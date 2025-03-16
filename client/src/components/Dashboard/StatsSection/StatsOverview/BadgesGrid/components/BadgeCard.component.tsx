@@ -25,7 +25,7 @@ export const BadgeCard = memo(({ badge }: BadgeCardProps) => {
         {formatDate(badge.earnedAt)}
       </p>
       {badge.description && (
-        <p className="text-gray-400 text-xs mt-1 text-center">
+        <p key={`${badge.id}-description`} className="text-gray-400 text-xs mt-1 text-center">
           {badge.description}
         </p>
       )}
