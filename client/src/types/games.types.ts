@@ -4,6 +4,8 @@ export type Game = {
   _id: string;
   slug: string;
   id: string;
+  isLevelAvailable: boolean;
+  requiredLevel: number;
   rating: {
     average: number;
     count: number;

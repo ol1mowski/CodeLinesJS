@@ -1,4 +1,5 @@
 import { Game } from '../../models/game.model.js';
+import { User } from '../../models/user.model.js';
 
 export const getGames = async (req, res, next) => {
   try {
@@ -10,6 +11,14 @@ export const getGames = async (req, res, next) => {
       page = 1,
       limit = 10
     } = req.query;
+
+    const userId = req.user?.userId;
+    let userLevel = 1;
+
+    if (userId) {
+      const user = await User.findById(userId).select('stats.level').lean();
+      userLevel = user?.stats?.level || 1;
+    }
 
     const query = { isActive: true };
     
@@ -34,13 +43,14 @@ export const getGames = async (req, res, next) => {
     ]);
 
     const hasNextPage = skip + games.length < total;
-
+    
     res.json({
       status: 'success',
       data: {
         games: games.map(game => ({
           ...game,
-          isCompleted: game.completions.users.includes(req.user?.userId)
+          isCompleted: game.completions?.users?.includes(userId),
+          isLevelAvailable: userLevel >= (game.requiredLevel || 1)
         })),
         pagination: {
           page: parseInt(page),

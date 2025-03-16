@@ -9,6 +9,8 @@ export interface Game {
   title: string;
   description: string;
   difficulty: GameDifficulty;
+  isLevelAvailable: boolean;
+  requiredLevel: number;
   rewardPoints: number;
   completions: {
     count: number;

@@ -23,6 +23,11 @@ const gameSchema = new mongoose.Schema({
     enum: ['easy', 'medium', 'hard', 'expert'],
     default: 'medium'
   },
+  requiredLevel: {
+    type: Number,
+    default: 1,
+    min: 1
+  },
   rating: {
     average: {
       type: Number,

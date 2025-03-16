@@ -17,7 +17,7 @@ type GamesListProps = {
 
 export const GamesList = memo(({ sortBy, searchQuery, selectedDifficulty }: GamesListProps) => {
   const { data, isLoading, isError } = useGamesQuery();
-
+  
   if (isLoading) return <GamesListSkeleton />;
   
   if (isError) {
@@ -63,11 +63,11 @@ export const GamesList = memo(({ sortBy, searchQuery, selectedDifficulty }: Game
       className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6"
     >
       {filteredGames.map((dashboardGame: DashboardGame) => {
-        // Mapowanie do wymaganego typu Game
         const game: Game = {
           _id: dashboardGame._id,
           id: dashboardGame._id,
           slug: dashboardGame.slug,
+          isLevelAvailable: dashboardGame.isLevelAvailable,
           title: dashboardGame.title,
           description: dashboardGame.description,
           difficulty: dashboardGame.difficulty,
@@ -82,7 +82,8 @@ export const GamesList = memo(({ sortBy, searchQuery, selectedDifficulty }: Game
           totalPlayers: 0,
           thumbnailUrl: "",
           rewardPoints: dashboardGame.rewardPoints,
-          xpPoints: dashboardGame.rewardPoints
+          xpPoints: dashboardGame.rewardPoints,
+          requiredLevel: dashboardGame.requiredLevel
         };
         
         return (
