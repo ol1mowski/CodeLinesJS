@@ -26,9 +26,8 @@ export const GamesSearch = memo(({ value, onChange }: GamesSearchProps) => {
           placeholder="Szukaj gry..."
           className="
             w-full pl-10 pr-4 py-1.5 
-            bg-dark-800/50 border border-js/10
+            bg-dark border border-js/10
             rounded-lg text-sm text-gray-200
-            placeholder-gray-400
             focus:outline-none focus:border-js/30
             transition-colors duration-200
           "
