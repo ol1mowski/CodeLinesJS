@@ -10,7 +10,7 @@ export const useStatsCards = (stats: UserStats | undefined) => {
       {
         icon: FaTrophy,
         label: "Ukończone Lekcje",
-        value: stats.data.completedLessons?.toString() || '0',
+        value: stats.data.completedChallenges?.toString() || '0',
         gradient: "from-amber-500 to-orange-500"
       },
       {

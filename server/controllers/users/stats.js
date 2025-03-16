@@ -1,6 +1,10 @@
 import { User } from '../../models/user.model.js';
 import { LearningPath } from '../../models/learningPath.model.js';
 import { AuthError, ValidationError } from '../../utils/errors.js';
+import { STATS_CONFIG } from './config/stats.config.js';
+import { calculateStreak } from './utils/dateUtils.js';
+import { calculateLearningPathsProgress } from './utils/learningPathUtils.js';
+import { updateStreakStats, initializeDailyStats } from './utils/statsUtils.js';
 
 export const getUserStats = async (req, res, next) => {
   try {
@@ -8,44 +12,26 @@ export const getUserStats = async (req, res, next) => {
     if (!userId) throw new AuthError('Brak autoryzacji');
 
     const [user, learningPaths] = await Promise.all([
-      User.findById(userId)
-        .select('stats username')
-        .lean(),
-      LearningPath.find({ 'lessons': { $exists: true, $not: { $size: 0 } } })
-        .lean()
+      User.findById(userId).select('stats username'),
+      LearningPath.find({ 'lessons': { $exists: true, $not: { $size: 0 } } }).lean()
     ]);
 
     if (!user) throw new ValidationError('Nie znaleziono użytkownika');
 
     const stats = user.stats || {};
-    const learningPathsProgress = learningPaths.map(path => {
-      const userPath = stats.learningPaths?.find(
-        up => up.pathId.toString() === path._id.toString()
-      );
-
-      return {
-        pathId: path._id,
-        title: path.title,
-        progress: {
-          completed: userPath?.progress?.completedLessons?.length || 0,
-          total: path.totalLessons,
-          percentage: path.totalLessons > 0 
-            ? Math.round((userPath?.progress?.completedLessons?.length || 0) / path.totalLessons * 100)
-            : 0,
-          status: userPath?.status || 'locked'
-        }
-      };
-    });
+    const learningPathsProgress = calculateLearningPathsProgress(stats, learningPaths);
+    const currentStreak = calculateStreak(stats.chartData?.daily || []);
+    const { currentStreak: updatedStreak, bestStreak } = await updateStreakStats(user, currentStreak);
 
     res.json({
       status: 'success',
       data: {
-        points: stats.points || 0,
-        level: stats.level || 1,
-        streak: stats.streak || 0,
-        bestStreak: stats.bestStreak || 0,
-        pointsToNextLevel: stats.pointsToNextLevel || 0,
-        completedLessons: stats.completedLessons || 0,
+        points: stats.points || STATS_CONFIG.DEFAULT_VALUES.points,
+        level: stats.level || STATS_CONFIG.DEFAULT_LEVEL,
+        streak: updatedStreak,
+        bestStreak,
+        pointsToNextLevel: stats.pointsToNextLevel || STATS_CONFIG.DEFAULT_POINTS_TO_NEXT_LEVEL,
+        completedLessons: stats.completedLessons || STATS_CONFIG.DEFAULT_VALUES.completedLessons,
         badges: stats.badges || [],
         lastActive: stats.lastActive,
         learningPaths: learningPathsProgress,
@@ -63,18 +49,34 @@ export const updateUserStats = async (req, res, next) => {
     if (!userId) throw new AuthError('Brak autoryzacji');
 
     const { points, xp } = req.body;
-
     const user = await User.findById(userId);
     if (!user) throw new ValidationError('Nie znaleziono użytkownika');
 
-    if (points) user.stats.points = (user.stats.points || 0) + points;
-    if (xp) user.stats.xp = (user.stats.xp || 0) + xp;
+    const today = new Date().toISOString().split('T')[0];
+    
+    if (!user.stats.chartData) {
+      user.stats.chartData = { daily: [], progress: [] };
+    }
+    
+    const todayStats = initializeDailyStats(user.stats.chartData, today);
+    if (!user.stats.chartData.daily.find(d => d.date === today)) {
+      user.stats.chartData.daily.push(todayStats);
+    }
 
-    const currentLevel = user.stats.level || 1;
-    const pointsToNextLevel = currentLevel * 100;
+    if (points) {
+      todayStats.points += points;
+      user.stats.points = (user.stats.points || 0) + points;
+    }
+    if (xp) {
+      user.stats.xp = (user.stats.xp || 0) + xp;
+    }
 
-    if (user.stats.points >= pointsToNextLevel) {
-      user.stats.level = Math.floor(user.stats.points / 100) + 1;
+    const currentStreak = calculateStreak(user.stats.chartData.daily);
+    const { currentStreak: updatedStreak, bestStreak } = await updateStreakStats(user, currentStreak);
+
+    const currentLevel = user.stats.level || STATS_CONFIG.DEFAULT_LEVEL;
+    if (user.stats.points >= currentLevel * STATS_CONFIG.POINTS_PER_LEVEL) {
+      user.stats.level = Math.floor(user.stats.points / STATS_CONFIG.POINTS_PER_LEVEL) + 1;
     }
 
     user.stats.lastActive = new Date();
@@ -87,7 +89,12 @@ export const updateUserStats = async (req, res, next) => {
         points: user.stats.points,
         xp: user.stats.xp,
         level: user.stats.level,
-        lastActive: user.stats.lastActive
+        lastActive: user.stats.lastActive,
+        streak: updatedStreak,
+        bestStreak,
+        chartData: {
+          daily: todayStats
+        }
       }
     });
   } catch (error) {
