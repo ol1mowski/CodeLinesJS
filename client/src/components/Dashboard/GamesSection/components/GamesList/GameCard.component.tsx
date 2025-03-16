@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { memo } from "react";
-import { FaStar, FaUsers, FaTrophy, FaPlay, FaLock } from "react-icons/fa";
+import { FaStar, FaTrophy, FaPlay, FaLock } from "react-icons/fa";
 import { Game } from "../../../../../types/games.types";
 import { useNavigate } from 'react-router-dom';
 
@@ -78,10 +78,6 @@ export const GameCard = memo(({ game }: GameCardProps) => {
 
         <div className="flex items-center justify-between text-sm">
           <div className="flex items-center gap-4 text-gray-400">
-            <span className="flex items-center gap-1">
-              <FaUsers className="w-4 h-4" />
-              {game.totalPlayers}
-            </span>
             <span className="flex items-center gap-1">
               <FaStar className="w-4 h-4" />
               {game.rating.average.toFixed(1)}

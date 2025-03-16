@@ -79,7 +79,6 @@ export const GamesList = memo(({ sortBy, searchQuery, selectedDifficulty }: Game
           },
           completions: dashboardGame.completions,
           completedCount: dashboardGame.completions.count,
-          totalPlayers: 0,
           thumbnailUrl: "",
           rewardPoints: dashboardGame.rewardPoints,
           xpPoints: dashboardGame.rewardPoints,

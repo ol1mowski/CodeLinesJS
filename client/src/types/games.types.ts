@@ -19,7 +19,6 @@ export type Game = {
   category: string;
   difficulty: GameDifficulty;
   completedCount: number;
-  totalPlayers: number;
   thumbnailUrl: string;
   isCompleted: boolean;
   xpPoints: number;

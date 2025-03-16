@@ -1,5 +1,6 @@
 import { Game } from '../../models/game.model.js';
 import { User } from '../../models/user.model.js';
+import AIService from '../../services/ai.service.js';
 
 export const getGames = async (req, res, next) => {
   try {
@@ -9,7 +10,8 @@ export const getGames = async (req, res, next) => {
       sort = 'rating.average',
       order = 'desc',
       page = 1,
-      limit = 10
+      limit = 10,
+      generateExample = false
     } = req.query;
 
     const userId = req.user?.userId;
@@ -18,6 +20,32 @@ export const getGames = async (req, res, next) => {
     if (userId) {
       const user = await User.findById(userId).select('stats.level').lean();
       userLevel = user?.stats?.level || 1;
+    }
+
+    if (generateExample === 'true') {
+      const gameData = await AIService.generateGameData(difficulty, category);
+      if (gameData.success) {
+        const description = await AIService.generateGameDescription(
+          'Przykładowa gra AI',
+          difficulty || 'medium'
+        );
+
+        return res.json({
+          status: 'success',
+          data: {
+            generatedGame: {
+              title: 'Przykładowa gra AI',
+              description: description.success ? description.description : 'Przykładowa gra wygenerowana przez AI',
+              difficulty: difficulty || 'medium',
+              category: category || 'basics',
+              requiredLevel: 1,
+              gameData: gameData.data,
+              isLevelAvailable: true,
+              isAIGenerated: true
+            }
+          }
+        });
+      }
     }
 
     const query = { isActive: true };
