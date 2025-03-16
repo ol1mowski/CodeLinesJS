@@ -13,7 +13,7 @@ export type UserStats = {
   level: number;
   points: number;
   pointsToNextLevel: number;
-  completedLessons: number;
+  completedChallenges: number;
   streak: number;
   bestStreak: number;
   badges: Badge[];

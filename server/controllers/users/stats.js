@@ -31,7 +31,7 @@ export const getUserStats = async (req, res, next) => {
         streak: updatedStreak,
         bestStreak,
         pointsToNextLevel: stats.pointsToNextLevel || STATS_CONFIG.DEFAULT_POINTS_TO_NEXT_LEVEL,
-        completedLessons: stats.completedLessons || STATS_CONFIG.DEFAULT_VALUES.completedLessons,
+        completedChallenges: stats.completedChallenges || STATS_CONFIG.DEFAULT_VALUES.completedChallenges,
         badges: stats.badges || [],
         lastActive: stats.lastActive,
         learningPaths: learningPathsProgress,

@@ -7,6 +7,6 @@ export const STATS_CONFIG = {
     xp: 0,
     streak: 0,
     bestStreak: 0,
-    completedLessons: 0
+    completedChallenges: 0
   }
 }; 
