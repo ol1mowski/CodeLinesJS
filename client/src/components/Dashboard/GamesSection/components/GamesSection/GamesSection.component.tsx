@@ -30,9 +30,10 @@ export const GamesSection = memo(() => {
           },
           rewardPoints: game.rewardPoints,
           completedCount: game.completions.count,
-          totalPlayers: 0, 
           thumbnailUrl: '', 
-          xpPoints: game.rewardPoints 
+          xpPoints: game.rewardPoints,
+          isLevelAvailable: game.isLevelAvailable,
+          requiredLevel: game.requiredLevel
         };
 
         return (

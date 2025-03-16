@@ -29,7 +29,9 @@ export type Game = {
     users: string[];
   };
   rewardPoints: number;
-  gameData: any[]; // Można uściślić typ w zależności od gry
+  gameData: any[]; 
+  isLevelAvailable: boolean;
+  requiredLevel: number;
   isActive: boolean;
   category: string;
   estimatedTime: number;

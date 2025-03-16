@@ -13,6 +13,7 @@ const mockStats = {
     completedLessons: 25,
     streak: 7,
     bestStreak: 14,
+    completedChallenges: 10,
     badges: [
       {
         id: "1",

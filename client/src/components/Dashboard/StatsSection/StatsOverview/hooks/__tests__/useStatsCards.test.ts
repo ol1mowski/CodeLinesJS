@@ -8,6 +8,7 @@ const mockStats = {
     streak: 7,
     bestStreak: 14,
     level: 5,
+    completedChallenges: 10,
     points: 1500,
     pointsToNextLevel: 2000,
     badges: [],
