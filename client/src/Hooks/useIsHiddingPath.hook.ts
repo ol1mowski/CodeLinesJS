@@ -9,14 +9,13 @@ export const useIsHiddenPath = () => {
     '/dashboard/community/groups',
     '/dashboard/learn',
     '/dashboard/play',
-    '/dashboard/learn/lesson/js-variables',
-    '/dashboard/learn/lesson/js-functions',
     '/dashboard/play/regex-raider',
     '/dashboard/play/async-quest',
     '/dashboard/play/js-typo-hunter',
     '/dashboard/play/scope-explorer',
     '/dashboard/settings'
   ];
-  
-  return hiddenPaths.includes(location.pathname);
+
+  return hiddenPaths.includes(location.pathname) || 
+         location.pathname.startsWith('/dashboard/learn/lesson/');
 };
