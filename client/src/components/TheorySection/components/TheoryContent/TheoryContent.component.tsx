@@ -9,7 +9,7 @@ export const TheoryContent = () => {
         <PhonePreview 
           position="right"
           title="Teoria JavaScript"
-          className="absolute -right-4 top-0 md:top-[-40px] lg:top-[-60px] md:right-0 lg:right-10 xl:right-20 z-10 hidden md:block"
+          className="absolute -right-4 top-0 md:top-[-20px] md:right-0 lg:right-10 xl:right-20 z-10 hidden md:block"
         />
 
         <div className="md:max-w-[60%] lg:max-w-[55%] space-y-6 py-6">

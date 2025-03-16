@@ -9,7 +9,7 @@ export const PracticeContent = () => {
         <PhonePreview 
           position="left"
           title="Praktyka JavaScript"
-          className="absolute -left-4 top-0 md:top-[-40px] lg:top-[-60px] md:left-0 lg:left-10 xl:left-20 z-10 hidden md:block"
+          className="absolute -left-4 top-0 md:top-[-20px] md:left-0 lg:left-10 xl:left-20 z-10 hidden md:block"
         />
 
         <div className="md:ml-auto md:max-w-[60%] lg:max-w-[55%] space-y-6 py-6">
