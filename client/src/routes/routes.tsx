@@ -15,6 +15,7 @@ const GamesSection = lazy(() => import("../components/Dashboard/GamesSection/Gam
 const GameplayRouter = lazy(() => import("../components/Dashboard/GamesSection/components/GameplayRouter/GameplayRouter.component").then(module => ({ default: module.GameplayRouter })));
 const CodeEditor = lazy(() => import("../components/Dashboard/CodeEditor/CodeEditor.component").then(module => ({ default: module.CodeEditor })));
 const ResetPasswordPage = lazy(() => import("../components/Auth/ResetPasswordPage").then(module => ({ default: module.ResetPasswordPage })));
+const ReportBugPage = lazy(() => import("../components/Dashboard/ReportBug/ReportBugPage.component").then(module => ({ default: module.ReportBugPage })));
 
 const Home = lazy(() => import("../pages/Home"));
 const Auth = lazy(() => import("../pages/Auth"));
@@ -89,6 +90,10 @@ export const router = createBrowserRouter([
       { 
         path: "code", 
         element: <LazyLoadWrapper><CodeEditor /></LazyLoadWrapper> 
+      },
+      { 
+        path: "report", 
+        element: <LazyLoadWrapper><ReportBugPage /></LazyLoadWrapper> 
       },
     ]
   },
