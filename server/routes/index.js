@@ -11,6 +11,7 @@ import learningPathsRoutes from './learningPaths.routes.js';
 import lessonsRoutes from './lessons.routes.js';
 import resourcesRoutes from './resources.routes.js';
 import usersRoutes from './users.routes.js';
+import reportsRoutes from './reports.routes.js';
 
 export const configureRoutes = (app) => {
   app.get('/health', (req, res) => {
@@ -29,6 +30,7 @@ export const configureRoutes = (app) => {
   app.use("/api/lessons", lessonsRoutes);
   app.use("/api/resources", resourcesRoutes);
   app.use('/api/users', usersRoutes);
+  app.use('/api/reports', reportsRoutes);
   
   app.all('/api/*', (req, res) => {
     return res.status(404).json({ error: 'API endpoint not found' });

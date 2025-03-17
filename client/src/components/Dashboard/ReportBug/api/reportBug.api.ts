@@ -2,7 +2,7 @@ import { API_URL } from "../../../../config/api.config";
 import { FormData } from "../hooks/useReportForm.hook";
 
 export const reportBug = async (token: string, data: FormData) => {
-  const response = await fetch(`${API_URL}report`, {
+  const response = await fetch(`${API_URL}reports`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
