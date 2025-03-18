@@ -1,0 +1,91 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:6
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-adminpassword}
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - codelinesjs-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  server:
+    image: ${DOCKERHUB_USERNAME}/codelinesjs-server:main
+    restart: always
+    depends_on:
+      - mongo
+    environment:
+      - PORT=5001
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://${MONGO_USER:-admin}:${MONGO_PASSWORD:-adminpassword}@mongo:27017/codelinesjs?authSource=admin
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRES_IN=24h
+      - JWT_COOKIE_EXPIRES_IN=86400000
+      - FRONTEND_URL=${FRONTEND_URL}
+      - EMAIL_HOST=${EMAIL_HOST}
+      - EMAIL_PORT=${EMAIL_PORT}
+      - EMAIL_USER=${EMAIL_USER}
+      - EMAIL_PASSWORD=${EMAIL_PASSWORD}
+      - EMAIL_FROM=${EMAIL_FROM}
+      - RATE_LIMIT_MAX=${RATE_LIMIT_MAX:-1000}
+      - RATE_LIMIT_WINDOW_MS=${RATE_LIMIT_WINDOW_MS:-900000}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - HUGGING_FACE_API_KEY=${HUGGING_FACE_API_KEY}
+      - VITE_GOOGLE_CLIENT_ID=${VITE_GOOGLE_CLIENT_ID}
+      - SENDGRID_API_KEY=${SENDGRID_API_KEY}
+    networks:
+      - codelinesjs-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  client:
+    image: ${DOCKERHUB_USERNAME}/codelinesjs-client:main
+    restart: always
+    depends_on:
+      - server
+    networks:
+      - codelinesjs-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  nginx:
+    image: nginx:alpine
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/ssl:/etc/nginx/ssl
+      - ./nginx/letsencrypt:/etc/letsencrypt
+    depends_on:
+      - client
+      - server
+    networks:
+      - codelinesjs-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  codelinesjs-network:
+    driver: bridge
+
+volumes:
+  mongo-data: 
