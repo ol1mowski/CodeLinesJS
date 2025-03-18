@@ -1,43 +1,75 @@
-import { FaUsers, FaCode, FaStar, FaTrophy, FaGithub } from "react-icons/fa";
+import { FaUsers, FaCode, FaComments, FaStar, FaFire, FaGem } from "react-icons/fa";
+import { IconType } from "react-icons";
 
-export const stats = [
+export type StatsDataType = {
+  icon: IconType;
+  label: string;
+  mainValue: string;
+  subValue: string;
+  trend: string;
+  details: Array<{ label: string; value: string }>;
+};
+
+export type LeaderboardUserType = {
+  name: string;
+  points: string;
+  avatar: string;
+  badge: IconType;
+};
+
+export const stats: StatsDataType[] = [
   {
     icon: FaUsers,
-    label: "Społeczność",
-    mainValue: "5,234",
-    subValue: "+156 w tym tygodniu",
+    label: "Grupy Programistyczne",
+    mainValue: "10+",
+    subValue: "Dołącz lub utwórz własną grupę tematyczną",
     trend: "+12%",
     details: [
-      { label: "Aktywni", value: "3,421" },
-      { label: "Online", value: "642" }
-    ]
+      { label: "Wzrost tygodniowy", value: "8%" },
+      { label: "Aktywność", value: "Wysoka" },
+    ],
+  },
+  {
+    icon: FaComments,
+    label: "Rozmowy Czatowe",
+    mainValue: "Bez limitów",
+    subValue: "Komunikacja w czasie rzeczywistym z innymi programistami",
+    trend: "+15%",
+    details: [
+      { label: "Nowych czatów", value: "24" },
+      { label: "Aktywność", value: "Wysoka" },
+    ],
   },
   {
     icon: FaCode,
-    label: "Rozwiązania",
-    mainValue: "12,456",
-    subValue: "Średnio 45/dzień",
-    trend: "+8%",
+    label: "Tablica Społeczności",
+    mainValue: "Dostępna",
+    subValue: "Dziel się kodem i pytaj o rozwiązania",
+    trend: "+9%",
     details: [
-      { label: "Zaakceptowane", value: "89%" },
-      { label: "Code Review", value: "2,341" }
-    ]
+      { label: "Nowe posty", value: "18" },
+      { label: "Aktywność", value: "Średnia" },
+    ],
   },
-  {
-    icon: FaGithub,
-    label: "Projekty",
-    mainValue: "1,289",
-    subValue: "Aktywne repozytoria",
-    trend: "+15%",
-    details: [
-      { label: "Współpraca", value: "456" },
-      { label: "Pull Requests", value: "892" }
-    ]
-  }
 ];
 
-export const topUsers = [
-  { name: "Michał K.", points: "2,345", avatar: "👨‍💻", badge: FaTrophy },
-  { name: "Anna W.", points: "2,156", avatar: "👩‍💻", badge: FaStar },
-  { name: "Tomek L.", points: "1,987", avatar: "🧑‍💻", badge: FaStar }
+export const topUsers: LeaderboardUserType[] = [
+  {
+    name: "Anna Kowalska",
+    points: "15420",
+    avatar: "👩‍💻",
+    badge: FaStar,
+  },
+  {
+    name: "Jan Nowak",
+    points: "14250",
+    avatar: "👨‍💻",
+    badge: FaFire,
+  },
+  {
+    name: "Marta Wiśniewska",
+    points: "13800",
+    avatar: "👩‍💻",
+    badge: FaGem,
+  },
 ]; 
