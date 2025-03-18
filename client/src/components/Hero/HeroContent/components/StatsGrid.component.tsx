@@ -3,9 +3,9 @@ import { MobileWrapper } from "../../../UI/MobileWrapper/MobileWrapper.component
 import { useMobileDetect } from "../../../../hooks/useMobileDetect";
 
 const stats = [
-  { value: "10K+", label: "Aktywnych Graczy" },
-  { value: "50K+", label: "Ukończonych Poziomów" },
-  { value: "95%", label: "Pozytywnych Opinii" },
+  { value: "16", label: "Dostępnych lekcji" },
+  { value: "4", label: "Gry" },
+  { value: "7", label: "Użytkowników" },
 ] as const;
 
 export const StatsGrid = memo(() => (
