@@ -1,0 +1,34 @@
+# Pliki systemowe
+.DS_Store
+Thumbs.db
+
+# Katalogi node_modules
+**/node_modules
+
+# Pliki tymczasowe
+**/npm-debug.log
+**/yarn-debug.log
+**/yarn-error.log
+
+# Katalogi kompilacji
+**/dist
+**/build
+
+# Git
+.git
+.gitignore
+
+# Pliki Dockera
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# Środowisko
+**/.env*
+!**/.env.example
+
+# Inne
+**/.vscode
+**/.idea
+**/coverage
+**/.nyc_output 
