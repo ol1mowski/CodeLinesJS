@@ -11,113 +11,125 @@
 <img width="1440" alt="Screenshot 2025-02-21 at 18 00 56" src="https://github.com/user-attachments/assets/1aeae37b-cdd9-4ff4-9e70-4eed53e8ec66" />
 
 
-## 🚀 O Projekcie
+# 🚀 CodeLinesJS
 
-CodeLinesJS to innowacyjna platforma edukacyjna, która przekształca naukę JavaScript w fascynującą przygodę. Łącząc elementy grywalizacji z praktyczną nauką programowania, tworzymy unikalne doświadczenie edukacyjne dla początkujących i średniozaawansowanych programistów.
+CodeLinesJS is an innovative educational platform that transforms learning JavaScript into an engaging and interactive experience. By combining gamification elements with hands-on programming challenges, we create a unique learning environment tailored for beginners and intermediate developers.
 
-### 👨‍💻 Autor
+## 👨‍💻 Author
 **Oliwier Markiewicz**
 
-## ✨ Kluczowe Funkcje
+## ✨ Key Features
 
-### 🎮 Interaktywna Nauka
-- Wciągający system nauki oparty na grywalizacji
-- Praktyczne wyzwania programistyczne
-- Natychmiastowa informacja zwrotna
+### 🎮 Interactive Learning
+- Gamified learning system that keeps users engaged
+- Hands-on coding challenges with real-world applications
+- Instant feedback to enhance the learning process
 
-### 🏆 System Osiągnięć
-- Punkty za ukończone wyzwania
-- Rankingi społeczności
-- Odznaki za specjalne osiągnięcia
+### 🏆 Achievements & Leaderboards
+- Earn points for completing challenges
+- Compete on community leaderboards
+- Unlock special badges for outstanding achievements
 
-### 👥 Społeczność
-- Interakcja z innymi programistami
-- Wymiana wiedzy i doświadczeń
-- System powiadomień o aktywnościach
+### 👥 Community & Collaboration
+- Built-in forums and discussion groups
+- Real-time chat with other developers
+- Follow other users and track their progress
+- Notification system to stay updated on activities
 
-## 🛠 Technologie
+### 🤖 AI-Powered Learning (Coming Soon!)
+- AI mentor providing real-time hints and code suggestions
+- Personalized learning recommendations based on progress
+- AI-powered debugging assistance
+
+## 🛠 Tech Stack
 
 ### Frontend
 - React 18 + TypeScript
 - Vite
 - Tailwind CSS
 - Framer Motion
-- Three js
+- Three.js (for 3D visualizations)
 
 ### State Management & Routing
 - React Context API
 - React Router 6
 
-### Backend & Auth
-- Express js
+### Backend & Authentication
+- Express.js
 - Google Authentication
 
 ### Database
 - MongoDB
 
+### Real-Time Features
+- WebSockets for real-time messaging
+- Notification system
+
 ### Testing
 - Vitest
 - Playwright
 
-## 🚀 Rozpoczęcie Pracy
+## 🚀 Getting Started
 
 ```bash
-# Klonowanie repozytorium
+# Clone the repository
 git clone https://github.com/ol1mowski/CodeLinesJS.git
 
-# Instalacja zależności
+# Install dependencies
 cd CodeLinesJS
 npm install
 
-# Zmienne środowiskowe
+# Setup environment variables
 cp .env.example .env
-# Uzupełnij zmienne w pliku .env
+# Fill in the required values in the .env file
 
-# Uruchomienie w trybie developerskim
+# Run in development mode
 npm run dev
 
-# Build produkcyjny
+# Build for production
 npm run build
 ```
 
-## 📁 Struktura Projektu
+## 📁 Project Structure
 
 ```
 src/
-├── components/         # Komponenty React
-│   ├── Auth/          # Komponenty autoryzacji
-│   ├── Dashboard/     # Dashboard i jego komponenty
-│   ├── Game/          # Komponenty związane z grą
-│   └── UI/            # Współdzielone komponenty UI
+├── components/         # React components
+│   ├── Auth/          # Authentication components
+│   ├── Dashboard/     # Dashboard and related components
+│   ├── Game/          # Game-related components
+│   └── UI/            # Shared UI components
 ├── hooks/             # Custom hooks
-├── context/          # Context API
-├── services/         # Serwisy (Firebase, API)
-└── utils/            # Funkcje pomocnicze
+├── context/           # Context API state management
+├── services/          # External services (API, Firebase, etc.)
+└── utils/             # Utility functions
 ```
 
-## 🧪 Testy
+## 🧪 Running Tests
 
 ```bash
-# Uruchomienie testów jednostkowych
+# Run unit tests
 npm run test
 
-# Uruchomienie testów E2E
+# Run end-to-end tests
 npm run test:e2e
 
-# Uruchomienie testów jednostkowych
+# Run unit tests only
 npm run test:unit
 ```
 
-## 📝 Licencja
+## 📝 License
 
-Copyright © 2024 CodeLinesJS. Wszelkie prawa zastrzeżone.
+CodeLinesJS is licensed under the MIT License. See the LICENSE file for details.
 
-## 📫 Kontakt
+## 📫 Contact
 
-- **Email**: [oliwier.markiewicz.dev@gmail.com]
+- **Email**: [oliwier.markiewicz.dev@gmail.com](mailto:oliwier.markiewicz.dev@gmail.com)
 - **LinkedIn**: [Oliwier Markiewicz](https://www.linkedin.com/in/oliwier-markiewicz-47857228a/)
 - **GitHub**: [@ol1mowski](https://github.com/ol1mowski)
 
 ---
 
-*Projekt jest w aktywnym rozwoju. Dokumentacja będzie na bieżąco aktualizowana.*
+🚧 *The project is actively being developed. Documentation will be updated regularly.*
+
+
