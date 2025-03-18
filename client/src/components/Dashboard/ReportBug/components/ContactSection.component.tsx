@@ -3,12 +3,10 @@ import { motion } from "framer-motion";
 
 type ContactSectionProps = {
   email?: string;
-  discordLink?: string;
 };
 
 export const ContactSection = memo(({
   email = "kontakt@codelinesjs.pl",
-  discordLink = "#"
 }: ContactSectionProps) => (
   <motion.div 
     initial={{ opacity: 0, y: 20 }}
@@ -20,11 +18,7 @@ export const ContactSection = memo(({
       Możesz również skontaktować się z nami bezpośrednio przez email:{" "}
       <a href={`mailto:${email}`} className="text-js hover:underline">
         {email}
-      </a>{" "}
-      lub dołączyć do naszej społeczności na{" "}
-      <a href={discordLink} className="text-js hover:underline">
-        Discord
-      </a>.
+      </a>
     </p>
   </motion.div>
 ));

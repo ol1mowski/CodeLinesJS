@@ -2,7 +2,7 @@ export const notificationsStyles = {
   dropdown: {
     container: `
       absolute right-0 top-12 w-80 bg-dark/95 rounded-xl 
-      border border-js/10 shadow-xl backdrop-blur-sm z-50
+      border border-js/10 shadow-xl backdrop-blur-sm z-[2147483647]
     `,
     header: {
       wrapper: "flex justify-between items-center mb-4 p-4",
