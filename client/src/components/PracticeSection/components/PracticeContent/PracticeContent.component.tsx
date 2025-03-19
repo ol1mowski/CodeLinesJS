@@ -8,6 +8,7 @@ export const PracticeContent = () => {
       <div className="relative pt-16 md:pt-24 lg:pt-20">
         <PhonePreview 
           position="left"
+          image="https://res.cloudinary.com/dbbuav0rj/image/upload/v1742282966/CodeLinesJs/game_cljs_snynmf.png"
           title="Praktyka JavaScript"
           className="absolute -left-4 top-0 md:top-[-20px] md:left-0 lg:left-10 xl:left-20 z-10 hidden md:block"
         />
