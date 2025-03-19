@@ -7,6 +7,7 @@ import { PracticeSection } from '../components/PracticeSection/PracticeSection.c
 import { HeroSection } from '../components/Hero/Hero.component';
 import { Footer } from '../components/Footer/Footer.component';
 import { CommunitySection } from '../components/Community/CommunitySection.component';
+import { TestimonialsSection } from '../components/Testimonials/TestimonialsSection.component';
 
 const Home = () => {
   return (
@@ -19,6 +20,7 @@ const Home = () => {
       <ChallengesSection />
       <CommunitySection />
       <ProgressSection />
+      <TestimonialsSection />
       <Footer />
     </div>
   );
