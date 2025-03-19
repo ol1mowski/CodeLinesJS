@@ -4,11 +4,11 @@ import { GameStats } from '../../../../types/jsTypoHunter.types';
 import { JSTypoHunterStats } from './JSTypoHunterStats/JSTypoHunterStats.component';
 import { JSTypoHunterGame } from './JSTypoHunterGame/JSTypoHunterGame.component';
 import { useGameTimer } from './hooks/useGameTimer';
-import { useGamesQuery } from '../../../../hooks/useGamesQuery';
 import { GameIntro } from '../GameIntro/GameIntro.component';
 import { JSTypoHunterSummary } from './JSTypoHunterSummary/JSTypoHunterSummary.component';
-import { Game } from '../../../../types/games.types';
+import { GameContent } from '../../../../types/games.type';
 import { Helmet } from 'react-helmet';
+import { useAICodeGenerator, AIGeneratedChallenge } from './hooks/useAICodeGenerator';
 
 const getDifficultyPoints = (difficulty: 'easy' | 'medium' | 'hard'): number => {
   switch (difficulty) {
@@ -23,9 +23,23 @@ const getDifficultyPoints = (difficulty: 'easy' | 'medium' | 'hard'): number => 
   }
 };
 
+const mapAIChallengeToChallengeFormat = (aiChallenge: AIGeneratedChallenge, index: number) => {
+  return {
+    id: index + 1,
+    code: aiChallenge.code,
+    error: aiChallenge.errors[0]?.lineContent || '',
+    correct: aiChallenge.errors[0]?.correction || '',
+    hint: aiChallenge.errors[0]?.explanation || '',
+    explanation: aiChallenge.description,
+    category: 'syntax' as const,
+    difficulty: aiChallenge.difficulty
+  };
+};
+
 const JSTypoHunter = memo(({ isPaused = false }: { isPaused?: boolean }) => {
-  const { data, isLoading, error } = useGamesQuery();
-  const gameContent = data?.games.find((game: Game) => game.slug === 'js-typo-hunter');
+  const { generateChallenge, progress } = useAICodeGenerator();
+  const [challenges, setChallenges] = useState<AIGeneratedChallenge[]>([]);
+  const [isInitializing, setIsInitializing] = useState(true);
   const [isGameStarted, setIsGameStarted] = useState(false);
 
   const [gameStats, setGameStats] = useState<GameStats>({
@@ -48,8 +62,38 @@ const JSTypoHunter = memo(({ isPaused = false }: { isPaused?: boolean }) => {
     isPaused,
   });
 
+  useEffect(() => {
+    const loadChallenges = async () => {
+      try {
+        setIsInitializing(true);
+        
+        const generatedChallenges = [];
+        
+        generatedChallenges.push(await generateChallenge('easy'));
+        
+        generatedChallenges.push(await generateChallenge('medium'));
+        generatedChallenges.push(await generateChallenge('medium'));
+        
+        generatedChallenges.push(await generateChallenge('hard'));
+        generatedChallenges.push(await generateChallenge('hard'));
+        
+        setChallenges(generatedChallenges);
+        setGameStats(prev => ({
+          ...prev,
+          totalLevels: generatedChallenges.length
+        }));
+      } catch (error) {
+        console.error("Nie udało się wygenerować wyzwań:", error);
+      } finally {
+        setIsInitializing(false);
+      }
+    };
+
+    loadChallenges();
+  }, [generateChallenge]);
+
   const handleScoreUpdate = useCallback((points: number) => {
-    const currentChallenge = gameContent?.gameData[gameStats.currentLevel - 1];
+    const currentChallenge = challenges[gameStats.currentLevel - 1];
     const difficultyPoints = getDifficultyPoints(currentChallenge?.difficulty || 'easy');
     const totalPoints = points + difficultyPoints;
 
@@ -58,7 +102,7 @@ const JSTypoHunter = memo(({ isPaused = false }: { isPaused?: boolean }) => {
       score: prev.score + totalPoints,
       correctAnswers: prev.correctAnswers + 1
     }));
-  }, [gameStats.currentLevel, gameContent]);
+  }, [gameStats.currentLevel, challenges]);
 
   const handleIncorrectAnswer = useCallback(() => {
     setIsGameOver(true);
@@ -68,7 +112,7 @@ const JSTypoHunter = memo(({ isPaused = false }: { isPaused?: boolean }) => {
   const handleLevelComplete = useCallback(() => {
     setTimeout(() => {
       const nextLevel = gameStats.currentLevel + 1;
-      if (nextLevel > (gameContent?.gameData.length || 0)) {
+      if (nextLevel > challenges.length) {
         setIsGameOver(true);
         stopTimer();
       } else {
@@ -78,21 +122,42 @@ const JSTypoHunter = memo(({ isPaused = false }: { isPaused?: boolean }) => {
         }));
       }
     }, 1000);
-  }, [gameStats.currentLevel, gameContent, stopTimer]);
+  }, [gameStats.currentLevel, challenges.length, stopTimer]);
 
-  const handleRestart = useCallback(() => {
-    setGameStats({
-      currentLevel: 1,
-      totalLevels: gameContent?.gameData.length || 0,
-      score: 0,
-      timeElapsed: 0,
-      maxTime: 300,
-      correctAnswers: 0
-    });
-    setIsGameOver(false);
-    resetTimer();
-    startTimer();
-  }, [resetTimer, startTimer, gameContent]);
+  const handleRestart = useCallback(async () => {
+    try {
+      setIsInitializing(true);
+      
+      const generatedChallenges = [];
+      
+      generatedChallenges.push(await generateChallenge('easy'));
+      
+      generatedChallenges.push(await generateChallenge('medium'));
+      generatedChallenges.push(await generateChallenge('medium'));
+      
+      generatedChallenges.push(await generateChallenge('hard'));
+      generatedChallenges.push(await generateChallenge('hard'));
+      
+      setChallenges(generatedChallenges);
+      
+      setGameStats({
+        currentLevel: 1,
+        totalLevels: generatedChallenges.length,
+        score: 0,
+        timeElapsed: 0,
+        maxTime: 300,
+        correctAnswers: 0
+      });
+      
+      setIsGameOver(false);
+      resetTimer();
+      startTimer();
+    } catch (error) {
+      console.error("Nie udało się wygenerować nowych wyzwań:", error);
+    } finally {
+      setIsInitializing(false);
+    }
+  }, [resetTimer, startTimer, generateChallenge]);
 
   const handleStartGame = () => {
     setIsGameStarted(true);
@@ -106,22 +171,45 @@ const JSTypoHunter = memo(({ isPaused = false }: { isPaused?: boolean }) => {
     }));
   }, [timeElapsed]);
 
-  useEffect(() => {
-    if (gameContent) {
-      setGameStats(prev => ({
-        ...prev,
-        totalLevels: gameContent.gameData.length
-      }));
-    }
-  }, [gameContent]);
+  const gameInfo: GameContent = {
+    title: "JSTypoHunter",
+    description: "Znajdź i popraw błędy w kodzie JavaScript. Wyzwania są generowane losowo!",
+    difficulty: 'medium',
+    rating: {
+      average: 4.5,
+      count: 120,
+      total: 540
+    },
+    completions: {
+      count: 80,
+      users: []
+    },
+    rewardPoints: 100,
+    gameData: challenges,
+    estimatedTime: 15,
+    isCompleted: false
+  };
 
-  if (isLoading) return <div>Ładowanie...</div>;
-  if (error) return <div>Błąd: {error.message}</div>;
-  if (!gameContent) return null;
+  if (isInitializing) return <div className="w-full h-64 flex items-center justify-center">
+    <div className="text-center">
+      <div className="text-xl font-medium text-gray-100 mb-2">Generowanie wyzwań...</div>
+      <div className="w-64 h-3 bg-gray-700 rounded-full overflow-hidden">
+        <div 
+          className="h-full bg-js transition-all duration-300 rounded-full" 
+          style={{ width: `${progress}%` }}
+        ></div>
+      </div>
+      <div className="text-sm text-gray-400 mt-2">Tworzenie unikalnych zadań</div>
+    </div>
+  </div>;
 
   if (!isGameStarted) {
-    return <GameIntro gameContent={gameContent} onStart={handleStartGame} />;
+    return <GameIntro gameContent={gameInfo} onStart={handleStartGame} />;
   }
+
+  const currentFormattedChallenge = challenges[gameStats.currentLevel - 1] 
+    ? mapAIChallengeToChallengeFormat(challenges[gameStats.currentLevel - 1], gameStats.currentLevel - 1)
+    : null;
 
   return (
     <motion.div
@@ -141,7 +229,7 @@ const JSTypoHunter = memo(({ isPaused = false }: { isPaused?: boolean }) => {
             score={gameStats.score}
             timeElapsed={timeElapsed}
             correctAnswers={gameStats.correctAnswers}
-            totalLevels={gameContent?.gameData.length || 0}
+            totalLevels={challenges.length}
             onRestart={handleRestart}
           />
         ) : (
@@ -152,12 +240,14 @@ const JSTypoHunter = memo(({ isPaused = false }: { isPaused?: boolean }) => {
             exit={{ opacity: 0, x: -50 }}
             transition={{ duration: 0.3 }}
           >
-            <JSTypoHunterGame 
-              currentChallenge={gameContent?.gameData[gameStats.currentLevel - 1]}
-              onScoreUpdate={handleScoreUpdate}
-              onLevelComplete={handleLevelComplete}
-              onIncorrectAnswer={handleIncorrectAnswer}
-            />
+            {currentFormattedChallenge && (
+              <JSTypoHunterGame 
+                currentChallenge={currentFormattedChallenge}
+                onScoreUpdate={handleScoreUpdate}
+                onLevelComplete={handleLevelComplete}
+                onIncorrectAnswer={handleIncorrectAnswer}
+              />
+            )}
           </motion.div>
         )}
       </AnimatePresence>

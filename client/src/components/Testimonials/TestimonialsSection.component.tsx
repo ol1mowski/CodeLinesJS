@@ -12,7 +12,7 @@ export const TestimonialsSection = memo(() => {
   const testimonials = useTestimonials();
 
   return (
-    <section className="py-20 overflow-hidden bg-gradient-to-b from-dark via-dark-medium to-dark relative">
+    <section id="opinie" className="py-20 overflow-hidden bg-gradient-to-b from-dark via-dark-medium to-dark relative">
       <SectionBackground />
       
       <Container>
