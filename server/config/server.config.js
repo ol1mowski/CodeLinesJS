@@ -60,7 +60,7 @@ export const configureServer = (app) => {
         scriptSrcElem: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://accounts.google.com", "https://*.gstatic.com", "https://cdn.jsdelivr.net", "https://*.jsdelivr.net"],
         connectSrc: ["'self'", "https://accounts.google.com", "https://*.googleapis.com", "https://codelinesjs.pl", "https://www.codelinesjs.pl", "http://localhost:*", "https://fonts.gstatic.com", "https://*.jsdelivr.net"],
         frameSrc: ["'self'", "https://accounts.google.com"],
-        imgSrc: ["'self'", "data:", "https://*.googleusercontent.com", "https://*.gstatic.com", "https://*.jsdelivr.net"],
+        imgSrc: ["'self'", "data:", "https://*.googleusercontent.com", "https://*.gstatic.com", "https://*.jsdelivr.net", "https://res.cloudinary.com"],
         styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://accounts.google.com", "https://cdn.jsdelivr.net", "https://*.jsdelivr.net"],
         fontSrc: ["'self'", "https://fonts.gstatic.com", "https://*.jsdelivr.net", "data:"],
         workerSrc: ["'self'", "blob:", "https://*.jsdelivr.net"],
