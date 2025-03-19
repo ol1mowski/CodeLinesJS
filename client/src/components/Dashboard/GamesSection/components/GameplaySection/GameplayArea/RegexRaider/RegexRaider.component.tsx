@@ -8,6 +8,7 @@ import { RegexRaiderSummary } from './RegexRaiderSummary/RegexRaiderSummary.comp
 import { useGamesQuery } from '../../../../hooks/useGamesQuery';
 import { GameIntro } from '../GameIntro/GameIntro.component';
 import { Game } from '../../../../types/games.types';
+import { Helmet } from 'react-helmet';
 
 const RegexRaider = memo(({ isPaused = false }: { isPaused?: boolean }) => {
   const { data, isLoading, error } = useGamesQuery();
@@ -123,6 +124,10 @@ const RegexRaider = memo(({ isPaused = false }: { isPaused?: boolean }) => {
       animate={{ opacity: 1 }}
       className="w-full space-y-6"
     >
+      <Helmet>
+        <title>Regex Raider | CodeLinesJS</title>
+        <meta name="description" content="Regex Raider CodeLinesJS - dołącz do nas i rozwijaj swoje umiejętności w przyjaznym środowisku." />
+      </Helmet>
       <RegexRaiderStats 
         stats={gameStats}
         isGameOver={isGameOver}

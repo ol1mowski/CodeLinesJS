@@ -6,6 +6,7 @@ import { StatsCharts } from "./StatsCharts/StatsCharts.component";
 import { DashboardState } from "../DashboardContent/components/DashboardState.component";
 import { LevelUpNotification } from "../../UI/Notifications/LevelUpNotification.component";
 import { LoadingScreen } from "../../UI/LoadingScreen/LoadingScreen.component";
+import { Helmet } from "react-helmet";
 
 
 export const StatsSection = memo(() => {
@@ -52,6 +53,10 @@ export const StatsSection = memo(() => {
         animate={{ opacity: 1 }}
         className="flex flex-col h-full p-6 gap-6"
       >
+        <Helmet>
+          <title>Statystyki i Postępy | CodeLinesJS</title>
+          <meta name="description" content="Statystyki i Postępy CodeLinesJS - dołącz do nas i rozwijaj swoje umiejętności w przyjaznym środowisku." />
+        </Helmet>
         <motion.div
           initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}

@@ -2,7 +2,7 @@ import { memo } from "react";
 import { motion } from "framer-motion";
 import { ResourceCard } from "./ResourceCard.component";
 import { type Resource } from "../types/resource.types";
-
+import { Helmet } from "react-helmet";
 
 type ResourceSectionProps = {
   title: string;
@@ -29,6 +29,10 @@ export const ResourceSection = memo(({
 }: ResourceSectionProps) => {
   return (
     <section>
+      <Helmet>
+        <title>Zasoby | CodeLinesJS</title>
+        <meta name="description" content="Zasoby JavaScript - dołącz do nas i rozwijaj swoje umiejętności w przyjaznym środowisku." />
+      </Helmet>
       <div className="mb-4">
         <h3 className="text-xl font-bold text-js mb-1">
           {title}

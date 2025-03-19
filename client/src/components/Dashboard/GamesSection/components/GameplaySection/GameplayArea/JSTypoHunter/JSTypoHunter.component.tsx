@@ -8,6 +8,7 @@ import { useGamesQuery } from '../../../../hooks/useGamesQuery';
 import { GameIntro } from '../GameIntro/GameIntro.component';
 import { JSTypoHunterSummary } from './JSTypoHunterSummary/JSTypoHunterSummary.component';
 import { Game } from '../../../../types/games.types';
+import { Helmet } from 'react-helmet';
 
 const getDifficultyPoints = (difficulty: 'easy' | 'medium' | 'hard'): number => {
   switch (difficulty) {
@@ -128,6 +129,10 @@ const JSTypoHunter = memo(({ isPaused = false }: { isPaused?: boolean }) => {
       animate={{ opacity: 1 }}
       className="w-full space-y-6"
     >
+      <Helmet>
+        <title>JSTypoHunter | CodeLinesJS</title>
+        <meta name="description" content="JSTypoHunter CodeLinesJS - dołącz do nas i rozwijaj swoje umiejętności w przyjaznym środowisku." />
+      </Helmet>
       <JSTypoHunterStats stats={gameStats} />
       <AnimatePresence mode="wait">
         {isGameOver ? (

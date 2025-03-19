@@ -8,6 +8,7 @@ import { LearningPaths } from "./LearningPaths/LearningPaths.component";
 import { LearnTabs } from "./LearnTabs/LearnTabs.component";
 import { useAuth } from "./hooks/useAuth";
 import { LoadingScreen } from "../../UI/LoadingScreen/LoadingScreen.component";
+import { Helmet } from "react-helmet";
 
 type TabType = "paths" | "lessons" | "resources" | "articles";
 
@@ -56,6 +57,10 @@ export const LearnSection = memo(() => {
       animate="visible"
       className="min-h-screen bg-dark/50 backdrop-blur-sm"
     >
+      <Helmet>
+        <title>Nauka | CodeLinesJS</title>
+        <meta name="description" content="Nauka JavaScript - dołącz do nas i rozwijaj swoje umiejętności w przyjaznym środowisku." />
+      </Helmet>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <SectionTitle
           title="Nauka JavaScript"

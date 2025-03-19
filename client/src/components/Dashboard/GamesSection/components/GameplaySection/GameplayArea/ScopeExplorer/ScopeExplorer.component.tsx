@@ -7,7 +7,7 @@ import { ScopeExplorerGame } from './ScopeExplorerGame/ScopeExplorerGame.compone
 import { ScopeExplorerSummary } from './ScopeExplorerSummary/ScopeExplorerSummary.component';
 import { useGamesQuery } from '../../../../hooks/useGamesQuery';
 import { GameIntro } from '../GameIntro/GameIntro.component';
-
+import { Helmet } from 'react-helmet';
 
 type Game = {
   slug: string;
@@ -162,6 +162,10 @@ const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean }) => {
       animate={{ opacity: 1 }}
       className="w-full h-full flex flex-col"
     >
+      <Helmet>
+        <title>Scope Explorer | CodeLinesJS</title>
+        <meta name="description" content="Scope Explorer CodeLinesJS - dołącz do nas i rozwijaj swoje umiejętności w przyjaznym środowisku." />
+      </Helmet>
       <ScopeExplorerStats 
         stats={gameStats} 
         isGameOver={isGameOver}

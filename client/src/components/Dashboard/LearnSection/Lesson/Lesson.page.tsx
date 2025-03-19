@@ -5,6 +5,7 @@ import { LessonContent } from "./components/LessonContent.component";
 import { LessonNotFound } from "./components/LessonNotFound.component";
 import { ErrorMessage } from "../components/ErrorMessage.component";
 import { LoadingScreen } from "../../../UI/LoadingScreen/LoadingScreen.component";
+import { Helmet } from "react-helmet";
 
 export const LessonPage = () => {
   const { lessonSlug } = useParams<{ lessonSlug: string }>();
@@ -42,14 +43,20 @@ export const LessonPage = () => {
   }
 
   return (
-    <LessonContent
-      lesson={lesson}
-      activeSection={activeSection}
-      progress={typeof progress === 'number' ? progress : 0}
-      onSectionComplete={handleSectionComplete}
-      onQuizComplete={handleQuizComplete}
-      onLessonComplete={handleLessonComplete}
-    />
+    <>
+      <Helmet>
+        <title>{lesson.title} | CodeLinesJS</title>
+        <meta name="description" content={lesson.description} />
+      </Helmet>
+      <LessonContent
+        lesson={lesson}
+        activeSection={activeSection}
+        progress={typeof progress === 'number' ? progress : 0}
+        onSectionComplete={handleSectionComplete}
+        onQuizComplete={handleQuizComplete}
+        onLessonComplete={handleLessonComplete}
+      />
+    </>
   );
 };
 

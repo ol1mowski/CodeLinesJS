@@ -1,7 +1,7 @@
 import { lazy, Suspense, memo } from 'react';
 import { useParams } from 'react-router-dom';
 import { GameContentProvider } from '../../../contexts/GameContentContext';
-
+import { Helmet } from 'react-helmet';
 const gameComponents = {
   'scope-explorer': lazy(() => import('./ScopeExplorer/ScopeExplorer.component')),
   'js-typo-hunter': lazy(() => import('./JSTypoHunter/JSTypoHunter.component')),
@@ -24,6 +24,10 @@ export const GameplayArea = memo(() => {
   
   return (
     <GameContentProvider>
+      <Helmet>
+        <title> {slug} | CodeLinesJS</title>
+        <meta name="description" content="Gra CodeLinesJS - dołącz do nas i rozwijaj swoje umiejętności w przyjaznym środowisku." />
+      </Helmet>
       <div className="w-full h-full">
         <Suspense fallback={<div>Ładowanie gry...</div>}>
           <GameComponent />

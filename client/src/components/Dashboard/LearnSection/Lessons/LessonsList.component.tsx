@@ -4,6 +4,7 @@ import { LessonCard } from "./LessonCard.component";
 import type { Lesson } from "../types/lesson.types";
 import { FilterType } from "../types/filter.types";
 import { FaSearch, FaSadTear } from "react-icons/fa";
+import { Helmet } from "react-helmet";
 
 type LessonsListProps = {
   lessons: Lesson[];
@@ -79,6 +80,10 @@ export const LessonsList = memo(
         animate="visible"
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
       >
+        <Helmet>
+          <title>Lekcje | CodeLinesJS</title>
+          <meta name="description" content="Lekcje JavaScript - dołącz do nas i rozwijaj swoje umiejętności w przyjaznym środowisku." />
+        </Helmet>
         {processedLessons.map((lesson) => (
           <LessonCard key={lesson.slug} lesson={lesson} />
         ))}

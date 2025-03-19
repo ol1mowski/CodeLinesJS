@@ -5,7 +5,7 @@ import { useCommunity } from './Feed/hooks/useCommunity.hook';
 import { prefetchRanking } from './Ranking/hooks/useRanking';
 // import { CommunityNav } from './Feed/components/Comments/CommunityNav.component';
 import { CommunityView } from './types/community.types';
-
+import { Helmet } from 'react-helmet';
 export const CommunitySection = memo(() => {
   const location = useLocation();
   const { state: { activeView }, setActiveView } = useCommunity();
@@ -26,6 +26,10 @@ export const CommunitySection = memo(() => {
 
   return (
     <div className="p-8 w-full min-h-screen bg-dark/50 backdrop-blur-sm">
+      <Helmet>
+        <title>Community | CodeLinesJS</title>
+        <meta name="description" content="Community CodeLinesJS - dołącz do nas i rozwijaj swoje umiejętności w przyjaznym środowisku." />
+      </Helmet>
       <div className="max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold font-space text-js mb-8">
           Wkrótce
