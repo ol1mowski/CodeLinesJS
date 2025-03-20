@@ -2,6 +2,20 @@ import { Game } from '../../models/game.model.js';
 import { User } from '../../models/user.model.js';
 import AIService from '../../services/ai.service.js';
 
+const getRandomElements = (array, count) => {
+
+  if (array.length <= count) return array;
+  
+  const shuffled = [...array];
+  
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  
+  return shuffled.slice(0, count);
+};
+
 export const getGames = async (req, res, next) => {
   try {
     const {
@@ -30,6 +44,8 @@ export const getGames = async (req, res, next) => {
           difficulty || 'medium'
         );
 
+        const randomGameData = getRandomElements(gameData.data, 7);
+
         return res.json({
           status: 'success',
           data: {
@@ -39,7 +55,7 @@ export const getGames = async (req, res, next) => {
               difficulty: difficulty || 'medium',
               category: category || 'basics',
               requiredLevel: 1,
-              gameData: gameData.data,
+              gameData: randomGameData, // Używamy losowo wybranych danych
               isLevelAvailable: true,
               isAIGenerated: true
             }
