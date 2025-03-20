@@ -1,6 +1,5 @@
 import { Game } from '../../models/game.model.js';
 import { User } from '../../models/user.model.js';
-import AIService from '../../services/ai.service.js';
 
 const getRandomElements = (array, count) => {
 
@@ -25,7 +24,6 @@ export const getGames = async (req, res, next) => {
       order = 'desc',
       page = 1,
       limit = 10,
-      generateExample = false
     } = req.query;
 
     const userId = req.user?.userId;
@@ -34,34 +32,6 @@ export const getGames = async (req, res, next) => {
     if (userId) {
       const user = await User.findById(userId).select('stats.level').lean();
       userLevel = user?.stats?.level || 1;
-    }
-
-    if (generateExample === 'true') {
-      const gameData = await AIService.generateGameData(difficulty, category);
-      if (gameData.success) {
-        const description = await AIService.generateGameDescription(
-          'Przykładowa gra AI',
-          difficulty || 'medium'
-        );
-
-        const randomGameData = getRandomElements(gameData.data, 7);
-
-        return res.json({
-          status: 'success',
-          data: {
-            generatedGame: {
-              title: 'Przykładowa gra AI',
-              description: description.success ? description.description : 'Przykładowa gra wygenerowana przez AI',
-              difficulty: difficulty || 'medium',
-              category: category || 'basics',
-              requiredLevel: 1,
-              gameData: randomGameData, // Używamy losowo wybranych danych
-              isLevelAvailable: true,
-              isAIGenerated: true
-            }
-          }
-        });
-      }
     }
 
     const query = { isActive: true };
@@ -88,14 +58,17 @@ export const getGames = async (req, res, next) => {
 
     const hasNextPage = skip + games.length < total;
     
+    const gamesWithRandomData = games.map(game => ({
+      ...game,
+      gameData: getRandomElements(game.gameData || [], 7),
+      isCompleted: game.completions?.users?.includes(userId),
+      isLevelAvailable: userLevel >= (game.requiredLevel || 1)
+    }));
+    
     res.json({
       status: 'success',
       data: {
-        games: games.map(game => ({
-          ...game,
-          isCompleted: game.completions?.users?.includes(userId),
-          isLevelAvailable: userLevel >= (game.requiredLevel || 1)
-        })),
+        games: gamesWithRandomData,
         pagination: {
           page: parseInt(page),
           limit: parseInt(limit),

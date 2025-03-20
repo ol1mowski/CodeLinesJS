@@ -8,6 +8,8 @@ import { useGamesQuery } from '../../../../hooks/useGamesQuery';
 import { GameIntro } from '../GameIntro/GameIntro.component';
 import { JSTypoHunterSummary } from './JSTypoHunterSummary/JSTypoHunterSummary.component';
 import { Game } from '../../../../types/games.types';
+import { Helmet } from 'react-helmet-async';
+
 const getDifficultyPoints = (difficulty: 'easy' | 'medium' | 'hard'): number => {
   switch (difficulty) {
     case 'easy':
@@ -36,11 +38,13 @@ const JSTypoHunter = memo(({ isPaused = false }: { isPaused?: boolean }) => {
   });
 
   const [isGameOver, setIsGameOver] = useState(false);
+  const [finalTime, setFinalTime] = useState(0);
 
   const { timeElapsed, resetTimer, startTimer, stopTimer } = useGameTimer({
-    maxTime: gameStats.maxTime,
+    maxTime: gameContent?.estimatedTime ? gameContent.estimatedTime * 60 : 300,
     onTimeEnd: () => {
       setIsGameOver(true);
+      setFinalTime(timeElapsed);
       stopTimer();
     },
     isPaused,
@@ -60,14 +64,16 @@ const JSTypoHunter = memo(({ isPaused = false }: { isPaused?: boolean }) => {
 
   const handleIncorrectAnswer = useCallback(() => {
     setIsGameOver(true);
+    setFinalTime(timeElapsed);
     stopTimer();
-  }, [stopTimer]);
+  }, [timeElapsed, stopTimer]);
 
   const handleLevelComplete = useCallback(() => {
     setTimeout(() => {
       const nextLevel = gameStats.currentLevel + 1;
       if (nextLevel > (gameContent?.gameData.length || 0)) {
         setIsGameOver(true);
+        setFinalTime(timeElapsed);
         stopTimer();
       } else {
         setGameStats(prev => ({
@@ -76,18 +82,21 @@ const JSTypoHunter = memo(({ isPaused = false }: { isPaused?: boolean }) => {
         }));
       }
     }, 1000);
-  }, [gameStats.currentLevel, gameContent, stopTimer]);
+  }, [gameStats.currentLevel, gameContent, timeElapsed, stopTimer]);
 
   const handleRestart = useCallback(() => {
+    if (!gameContent) return;
+    
     setGameStats({
       currentLevel: 1,
       totalLevels: gameContent?.gameData.length || 0,
       score: 0,
       timeElapsed: 0,
-      maxTime: 300,
+      maxTime: gameContent.estimatedTime ? gameContent.estimatedTime * 60 : 300,
       correctAnswers: 0
     });
     setIsGameOver(false);
+    setFinalTime(0);
     resetTimer();
     startTimer();
   }, [resetTimer, startTimer, gameContent]);
@@ -108,14 +117,35 @@ const JSTypoHunter = memo(({ isPaused = false }: { isPaused?: boolean }) => {
     if (gameContent) {
       setGameStats(prev => ({
         ...prev,
-        totalLevels: gameContent.gameData.length
+        totalLevels: gameContent.gameData.length,
+        maxTime: gameContent.estimatedTime ? gameContent.estimatedTime * 60 : 300
       }));
     }
   }, [gameContent]);
 
-  if (isLoading) return <div>Ładowanie...</div>;
-  if (error) return <div>Błąd: {error.message}</div>;
-  if (!gameContent) return null;
+  if (isLoading) return (
+    <div className="w-full h-64 flex items-center justify-center">
+      <div className="text-center">
+        <div className="text-xl font-medium text-gray-100 mb-2">Ładowanie gry...</div>
+      </div>
+    </div>
+  );
+  
+  if (error) return (
+    <div className="w-full h-64 flex items-center justify-center">
+      <div className="text-center">
+        <div className="text-xl font-medium text-gray-100 mb-2">Wystąpił błąd: {error.message}</div>
+      </div>
+    </div>
+  );
+  
+  if (!gameContent) return (
+    <div className="w-full h-64 flex items-center justify-center">
+      <div className="text-center">
+        <div className="text-xl font-medium text-gray-100 mb-2">Gra niedostępna</div>
+      </div>
+    </div>
+  );
 
   if (!isGameStarted) {
     return <GameIntro gameContent={gameContent} onStart={handleStartGame} />;
@@ -127,13 +157,17 @@ const JSTypoHunter = memo(({ isPaused = false }: { isPaused?: boolean }) => {
       animate={{ opacity: 1 }}
       className="w-full space-y-6"
     >
+      <Helmet>
+        <title>JSTypoHunter | CodeLinesJS</title>
+        <meta name="description" content="JSTypoHunter CodeLinesJS - dołącz do nas i rozwijaj swoje umiejętności w przyjaznym środowisku." />
+      </Helmet>
       <JSTypoHunterStats stats={gameStats} />
       <AnimatePresence mode="wait">
         {isGameOver ? (
           <JSTypoHunterSummary
             key="game-over"
             score={gameStats.score}
-            timeElapsed={timeElapsed}
+            timeElapsed={finalTime}
             correctAnswers={gameStats.correctAnswers}
             totalLevels={gameContent?.gameData.length || 0}
             onRestart={handleRestart}

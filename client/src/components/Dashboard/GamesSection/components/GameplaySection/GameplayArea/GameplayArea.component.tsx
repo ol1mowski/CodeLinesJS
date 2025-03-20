@@ -1,7 +1,8 @@
 import { lazy, Suspense, memo } from 'react';
 import { useParams } from 'react-router-dom';
 import { GameContentProvider } from '../../../contexts/GameContentContext';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
+
 const gameComponents = {
   'scope-explorer': lazy(() => import('./ScopeExplorer/ScopeExplorer.component')),
   'js-typo-hunter': lazy(() => import('./JSTypoHunter/JSTypoHunter.component')),

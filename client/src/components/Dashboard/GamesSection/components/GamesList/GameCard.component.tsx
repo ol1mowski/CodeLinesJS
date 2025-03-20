@@ -12,8 +12,6 @@ type GameCardProps = {
 export const GameCard = memo(({ game }: GameCardProps) => {
   const navigate = useNavigate();
 
-  console.log(game);
-
   const handlePlayClick = () => {
     if (!game.isLevelAvailable) {
       return;

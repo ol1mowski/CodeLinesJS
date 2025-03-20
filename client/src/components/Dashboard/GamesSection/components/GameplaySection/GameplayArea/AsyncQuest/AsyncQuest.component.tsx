@@ -8,7 +8,7 @@ import { AsyncQuestGame } from './AsyncQuestGame/AsyncQuestGame.component';
 import { useGamesQuery } from '../../../../hooks/useGamesQuery';
 import { GameIntro } from '../GameIntro/GameIntro.component';
 import { Game } from '../../../../types/games.types';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 const AsyncQuest = memo(({ isPaused = false }: { isPaused?: boolean }) => {
   const { data, isLoading, error } = useGamesQuery();

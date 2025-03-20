@@ -7,7 +7,7 @@ import { ScopeExplorerGame } from './ScopeExplorerGame/ScopeExplorerGame.compone
 import { ScopeExplorerSummary } from './ScopeExplorerSummary/ScopeExplorerSummary.component';
 import { useGamesQuery } from '../../../../hooks/useGamesQuery';
 import { GameIntro } from '../GameIntro/GameIntro.component';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 type Game = {
   slug: string;

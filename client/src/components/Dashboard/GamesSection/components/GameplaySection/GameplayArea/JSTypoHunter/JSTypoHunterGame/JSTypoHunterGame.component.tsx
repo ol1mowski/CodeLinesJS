@@ -46,6 +46,8 @@ export const JSTypoHunterGame = memo(({
     type: null,
     message: ''
   });
+  const [attempts, setAttempts] = useState(0);
+  const MAX_ATTEMPTS = 3;
 
   const handleEditorChange = (value: string | undefined) => {
     if (value !== undefined) {
@@ -53,24 +55,88 @@ export const JSTypoHunterGame = memo(({
     }
   };
 
+  const checkCorrection = (userCode: string, correctLine: string): boolean => {
+    // Normalizacja tekstu przed porównaniem
+    const normalizedUserCode = userCode.trim().replace(/\s+/g, ' ');
+    const normalizedCorrectLine = correctLine.trim().replace(/\s+/g, ' ');
+    
+    // Prosta porównanie
+    if (normalizedUserCode.includes(normalizedCorrectLine)) {
+      return true;
+    }
+    
+    // Obliczenie podobieństwa
+    const similarityThreshold = 0.8;
+    // Prosta implementacja funkcji obliczającej podobieństwo
+    const calculateSimilarity = (str1: string, str2: string): number => {
+      if (str1 === str2) return 1.0;
+      
+      let matches = 0;
+      const longerStr = str1.length > str2.length ? str1 : str2;
+      const shorterStr = str1.length > str2.length ? str2 : str1;
+      
+      for (let i = 0; i < shorterStr.length; i++) {
+        if (shorterStr[i] === longerStr[i]) {
+          matches++;
+        }
+      }
+      
+      return matches / longerStr.length;
+    };
+    
+    return calculateSimilarity(normalizedUserCode, normalizedCorrectLine) > similarityThreshold;
+  };
+
   const handleSubmit = useCallback(() => {
-    const isCorrect = userInput.replace(/\s+/g, '') === currentChallenge.correct.replace(/\s+/g, '');
+    const lines = userInput.split('\n');
+    let isCorrect = false;
+    
+    // Sprawdź każdą linię kodu użytkownika
+    for (const line of lines) {
+      if (checkCorrection(line, currentChallenge.correct)) {
+        isCorrect = true;
+        break;
+      }
+    }
 
     if (isCorrect) {
-      setFeedback({ type: 'success', message: 'Świetnie! Poprawna odpowiedź!' });
-      onScoreUpdate(10);
+      setFeedback({ 
+        type: 'success', 
+        message: 'Świetnie! Poprawna odpowiedź!' 
+      });
+      
+      // Oblicz punkty na podstawie liczby prób
+      const points = Math.max(10 - attempts * 2, 1);
+      onScoreUpdate(points);
+      
       setTimeout(() => {
         onLevelComplete();
         setUserInput(currentChallenge.code);
         setFeedback({ type: null, message: '' });
+        setAttempts(0);
       }, 1500);
     } else {
-      setFeedback({ type: 'error', message: 'Niestety, to nie jest prawidłowa odpowiedź.' });
-      setTimeout(() => {
-        onIncorrectAnswer();
-      }, 1500);
+      setAttempts(prev => prev + 1);
+      
+      if (attempts + 1 >= MAX_ATTEMPTS) {
+        setFeedback({ 
+          type: 'error', 
+          message: 'Niestety, przekroczyłeś liczbę prób. Koniec gry!' 
+        });
+        setTimeout(() => {
+          onIncorrectAnswer();
+        }, 1500);
+      } else {
+        setFeedback({ 
+          type: 'error', 
+          message: `Niestety, to nie jest prawidłowa odpowiedź. Pozostałe próby: ${MAX_ATTEMPTS - attempts - 1}` 
+        });
+        setTimeout(() => {
+          setFeedback({ type: null, message: '' });
+        }, 1500);
+      }
     }
-  }, [userInput, currentChallenge, onScoreUpdate, onLevelComplete, onIncorrectAnswer]);
+  }, [userInput, currentChallenge, attempts, onScoreUpdate, onLevelComplete, onIncorrectAnswer]);
 
   const CategoryIcon = getCategoryIcon(currentChallenge.category);
 
@@ -100,10 +166,10 @@ export const JSTypoHunterGame = memo(({
           </div>
         </div>
         <p className="text-gray-400 text-sm">
-          Znajdź i popraw błąd w kodzie.
+          {currentChallenge.explanation || 'Znajdź i popraw błąd w kodzie.'}
         </p>
         <p className="mt-1 text-gray-500 text-sm">
-          Wskazówka: Naciśnij przycisk, aby zatwierdzić.
+          Pozostałe próby: {MAX_ATTEMPTS - attempts}
         </p>
       </div>
 
@@ -135,7 +201,7 @@ export const JSTypoHunterGame = memo(({
 
       <JSTypoHunterHint 
         hint={currentChallenge.hint || ''} 
-        isVisible={true}
+        isVisible={attempts > 0}
       />
     </motion.div>
   );

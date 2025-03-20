@@ -6,7 +6,7 @@ import { GamesSorting } from "./components/GamesSorting/GamesSorting.component";
 import { GamesSearch } from "./components/GamesSearch/GamesSearch.component";
 import { GamesDifficulty } from "./components/GamesDifficulty/GamesDifficulty.component";
 import { GameDifficulty } from "../../../types/games.types";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 
 export type ActiveCategory = "all" | "basics" | "algorithms" | "challenges" | "competitions";
 export type SortOption = "newest" | "popular" | "difficulty" | "xp";
