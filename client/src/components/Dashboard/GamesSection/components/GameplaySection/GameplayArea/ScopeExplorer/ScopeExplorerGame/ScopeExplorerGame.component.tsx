@@ -7,7 +7,6 @@ import { getCategoryIcon, getCategoryLabel, getDifficultyColor, getDifficultyLab
 import { useKeyboardShortcuts } from '../../JSTypoHunter/hooks/useKeyboardShortcuts';
 import { ScopeExplorerProgress } from '../ScopeExplorerProgress/ScopeExplorerProgress.component';
 
-// Obejście problemu z typowaniem
 const SyntaxHighlighterComponent = SyntaxHighlighter as any;
 
 type ScopeExplorerGameProps = {
