@@ -1,0 +1,99 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: server-config
+  namespace: codelinesjs
+data:
+  NODE_ENV: "production"
+  PORT: "5001"
+  JWT_EXPIRES_IN: "24h"
+  JWT_COOKIE_EXPIRES_IN: "86400000"
+  RATE_LIMIT_MAX: "1000"
+  RATE_LIMIT_WINDOW_MS: "900000"
+  FRONTEND_URL: "https://codelinesjs.pl"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: server-secrets
+  namespace: codelinesjs
+type: Opaque
+data:
+  JWT_SECRET: ""
+  EMAIL_HOST: ""
+  EMAIL_PORT: ""
+  EMAIL_USER: ""
+  EMAIL_PASSWORD: ""
+  EMAIL_FROM: ""
+  GEMINI_API_KEY: ""
+  HUGGING_FACE_API_KEY: ""
+  VITE_GOOGLE_CLIENT_ID: ""
+  SENDGRID_API_KEY: ""
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server
+  namespace: codelinesjs
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: server
+  template:
+    metadata:
+      labels:
+        app: server
+    spec:
+      containers:
+      - name: server
+        image: ${DOCKER_REGISTRY}/codelinesjs-server:latest
+        ports:
+        - containerPort: 5001
+        envFrom:
+        - configMapRef:
+            name: server-config
+        - secretRef:
+            name: server-secrets
+        env:
+        - name: MONGODB_URI
+          value: "mongodb://$(MONGO_INITDB_ROOT_USERNAME):$(MONGO_INITDB_ROOT_PASSWORD)@mongodb:27017/codelinesjs?authSource=admin"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi" 
+            cpu: "500m"
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: 5001
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: 5001
+          initialDelaySeconds: 20
+          periodSeconds: 15
+        startupProbe:
+          httpGet:
+            path: /api/health
+            port: 5001
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          failureThreshold: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: server
+  namespace: codelinesjs
+spec:
+  selector:
+    app: server
+  ports:
+  - port: 5001
+    targetPort: 5001
+  type: ClusterIP 
