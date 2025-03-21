@@ -7,7 +7,8 @@ const gameComponents = {
   'scope-explorer': lazy(() => import('./ScopeExplorer/ScopeExplorer.component')),
   'js-typo-hunter': lazy(() => import('./JSTypoHunter/JSTypoHunter.component')),
   'async-quest': lazy(() => import('./AsyncQuest/AsyncQuest.component')),
-  'regex-raider': lazy(() => import('./RegexRaider/RegexRaider.component'))
+  'regex-raider': lazy(() => import('./RegexRaider/RegexRaider.component')),
+  'js-quiz': lazy(() => import('./JSQuiz/JSQuiz.component'))
 };
 
 export const GameplayArea = memo(() => {

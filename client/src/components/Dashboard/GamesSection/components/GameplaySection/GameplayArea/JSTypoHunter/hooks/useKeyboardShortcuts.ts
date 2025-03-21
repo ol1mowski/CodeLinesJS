@@ -6,6 +6,7 @@ type KeyboardShortcutsProps = {
   onNumber1?: () => void;
   onNumber2?: () => void;
   onNumber3?: () => void;
+  onNumber4?: () => void;
   disabled?: boolean;
 };
 
@@ -15,6 +16,7 @@ export const useKeyboardShortcuts = ({
   onNumber1,
   onNumber2,
   onNumber3,
+  onNumber4,
   disabled = false 
 }: KeyboardShortcutsProps) => {
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
@@ -36,8 +38,11 @@ export const useKeyboardShortcuts = ({
       case '3':
         onNumber3?.();
         break;
+      case '4':
+        onNumber4?.();
+        break;
     }
-  }, [onEscape, onEnter, onNumber1, onNumber2, onNumber3, disabled]);
+  }, [onEscape, onEnter, onNumber1, onNumber2, onNumber3, onNumber4, disabled]);
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
