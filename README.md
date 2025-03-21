@@ -69,6 +69,11 @@ CodeLinesJS is an innovative educational platform that transforms learning JavaS
 - Vitest
 - Playwright
 
+### Deployment & Infrastructure
+- Docker
+- Kubernetes
+- GitHub Actions (CI/CD)
+
 ## 🚀 Getting Started
 
 ```bash
@@ -89,6 +94,81 @@ npm run dev
 # Build for production
 npm run build
 ```
+
+## 🐳 Docker
+
+CodeLinesJS jest w pełni skonteneryzowany, co umożliwia łatwe uruchomienie aplikacji w różnych środowiskach.
+
+### Uruchamianie za pomocą Docker Compose
+
+```bash
+# Uruchomienie całej aplikacji
+docker-compose up -d
+
+# Sprawdzenie logów
+docker-compose logs -f
+
+# Zatrzymanie usług
+docker-compose down
+```
+
+### Dostępne obrazy Docker
+
+- `codelinesjs-client` - Frontend React
+- `codelinesjs-server` - Backend API
+- `mongo` - Baza danych MongoDB
+
+### Budowanie własnych obrazów
+
+```bash
+# Budowanie obrazu klienta
+docker build -t codelinesjs-client -f Dockerfile.client .
+
+# Budowanie obrazu serwera
+docker build -t codelinesjs-server -f Dockerfile.server .
+
+# Budowanie monolitycznego obrazu (zawierającego klienta i serwer)
+docker build -t codelinesjs .
+```
+
+## ☸️ Kubernetes
+
+Projekt zawiera pełną konfigurację Kubernetes, umożliwiającą wdrożenie w środowisku klastrowym.
+
+### Struktura konfiguracji
+
+```
+kubernetes/
+├── base/                     # Podstawowe manifesty
+│   ├── namespace.yaml        # Namespace dla aplikacji
+│   ├── mongodb.yaml          # Baza danych MongoDB
+│   ├── server.yaml           # Backend API
+│   ├── client.yaml           # Frontend React
+│   ├── ingress.yaml          # Ingress dla dostępu zewnętrznego
+│   └── cert-manager.yaml     # Konfiguracja certyfikatów SSL
+│
+└── overlays/                 # Nakładki dla różnych środowisk
+    ├── dev/                  # Środowisko deweloperskie
+    └── prod/                 # Środowisko produkcyjne
+```
+
+### Wdrażanie na Kubernetes
+
+```bash
+# Wdrażanie w środowisku deweloperskim
+cd kubernetes && ./deploy.sh dev
+
+# Wdrażanie w środowisku produkcyjnym
+cd kubernetes && ./deploy.sh prod
+```
+
+### Wymagania
+
+- Klaster Kubernetes (np. minikube, EKS, GKE, AKS)
+- kubectl i kustomize
+- Ingress-nginx i cert-manager (dla HTTPS)
+
+Więcej informacji w dokumentacji w katalogu `kubernetes/`.
 
 ## 📁 Project Structure
 
