@@ -16,6 +16,8 @@ export interface Game {
     count: number;
   };
   createdAt: string;
+  gameData?: any[];
+  estimatedTime?: number;
 }
 
 export interface GamesResponse {
