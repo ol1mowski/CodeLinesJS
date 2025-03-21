@@ -56,18 +56,14 @@ export const JSTypoHunterGame = memo(({
   };
 
   const checkCorrection = (userCode: string, correctLine: string): boolean => {
-    // Normalizacja tekstu przed porównaniem
     const normalizedUserCode = userCode.trim().replace(/\s+/g, ' ');
     const normalizedCorrectLine = correctLine.trim().replace(/\s+/g, ' ');
     
-    // Prosta porównanie
     if (normalizedUserCode.includes(normalizedCorrectLine)) {
       return true;
     }
     
-    // Obliczenie podobieństwa
     const similarityThreshold = 0.8;
-    // Prosta implementacja funkcji obliczającej podobieństwo
     const calculateSimilarity = (str1: string, str2: string): number => {
       if (str1 === str2) return 1.0;
       
@@ -91,7 +87,6 @@ export const JSTypoHunterGame = memo(({
     const lines = userInput.split('\n');
     let isCorrect = false;
     
-    // Sprawdź każdą linię kodu użytkownika
     for (const line of lines) {
       if (checkCorrection(line, currentChallenge.correct)) {
         isCorrect = true;
@@ -105,8 +100,7 @@ export const JSTypoHunterGame = memo(({
         message: 'Świetnie! Poprawna odpowiedź!' 
       });
       
-      // Oblicz punkty na podstawie liczby prób
-      const points = Math.max(10 - attempts * 2, 1);
+        const points = Math.max(10 - attempts * 2, 1);
       onScoreUpdate(points);
       
       setTimeout(() => {
