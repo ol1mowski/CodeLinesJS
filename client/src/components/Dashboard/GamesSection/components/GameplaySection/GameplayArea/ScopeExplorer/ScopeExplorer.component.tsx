@@ -8,7 +8,7 @@ import { useScopeExplorerGame } from './hooks/useScopeExplorerGame';
 import { LoadingErrorContainer } from './components/LoadingErrorContainer.component';
 import { GameContent } from './components/GameContent.component';
 import { useAnimations } from './hooks/useAnimations';
-import { useSEO } from './hooks/useSEO';
+import { useSEO } from '../../../../../../../Hooks/useSEO';
 
 const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean }) => {
   const { gameContent, isLoading, error } = useScopeExplorerData();

@@ -11,7 +11,7 @@ type RegexRaiderGameProps = {
   onGameOver: () => void;
 };
 
-export const RegexRaiderGame = memo(({ 
+export const RegexRaiderGame = memo(({
   onScoreUpdate,
   onLevelComplete,
   currentLevel,
@@ -19,7 +19,7 @@ export const RegexRaiderGame = memo(({
 }: RegexRaiderGameProps) => {
   const { data } = useGamesQuery();
   const gameContent = data?.games.find((game: Game) => game.slug === 'regex-raider');
-  
+
   const [userRegex, setUserRegex] = useState('');
   const [matches, setMatches] = useState<string[]>([]);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
@@ -32,7 +32,7 @@ export const RegexRaiderGame = memo(({
     const value = event.target.value;
     setUserRegex(value);
     setIsCorrect(null);
-    
+
     try {
       const regex = new RegExp(value, 'g');
       const found = currentChallenge.text.match(regex) || [];
@@ -47,8 +47,8 @@ export const RegexRaiderGame = memo(({
       const userMatches = currentChallenge.text.match(new RegExp(userRegex, 'g')) || [];
       const correctMatches: string[] = currentChallenge.text.match(new RegExp(currentChallenge.correctRegex, 'g')) || [];
 
-      const isMatch = 
-        userMatches.length === correctMatches.length && 
+      const isMatch =
+        userMatches.length === correctMatches.length &&
         userMatches.every((match: string) => correctMatches.includes(match));
 
       setIsCorrect(isMatch);
@@ -96,7 +96,10 @@ export const RegexRaiderGame = memo(({
             value={userRegex}
             onChange={handleRegexChange}
             placeholder="Wpisz wyrażenie regularne..."
-            className="flex-1 bg-dark-900/50 border border-js/10 rounded-lg px-4 py-2 text-gray-300 font-mono"
+            style={{
+              backgroundColor: '#1a1a1a',
+            }}
+            className="bg-dark-900 flex-1 border border-js/10 rounded-lg px-4 py-2 text-js font-mono placeholder-yellow-500"
           />
           <button
             onClick={handleSubmit}
@@ -125,15 +128,14 @@ export const RegexRaiderGame = memo(({
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className={`p-4 rounded-lg ${
-              isCorrect 
-                ? 'bg-green-500/20 border border-green-500/30' 
+            className={`p-4 rounded-lg ${isCorrect
+                ? 'bg-green-500/20 border border-green-500/30'
                 : 'bg-red-500/20 border border-red-500/30'
-            }`}
+              }`}
           >
             <p className={`text-sm ${isCorrect ? 'text-green-400' : 'text-red-400'}`}>
-              {isCorrect 
-                ? 'Świetnie! Wyrażenie regularne jest poprawne!' 
+              {isCorrect
+                ? 'Świetnie! Wyrażenie regularne jest poprawne!'
                 : 'Wyrażenie nie znajduje wszystkich wymaganych dopasowań.'}
             </p>
           </motion.div>

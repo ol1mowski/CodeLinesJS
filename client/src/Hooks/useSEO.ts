@@ -9,7 +9,7 @@ type UseSEOProps = {
 export const useSEO = ({ 
   title, 
   description,
-  gameName = 'Scope Explorer'
+  gameName = 'Regex Raider'
 }: UseSEOProps = {}) => {
   const pageTitle = useMemo(() => {
     return title || `${gameName} | CodeLinesJS`;
