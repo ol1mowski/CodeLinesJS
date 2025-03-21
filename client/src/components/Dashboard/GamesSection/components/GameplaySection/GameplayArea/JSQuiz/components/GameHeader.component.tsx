@@ -24,9 +24,9 @@ export const GameHeader = memo(({
       <GameIntro gameContent={gameContent} onStart={onGameStart} />
     ) : (
       <div className="w-full p-6 text-center">
-        <p className="text-lg text-blue-200">Brak danych gry</p>
+        <p className="text-lg text-js/80">Brak danych gry</p>
         <button
-          className="mt-4 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors"
+          className="mt-4 px-6 py-2 bg-js/80 hover:bg-js text-white rounded-md transition-colors"
           onClick={onGameStart}
         >
           Rozpocznij mimo to

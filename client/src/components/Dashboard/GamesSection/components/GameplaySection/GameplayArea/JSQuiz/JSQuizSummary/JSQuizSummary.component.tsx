@@ -46,10 +46,10 @@ export const JSQuizSummary = memo(({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-gray-800/50 p-4 rounded-lg"
+          className="bg-dark-800/50 p-4 rounded-lg"
         >
           <div className="flex items-center gap-3 mb-2">
-            <CategoryIcon className="text-blue-400" />
+            <CategoryIcon className="text-js" />
             <h3 className="text-lg font-medium">
               {getCategoryLabel(category as 'basics' | 'advanced' | 'frameworks')}
             </h3>
@@ -60,7 +60,7 @@ export const JSQuizSummary = memo(({
           </div>
           <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
             <motion.div
-              className="h-full bg-blue-500"
+              className="h-full bg-js"
               initial={{ width: 0 }}
               animate={{ width: `${percentage}%` }}
               transition={{ duration: 0.5, delay: 0.5 }}
@@ -90,20 +90,20 @@ export const JSQuizSummary = memo(({
         transition={{ delay: 0.2 }}
         className="grid grid-cols-3 gap-4 mb-8"
       >
-        <div className="bg-gray-800/50 p-4 rounded-lg flex flex-col items-center justify-center">
-          <FaTrophy className="text-3xl text-yellow-400 mb-2" />
+        <div className="bg-dark-800/50 p-4 rounded-lg flex flex-col items-center justify-center">
+          <FaTrophy className="text-3xl text-js mb-2" />
           <div className="text-xs text-gray-400">Punkty</div>
           <div className="text-2xl font-bold">{score}</div>
         </div>
         
-        <div className="bg-gray-800/50 p-4 rounded-lg flex flex-col items-center justify-center">
+        <div className="bg-dark-800/50 p-4 rounded-lg flex flex-col items-center justify-center">
           <FaCheck className="text-3xl text-green-400 mb-2" />
           <div className="text-xs text-gray-400">Poprawne odpowiedzi</div>
           <div className="text-2xl font-bold">{correctAnswers}/{challenges.length}</div>
         </div>
         
-        <div className="bg-gray-800/50 p-4 rounded-lg flex flex-col items-center justify-center">
-          <FaClock className="text-3xl text-blue-400 mb-2" />
+        <div className="bg-dark-800/50 p-4 rounded-lg flex flex-col items-center justify-center">
+          <FaClock className="text-3xl text-js mb-2" />
           <div className="text-xs text-gray-400">Całkowity czas</div>
           <div className="text-2xl font-bold">{formatTime(timeElapsed)}</div>
         </div>
@@ -129,9 +129,9 @@ export const JSQuizSummary = memo(({
       >
         <button
           onClick={onRestart}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium flex items-center justify-center gap-2 mx-auto transition-colors"
+          className="bg-js/80 hover:bg-js text-dark px-6 py-3 rounded-lg font-medium flex items-center justify-center gap-2 mx-auto transition-colors"
         >
-          <FaRedo />
+          <FaRedo className='text-dark'/>
           Zagraj jeszcze raz
         </button>
       </motion.div>

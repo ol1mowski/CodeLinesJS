@@ -44,7 +44,7 @@ const JSQuiz = memo(({ isPaused = false }: { isPaused?: boolean }) => {
           ) : (
             <motion.div
               {...containerAnimation}
-              className="w-full h-full flex flex-col bg-gradient-to-br from-indigo-900 via-blue-900 to-indigo-800 text-white rounded-lg shadow-xl overflow-hidden"
+              className="w-full h-full flex flex-col"
             >
               <Helmet>
                 <title>{pageTitle}</title>

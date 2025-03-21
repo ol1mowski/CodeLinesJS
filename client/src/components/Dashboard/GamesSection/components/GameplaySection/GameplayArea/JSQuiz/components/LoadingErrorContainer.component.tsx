@@ -19,11 +19,11 @@ export const LoadingErrorContainer = memo(({
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          className="text-4xl text-blue-400 mb-4"
+          className="text-4xl text-js mb-4"
         >
           <FaSpinner />
         </motion.div>
-        <p className="text-xl font-medium text-blue-300">Ładowanie gry...</p>
+        <p className="text-xl font-medium text-js/80">Ładowanie gry...</p>
       </div>
     );
   }
@@ -47,7 +47,7 @@ export const LoadingErrorContainer = memo(({
   if (!children) {
     return (
       <div className="h-full flex items-center justify-center">
-        <p className="text-lg text-blue-300">Gra niedostępna</p>
+        <p className="text-lg text-js/80">Gra niedostępna</p>
       </div>
     );
   }

@@ -19,10 +19,10 @@ export const JSQuizStats = memo(({ stats, isGameOver, finalTime }: JSQuizStatsPr
   const displayTime = isGameOver ? finalTime : stats.timeElapsed;
   
   return (
-    <div className="w-full p-4 bg-gray-800/50 rounded-lg mb-4">
+    <div className="w-full p-4 bg-dark-800/50 rounded-lg mb-4">
       <div className="grid grid-cols-3 gap-4">
         <motion.div 
-          className="flex items-center gap-2 text-blue-400"
+          className="flex items-center gap-2 text-js"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
@@ -48,7 +48,7 @@ export const JSQuizStats = memo(({ stats, isGameOver, finalTime }: JSQuizStatsPr
         </motion.div>
         
         <motion.div 
-          className="flex items-center gap-2 text-yellow-400"
+          className="flex items-center gap-2 text-js"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}

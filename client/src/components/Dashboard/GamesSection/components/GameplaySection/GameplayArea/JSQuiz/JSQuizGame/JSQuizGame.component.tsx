@@ -81,8 +81,8 @@ export const JSQuizGame = memo(({
 
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-blue-500/10">
-            <CategoryIcon className="w-4 h-4 text-blue-400" />
+          <div className="p-2 rounded-lg bg-js/10">
+            <CategoryIcon className="w-4 h-4 text-js" />
           </div>
           <div className="text-sm text-gray-400">
             {getCategoryLabel(currentChallenge.category)}
@@ -93,7 +93,7 @@ export const JSQuizGame = memo(({
         </div>
       </div>
 
-      <div className="p-6 bg-gray-800/50 border border-blue-500/10 rounded-lg mb-6">
+      <div className="p-6 bg-dark-800/50 border border-js/10 rounded-lg mb-6">
         <h3 className="text-xl font-medium text-white mb-2">{currentChallenge.question}</h3>
       </div>
 
@@ -112,7 +112,7 @@ export const JSQuizGame = memo(({
                 ? isCorrect
                   ? 'bg-green-500/20 border-green-500/30 text-green-400'
                   : 'bg-red-500/20 border-red-500/30 text-red-400'
-                : 'bg-gray-800/50 border border-blue-500/10 text-gray-300 hover:border-blue-500/30'
+                : 'bg-dark-800/50 border border-js/10 text-gray-300 hover:border-js/30'
               }
             `}
             {...optionAnimation}
