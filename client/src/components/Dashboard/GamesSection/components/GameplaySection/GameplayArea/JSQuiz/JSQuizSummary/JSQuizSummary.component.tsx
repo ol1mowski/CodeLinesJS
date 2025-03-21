@@ -36,39 +36,43 @@ export const JSQuizSummary = memo(({
   };
 
   const renderCategoryStats = () => {
-    return Object.entries(categoryStats).map(([category, stats]) => {
-      const CategoryIcon = getCategoryIcon(category as 'basics' | 'advanced' | 'frameworks');
-      const percentage = calculatePercentage(stats.correct, stats.total);
-      
-      return (
-        <motion.div
-          key={category}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="bg-dark-800/50 p-4 rounded-lg"
-        >
-          <div className="flex items-center gap-3 mb-2">
-            <CategoryIcon className="text-js" />
-            <h3 className="text-lg font-medium">
-              {getCategoryLabel(category as 'basics' | 'advanced' | 'frameworks')}
-            </h3>
-          </div>
-          <div className="flex justify-between text-sm text-gray-400 mb-1">
-            <span>Poprawne: {stats.correct}/{stats.total}</span>
-            <span>{percentage}%</span>
-          </div>
-          <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
-            <motion.div
-              className="h-full bg-js"
-              initial={{ width: 0 }}
-              animate={{ width: `${percentage}%` }}
-              transition={{ duration: 0.5, delay: 0.5 }}
-            />
-          </div>
-        </motion.div>
-      );
-    });
+    if (!categoryStats) return null;
+    
+    return Object.entries(categoryStats)
+      .filter(([_, stats]) => stats && typeof stats === 'object') // Sprawdzamy czy statystyki istnieją
+      .map(([category, stats]) => {
+        const CategoryIcon = getCategoryIcon(category as 'basics' | 'advanced' | 'frameworks');
+        const percentage = calculatePercentage(stats.correct || 0, stats.total || 0);
+        
+        return (
+          <motion.div
+            key={category}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="bg-dark-800/50 p-4 rounded-lg"
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <CategoryIcon className="text-js" />
+              <h3 className="text-lg font-medium">
+                {getCategoryLabel(category as 'basics' | 'advanced' | 'frameworks')}
+              </h3>
+            </div>
+            <div className="flex justify-between text-sm text-gray-400 mb-1">
+              <span>Poprawne: {stats.correct || 0}/{stats.total || 0}</span>
+              <span>{percentage}%</span>
+            </div>
+            <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
+              <motion.div
+                className="h-full bg-js"
+                initial={{ width: 0 }}
+                animate={{ width: `${percentage}%` }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+              />
+            </div>
+          </motion.div>
+        );
+      });
   };
 
   return (
@@ -80,7 +84,7 @@ export const JSQuizSummary = memo(({
       >
         <h2 className="text-3xl font-bold text-white mb-2">Koniec Quizu!</h2>
         <p className="text-gray-400">
-          Ukończyłeś quiz z wynikiem {score} punktów, odpowiadając poprawnie na {correctAnswers} z {challenges.length} pytań.
+          Ukończyłeś quiz z wynikiem {score} punktów, odpowiadając poprawnie na {correctAnswers} z {challenges?.length || 0} pytań.
         </p>
       </motion.div>
 
@@ -99,7 +103,7 @@ export const JSQuizSummary = memo(({
         <div className="bg-dark-800/50 p-4 rounded-lg flex flex-col items-center justify-center">
           <FaCheck className="text-3xl text-green-400 mb-2" />
           <div className="text-xs text-gray-400">Poprawne odpowiedzi</div>
-          <div className="text-2xl font-bold">{correctAnswers}/{challenges.length}</div>
+          <div className="text-2xl font-bold">{correctAnswers}/{challenges?.length || 0}</div>
         </div>
         
         <div className="bg-dark-800/50 p-4 rounded-lg flex flex-col items-center justify-center">

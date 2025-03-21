@@ -31,7 +31,11 @@ export const GameContent = memo(({
   const { gameAnimation, summaryAnimation } = useAnimations();
 
   if (!currentChallenge && !isGameOver) {
-    return null;
+    return (
+      <div className="flex-1 flex items-center justify-center">
+        <p className="text-js">Ładowanie pytania...</p>
+      </div>
+    );
   }
 
   return (
@@ -46,14 +50,16 @@ export const GameContent = memo(({
             transition={gameAnimation.transition}
             className="w-full"
           >
-            <JSQuizGame
-              currentChallenge={currentChallenge!}
-              onScoreUpdate={onScoreUpdate}
-              onLevelComplete={onLevelComplete}
-              currentLevel={gameStats.currentLevel}
-              totalLevels={gameStats.totalLevels}
-              onGameOver={onGameOver}
-            />
+            {currentChallenge && (
+              <JSQuizGame
+                currentChallenge={currentChallenge}
+                onScoreUpdate={onScoreUpdate}
+                onLevelComplete={onLevelComplete}
+                currentLevel={gameStats.currentLevel}
+                totalLevels={gameStats.totalLevels}
+                onGameOver={onGameOver}
+              />
+            )}
           </motion.div>
         ) : (
           <motion.div

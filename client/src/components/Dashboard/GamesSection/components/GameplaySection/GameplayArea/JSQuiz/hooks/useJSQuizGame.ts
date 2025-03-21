@@ -60,8 +60,10 @@ export const useJSQuizGame = ({ gameContent, isPaused }: UseJSQuizGameProps) => 
 
     gameContent.gameData.forEach((challenge: QuizChallenge) => {
       const category = challenge.category as keyof typeof initialCategoryStats;
-      initialCategoryStats[category].total++;
-      initialCategoryStats[category].points += challenge.points || 0;
+      if (category && initialCategoryStats[category]) {
+        initialCategoryStats[category].total++;
+        initialCategoryStats[category].points += challenge.points || 0;
+      }
     });
 
     setGameStats(prev => ({
@@ -79,10 +81,10 @@ export const useJSQuizGame = ({ gameContent, isPaused }: UseJSQuizGameProps) => 
       correctAnswers: prev.correctAnswers + 1,
       categoryStats: {
         ...prev.categoryStats,
-        [category]: {
+        [category]: prev.categoryStats[category] ? {
           ...prev.categoryStats[category],
           correct: prev.categoryStats[category].correct + 1
-        }
+        } : { total: 0, correct: 1, points: points }
       }
     }));
   }, []);
@@ -113,8 +115,10 @@ export const useJSQuizGame = ({ gameContent, isPaused }: UseJSQuizGameProps) => 
 
     gameContent.gameData.forEach((challenge: QuizChallenge) => {
       const category = challenge.category as keyof typeof initialCategoryStats;
-      initialCategoryStats[category].total++;
-      initialCategoryStats[category].points += challenge.points || 0;
+      if (category && initialCategoryStats[category]) {
+        initialCategoryStats[category].total++;
+        initialCategoryStats[category].points += challenge.points || 0;
+      }
     });
 
     setGameStats({
