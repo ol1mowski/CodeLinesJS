@@ -1,27 +1,9 @@
 version: '3.8'
 
 services:
-  mongo:
-    image: mongo:6
-    restart: always
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-admin}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-adminpassword}
-    volumes:
-      - mongo-data:/data/db
-    networks:
-      - codelinesjs-network
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-
   server:
     image: ${DOCKERHUB_USERNAME}/codelinesjs-server:main
     restart: always
-    depends_on:
-      - mongo
     environment:
       - PORT=5001
       - NODE_ENV=production

@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { motion } from "framer-motion";
-import { FaUsers } from "react-icons/fa";
+import { FaBook } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { blockStyles as styles } from "../style/block.styles";
 import { useBlockAnimation } from "../hooks/useBlockAnimation";
@@ -10,7 +10,7 @@ export const CommunityBlock = memo(() => {
   const animations = useBlockAnimation();
 
   const handleStartGame = () => {
-    navigate('/dashboard/community');
+    navigate('/dashboard/learn');
   };
 
   return (
@@ -22,14 +22,14 @@ export const CommunityBlock = memo(() => {
     >
       <div className={styles.header.wrapper}>
         <h2 className={styles.header.title}>
-          <FaUsers className={styles.header.icon} />
-          Społeczność
+          <FaBook className={styles.header.icon} />
+          Nauka
         </h2>
       </div>
 
       <div className={styles.content.wrapper}>
         <p className={styles.content.description}>
-          Sprawdź najnowsze informacje i aktualności społeczności.
+          Sprawdź najnowsze informacje i aktualności związane z nauką.
         </p>
 
         <div className={styles.content.button.wrapper}>

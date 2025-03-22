@@ -1,19 +1,6 @@
 version: '3.8'
 
 services:
-  mongo:
-    image: mongo:6
-    restart: always
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: adminpassword
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo-data:/data/db
-    networks:
-      - codelinesjs-network
-
   server:
     build:
       context: .
@@ -21,8 +8,6 @@ services:
     restart: always
     ports:
       - "5001:5001"
-    depends_on:
-      - mongo
     environment:
       - PORT=5001
       - NODE_ENV=production
@@ -51,7 +36,7 @@ services:
       dockerfile: Dockerfile.client
     restart: always
     ports:
-      - "80:80"
+      - "3000:3000"
     depends_on:
       - server
     networks:
@@ -60,6 +45,3 @@ services:
 networks:
   codelinesjs-network:
     driver: bridge
-
-volumes:
-  mongo-data: 

@@ -11,6 +11,7 @@ import { navVariants } from "./animations/navigationAnimations";
 import { useMemo, useCallback } from "react";
 import type { NavigationItem } from ".";
 import { navigationItems } from "./constants/navigationItems";
+import { useMobileDetect } from "../../../hooks/useMobileDetect";
 
 
 const sectionTitles: Record<string, string> = {
@@ -24,6 +25,7 @@ export const DashboardNavigation = () => {
   const { isExpanded, setIsExpanded, activeItem, setActiveItem } = useNavigation();
   const { logout } = useAuth();
   const isHiddenPath = useIsHiddenPath();
+  const isMobile = useMobileDetect();
 
   const handleNavigation = useCallback((item: NavigationItem) => {
     setActiveItem(item.id);
@@ -52,7 +54,7 @@ export const DashboardNavigation = () => {
         initial="collapsed"
         animate={isExpanded ? "expanded" : "collapsed"}
         variants={navVariants}
-        className={`${isHiddenPath ? 'hidden md:flex' : ''} fixed left-0 top-0 bg-gradient-to-b from-dark via-dark-medium to-dark backdrop-blur-lg border-r border-js/10 flex flex-col py-6 z-40 shadow-xl shadow-black/10 h-full`}
+        className={`${isHiddenPath || isMobile ? 'hidden md:flex' : ''} fixed left-0 top-0 bg-gradient-to-b from-dark via-dark-medium to-dark backdrop-blur-lg border-r border-js/10 flex flex-col py-6 z-40 shadow-xl shadow-black/10 h-full`}
       >
         <NavigationLogo isExpanded={isExpanded} />
 
