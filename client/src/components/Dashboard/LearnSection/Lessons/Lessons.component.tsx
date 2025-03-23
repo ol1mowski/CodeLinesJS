@@ -4,9 +4,15 @@ import { LoadingScreen } from "../../../UI/LoadingScreen/LoadingScreen.component
 import { LessonsHeader } from "./LessonsHeader.component";
 import { LessonsList } from "./LessonsList.component";
 import { useLessons } from "../hooks/useLessons";
+import { useStats } from "../../../Dashboard/StatsSection/hooks/useStats.hook";
+import { useAuth } from "../../../../Hooks/useAuth";
 
 export const Lessons = memo(() => {
-  const userId = "current-user";
+  const { user } = useAuth();
+  const { stats } = useStats();
+  const userId = user?.id || "current-user";
+  const userLevel = stats?.data?.level || 1;
+
   const {
     filteredLessons,
     filter,
@@ -26,7 +32,7 @@ export const Lessons = memo(() => {
     );
   }
 
-  if (isLoading) {
+  if (isLoading && !stats) {
     return <LoadingScreen />;
   }
 
@@ -40,7 +46,7 @@ export const Lessons = memo(() => {
         filter={filter}
         userId={userId}
         userData={{
-          userLevel: 1,
+          userLevel: userLevel,
           requiredLevel: requiredLevel || 1
         }}
       />
