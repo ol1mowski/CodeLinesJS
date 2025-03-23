@@ -8,6 +8,8 @@ export const getCategoryIcon = (category: 'basics' | 'advanced' | 'frameworks') 
       return FaBrain;
     case 'frameworks':
       return FaReact;
+    default:
+      return FaCode;
   }
 };
 

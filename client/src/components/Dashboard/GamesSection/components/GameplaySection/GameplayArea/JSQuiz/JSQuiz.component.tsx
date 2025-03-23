@@ -77,6 +77,6 @@ const JSQuiz = memo(({ isPaused = false }: { isPaused?: boolean }) => {
   );
 });
 
-export default JSQuiz;
+JSQuiz.displayName = 'JSQuiz';
 
-JSQuiz.displayName = 'JSQuiz'; 
+export default JSQuiz; 

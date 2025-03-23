@@ -3,8 +3,9 @@ import { motion } from 'framer-motion';
 import { QuizChallenge } from '../../../../../types/jsQuiz.types';
 import { getCategoryIcon, getCategoryLabel, getDifficultyColor, getDifficultyLabel } from './JSQuizGame.utils';
 import { useKeyboardShortcuts } from '../../JSTypoHunter/hooks/useKeyboardShortcuts';
-import { JSQuizProgress } from '../JSQuizProgress/JSQuizProgress.component';
+import JSQuizProgress from '../JSQuizProgress';
 import { useAnimations } from '../hooks/useAnimations';
+import { FaCode } from 'react-icons/fa';
 
 type JSQuizGameProps = {
   currentChallenge: QuizChallenge;
@@ -63,7 +64,7 @@ export const JSQuizGame = memo(({
     disabled: showExplanation
   });
 
-  const CategoryIcon = getCategoryIcon(currentChallenge.category);
+  const CategoryIcon = getCategoryIcon(currentChallenge.category) || FaCode;
 
   return (
     <motion.div

@@ -1,8 +1,8 @@
 import { memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { QuizChallenge, GameStats } from '../../../../../types/jsQuiz.types';
-import { JSQuizGame } from '../JSQuizGame/JSQuizGame.component';
-import { JSQuizSummary } from '../JSQuizSummary/JSQuizSummary.component';
+import JSQuizGame from '../JSQuizGame';
+import JSQuizSummary from '../JSQuizSummary';
 import { useAnimations } from '../hooks/useAnimations';
 
 type GameContentProps = {
