@@ -1,7 +1,7 @@
 # CodeLinesJS - Interaktywna Platforma do Nauki JavaScript
 
 # Test User
-### login: test@test.pl
+### login: test@test.test
 ### password: Test123!@#
 
 ## Landing page
