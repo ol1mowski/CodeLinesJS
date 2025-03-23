@@ -1,8 +1,9 @@
-import { memo } from 'react';
+import { memo, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FaClock, FaTrophy, FaCheck, FaRedo } from 'react-icons/fa';
 import { QuizChallenge } from '../../../../../types/jsQuiz.types';
 import { getCategoryIcon, getCategoryLabel } from '../JSQuizGame/JSQuizGame.utils';
+import { useUpdatePoints } from '../../../../../hooks/useUpdatePoints';
 
 type JSQuizSummaryProps = {
   score: number;
@@ -25,6 +26,12 @@ export const JSQuizSummary = memo(({
   categoryStats,
   onRestart
 }: JSQuizSummaryProps) => {
+  const { updatePoints } = useUpdatePoints();
+
+  useEffect(() => {
+    updatePoints(score);
+  }, [score, updatePoints]);
+
   const formatTime = (time: number): string => {
     const minutes = Math.floor(time / 60);
     const seconds = time % 60;
