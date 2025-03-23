@@ -1,9 +1,5 @@
 # CodeLinesJS - Interaktywna Platforma do Nauki JavaScript
 
-# Test User
-### login: test@test.test
-### password: Test123!@#
-
 ## Landing page
 
 ![{F953484C-28A7-4177-84FA-8380813F80B4}](https://github.com/user-attachments/assets/969a5ba6-0bc2-48e4-be1d-42e4b1bd7b00)
