@@ -54,6 +54,7 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-sm text-red-400 mt-1"
+          data-testid={`${props.name}-error`}
         >
           {error}
         </motion.p>
