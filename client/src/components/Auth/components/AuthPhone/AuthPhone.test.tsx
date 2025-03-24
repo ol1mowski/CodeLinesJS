@@ -2,7 +2,6 @@ import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { AuthPhone } from './AuthPhone.component';
 
-// Mock dla komponentu PhonePreview
 vi.mock('../../../UI/PhonePreview/PhonePreview.component', () => ({
   PhonePreview: ({ title }: { title: string }) => <div data-testid="phone-preview">{title}</div>
 }));

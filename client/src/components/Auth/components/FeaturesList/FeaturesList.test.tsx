@@ -2,7 +2,6 @@ import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { FeaturesList } from './FeaturesList.component';
 
-// Mock dla komponentu FeatureItem
 vi.mock('../FeatureItem/FeatureItem.component', () => ({
   FeatureItem: ({ text }: { text: string }) => <div data-testid="feature-item">{text}</div>
 }));

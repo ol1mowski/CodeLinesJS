@@ -6,21 +6,26 @@ type UseSEOProps = {
   gameName?: string;
 };
 
-export const useSEO = ({ 
-  title, 
+/**
+ * Hook zarządzający SEO dla gier
+ * @param title - Opcjonalny tytuł strony
+ * @param description - Opcjonalny opis strony
+ * @param gameName - Nazwa gry, domyślnie 'JSTypoHunter'
+ */
+export const useSEO = ({
+  title,
   description,
-  gameName = 'Regex Raider'
+  gameName = 'JSTypoHunter'
 }: UseSEOProps = {}) => {
   const pageTitle = useMemo(() => {
-    return title || `${gameName} | CodeLinesJS`;
+    if (title) return `${title} | CodeLinesJS`;
+    return `${gameName} - Gra programistyczna | CodeLinesJS`;
   }, [title, gameName]);
 
   const pageDescription = useMemo(() => {
-    return description || `${gameName} CodeLinesJS - dołącz do nas i rozwijaj swoje umiejętności w przyjaznym środowisku.`;
+    if (description) return description;
+    return `Zagraj w ${gameName} - interaktywną grę programistyczną, która pomoże Ci rozwinąć umiejętności kodowania.`;
   }, [description, gameName]);
 
-  return {
-    pageTitle,
-    pageDescription
-  };
+  return { pageTitle, pageDescription };
 }; 
