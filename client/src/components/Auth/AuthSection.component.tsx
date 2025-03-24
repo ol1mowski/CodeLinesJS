@@ -3,7 +3,7 @@ import { Container } from "../UI/Container/Container.component";
 import { AuthBackground } from "./AuthBackground/AuthBackground.component";
 import { AuthLeftSection } from './components/AuthLeftSection/AuthLeftSection.component';
 import { AuthFormSection } from './components/AuthFormSection/AuthFormSection.component';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 type AuthSectionProps = {
   children?: ReactNode;
