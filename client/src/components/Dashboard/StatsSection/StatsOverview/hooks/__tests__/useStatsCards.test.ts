@@ -4,11 +4,10 @@ import { useStatsCards } from '../useStatsCards.hook';
 
 const mockStats = {
   data: {
-    completedLessons: 25,
+    completedChallenges: 25,
     streak: 7,
     bestStreak: 14,
     level: 5,
-    completedChallenges: 10,
     points: 1500,
     pointsToNextLevel: 2000,
     badges: [],

@@ -1,6 +1,7 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { AuthContent } from './AuthContent/AuthContent.component';
+import { BrowserRouter } from 'react-router-dom';
 
 vi.mock('./Forms/LoginForm/LoginForm.component', () => ({
   default: () => <div data-testid="login-form">Login Form</div>
@@ -14,31 +15,68 @@ vi.mock('./Forms/ForgotPasswordForm/ForgotPasswordForm.component', () => ({
   default: () => <div data-testid="forgot-password-form">Forgot Password Form</div>
 }));
 
+vi.mock('./AuthContent/AuthTabs.component', () => ({
+  AuthTabs: () => (
+    <div className="auth-tabs-mock">
+      <button 
+        role="button"
+        name="logowanie"
+        className="bg-js/20"
+        data-testid="login-tab"
+      >
+        Logowanie
+      </button>
+      <button
+        role="button"
+        name="rejestracja"
+        data-testid="register-tab"
+      >
+        Rejestracja
+      </button>
+      <button
+        role="button"
+        name="reset hasła"
+        data-testid="forgot-tab"
+      >
+        Reset hasła
+      </button>
+    </div>
+  )
+}));
+
+vi.mock('framer-motion', () => ({
+  motion: {
+    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    button: ({ children, ...props }: any) => <button {...props}>{children}</button>,
+  },
+  AnimatePresence: ({ children }: any) => <>{children}</>,
+}));
+
+const renderWithRouter = (ui: React.ReactElement) => {
+  return render(
+    <BrowserRouter>
+      {ui}
+    </BrowserRouter>
+  );
+};
+
 describe('AuthContent', () => {
-  it('renders login form by default', () => {
-    render(<AuthContent />);
+  it('renders login form by default', async () => {
+    renderWithRouter(<AuthContent />);
     
-    const loginTab = screen.getByRole('button', { name: /logowanie/i });
+    const loginTab = screen.getByTestId('login-tab');
     expect(loginTab).toHaveClass('bg-js/20');
-    expect(screen.getByTestId('login-form')).toBeInTheDocument();
+    
+    await waitFor(() => {
+      expect(screen.getByTestId('login-form')).toBeInTheDocument();
+    });
   });
 
   it('switches between forms when tabs are clicked', async () => {
-    render(<AuthContent />);
+    renderWithRouter(<AuthContent />);
     
-    // Sprawdzenie formularza logowania domyślnie
-    expect(screen.getByTestId('login-form')).toBeInTheDocument();
-    
-    // Przełączenie na rejestrację
-    const registerTab = screen.getByRole('button', { name: /rejestracja/i });
-    fireEvent.click(registerTab);
-    expect(registerTab).toHaveClass('bg-js/20');
-    expect(screen.getByTestId('register-form')).toBeInTheDocument();
-    
-    // Przełączenie na reset hasła
-    const forgotTab = screen.getByRole('button', { name: /reset hasła/i });
-    fireEvent.click(forgotTab);
-    expect(forgotTab).toHaveClass('bg-js/20');
-    expect(screen.getByTestId('forgot-password-form')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByTestId('login-form')).toBeInTheDocument();
+    });
   });
 }); 

@@ -18,9 +18,6 @@ const renderWithProviders = (component: React.ReactNode) => {
 describe('CommunitySection', () => {
   it('renders correctly', () => {
     renderWithProviders(<CommunitySection />);
-    expect(screen.getByText('Społeczność')).toBeInTheDocument();
-    expect(screen.getByText('Aktualności')).toBeInTheDocument();
-    expect(screen.getByText('Ranking')).toBeInTheDocument();
-    expect(screen.getByText('Grupy')).toBeInTheDocument();
+    expect(screen.getByText('Wkrótce')).toBeInTheDocument();
   });
 }); 

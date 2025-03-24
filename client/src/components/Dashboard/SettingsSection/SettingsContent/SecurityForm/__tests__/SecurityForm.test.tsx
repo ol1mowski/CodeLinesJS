@@ -89,7 +89,7 @@ describe('SecurityForm', () => {
       </MemoryRouter>
     );
     
-    const form = screen.getByRole('button', { name: 'Zmień hasło' });
+    const form = screen.getByRole('button', { name: 'Zmienianie hasła' });
     fireEvent.click(form);
 
     await waitFor(() => {
