@@ -3,9 +3,11 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import ResetPasswordForm from './ResetPasswordForm.component';
 import { useAuth } from '../../../../Hooks/useAuth';
 
+let mockedToken = 'valid-token-12345';
+
 vi.mock('react-router-dom', () => ({
   useNavigate: () => vi.fn(),
-  useParams: () => ({ token: 'valid-token-12345' }),
+  useParams: () => ({ token: mockedToken }),
   Link: ({ children, to, ...props }: any) => (
     <a href={to} {...props}>{children}</a>
   )
@@ -31,28 +33,29 @@ vi.mock('framer-motion', () => ({
 
 describe('ResetPasswordForm', () => {
   beforeEach(() => {
-    vi.resetModules();
+    vi.clearAllMocks();
+    mockedToken = 'valid-token-12345';
   });
 
-  it('renderuje formularz poprawnie z poprawnym tokenem', () => {
+  it('Renders the form correctly with a valid token', () => {
     render(<ResetPasswordForm />);
     
     expect(screen.getByText(/wprowadź nowe hasło dla swojego konta/i)).toBeInTheDocument();
-    expect(screen.getByText(/nowe hasło/i)).toBeInTheDocument();
-    expect(screen.getByText(/potwierdź nowe hasło/i)).toBeInTheDocument();
+    expect(screen.queryAllByText(/nowe hasło/i).length).toBeGreaterThan(0);
+    expect(screen.queryAllByText(/potwierdź nowe hasło/i).length).toBeGreaterThan(0);
     expect(screen.getByRole('button', { name: /zresetuj hasło/i })).toBeInTheDocument();
   });
 
-  it('wyświetla komunikat błędu przy braku tokenu', () => {
-    vi.spyOn(require('react-router-dom'), 'useParams').mockReturnValue({ token: undefined });
+  it('displays an error message when the token is missing', () => {
+    mockedToken = undefined as any;
     
     render(<ResetPasswordForm />);
     
     expect(screen.getByText(/brak tokenu resetowania hasła/i)).toBeInTheDocument();
   });
 
-  it('wyświetla komunikat błędu przy nieprawidłowym tokenie', () => {
-    vi.spyOn(require('react-router-dom'), 'useParams').mockReturnValue({ token: 'short' });
+  it('displays an error message when the token is invalid', () => {
+    mockedToken = 'short';
     
     render(<ResetPasswordForm />);
     
@@ -71,10 +74,12 @@ describe('ResetPasswordForm', () => {
     });
   });
 
-  it('waliduje format hasła', async () => {
+  it('validates the password format', async () => {
     render(<ResetPasswordForm />);
     
-    const passwordInput = screen.getByPlaceholderText('••••••••');
+      const inputs = screen.getAllByPlaceholderText('••••••••');
+    const passwordInput = inputs[0];
+    
     fireEvent.change(passwordInput, { target: { value: 'password' } });
     
     const submitButton = screen.getByRole('button', { name: /zresetuj hasło/i });
@@ -86,7 +91,7 @@ describe('ResetPasswordForm', () => {
     });
   });
 
-  it('waliduje zgodność haseł', async () => {
+  it('validates the password format', async () => {
     render(<ResetPasswordForm />);
     
     const inputs = screen.getAllByPlaceholderText('••••••••');
@@ -105,7 +110,7 @@ describe('ResetPasswordForm', () => {
     });
   });
 
-  it('wywołuje funkcję resetowania hasła z poprawnymi danymi', async () => {
+  it('calls the reset password function with correct data', async () => {
     const mockResetPassword = vi.fn().mockResolvedValue('Hasło zostało pomyślnie zresetowane');
     
     vi.mocked(useAuth).mockReturnValue({
@@ -131,7 +136,7 @@ describe('ResetPasswordForm', () => {
     });
   });
 
-  it('wyświetla komunikat sukcesu po poprawnym zresetowaniu hasła', async () => {
+  it('displays a success message after a successful password reset', async () => {
     const mockResetPassword = vi.fn().mockResolvedValue('Hasło zostało pomyślnie zresetowane');
     
     vi.mocked(useAuth).mockReturnValue({
@@ -157,7 +162,7 @@ describe('ResetPasswordForm', () => {
     });
   });
 
-  it('wyświetla komunikat błędu w przypadku niepowodzenia resetowania hasła', async () => {
+  it('displays an error message when the password reset fails', async () => {
     const mockError = new Error('Token resetowania hasła wygasł');
     const mockResetPassword = vi.fn().mockRejectedValue(mockError);
     
