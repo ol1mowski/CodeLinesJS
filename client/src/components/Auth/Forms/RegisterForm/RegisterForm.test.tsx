@@ -29,20 +29,22 @@ vi.mock('framer-motion', () => ({
 }));
 
 describe('RegisterForm', () => {
-  it('renderuje formularz poprawnie', () => {
+  it('Renders the form correctly', () => {
     render(<RegisterForm />);
-    
+
     expect(screen.getByPlaceholderText('jankowalski')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('twoj@email.com')).toBeInTheDocument();
-    expect(screen.getByText(/hasło/i)).toBeInTheDocument();
-    expect(screen.getByText(/potwierdź hasło/i)).toBeInTheDocument();
+    const hasloLabels = screen.queryAllByText(/hasło/i);
+    expect(hasloLabels.length).toBeGreaterThan(0);
+    const potwierdzHasloLabel = screen.queryAllByText(/potwierdź hasło/i);
+    expect(potwierdzHasloLabel.length).toBeGreaterThan(0);
     expect(screen.getByRole('checkbox')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /zarejestruj/i })).toBeInTheDocument();
   });
 
-  it('waliduje wymagane pola', async () => {
+  it('validates required fields', async () => {
     render(<RegisterForm />);
-    
+
     const submitButton = screen.getByRole('button', { name: /zarejestruj/i });
     fireEvent.click(submitButton);
 
@@ -52,12 +54,12 @@ describe('RegisterForm', () => {
     });
   });
 
-  it('waliduje format nazwy użytkownika', async () => {
+  it('validates the username format', async () => {
     render(<RegisterForm />);
-    
+
     const usernameInput = screen.getByPlaceholderText('jankowalski');
     fireEvent.change(usernameInput, { target: { value: 'użytkownik@' } });
-    
+
     const submitButton = screen.getByRole('button', { name: /zarejestruj/i });
     fireEvent.click(submitButton);
 
@@ -67,14 +69,14 @@ describe('RegisterForm', () => {
     });
   });
 
-  it('waliduje format hasła', async () => {
+  it('validates the password format', async () => {
     render(<RegisterForm />);
-    
+
     const passwordInputs = screen.getAllByPlaceholderText('••••••••');
     const passwordInput = passwordInputs[0];
-    
+
     fireEvent.change(passwordInput, { target: { value: 'password' } });
-    
+
     const submitButton = screen.getByRole('button', { name: /zarejestruj/i });
     fireEvent.click(submitButton);
 
@@ -84,16 +86,16 @@ describe('RegisterForm', () => {
     });
   });
 
-  it('waliduje zgodność haseł', async () => {
+  it('validates the password format', async () => {
     render(<RegisterForm />);
-    
+
     const passwordInputs = screen.getAllByPlaceholderText('••••••••');
     const passwordInput = passwordInputs[0];
     const confirmPasswordInput = passwordInputs[1];
-    
+
     fireEvent.change(passwordInput, { target: { value: 'Password123' } });
     fireEvent.change(confirmPasswordInput, { target: { value: 'Password124' } });
-    
+
     const submitButton = screen.getByRole('button', { name: /zarejestruj/i });
     fireEvent.click(submitButton);
 
@@ -103,33 +105,33 @@ describe('RegisterForm', () => {
     });
   });
 
-  it('wywołuje funkcję rejestracji z poprawnymi danymi', async () => {
+  it('calls the registration function with correct data', async () => {
     const mockRegister = vi.fn().mockResolvedValue(undefined);
-    
+
     vi.mocked(useAuth).mockReturnValue({
       register: mockRegister,
       loading: false,
       error: null
     } as any);
-    
+
     render(<RegisterForm />);
-    
+
     const usernameInput = screen.getByPlaceholderText('jankowalski');
     fireEvent.change(usernameInput, { target: { value: 'testuser' } });
-    
+
     const emailInput = screen.getByPlaceholderText('twoj@email.com');
     fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
-    
+
     const passwordInputs = screen.getAllByPlaceholderText('••••••••');
     const passwordInput = passwordInputs[0];
     const confirmPasswordInput = passwordInputs[1];
-    
+
     fireEvent.change(passwordInput, { target: { value: 'Password123' } });
     fireEvent.change(confirmPasswordInput, { target: { value: 'Password123' } });
-    
+
     const privacyCheckbox = screen.getByRole('checkbox');
     fireEvent.click(privacyCheckbox);
-    
+
     const submitButton = screen.getByRole('button', { name: /zarejestruj/i });
     fireEvent.click(submitButton);
 
@@ -138,34 +140,34 @@ describe('RegisterForm', () => {
     });
   });
 
-  it('wyświetla komunikat błędu w przypadku niepowodzenia rejestracji', async () => {
+  it('displays an error message when the registration fails', async () => {
     const mockError = new Error('Użytkownik o podanym adresie email już istnieje');
     const mockRegister = vi.fn().mockRejectedValue(mockError);
-    
+
     vi.mocked(useAuth).mockReturnValue({
       register: mockRegister,
       loading: false,
       error: null
     } as any);
-    
+
     render(<RegisterForm />);
-    
+
     const usernameInput = screen.getByPlaceholderText('jankowalski');
     fireEvent.change(usernameInput, { target: { value: 'testuser' } });
-    
+
     const emailInput = screen.getByPlaceholderText('twoj@email.com');
     fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
-    
+
     const passwordInputs = screen.getAllByPlaceholderText('••••••••');
     const passwordInput = passwordInputs[0];
     const confirmPasswordInput = passwordInputs[1];
-    
+
     fireEvent.change(passwordInput, { target: { value: 'Password123' } });
     fireEvent.change(confirmPasswordInput, { target: { value: 'Password123' } });
-    
+
     const privacyCheckbox = screen.getByRole('checkbox');
     fireEvent.click(privacyCheckbox);
-    
+
     const submitButton = screen.getByRole('button', { name: /zarejestruj/i });
     fireEvent.click(submitButton);
 
