@@ -10,6 +10,7 @@ import { defaultCode } from "./constants";
 import { useFileOperations } from "./hooks/useFileOperations.hook";
 import { CodeHistory } from "./components/CodeHistory.component";
 import { Helmet } from "react-helmet";
+
 export const CodeEditor = memo(() => {
   const { output, isExecuting, executeCode, clearConsole } = useCodeExecution();
   const { history, addToHistory, clearHistory } = useCodeHistory();
@@ -36,6 +37,7 @@ export const CodeEditor = memo(() => {
         <h1 className="text-3xl font-bold font-space text-js">Edytor Kodu JavaScript</h1>
         <div className="flex items-center gap-4">
           <button
+            data-testid="save-code-btn"
             onClick={() => saveToFile(code)}
             disabled={!isEditorReady}
             className="px-4 py-2 text-sm text-js border border-js/20 rounded hover:bg-js/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -43,7 +45,12 @@ export const CodeEditor = memo(() => {
             <FaDownload className="w-4 h-4 mr-2 inline-block" />
             Zapisz do Pliku
           </button>
-          <button onClick={() => setShowHistory(prev => !prev)} className="p-2 text-gray-400 hover:text-js transition-colors" title="Historia kodu">
+          <button 
+            data-testid="history-btn"
+            onClick={() => setShowHistory(prev => !prev)} 
+            className="p-2 text-gray-400 hover:text-js transition-colors" 
+            title="Historia kodu"
+          >
             <FaHistory className="w-5 h-5" />
           </button>
           {showHistory && (

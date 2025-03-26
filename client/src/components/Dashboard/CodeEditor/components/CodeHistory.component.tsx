@@ -9,7 +9,7 @@ type CodeHistoryProps = {
 };
 
 export const CodeHistory = memo(({ history, onSelect, onClear }: CodeHistoryProps) => (
-  <div className="absolute top-full right-0 mt-2 w-64 bg-dark/95 rounded-lg border border-js/10 shadow-xl">
+  <div data-testid="history-panel" className="absolute top-full right-0 mt-2 w-64 bg-dark/95 rounded-lg border border-js/10 shadow-xl">
     <div className="flex items-center justify-between p-3 border-b border-js/10">
       <div className="flex items-center gap-2 text-js">
         <FaHistory className="w-4 h-4" />
@@ -17,6 +17,7 @@ export const CodeHistory = memo(({ history, onSelect, onClear }: CodeHistoryProp
       </div>
       {history.length > 0 && (
         <button
+          data-testid="clear-history-btn"
           onClick={onClear}
           className="p-1.5 text-gray-400 hover:text-js transition-colors"
           title="Wyczyść historię"
@@ -34,6 +35,7 @@ export const CodeHistory = memo(({ history, onSelect, onClear }: CodeHistoryProp
         history.map((entry, index) => (
           <motion.button
             key={entry.timestamp}
+            data-testid={`history-item-${index}`}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05 }}

@@ -15,6 +15,7 @@ export const ConsoleOutput = memo(({ output, onClear, isExecuting }: ConsoleOutp
         {isExecuting ? 'Wykonywanie...' : 'Gotowe'}
       </span>
       <button
+        data-testid="clear-console-btn"
         onClick={onClear}
         className="p-1.5 text-gray-400 hover:text-js transition-colors"
         title="Wyczyść konsolę"
@@ -22,7 +23,7 @@ export const ConsoleOutput = memo(({ output, onClear, isExecuting }: ConsoleOutp
         <FaTrash className="w-4 h-4" />
       </button>
     </div>
-    <div className="flex-1 p-4 font-mono text-sm overflow-auto">
+    <div data-testid="console-output" className="flex-1 p-4 font-mono text-sm overflow-auto">
       {output.map((log, index) => (
         <motion.div
           key={index}
