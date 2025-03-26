@@ -26,7 +26,6 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-COPY --from=client-build /app/client/dist ./client/dist
 COPY --from=server-build /app/server ./server
 
 ENV NODE_ENV=production

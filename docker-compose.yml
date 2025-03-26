@@ -30,18 +30,6 @@ services:
     networks:
       - codelinesjs-network
 
-  client:
-    build:
-      context: .
-      dockerfile: Dockerfile.client
-    restart: always
-    ports:
-      - "3000:3000"
-    depends_on:
-      - server
-    networks:
-      - codelinesjs-network
-
 networks:
   codelinesjs-network:
     driver: bridge

@@ -31,40 +31,6 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  client:
-    image: ${DOCKERHUB_USERNAME}/codelinesjs-client:main
-    restart: always
-    depends_on:
-      - server
-    networks:
-      - codelinesjs-network
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-
-  nginx:
-    image: nginx:alpine
-    restart: always
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d
-      - ./nginx/ssl:/etc/nginx/ssl
-      - ./nginx/letsencrypt:/etc/letsencrypt
-    depends_on:
-      - client
-      - server
-    networks:
-      - codelinesjs-network
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-
 networks:
   codelinesjs-network:
     driver: bridge
