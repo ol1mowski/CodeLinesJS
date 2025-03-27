@@ -8,7 +8,6 @@ export const authMiddleware = async (req, res, next) => {
     let token;
     const authHeader = req.headers.authorization;
 
-    // Ograniczenie metod uzyskiwania tokenu dla większego bezpieczeństwa
     if (authHeader && authHeader.startsWith('Bearer ')) {
       token = authHeader.split(' ')[1];
     } else if (req.cookies && req.cookies.jwt) {
@@ -19,11 +18,10 @@ export const authMiddleware = async (req, res, next) => {
       throw new AuthError('Brak tokenu autoryzacji. Zaloguj się, aby uzyskać dostęp.');
     }
 
-    // Weryfikacja tokenu z jawnym określeniem algorytmu
     let decoded;
     try {
       decoded = jwt.verify(token, process.env.JWT_SECRET, {
-        algorithms: ['HS256'] // Akceptujemy tylko HS256
+        algorithms: ['HS256']
       });
     } catch (error) {
       if (error.name === 'JsonWebTokenError') {
@@ -35,18 +33,15 @@ export const authMiddleware = async (req, res, next) => {
       throw error;
     }
 
-    // Sprawdzenie czy użytkownik istnieje
     const user = await User.findById(decoded.userId).select('+passwordChangedAt');
     if (!user) {
       throw new AuthError('Użytkownik powiązany z tym tokenem już nie istnieje.');
     }
 
-    // Sprawdzenie czy hasło nie zostało zmienione po wygenerowaniu tokenu
     if (user.changedPasswordAfter && user.changedPasswordAfter(decoded.iat)) {
       throw new AuthError('Hasło zostało zmienione. Zaloguj się ponownie.');
     }
 
-    // Zapisujemy kompletne informacje o użytkowniku (ale bez wrażliwych danych)
     req.user = {
       userId: decoded.userId,
       email: decoded.email,
@@ -55,7 +50,6 @@ export const authMiddleware = async (req, res, next) => {
       accountType: user.accountType
     };
 
-    // Aktualizacja statusu aktywności
     await User.findByIdAndUpdate(decoded.userId, {
       $set: {
         isActive: true,
@@ -63,7 +57,6 @@ export const authMiddleware = async (req, res, next) => {
       }
     });
 
-    // Monitorowanie wygaśnięcia sesji
     const timeToExpiry = decoded.exp * 1000 - Date.now();
     if (timeToExpiry > 0) {
       setTimeout(async () => {
@@ -83,9 +76,6 @@ export const authMiddleware = async (req, res, next) => {
   }
 };
 
-/**
- * Middleware ograniczający dostęp do określonych ról
- */
 export const restrictTo = (...roles) => {
   return (req, res, next) => {
     if (!req.user) {

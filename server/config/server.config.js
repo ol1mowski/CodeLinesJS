@@ -5,6 +5,7 @@ import rateLimit from "express-rate-limit";
 import mongoSanitize from "express-mongo-sanitize";
 import compression from "compression";
 import cookieParser from "cookie-parser";
+import hpp from "hpp";
 import config from "./config.js";
 import { responseEnhancer } from "../utils/response.js";
 import { cacheMiddleware } from "../utils/cache.js";
@@ -15,6 +16,8 @@ export const configureServer = (app) => {
   
   app.use(express.json({ limit: config.limits.jsonBodySize }));
   app.use(express.urlencoded({ extended: true, limit: config.limits.jsonBodySize }));
+  
+  app.use(hpp());
   
   app.use((req, res, next) => {
     const startTime = Date.now();
@@ -30,12 +33,14 @@ export const configureServer = (app) => {
   });
   
   app.use(cors({
-    origin: config.cors.origin,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-    credentials: false,
-    preflightContinue: false,
-    optionsSuccessStatus: 204
+    origin: config.cors.origin === '*' ? true : config.cors.origin.split(','),
+    methods: config.cors.methods,
+    allowedHeaders: config.cors.allowedHeaders,
+    exposedHeaders: config.cors.exposedHeaders,
+    credentials: config.cors.credentials,
+    maxAge: config.cors.maxAge,
+    preflightContinue: config.cors.preflightContinue,
+    optionsSuccessStatus: config.cors.optionsSuccessStatus
   }));
   
   app.use((req, res, next) => {
@@ -66,6 +71,7 @@ export const configureServer = (app) => {
         workerSrc: ["'self'", "blob:", "https://*.jsdelivr.net"],
       }
     },
+    referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
     permissionsPolicy: {
       features: {
         identityCredentialsGet: ["'self'", "https://accounts.google.com"]
@@ -73,10 +79,19 @@ export const configureServer = (app) => {
     },
     crossOriginEmbedderPolicy: false,
     crossOriginResourcePolicy: { policy: "cross-origin" },
-    crossOriginOpenerPolicy: false
+    crossOriginOpenerPolicy: false,
+    noSniff: true,
+    xssFilter: true,
+    hsts: {
+      maxAge: 15552000,
+      includeSubDomains: true,
+      preload: true
+    },
+    frameguard: {
+      action: 'deny'
+    }
   }));
   
-  // Dodaj nagłówki CORS dla fontów
   app.use((req, res, next) => {
     if (req.url.includes('fonts.gstatic.com') || req.url.match(/\.(woff|woff2|ttf|eot)$/)) {
       res.setHeader('Access-Control-Allow-Origin', '*');
@@ -86,14 +101,30 @@ export const configureServer = (app) => {
   
   app.use(compression());
   
-  const limiter = rateLimit({
-    windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000,
-    max: parseInt(process.env.RATE_LIMIT_MAX) || 100,
-    standardHeaders: true,
-    legacyHeaders: false,
-    message: 'Zbyt wiele zapytań z tego adresu IP, spróbuj ponownie za 15 minut'
+  const apiLimiter = rateLimit({
+    windowMs: config.rateLimit.windowMs,
+    max: config.rateLimit.max,
+    standardHeaders: config.rateLimit.standardHeaders,
+    legacyHeaders: config.rateLimit.legacyHeaders,
+    message: config.rateLimit.message,
+    skipSuccessfulRequests: false,
+    keyGenerator: (req) => {
+      return req.ip + '-' + (req.headers['user-agent'] || '');
+    }
   });
-  app.use('/api/', limiter);
+  
+  app.use('/api/', apiLimiter);
+  
+  const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 10,
+    message: 'Zbyt wiele prób logowania. Spróbuj ponownie za 15 minut.',
+    standardHeaders: true
+  });
+  
+  app.use('/api/auth/login', authLimiter);
+  app.use('/api/auth/register', authLimiter);
+  app.use('/api/auth/forgot-password', authLimiter);
   
   app.use(cookieParser());
   app.use(mongoSanitize());

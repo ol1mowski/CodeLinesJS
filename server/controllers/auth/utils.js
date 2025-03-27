@@ -3,17 +3,9 @@ import crypto from 'crypto';
 import { transporter, createEmailTemplate } from '../../config/mailer.js';
 import config from '../../config/config.js';
 
-/**
- * Generuje bezpieczny token JWT z dodatkowymi polami bezpieczeństwa
- * @param {Object} user - Obiekt użytkownika
- * @param {string} expiresIn - Czas wygaśnięcia tokenu
- * @returns {string} Token JWT
- */
 export const generateToken = (user, expiresIn = config.jwt.expiresIn) => {
-  // Dodanie unikalnego identyfikatora tokenu (jti)
   const tokenId = crypto.randomBytes(16).toString('hex');
   
-  // Dodatkowe pola bezpieczeństwa w tokenie
   return jwt.sign(
     {
       userId: user._id,
@@ -21,28 +13,25 @@ export const generateToken = (user, expiresIn = config.jwt.expiresIn) => {
       username: user.username,
       accountType: user.accountType,
       role: user.role || 'user',
-      iat: Math.floor(Date.now() / 1000), // czas wygenerowania tokenu
-      jti: tokenId, // unikalny identyfikator tokenu
+      iat: Math.floor(Date.now() / 1000),
+      jti: tokenId,
     },
     process.env.JWT_SECRET,
     { 
       expiresIn,
-      algorithm: 'HS256' // jawnie określamy algorytm
+      algorithm: 'HS256'
     }
   );
 };
-
-// Generuj token resetu hasła
+  
 export const generatePasswordResetToken = () => {
   const resetToken = crypto.randomBytes(32).toString('hex');
   
-  // Przechowujemy hash tokenu w bazie
   const hashedToken = crypto
     .createHash('sha256')
     .update(resetToken)
     .digest('hex');
     
-  // Czas wygaśnięcia tokenu: 1 godzina
   const expiresIn = Date.now() + config.security.passwordResetTokenExpiresIn;
   
   return { resetToken, hashedToken, expiresIn };
