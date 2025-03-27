@@ -57,40 +57,50 @@ export const configureServer = (app) => {
     next();
   });
   
-  app.use(helmet({
+  const helmetConfig = {
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://accounts.google.com", "https://*.gstatic.com", "https://cdn.jsdelivr.net", "https://*.jsdelivr.net"],
-        scriptSrcElem: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://accounts.google.com", "https://*.gstatic.com", "https://cdn.jsdelivr.net", "https://*.jsdelivr.net"],
-        connectSrc: ["'self'", "https://accounts.google.com", "https://*.googleapis.com", "https://codelinesjs.pl", "https://www.codelinesjs.pl", "http://localhost:*", "https://fonts.gstatic.com", "https://*.jsdelivr.net"],
-        frameSrc: ["'self'", "https://accounts.google.com"],
-        imgSrc: ["'self'", "data:", "https://*.googleusercontent.com", "https://*.gstatic.com", "https://*.jsdelivr.net", "https://res.cloudinary.com"],
-        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://accounts.google.com", "https://cdn.jsdelivr.net", "https://*.jsdelivr.net"],
-        fontSrc: ["'self'", "https://fonts.gstatic.com", "https://*.jsdelivr.net", "data:"],
-        workerSrc: ["'self'", "blob:", "https://*.jsdelivr.net"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "https://www.google-analytics.com", "https://www.googletagmanager.com", "https://cdn.jsdelivr.net"],
+        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdn.jsdelivr.net"],
+        imgSrc: ["'self'", "data:", "https://www.google-analytics.com", "https://www.googletagmanager.com"],
+        connectSrc: ["'self'", "https://www.google-analytics.com", "https://www.googletagmanager.com"],
+        fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdn.jsdelivr.net"],
+        objectSrc: ["'none'"],
+        frameAncestors: ["'none'"],
+        formAction: ["'self'"],
+        baseUri: ["'self'"],
+        manifestSrc: ["'self'"],
+        upgradeInsecureRequests: [],
+        workerSrc: ["'self'", "blob:"]
       }
     },
-    referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
-    permissionsPolicy: {
-      features: {
-        identityCredentialsGet: ["'self'", "https://accounts.google.com"]
-      }
-    },
-    crossOriginEmbedderPolicy: false,
-    crossOriginResourcePolicy: { policy: "cross-origin" },
-    crossOriginOpenerPolicy: false,
-    noSniff: true,
     xssFilter: true,
+    frameguard: {
+      action: 'deny'
+    },
     hsts: {
-      maxAge: 15552000,
+      maxAge: 31536000,
       includeSubDomains: true,
       preload: true
     },
-    frameguard: {
-      action: 'deny'
+    referrerPolicy: {
+      policy: 'strict-origin-when-cross-origin'
+    },
+    permissionsPolicy: {
+      features: {
+        geolocation: ["'self'"],
+        camera: ["'none'"],
+        microphone: ["'none'"],
+        speaker: ["'none'"],
+        fullscreen: ["'self'"]
+      }
+    },
+    noCache: process.env.NODE_ENV === 'production' ? false : true,
+    dnsPrefetchControl: {
+      allow: false
     }
-  }));
+  };
   
   app.use((req, res, next) => {
     if (req.url.includes('fonts.gstatic.com') || req.url.match(/\.(woff|woff2|ttf|eot)$/)) {
@@ -102,29 +112,29 @@ export const configureServer = (app) => {
   app.use(compression());
   
   const apiLimiter = rateLimit({
-    windowMs: config.rateLimit.windowMs,
-    max: config.rateLimit.max,
-    standardHeaders: config.rateLimit.standardHeaders,
-    legacyHeaders: config.rateLimit.legacyHeaders,
-    message: config.rateLimit.message,
-    skipSuccessfulRequests: false,
-    keyGenerator: (req) => {
-      return req.ip + '-' + (req.headers['user-agent'] || '');
+    windowMs: 15 * 60 * 1000,
+    max: 200,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: {
+      status: 'error',
+      message: 'Zbyt wiele żądań, spróbuj ponownie później',
+    }
+  });
+  
+  const authLimiter = rateLimit({
+    windowMs: 10 * 60 * 1000,
+    max: 20,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: {
+      status: 'error',
+      message: 'Zbyt wiele prób logowania, spróbuj ponownie później',
     }
   });
   
   app.use('/api/', apiLimiter);
-  
-  const authLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 10,
-    message: 'Zbyt wiele prób logowania. Spróbuj ponownie za 15 minut.',
-    standardHeaders: true
-  });
-  
-  app.use('/api/auth/login', authLimiter);
-  app.use('/api/auth/register', authLimiter);
-  app.use('/api/auth/forgot-password', authLimiter);
+  app.use('/api/auth', authLimiter);
   
   app.use(cookieParser());
   app.use(mongoSanitize());
@@ -143,6 +153,8 @@ export const configureServer = (app) => {
   app.use('/api/learning-paths', cacheMiddleware(600));
   app.use('/api/lessons', cacheMiddleware(600));
   app.use('/api/resources', cacheMiddleware(600));
+  
+  app.use(helmet(helmetConfig));
   
   return app;
 }; 

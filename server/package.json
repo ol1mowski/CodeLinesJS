@@ -42,6 +42,7 @@
     "mongoose": "^8.9.3",
     "node-fetch": "^3.3.2",
     "nodemailer": "^6.9.16",
+    "sanitize-html": "^2.15.0",
     "xss-clean": "^0.1.4"
   },
   "devDependencies": {
