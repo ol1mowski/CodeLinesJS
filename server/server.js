@@ -4,7 +4,7 @@ import { connectDB } from "./config/db.config.js";
 import { configureRoutes } from "./routes/index.js";
 import { configureGoogleSignIn } from "./middleware/google.middleware.js";
 import { configureStaticFiles } from "./middleware/static.middleware.js";
-import { errorHandler } from "./middleware/error.middleware.js";
+import errorHandler from "./middleware/error.middleware.js";
 
 const app = express();
 
