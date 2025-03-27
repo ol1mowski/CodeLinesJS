@@ -6,6 +6,8 @@ resources:
   - server.yaml
   - ingress.yaml
   - secrets.yaml
+  - network-policy.yaml
+  - pdb.yaml
 
 commonLabels:
   app: codelinesjs

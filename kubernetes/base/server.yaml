@@ -18,9 +18,21 @@ spec:
         app: codelinesjs
         component: server
     spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       containers:
       - name: server
         image: ol1mowski187/codelinesjs-server:latest
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 1000
+          capabilities:
+            drop:
+              - ALL
         ports:
         - containerPort: 5001
         env:
@@ -62,6 +74,12 @@ spec:
             port: 5001
           initialDelaySeconds: 15
           periodSeconds: 20
+        volumeMounts:
+        - name: tmp-volume
+          mountPath: /tmp
+      volumes:
+      - name: tmp-volume
+        emptyDir: {}
 ---
 apiVersion: v1
 kind: Service

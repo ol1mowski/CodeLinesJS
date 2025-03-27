@@ -17,9 +17,8 @@ patches:
 secretGenerator:
   - name: server-secret
     behavior: merge
-    literals:
-      - jwt-secret=
-      - mongodb-uri=
+    envs:
+    - .env 
 
 configMapGenerator:
   - name: server-config
