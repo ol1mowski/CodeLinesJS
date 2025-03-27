@@ -3,11 +3,11 @@ kind: Kustomization
 
 resources:
   - namespace.yaml
-  - mongodb.yaml
   - server.yaml
   - ingress.yaml
-  - cert-manager.yaml
+  - secrets.yaml
 
 commonLabels:
-  app.kubernetes.io/part-of: codelinesjs
-  app.kubernetes.io/managed-by: kustomize 
+  app: codelinesjs
+
+namespace: codelinesjs 

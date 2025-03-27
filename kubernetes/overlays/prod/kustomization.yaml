@@ -1,22 +1,26 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: codelinesjs
-
 resources:
   - ../../base
 
-patchesStrategicMerge:
-  - resources-patch.yaml
-  - server-config-patch.yaml
+namespace: codelinesjs
 
 commonLabels:
-  environment: production
+  environment: prod
 
-images:
-  - name: ${DOCKER_REGISTRY}/codelinesjs-server
-    newName: ${DOCKER_REGISTRY}/codelinesjs-server
-    newTag: prod
-  - name: ${DOCKER_REGISTRY}/codelinesjs-client
-    newName: ${DOCKER_REGISTRY}/codelinesjs-client
-    newTag: prod 
+patches:
+  - path: patches/server-patch.yaml
+
+secretGenerator:
+  - name: server-secret
+    behavior: merge
+    envs:
+    - .server.env
+
+configMapGenerator:
+  - name: server-config
+    behavior: merge
+    literals:
+      - NODE_ENV=production
+      - CORS_ORIGIN=https://codelinesjs.example.com 

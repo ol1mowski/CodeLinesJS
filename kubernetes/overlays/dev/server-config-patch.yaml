@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: server-config
-data:
-  NODE_ENV: "development"
-  FRONTEND_URL: "https://dev.codelinesjs.pl"
-  RATE_LIMIT_MAX: "10000"
-  RATE_LIMIT_WINDOW_MS: "900000" 

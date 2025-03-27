@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server
+spec:
+  replicas: 3
+  template:
+    spec:
+      containers:
+      - name: server
+        env:
+        - name: NODE_ENV
+          value: production
+        image: ol1mowski187/codelinesjs-server:latest
+        resources:
+          requests:
+            cpu: 300m
+            memory: 512Mi
+          limits:
+            cpu: 700m
+            memory: 1Gi 

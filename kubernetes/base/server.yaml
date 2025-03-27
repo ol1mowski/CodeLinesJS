@@ -1,99 +1,96 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: server-config
-  namespace: codelinesjs
-data:
-  NODE_ENV: "production"
-  PORT: "5001"
-  JWT_EXPIRES_IN: "24h"
-  JWT_COOKIE_EXPIRES_IN: "86400000"
-  RATE_LIMIT_MAX: "1000"
-  RATE_LIMIT_WINDOW_MS: "900000"
-  FRONTEND_URL: "https://codelinesjs.pl"
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: server-secrets
-  namespace: codelinesjs
-type: Opaque
-data:
-  JWT_SECRET: ""
-  EMAIL_HOST: ""
-  EMAIL_PORT: ""
-  EMAIL_USER: ""
-  EMAIL_PASSWORD: ""
-  EMAIL_FROM: ""
-  GEMINI_API_KEY: ""
-  HUGGING_FACE_API_KEY: ""
-  VITE_GOOGLE_CLIENT_ID: ""
-  SENDGRID_API_KEY: ""
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: server
   namespace: codelinesjs
+  labels:
+    app: codelinesjs
+    component: server
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      app: server
+      app: codelinesjs
+      component: server
   template:
     metadata:
       labels:
-        app: server
+        app: codelinesjs
+        component: server
     spec:
       containers:
       - name: server
-        image: ${DOCKER_REGISTRY}/codelinesjs-server:latest
+        image: ol1mowski187/codelinesjs-server:latest
         ports:
         - containerPort: 5001
-        envFrom:
-        - configMapRef:
-            name: server-config
-        - secretRef:
-            name: server-secrets
         env:
+        - name: NODE_ENV
+          value: production
+        - name: PORT
+          value: "5001"
         - name: MONGODB_URI
-          value: "mongodb://$(MONGO_INITDB_ROOT_USERNAME):$(MONGO_INITDB_ROOT_PASSWORD)@mongodb:27017/codelinesjs?authSource=admin"
+          valueFrom:
+            secretKeyRef:
+              name: server-secret
+              key: mongodb-uri
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: server-secret
+              key: jwt-secret
+        - name: CORS_ORIGIN
+          valueFrom:
+            configMapKeyRef:
+              name: server-config
+              key: CORS_ORIGIN
         resources:
           requests:
-            memory: "256Mi"
-            cpu: "200m"
+            cpu: 100m
+            memory: 128Mi
           limits:
-            memory: "512Mi" 
-            cpu: "500m"
+            cpu: 300m
+            memory: 256Mi
         readinessProbe:
           httpGet:
             path: /api/health
             port: 5001
-          initialDelaySeconds: 10
-          periodSeconds: 5
+          initialDelaySeconds: 5
+          periodSeconds: 10
         livenessProbe:
           httpGet:
             path: /api/health
             port: 5001
-          initialDelaySeconds: 20
-          periodSeconds: 15
-        startupProbe:
-          httpGet:
-            path: /api/health
-            port: 5001
-          initialDelaySeconds: 5
-          periodSeconds: 5
-          failureThreshold: 30
+          initialDelaySeconds: 15
+          periodSeconds: 20
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: server
   namespace: codelinesjs
+  labels:
+    app: codelinesjs
+    component: server
 spec:
-  selector:
-    app: server
+  type: ClusterIP
   ports:
   - port: 5001
     targetPort: 5001
-  type: ClusterIP 
+    protocol: TCP
+    name: http
+  selector:
+    app: codelinesjs
+    component: server
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: server-config
+  namespace: codelinesjs
+  labels:
+    app: codelinesjs
+    component: server
+data:
+  NODE_ENV: "production"
+  PORT: "5001"
+  CORS_ORIGIN: "https://codelinesjs.example.com" 
