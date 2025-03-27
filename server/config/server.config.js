@@ -32,42 +32,19 @@ export const configureServer = (app) => {
     next();
   });
   
-  app.use(cors({
-    origin: config.cors.origin === '*' ? true : config.cors.origin.split(','),
-    methods: config.cors.methods,
-    allowedHeaders: config.cors.allowedHeaders,
-    exposedHeaders: config.cors.exposedHeaders,
-    credentials: config.cors.credentials,
-    maxAge: config.cors.maxAge,
-    preflightContinue: config.cors.preflightContinue,
-    optionsSuccessStatus: config.cors.optionsSuccessStatus
-  }));
-  
-  app.use((req, res, next) => {
-    if (req.headers.referer && req.headers.referer.includes('accounts.google.com')) {
-      res.setHeader('Access-Control-Allow-Origin', 'https://accounts.google.com');
-      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-      res.setHeader('Access-Control-Allow-Credentials', 'true');
-    }
-    
-    res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
-    res.setHeader('Cross-Origin-Embedder-Policy', 'unsafe-none');
-    res.setHeader('Permissions-Policy', 'identity-credentials-get=(self "https://accounts.google.com")');
-    next();
-  });
-  
   const helmetConfig = {
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'", "https://www.google-analytics.com", "https://www.googletagmanager.com", "https://cdn.jsdelivr.net"],
-        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdn.jsdelivr.net"],
-        imgSrc: ["'self'", "data:", "https://www.google-analytics.com", "https://www.googletagmanager.com"],
-        connectSrc: ["'self'", "https://www.google-analytics.com", "https://www.googletagmanager.com"],
-        fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdn.jsdelivr.net"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://www.google-analytics.com", "https://www.googletagmanager.com", "https://cdn.jsdelivr.net", "https://accounts.google.com", "https://*.gstatic.com"],
+        scriptSrcElem: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://www.google-analytics.com", "https://www.googletagmanager.com", "https://cdn.jsdelivr.net", "https://accounts.google.com", "https://*.gstatic.com"],
+        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdn.jsdelivr.net", "https://accounts.google.com"],
+        imgSrc: ["'self'", "data:", "https://www.google-analytics.com", "https://www.googletagmanager.com", "https://res.cloudinary.com", "https://*.googleusercontent.com", "https://*.gstatic.com"],
+        connectSrc: ["'self'", "https://www.google-analytics.com", "https://www.googletagmanager.com", "https://accounts.google.com", "https://*.googleapis.com", "http://localhost:*", "https://codelinesjs.pl", "https://www.codelinesjs.pl"],
+        fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdn.jsdelivr.net", "data:"],
         objectSrc: ["'none'"],
         frameAncestors: ["'none'"],
+        frameSrc: ["'self'", "https://accounts.google.com"],
         formAction: ["'self'"],
         baseUri: ["'self'"],
         manifestSrc: ["'self'"],
@@ -99,8 +76,38 @@ export const configureServer = (app) => {
     noCache: process.env.NODE_ENV === 'production' ? false : true,
     dnsPrefetchControl: {
       allow: false
-    }
+    },
+    crossOriginEmbedderPolicy: false,
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+    crossOriginOpenerPolicy: false
   };
+  
+  app.use(helmet(helmetConfig));
+  
+  app.use(cors({
+    origin: config.cors.origin === '*' ? true : config.cors.origin.split(','),
+    methods: config.cors.methods,
+    allowedHeaders: config.cors.allowedHeaders,
+    exposedHeaders: config.cors.exposedHeaders,
+    credentials: config.cors.credentials,
+    maxAge: config.cors.maxAge,
+    preflightContinue: config.cors.preflightContinue,
+    optionsSuccessStatus: config.cors.optionsSuccessStatus
+  }));
+  
+  app.use((req, res, next) => {
+    if (req.headers.referer && req.headers.referer.includes('accounts.google.com')) {
+      res.setHeader('Access-Control-Allow-Origin', 'https://accounts.google.com');
+      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+      res.setHeader('Access-Control-Allow-Credentials', 'true');
+    }
+    
+    res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+    res.setHeader('Cross-Origin-Embedder-Policy', 'unsafe-none');
+    res.setHeader('Permissions-Policy', 'identity-credentials-get=(self "https://accounts.google.com")');
+    next();
+  });
   
   app.use((req, res, next) => {
     if (req.url.includes('fonts.gstatic.com') || req.url.match(/\.(woff|woff2|ttf|eot)$/)) {
@@ -153,8 +160,6 @@ export const configureServer = (app) => {
   app.use('/api/learning-paths', cacheMiddleware(600));
   app.use('/api/lessons', cacheMiddleware(600));
   app.use('/api/resources', cacheMiddleware(600));
-  
-  app.use(helmet(helmetConfig));
   
   return app;
 }; 
