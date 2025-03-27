@@ -8,50 +8,68 @@ on:
 
 jobs:
   test:
-    name: Testy klienta
+    name: Client tests
     runs-on: ubuntu-latest
     
     steps:
     - uses: actions/checkout@v4
     
-    - name: Ustawienie Node.js
+    - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '18'
         cache: 'npm'
         cache-dependency-path: client/package-lock.json
+    
+    - name: Fix problem with case sensitivity in directory names
+      run: |
+        cd client/src
+        if [ -d "Hooks" ] && [ ! -d "hooks" ]; then
+          echo "Tworzenie dowiązania symbolicznego hooks -> Hooks"
+          ln -s Hooks hooks
+        fi
         
-    - name: Instalacja zależności
+    - name: Install dependencies
       run: |
         cd client
         npm ci
         
-    - name: Uruchomienie testów
+    - name: Run tests in verbose mode
       run: |
         cd client
-        npm run test
+        NODE_ENV=test npm run test -- --reporter verbose
+      env:
+        CI: true
 
   build-docker:
-    name: Build obrazów Docker
+    name: Build Docker images
     needs: test
     runs-on: ubuntu-latest
     
     steps:
     - uses: actions/checkout@v4
     
-    - name: Logowanie do Docker Hub
+    - name: Fix problem with case sensitivity in directory names
+      run: |
+        cd client/src
+        if [ -d "Hooks" ] && [ ! -d "hooks" ]; then
+          echo "Tworzenie dowiązania symbolicznego hooks -> Hooks"
+          ln -s Hooks hooks
+        fi
+    
+    - name: Log in to Docker Hub
       uses: docker/login-action@v3
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         
-    - name: Ustawienie QEMU
+    - name: Setup QEMU
       uses: docker/setup-qemu-action@v3
       
-    - name: Ustawienie BuildX
+    - name: Setup BuildX
       uses: docker/setup-buildx-action@v3
       
-    - name: Build i push obrazu serwera
+    - name: Build and push server image
       uses: docker/build-push-action@v5
       with:
         context: .
@@ -61,17 +79,7 @@ jobs:
           ol1mowski/codelinesjs-server:latest
           ol1mowski/codelinesjs-server:${{ github.sha }}
           
-    - name: Build i push obrazu klienta
-      uses: docker/build-push-action@v5
-      with:
-        context: .
-        file: ./Dockerfile.client.github
-        push: ${{ github.ref == 'refs/heads/main' }}
-        tags: |
-          ol1mowski/codelinesjs-client:latest
-          ol1mowski/codelinesjs-client:${{ github.sha }}
-          
-    - name: Powiadomienie o zakończeniu
+    - name: Notify about completion
       if: always()
       run: |
-        echo "Build zakończony - Sprawdź status zadań GitHub Actions" 
+        echo "Build completed - Check GitHub Actions status" 
