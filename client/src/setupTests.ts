@@ -5,16 +5,10 @@ import { vi } from 'vitest';
 
 expect.extend(matchers);
 
-// Mock dla IntersectionObserver
 class MockIntersectionObserver {
   readonly root: Element | null = null;
   readonly rootMargin: string = '';
   readonly thresholds: ReadonlyArray<number> = [];
-  
-  constructor(
-    private callback: IntersectionObserverCallback,
-    private options?: IntersectionObserverInit
-  ) {}
   
   observe = vi.fn();
   unobserve = vi.fn();
@@ -22,20 +16,17 @@ class MockIntersectionObserver {
   takeRecords = vi.fn(() => []);
 }
 
-// Mock dla ResizeObserver
 class MockResizeObserver {
-  constructor(private callback: ResizeObserverCallback) {}
+  constructor() {}
   
   observe = vi.fn();
   unobserve = vi.fn();
   disconnect = vi.fn();
 }
 
-// Ustawienie mock obiektów globalnie
 window.IntersectionObserver = MockIntersectionObserver as any;
 window.ResizeObserver = MockResizeObserver as any;
 
-// Wyciszenie ostrzeżeń z framer-motion
 const consoleError = console.error;
 console.error = (...args: any[]) => {
   if (
@@ -51,7 +42,6 @@ console.error = (...args: any[]) => {
   consoleError(...args);
 };
 
-// Mock dla window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
   value: vi.fn().mockImplementation(query => ({
@@ -66,14 +56,12 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 })
 
-// Mock dla ResizeObserver
 global.ResizeObserver = vi.fn().mockImplementation(() => ({
   observe: vi.fn(),
   unobserve: vi.fn(),
   disconnect: vi.fn(),
 }))
 
-// Mock dla IntersectionObserver
 global.IntersectionObserver = vi.fn().mockImplementation(() => ({
   observe: vi.fn(),
   unobserve: vi.fn(),
