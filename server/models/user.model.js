@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
+import config from "../config/config.js";
 
 const userSchema = new mongoose.Schema(
   {
@@ -179,6 +180,7 @@ const userSchema = new mongoose.Schema(
       default: false,
       index: true
     },
+    passwordChangedAt: Date,
   },
   {
     timestamps: true,
@@ -187,13 +189,31 @@ const userSchema = new mongoose.Schema(
 
 userSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
-    this.password = await bcrypt.hash(this.password, 10);
+    const saltRounds = config.security.bcryptSaltRounds || 12;
+    this.password = await bcrypt.hash(this.password, saltRounds);
+    this.passwordChangedAt = new Date();
   }
   next();
 });
 
+userSchema.methods.changedPasswordAfter = function(jwtTimestamp) {
+  if (this.passwordChangedAt) {
+    const changedTimestamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
+    return jwtTimestamp < changedTimestamp;
+  }
+  return false;
+};
+
 userSchema.methods.comparePassword = async function (candidatePassword) {
-  return bcrypt.compare(candidatePassword, this.password);
+  if (!candidatePassword || !this.password) {
+    return false;
+  }
+  try {
+    return await bcrypt.compare(candidatePassword, this.password);
+  } catch (error) {
+    console.error('Error comparing passwords:', error);
+    return false;
+  }
 };
 
 export const User = mongoose.model("User", userSchema);

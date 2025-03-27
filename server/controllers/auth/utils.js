@@ -1,87 +1,115 @@
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 import { transporter, createEmailTemplate } from '../../config/mailer.js';
+import config from '../../config/config.js';
 
-export const generateToken = (user, expiresIn = '24h') => {
+/**
+ * Generuje bezpieczny token JWT z dodatkowymi polami bezpieczeństwa
+ * @param {Object} user - Obiekt użytkownika
+ * @param {string} expiresIn - Czas wygaśnięcia tokenu
+ * @returns {string} Token JWT
+ */
+export const generateToken = (user, expiresIn = config.jwt.expiresIn) => {
+  // Dodanie unikalnego identyfikatora tokenu (jti)
+  const tokenId = crypto.randomBytes(16).toString('hex');
+  
+  // Dodatkowe pola bezpieczeństwa w tokenie
   return jwt.sign(
     {
       userId: user._id,
       email: user.email,
       username: user.username,
-      accountType: user.accountType
+      accountType: user.accountType,
+      role: user.role || 'user',
+      iat: Math.floor(Date.now() / 1000), // czas wygenerowania tokenu
+      jti: tokenId, // unikalny identyfikator tokenu
     },
     process.env.JWT_SECRET,
-    { expiresIn }
+    { 
+      expiresIn,
+      algorithm: 'HS256' // jawnie określamy algorytm
+    }
   );
 };
 
-export const sendWelcomeEmail = async (user) => {
-  const welcomeContent = `
-    <p>Cześć ${user.username}!</p>
-    <p>Witamy w społeczności CodeLinesJS! 🎉</p>
-    <p>Twoje konto zostało pomyślnie utworzone i jesteś gotowy, aby rozpocząć swoją przygodę z JavaScript.</p>
-    <div class="code-block">
-      const user = {
-        name: "${user.username}",
-        level: "Początkujący",
-        goal: "Zostać JavaScript Ninja!"
-      };
-      
-      console.log("Witaj " + user.name + "! Twoja przygoda się zaczyna!");
-    </div>
-    <p>Co możesz teraz zrobić?</p>
-    <ul>
-      <li>Uzupełnij swój profil</li>
-      <li>Rozpocznij naukę od podstawowych lekcji</li>
-      <li>Rozwiązuj interaktywne wyzwania</li>
-    </ul>
-    <div style="text-align: center;">
-      <a href="${process.env.FRONTEND_URL}/dashboard" class="btn">Przejdź do dashboardu</a>
-    </div>
-    <p>Jeśli masz jakiekolwiek pytania, nie wahaj się skontaktować z naszym zespołem wsparcia.</p>
-    <p>Powodzenia w nauce!</p>
-  `;
+// Generuj token resetu hasła
+export const generatePasswordResetToken = () => {
+  const resetToken = crypto.randomBytes(32).toString('hex');
+  
+  // Przechowujemy hash tokenu w bazie
+  const hashedToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+    
+  // Czas wygaśnięcia tokenu: 1 godzina
+  const expiresIn = Date.now() + config.security.passwordResetTokenExpiresIn;
+  
+  return { resetToken, hashedToken, expiresIn };
+};
 
-  return transporter.sendMail({
-    from: `CodeLinesJS <${process.env.EMAIL_USER}>`,
+export const sendWelcomeEmail = async (user) => {
+  const subject = 'Witamy w CodeLinesJS!';
+  const html = createEmailTemplate({
+    title: 'Witaj w CodeLinesJS!',
+    preheader: 'Dziękujemy za dołączenie do naszej społeczności.',
+    content: `
+      <p>Cześć ${user.username}!</p>
+      <p>Cieszymy się, że dołączyłeś/aś do naszej społeczności. Jesteśmy tutaj, aby pomóc Ci rozwijać umiejętności programowania w JavaScript.</p>
+      <p>Możesz zalogować się do swojego konta używając adresu email: ${user.email}</p>
+      <p>Pozdrawiamy,<br/>Zespół CodeLinesJS</p>
+    `
+  });
+
+  await transporter.sendMail({
+    from: config.email.from,
     to: user.email,
-    subject: "Witaj w CodeLinesJS!",
-    html: createEmailTemplate('Witaj w CodeLinesJS!', welcomeContent)
+    subject,
+    html
   });
 };
 
 export const sendPasswordResetEmail = async (user, resetUrl) => {
-  const emailContent = `
-    <p>Cześć ${user.username || 'Użytkowniku'}!</p>
-    <p>Otrzymaliśmy prośbę o reset hasła dla Twojego konta w CodeLinesJS.</p>
-    <p>Aby zresetować hasło, kliknij poniższy przycisk:</p>
-    <div style="text-align: center;">
-      <a href="${resetUrl}" class="btn">Zresetuj hasło</a>
-    </div>
-    <p>Jeśli przycisk nie działa, skopiuj i wklej poniższy link do przeglądarki:</p>
-    <div class="code-block">${resetUrl}</div>
-    <p>Link wygaśnie za godzinę ze względów bezpieczeństwa.</p>
-    <p><strong>Nie prosiłeś o reset hasła?</strong> Jeśli to nie Ty prosiłeś o reset hasła, zignoruj tę wiadomość lub skontaktuj się z naszym zespołem wsparcia.</p>
-  `;
+  const subject = 'Resetowanie hasła w CodeLinesJS';
+  const html = createEmailTemplate({
+    title: 'Resetowanie hasła',
+    preheader: 'Instrukcje dotyczące resetowania hasła w CodeLinesJS.',
+    content: `
+      <p>Cześć ${user.username}!</p>
+      <p>Otrzymaliśmy prośbę o resetowanie Twojego hasła. Jeśli to nie Ty, zignoruj tę wiadomość.</p>
+      <p>Aby zresetować hasło, kliknij w poniższy link (ważny przez 1 godzinę):</p>
+      <p><a href="${resetUrl}" style="padding: 10px 15px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px;">Resetuj hasło</a></p>
+      <p>Jeśli link nie działa, skopiuj i wklej poniższy URL do przeglądarki:</p>
+      <p>${resetUrl}</p>
+      <p>Pozdrawiamy,<br/>Zespół CodeLinesJS</p>
+    `
+  });
 
-  return transporter.sendMail({
-    from: `CodeLinesJS <${process.env.EMAIL_USER}>`,
+  await transporter.sendMail({
+    from: config.email.from,
     to: user.email,
-    subject: "Reset hasła w CodeLinesJS",
-    html: createEmailTemplate('Reset hasła', emailContent)
+    subject,
+    html
   });
 };
 
 export const sendPasswordChangedEmail = async (user) => {
-  return transporter.sendMail({
-    to: user.email,
-    subject: "Hasło zostało zmienione",
-    html: createEmailTemplate('Potwierdzenie zmiany hasła', `
-      <p>Cześć ${user.username || 'Użytkowniku'}!</p>
+  const subject = 'Potwierdzenie zmiany hasła w CodeLinesJS';
+  const html = createEmailTemplate({
+    title: 'Hasło zostało zmienione',
+    preheader: 'Potwierdzenie zmiany hasła w CodeLinesJS.',
+    content: `
+      <p>Cześć ${user.username}!</p>
       <p>Twoje hasło zostało pomyślnie zmienione.</p>
-      <p>Jeśli to nie Ty dokonałeś tej zmiany, natychmiast skontaktuj się z naszym zespołem wsparcia.</p>
-      <div style="text-align: center;">
-        <a href="${process.env.FRONTEND_URL}/login" class="btn">Zaloguj się</a>
-      </div>
-    `)
+      <p>Jeśli to nie Ty zmieniłeś/aś hasło, natychmiast skontaktuj się z nami.</p>
+      <p>Pozdrawiamy,<br/>Zespół CodeLinesJS</p>
+    `
+  });
+
+  await transporter.sendMail({
+    from: config.email.from,
+    to: user.email,
+    subject,
+    html
   });
 }; 
