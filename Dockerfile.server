@@ -1,0 +1,15 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+COPY server/package*.json ./
+
+RUN npm ci --only=production
+
+COPY server ./
+
+ENV NODE_ENV=production
+
+EXPOSE 5001
+
+CMD ["node", "server.js"] 

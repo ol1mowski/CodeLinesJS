@@ -1,0 +1,114 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server
+  namespace: codelinesjs
+  labels:
+    app: codelinesjs
+    component: server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: codelinesjs
+      component: server
+  template:
+    metadata:
+      labels:
+        app: codelinesjs
+        component: server
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: server
+        image: ol1mowski187/codelinesjs-server:latest
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 1000
+          capabilities:
+            drop:
+              - ALL
+        ports:
+        - containerPort: 5001
+        env:
+        - name: NODE_ENV
+          value: production
+        - name: PORT
+          value: "5001"
+        - name: MONGODB_URI
+          valueFrom:
+            secretKeyRef:
+              name: server-secret
+              key: mongodb-uri
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: server-secret
+              key: jwt-secret
+        - name: CORS_ORIGIN
+          valueFrom:
+            configMapKeyRef:
+              name: server-config
+              key: CORS_ORIGIN
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 300m
+            memory: 256Mi
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: 5001
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: 5001
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        volumeMounts:
+        - name: tmp-volume
+          mountPath: /tmp
+      volumes:
+      - name: tmp-volume
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: server
+  namespace: codelinesjs
+  labels:
+    app: codelinesjs
+    component: server
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5001
+    targetPort: 5001
+    protocol: TCP
+    name: http
+  selector:
+    app: codelinesjs
+    component: server
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: server-config
+  namespace: codelinesjs
+  labels:
+    app: codelinesjs
+    component: server
+data:
+  NODE_ENV: "production"
+  PORT: "5001"
+  CORS_ORIGIN: "https://codelinesjs.example.com" 

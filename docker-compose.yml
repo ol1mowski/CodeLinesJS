@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    restart: always
+    ports:
+      - "5001:5001"
+    environment:
+      - PORT=5001
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://admin:adminpassword@mongo:27017/codelinesjs?authSource=admin
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRES_IN=24h
+      - JWT_COOKIE_EXPIRES_IN=86400000
+      - FRONTEND_URL=${FRONTEND_URL:-http://localhost}
+      - EMAIL_HOST=${EMAIL_HOST}
+      - EMAIL_PORT=${EMAIL_PORT}
+      - EMAIL_USER=${EMAIL_USER}
+      - EMAIL_PASSWORD=${EMAIL_PASSWORD}
+      - EMAIL_FROM=${EMAIL_FROM}
+      - RATE_LIMIT_MAX=${RATE_LIMIT_MAX:-1000}
+      - RATE_LIMIT_WINDOW_MS=${RATE_LIMIT_WINDOW_MS:-900000}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - HUGGING_FACE_API_KEY=${HUGGING_FACE_API_KEY}
+      - VITE_GOOGLE_CLIENT_ID=${VITE_GOOGLE_CLIENT_ID}
+      - SENDGRID_API_KEY=${SENDGRID_API_KEY}
+    networks:
+      - codelinesjs-network
+
+networks:
+  codelinesjs-network:
+    driver: bridge
