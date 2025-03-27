@@ -76,8 +76,8 @@ jobs:
         file: ./Dockerfile.server
         push: true
         tags: |
-          ol1mowski/codelinesjs-server:latest
-          ol1mowski/codelinesjs-server:${{ github.sha }}
+          ol1mowski187/codelinesjs-server:latest
+          ol1mowski187/codelinesjs-server:${{ github.sha }}
           
     - name: Notify about completion
       if: always()
