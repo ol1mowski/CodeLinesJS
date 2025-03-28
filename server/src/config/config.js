@@ -24,8 +24,8 @@ const config = {
   },
 
   cors: {
-    origin: process.env.CORS_ORIGIN || '*',
-    credentials: false,
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
     exposedHeaders: ['Content-Length', 'X-Requested-With'],
@@ -48,7 +48,7 @@ const config = {
     port: process.env.EMAIL_PORT,
     user: process.env.EMAIL_USER,
     password: process.env.EMAIL_PASSWORD,
-    from: process.env.EMAIL_FROM || 'noreply@codelinejs.com',
+    from: process.env.EMAIL_FROM || 'kontakt@codelinejs.pl',
   },
 
   limits: {
