@@ -1,6 +1,6 @@
-import express from "express";
+import express, { NextFunction, Request, Response, Application } from "express";
 import cors from "cors";
-import helmet from "helmet";
+import helmet, { HelmetOptions } from "helmet";
 import rateLimit from "express-rate-limit";
 import mongoSanitize from "express-mongo-sanitize";
 import compression from "compression";
@@ -10,7 +10,7 @@ import config from "./config.js";
 import { responseEnhancer } from "../utils/response.js";
 import { cacheMiddleware } from "../utils/cache.js";
 
-export const configureServer = (app) => {
+export const configureServer = (app: Application): Application => {
   
   app.set('trust proxy', 1);
   app.use(express.json({ limit: config.limits.jsonBodySize }));
@@ -18,10 +18,10 @@ export const configureServer = (app) => {
   
   app.use(hpp());
   
-  app.use((req, res, next) => {
+  app.use((req: Request, res: Response, next: NextFunction) => {
     const originalSend = res.send;
-    res.send = function(body) {
-      return originalSend.apply(this, arguments);
+    res.send = function(body: any) {
+      return originalSend.call(this, body);
     };
     
     next();
@@ -57,7 +57,7 @@ export const configureServer = (app) => {
       preload: true
     },
     referrerPolicy: {
-      policy: 'strict-origin-when-cross-origin'
+      policy: "strict-origin-when-cross-origin" as "strict-origin-when-cross-origin"
     },
     permissionsPolicy: {
       features: {
@@ -73,14 +73,14 @@ export const configureServer = (app) => {
       allow: false
     },
     crossOriginEmbedderPolicy: false,
-    crossOriginResourcePolicy: { policy: "cross-origin" },
+    crossOriginResourcePolicy: false,
     crossOriginOpenerPolicy: false
   };
   
-  app.use(helmet(helmetConfig));
+  app.use(helmet(helmetConfig as HelmetOptions));
   
   app.use(cors({
-    origin: config.cors.origin === '*' ? true : config.cors.origin.split(','),
+    origin: config.cors.origin === '*' ? true : config.cors.origin?.split(','),
     methods: config.cors.methods,
     allowedHeaders: config.cors.allowedHeaders,
     exposedHeaders: config.cors.exposedHeaders,

@@ -8,6 +8,34 @@ import {
 
 import { User } from '../../models/user.model.js';
 import { AuthError, ValidationError } from '../../utils/errors.js';
+import { Document } from 'mongoose';
+
+interface UserDocument extends Document {
+  comparePassword(password: string): Promise<boolean>;
+  bio?: string;
+}
+
+interface UserLeanDocument {
+  _id: string;
+  username: string;
+  email: string;
+  password?: string;
+  avatar?: string;
+  bio?: string;
+  profile?: any;
+  preferences?: {
+    theme?: string;
+    language?: string;
+    [key: string]: any;
+  };
+  stats?: {
+    completedChallenges?: number;
+    points?: number;
+    streak?: number;
+    [key: string]: any;
+  };
+  [key: string]: any;
+}
 
 export const getSettings = getSettingsController;
 export const updateProfile = updateProfileController;
@@ -19,7 +47,7 @@ export const getProfile = async (req, res, next) => {
   try {
     const user = await User.findById(req.user.userId)
       .select('username email profile preferences stats')
-      .lean();
+      .lean() as unknown as UserLeanDocument;
     
     if (!user) {
       throw new AuthError('Użytkownik nie znaleziony');
@@ -28,12 +56,12 @@ export const getProfile = async (req, res, next) => {
     res.json({
       username: user.username,
       email: user.email,
-      profile: user.profile,
-      preferences: user.preferences,
+      profile: user.profile || {},
+      preferences: user.preferences || {},
       stats: {
-        completedChallenges: user.stats.completedChallenges,
-        totalPoints: user.stats.totalPoints,
-        streak: user.stats.streak
+        completedChallenges: user.stats?.completedChallenges || 0,
+        totalPoints: user.stats?.points || 0,
+        streak: user.stats?.streak || 0
       }
     });
   } catch (error) {
@@ -50,7 +78,7 @@ export const getPreferences = async (req, res, next) => {
       throw new AuthError('Użytkownik nie znaleziony');
     }
     
-    res.json(user.preferences);
+    res.json(user.preferences || {});
   } catch (error) {
     next(error);
   }
@@ -65,7 +93,11 @@ export const updatePreferences = async (req, res, next) => {
       { new: true }
     ).select('preferences');
     
-    res.json(user.preferences);
+    if (!user) {
+      throw new AuthError('Użytkownik nie znaleziony');
+    }
+    
+    res.json(user.preferences || {});
   } catch (error) {
     next(error);
   }
@@ -75,7 +107,7 @@ export const deleteAccount = async (req, res, next) => {
   try {
     const { password } = req.body;
     
-    const user = await User.findById(req.user.userId);
+    const user = await User.findById(req.user.userId) as UserDocument;
     if (!user) {
       throw new AuthError('Użytkownik nie znaleziony');
     }
@@ -97,7 +129,7 @@ export const getUserData = async (req, res, next) => {
   try {
     const user = await User.findById(req.user.userId)
       .select('email username avatar bio stats preferences')
-      .lean();
+      .lean() as unknown as UserLeanDocument;
     
     if (!user) {
       throw new AuthError('Użytkownik nie znaleziony');
@@ -106,16 +138,16 @@ export const getUserData = async (req, res, next) => {
     res.json({
       email: user.email,
       username: user.username,
-      avatar: user.avatar,
-      bio: user.bio,
+      avatar: user.avatar || '',
+      bio: user.bio || '',
       stats: {
-        completedChallenges: user.stats.completedChallenges,
-        totalPoints: user.stats.totalPoints,
-        streak: user.stats.streak
+        completedChallenges: user.stats?.completedChallenges || 0,
+        totalPoints: user.stats?.points || 0,
+        streak: user.stats?.streak || 0
       },
       preferences: {
-        theme: user.preferences.theme,
-        language: user.preferences.language
+        theme: user.preferences?.theme || 'light',
+        language: user.preferences?.language || 'pl'
       }
     });
   } catch (error) {
@@ -136,7 +168,7 @@ export const getUserByIdentifier = async (req, res, next) => {
     
     const user = await User.findOne(query)
       .select('username avatar bio stats')
-      .lean();
+      .lean() as unknown as UserLeanDocument;
     
     if (!user) {
       throw new ValidationError('Użytkownik nie znaleziony');
@@ -145,12 +177,12 @@ export const getUserByIdentifier = async (req, res, next) => {
     res.json({
       id: user._id,
       username: user.username,
-      avatar: user.avatar,
-      bio: user.bio,
+      avatar: user.avatar || '',
+      bio: user.bio || '',
       stats: {
-        completedChallenges: user.stats.completedChallenges,
-        totalPoints: user.stats.totalPoints,
-        streak: user.stats.streak
+        completedChallenges: user.stats?.completedChallenges || 0,
+        totalPoints: user.stats?.points || 0,
+        streak: user.stats?.streak || 0
       }
     });
   } catch (error) {

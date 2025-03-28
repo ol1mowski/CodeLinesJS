@@ -1,4 +1,4 @@
-import express from 'express';
+import { Application, Request, Response, RequestHandler } from 'express';
 import authRoutes from "./auth.routes.js";
 import statsRoutes from "./stats.routes.js";
 import gamesRoutes from "./games.routes.js";
@@ -13,8 +13,8 @@ import resourcesRoutes from './resources.routes.js';
 import usersRoutes from './users.routes.js';
 import reportsRoutes from './reports.routes.js';
 
-export const configureRoutes = (app) => {
-  app.get('/health', (req, res) => {
+export const configureRoutes = (app: Application): Application => {
+  app.get('/health', (req: Request, res: Response) => {
     res.status(200).json({ 
       status: 'ok', 
       environment: process.env.NODE_ENV,
@@ -36,10 +36,13 @@ export const configureRoutes = (app) => {
   app.use('/api/users', usersRoutes);
   app.use('/api/reports', reportsRoutes);
   
-  app.all('/api/*', (req, res) => {
+
+  const notFoundHandler: RequestHandler = (req, res) => {
     console.log(`API endpoint not found: ${req.method} ${req.originalUrl}`);
-    return res.status(404).json({ error: 'API endpoint not found' });
-  });
+    res.status(404).json({ error: 'API endpoint not found' });
+  };
+  
+  app.use('/api', notFoundHandler);
   
   return app;
 }; 

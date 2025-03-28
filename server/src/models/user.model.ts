@@ -7,12 +7,12 @@ const userSchema = new mongoose.Schema(
     username: {
       type: String,
       required: true,
-      unique: true,
+      unique: true, 
       trim: true,
     },
     email: {
       type: String,
-      required: true,
+      required: true, 
       unique: true,
       trim: true,
       lowercase: true,
@@ -196,15 +196,15 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-userSchema.methods.changedPasswordAfter = function(jwtTimestamp) {
+userSchema.methods.changedPasswordAfter = function(jwtTimestamp: number) {
   if (this.passwordChangedAt) {
-    const changedTimestamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
+    const changedTimestamp = parseInt(this.passwordChangedAt.getTime().toString(), 10);
     return jwtTimestamp < changedTimestamp;
   }
   return false;
 };
 
-userSchema.methods.comparePassword = async function (candidatePassword) {
+userSchema.methods.comparePassword = async function (candidatePassword: string) {
   if (!candidatePassword || !this.password) {
     return false;
   }

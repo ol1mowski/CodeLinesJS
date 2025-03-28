@@ -6,7 +6,7 @@ dotenv.config();
 
 const updateUserStats = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI);
+    await mongoose.connect(process.env.MONGODB_URI || '');
     console.log('Połączono z bazą danych');
 
     const users = await User.find({});
@@ -27,7 +27,7 @@ const updateUserStats = async () => {
         date.setDate(date.getDate() - i);
         const dateStr = date.toISOString().split('T')[0];
         
-        const dailyStats = existingStats.daily?.find(d => d.date === dateStr);
+        const dailyStats = existingStats.daily?.find((d: { date: string }) => d.date === dateStr);
         
         last7Days.push({
           date: dateStr,

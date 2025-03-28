@@ -6,9 +6,21 @@ import sanitizeHtml from 'sanitize-html';
 
 dotenv.config();
 
-sgMail.setApiKey(config.email.sendgridApiKey);
-                
-export const sendEmail = async (options) => {
+sgMail.setApiKey(config.email.sendgridApiKey || '');
+
+type EmailOptions = {
+  to: string;
+  from?: string;
+  subject: string;
+  html: string;
+}
+
+type EmailResult = {
+  success: boolean;
+  error?: any;
+}
+
+export const sendEmail = async (options: EmailOptions): Promise<EmailResult> => {
   const msg = {
     to: options.to,
     from: options.from || config.email.from,
@@ -21,8 +33,8 @@ export const sendEmail = async (options) => {
     return { success: true };
   } catch (error) {
     console.error('Błąd podczas wysyłania e-maila:', error);
-    if (error.response) {
-      console.error(error.response.body);
+    if (error && typeof error === 'object' && 'response' in error) {
+      console.error((error as any).response?.body);
     }
     return { success: false, error };
   }
@@ -30,7 +42,7 @@ export const sendEmail = async (options) => {
 
 export const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
-  port: process.env.EMAIL_PORT,
+  port: process.env.EMAIL_PORT ? parseInt(process.env.EMAIL_PORT) : undefined,
   secure: process.env.EMAIL_SECURE === 'true',
   auth: {
     user: process.env.EMAIL_USER,
@@ -38,7 +50,7 @@ export const transporter = nodemailer.createTransport({
   },
 });
 
-const sanitizeContent = (content) => {
+const sanitizeContent = (content: string | undefined): string => {
   if (!content) return '';
   
   return sanitizeHtml(content, {
@@ -71,16 +83,22 @@ const sanitizeContent = (content) => {
   });
 };
 
-export const createEmailTemplate = (params) => {
-  const { title, preheader = '', content } = typeof params === 'object' ? params : { 
+interface EmailTemplateParams {
+  title: string;
+  preheader?: string;
+  content: string;
+}
+
+export const createEmailTemplate = (params: EmailTemplateParams | string, content?: string): string => {
+  const { title, preheader = '', content: contentText } = typeof params === 'object' ? params : { 
     title: params, 
     preheader: '', 
-    content: arguments[1] 
+    content: content || '' 
   };
   
   const safeTitle = sanitizeContent(title);
   const safePreheader = sanitizeContent(preheader);
-  const safeContent = sanitizeContent(content);
+  const safeContent = sanitizeContent(contentText);
   
   const currentYear = new Date().getFullYear();
   
@@ -223,4 +241,4 @@ export const createEmailTemplate = (params) => {
     </body>
     </html>
   `;
-};
+}; 

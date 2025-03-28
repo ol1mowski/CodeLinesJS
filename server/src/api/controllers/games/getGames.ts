@@ -1,5 +1,6 @@
 import { Game } from '../../../models/game.model.js';
 import { User } from '../../../models/user.model.js';
+import { Request, Response, NextFunction } from 'express';
 
 const getRandomElements = (array, count) => {
 
@@ -15,7 +16,7 @@ const getRandomElements = (array, count) => {
   return shuffled.slice(0, count);
 };
 
-export const getGames = async (req, res, next) => {
+export const getGames = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const {
       difficulty,

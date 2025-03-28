@@ -1,21 +1,21 @@
-import express from 'express';
+import express, { Application, Request, Response, NextFunction } from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export const configureStaticFiles = (app) => {
-  app.get(['/auth/google/callback', '/login/google/callback', '/oauth/google/callback'], (req, res) => {
+export const configureStaticFiles = (app: Application): Application => {
+  app.get(['/auth/google/callback', '/login/google/callback', '/oauth/google/callback'], (req: Request, res: Response) => {
     res.sendFile(path.join(__dirname, '../../public', 'index.html'));
   });
   
   app.use(express.static(path.join(__dirname, '../../public'), {
     maxAge: '1d',
-    setHeaders: (res, path) => {
-      if (path.endsWith('.js')) {
+    setHeaders: (res: Response, filePath: string) => {
+      if (filePath.endsWith('.js')) {
         res.setHeader('Content-Type', 'application/javascript');
-      } else if (path.endsWith('.css')) {
+      } else if (filePath.endsWith('.css')) {
         res.setHeader('Content-Type', 'text/css');
       }
     }
@@ -31,7 +31,7 @@ export const configureStaticFiles = (app) => {
     '*.json',
     '/favicon.ico',
     '/manifest.json'
-  ], (req, res, next) => {
+  ], (req: Request, res: Response, next: NextFunction) => {
     const filePath = path.join(__dirname, '../../public', req.path);
     
     if (req.path.endsWith('.js')) {
@@ -49,7 +49,7 @@ export const configureStaticFiles = (app) => {
     });
   });
   
-  app.get('*', (req, res, next) => {
+  app.get('*', (req: Request, res: Response, next: NextFunction) => {
     if (req.path.startsWith('/api/')) {
       return next();
     }

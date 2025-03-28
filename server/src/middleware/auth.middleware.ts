@@ -1,9 +1,34 @@
 import jwt from 'jsonwebtoken';
 import { AuthError, ForbiddenError } from '../utils/errors.js';
 import { User } from '../models/user.model.js';
-import config from '../config/config.js';
+import { Request, Response, NextFunction } from 'express';
+import { Document } from 'mongoose';
 
-export const authMiddleware = async (req, res, next) => {
+interface UserAuthDocument extends Document {
+  username: string;
+  email: string;
+  role?: string;
+  accountType: 'local' | 'google';
+  changedPasswordAfter?: (timestamp: number) => boolean;
+  passwordChangedAt?: Date;
+}
+  
+declare global {
+  namespace Express {
+    interface Request {
+      user?: {
+        userId: string;
+        email: string;
+        username?: string;
+        role: string;
+        accountType?: string;
+        [key: string]: any;
+      };
+    }
+  }
+}
+
+export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   try {
     let token;
     const authHeader = req.headers.authorization;
@@ -20,20 +45,20 @@ export const authMiddleware = async (req, res, next) => {
 
     let decoded;
     try {
-      decoded = jwt.verify(token, process.env.JWT_SECRET, {
+      decoded = jwt.verify(token, process.env.JWT_SECRET as string, {
         algorithms: ['HS256']
       });
     } catch (error) {
-      if (error.name === 'JsonWebTokenError') {
+      if (error instanceof jwt.JsonWebTokenError) {
         throw new AuthError('Nieprawidłowy token. Zaloguj się ponownie.');
       }
-      if (error.name === 'TokenExpiredError') {
+      if (error instanceof jwt.TokenExpiredError) {
         throw new AuthError('Token wygasł. Zaloguj się ponownie.');
       }
       throw error;
     }
 
-    const user = await User.findById(decoded.userId).select('+passwordChangedAt');
+    const user = await User.findById(decoded.userId).select('+passwordChangedAt') as UserAuthDocument;
     if (!user) {
       throw new AuthError('Użytkownik powiązany z tym tokenem już nie istnieje.');
     }
@@ -76,8 +101,8 @@ export const authMiddleware = async (req, res, next) => {
   }
 };
 
-export const restrictTo = (...roles) => {
-  return (req, res, next) => {
+export const restrictTo = (...roles: string[]) => {
+  return (req: Request, res: Response, next: NextFunction) => {
     if (!req.user) {
       return next(new AuthError('Nie jesteś zalogowany'));
     }

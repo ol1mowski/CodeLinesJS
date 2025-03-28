@@ -80,7 +80,7 @@ const gameSchema = new mongoose.Schema({
   timestamps: true
 });
 
-gameSchema.methods.updateRating = function(newRating) {
+gameSchema.methods.updateRating = function(newRating: number) {
   this.rating.total += newRating;
   this.rating.count += 1;
   this.rating.average = this.rating.total / this.rating.count;

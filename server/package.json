@@ -2,16 +2,17 @@
   "name": "codelinesjs-api",
   "version": "1.0.0",
   "description": "API dla platformy CodeLinesJS do nauki JavaScript",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/index.js",
-    "dev": "nodemon src/index.js",
-    "init-data": "node src/scripts/initLearningData.js",
-    "update-stats": "node src/scripts/updateUserStats.js",
-    "init-paths": "node src/scripts/initLearningPaths.js",
-    "vercel-build": "echo 'Build started' && mkdir -p public && echo 'Build completed'"
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "nodemon",
+    "init-data": "NODE_OPTIONS=\"--loader ts-node/esm\" node src/scripts/initLearningData.ts",
+    "update-stats": "NODE_OPTIONS=\"--loader ts-node/esm\" node src/scripts/updateUserStats.ts",
+    "init-paths": "NODE_OPTIONS=\"--loader ts-node/esm\" node src/scripts/initLearningPaths.ts",
+    "vercel-build": "tsc && echo 'Build completed'"
   },
   "engines": {
     "node": ">=18.x"
@@ -46,6 +47,17 @@
     "xss-clean": "^0.1.4"
   },
   "devDependencies": {
-    "nodemon": "^3.1.9"
+    "@types/bcryptjs": "^3.0.0",
+    "@types/compression": "^1.7.5",
+    "@types/cookie-parser": "^1.4.8",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.1",
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/node": "^22.13.14",
+    "@types/nodemailer": "^6.4.17",
+    "@types/sanitize-html": "^2.13.0",
+    "nodemon": "^3.1.9",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2"
   }
 }

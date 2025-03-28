@@ -7,7 +7,7 @@ dotenv.config();
 
 const initializeLearningPaths = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI);
+    await mongoose.connect(process.env.MONGODB_URI || '');
     console.log('Połączono z bazą danych');
 
     const jsLessons = await Lesson.find({ category: 'javascript' });
@@ -20,7 +20,7 @@ const initializeLearningPaths = async () => {
         category: "javascript",
         difficulty: "beginner",
         totalLessons: jsLessons.length,
-        lessons: jsLessons.map(lesson => lesson._id),
+        lessons: jsLessons.map((lesson: { _id: string }) => lesson._id),
         estimatedTime: 180,
         requirements: ["Podstawowa znajomość HTML"],
         outcomes: ["Zrozumienie podstaw JavaScript"],
@@ -33,7 +33,7 @@ const initializeLearningPaths = async () => {
         category: "react",
         difficulty: "intermediate",
         totalLessons: reactLessons.length,
-        lessons: reactLessons.map(lesson => lesson._id),
+        lessons: reactLessons.map((lesson: { _id: string }) => lesson._id),
         estimatedTime: 240,
         requirements: ["Znajomość JavaScript"],
         outcomes: ["Tworzenie aplikacji w React"],
@@ -45,7 +45,7 @@ const initializeLearningPaths = async () => {
     await LearningPath.deleteMany({});
     const createdPaths = await LearningPath.insertMany(learningPathsData);
     
-    console.log('Utworzono ścieżki nauki:', createdPaths.map(p => p.title));
+    console.log('Utworzono ścieżki nauki:', createdPaths.map((p: { title: string }) => p.title));
     console.log('Inicjalizacja zakończona pomyślnie');
   } catch (error) {
     console.error('Błąd podczas inicjalizacji:', error);

@@ -6,7 +6,7 @@ dotenv.config();
 
 const migrateUserProgress = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI);
+    await mongoose.connect(process.env.MONGODB_URI || '');
     console.log('Połączono z bazą danych');
 
     const users = await User.find({});

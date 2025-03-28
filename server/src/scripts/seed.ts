@@ -24,7 +24,7 @@ const initializeCollections = async () => {
   }
 };
 
-mongoose.connect(process.env.MONGODB_URI)
+mongoose.connect(process.env.MONGODB_URI || '')
   .then(() => initializeCollections())
   .then(() => {
     console.log('Inicjalizacja zakończona');

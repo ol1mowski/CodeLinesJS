@@ -476,7 +476,7 @@ console.log(person?.name);`,
 
 const initializeGames = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI);
+    await mongoose.connect(process.env.MONGODB_URI || '');
     console.log("Połączono z bazą danych");
 
     await Game.deleteMany({});

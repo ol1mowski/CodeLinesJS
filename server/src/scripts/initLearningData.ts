@@ -8,7 +8,7 @@ dotenv.config();
 
 const initializeData = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI);
+    await mongoose.connect(process.env.MONGODB_URI || '');
     console.log('Połączono z bazą danych');
     
     await Promise.all([
@@ -18,7 +18,7 @@ const initializeData = async () => {
     console.log('Usunięto stare kolekcje');
 
     const createdLessons = await Lesson.insertMany(lessonsData);
-    console.log('Dodano lekcje:', createdLessons.map(l => l.slug));
+    console.log('Dodano lekcje:', createdLessons.map((l: { slug: string }) => l.slug));
 
     await LessonContent.insertMany(lessonsContent);
     console.log('Dodano treści lekcji');
