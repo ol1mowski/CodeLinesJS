@@ -15,7 +15,11 @@ import reportsRoutes from './reports.routes.js';
 
 export const configureRoutes = (app) => {
   app.get('/health', (req, res) => {
-    res.status(200).json({ status: 'ok', environment: process.env.NODE_ENV });
+    res.status(200).json({ 
+      status: 'ok', 
+      environment: process.env.NODE_ENV,
+      serverTime: new Date().toISOString()
+    });
   });
   
   app.use("/api/auth", authRoutes);
@@ -33,6 +37,7 @@ export const configureRoutes = (app) => {
   app.use('/api/reports', reportsRoutes);
   
   app.all('/api/*', (req, res) => {
+    console.log(`API endpoint not found: ${req.method} ${req.originalUrl}`);
     return res.status(404).json({ error: 'API endpoint not found' });
   });
   

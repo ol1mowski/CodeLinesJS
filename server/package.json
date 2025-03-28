@@ -11,7 +11,7 @@
     "init-data": "node src/scripts/initLearningData.js",
     "update-stats": "node src/scripts/updateUserStats.js",
     "init-paths": "node src/scripts/initLearningPaths.js",
-    "vercel-build": "echo 'Build completed'"
+    "vercel-build": "echo 'Build started' && mkdir -p public && echo 'Build completed'"
   },
   "engines": {
     "node": ">=18.x"

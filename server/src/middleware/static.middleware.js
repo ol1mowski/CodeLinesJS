@@ -54,8 +54,12 @@ export const configureStaticFiles = (app) => {
       return next();
     }
     
+    console.log(`Serving index.html for path: ${req.path}`);
+    console.log(`Full path: ${path.join(__dirname, '../../public', 'index.html')}`);
+    
     res.sendFile(path.join(__dirname, '../../public', 'index.html'), (err) => {
       if (err) {
+        console.error('Error serving index.html:', err);
         res.status(500).send('Błąd serwera');
       }
     });
