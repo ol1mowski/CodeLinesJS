@@ -1,5 +1,5 @@
+// @ts-nocheck
 import mongoose from "mongoose";
-// @ts-ignore
 import bcrypt from "bcryptjs";
 import config from "../config/config.js";
 

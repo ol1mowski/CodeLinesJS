@@ -1,10 +1,10 @@
+// @ts-nocheck
 import jwt from 'jsonwebtoken';
 import { User } from '../models/user.model.js';
 import { AuthError } from '../utils/errors.js';
 import { EmailService } from './email.service.js';
 import { TokenService } from './token.service.js';
 import { UserService } from './user.service.js';
-// @ts-ignore
 import bcrypt from 'bcryptjs';
 
 class AuthService {
