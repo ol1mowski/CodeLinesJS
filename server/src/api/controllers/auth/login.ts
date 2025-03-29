@@ -1,44 +1,18 @@
-import { User } from '../../../models/user.model.js';
 import { AuthError } from '../../../utils/errors.js';
-import { generateToken } from './utils.js';
+import authService from '../../../services/auth.service.js';
+import { NextFunction, Request, Response } from 'express';
 
-export const login = async (req, res, next) => {
+export const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password, rememberMe } = req.body;
 
-    const user = await User.findOne({ email });
-    if (!user) {
-      throw new AuthError('Nieprawidłowe dane logowania');
+    if (!email || !password) {
+      throw new AuthError('Email i hasło są wymagane');
     }
 
-    if (user.accountType === 'google') {
-      throw new AuthError('To konto używa logowania przez Google. Użyj przycisku "Zaloguj przez Google".');
-    }
-
-    const isPasswordValid = await user.comparePassword(password);
-    if (!isPasswordValid) {
-      throw new AuthError('Nieprawidłowe dane logowania');
-    }
-
-    user.lastLogin = new Date();
-    await user.save();
-
-    const expiresIn = rememberMe ? '30d' : '24h';
-    const token = generateToken(user, expiresIn);
-
-    res.json({
-      token,
-      expiresIn,
-      user: {
-        id: user._id,
-        email: user.email,
-        username: user.username,
-        avatar: user.avatar,
-        profile: user.profile,
-        preferences: user.preferences,
-        stats: user.stats
-      }
-    });
+    const result = await authService.loginUser(email, password, rememberMe);
+    
+    res.json(result);
   } catch (error) {
     next(error);
   }

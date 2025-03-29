@@ -1,12 +1,9 @@
-import { User } from '../../../models/user.model.js';
+import { NextFunction, Request, Response } from 'express';
+import authService from '../../../services/auth.service.js';
 
-export const verifyToken = async (req, res) => {
+export const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const user = await User.findById(req.user.userId).select('-password');
-    if (!user) {
-      return res.status(401).json({ error: 'Użytkownik nie znaleziony' });
-    }
-
+    const user = await authService.verifyUserToken(req.user.userId);
     res.json(user);
   } catch (error) {
     console.error('verifyToken - błąd:', error);
