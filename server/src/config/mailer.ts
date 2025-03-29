@@ -42,13 +42,66 @@ export const sendEmail = async (options: EmailOptions): Promise<EmailResult> => 
 
 export const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
-  port: process.env.EMAIL_PORT ? parseInt(process.env.EMAIL_PORT) : undefined,
-  secure: process.env.EMAIL_SECURE === 'true',
+  port: 465,
+  secure: true,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASSWORD,
   },
+  connectionTimeout: 60000,
+  greetingTimeout: 30000,
+  socketTimeout: 60000,
+  debug: process.env.NODE_ENV === 'development',
+  logger: process.env.NODE_ENV === 'development',
+  tls: {
+    rejectUnauthorized: false
+  }
 });
+
+transporter.verify(function(error, success) {
+  if (error) {
+    console.error('Problem z konfiguracją transportera e-mail:', error);
+    console.log('Dane konfiguracyjne:', {
+      host: process.env.EMAIL_HOST,
+      port: process.env.EMAIL_PORT,
+      secure: process.env.EMAIL_SECURE,
+      user: process.env.EMAIL_USER ? 'SKONFIGUROWANO' : 'BRAK',
+      pass: process.env.EMAIL_PASSWORD ? 'SKONFIGUROWANO' : 'BRAK'
+    });
+  } else {
+    console.log('Serwer poczty skonfigurowany poprawnie');
+  }
+});
+
+export const sendMailWithFallback = async (options: {
+  from: string;
+  to: string;
+  subject: string;
+  html: string;
+}) => {
+  if (config.email.sendgridApiKey) {
+    try {
+      await sgMail.send({
+        to: options.to,
+        from: options.from,
+        subject: options.subject,
+        html: options.html,
+      });
+      return { success: true, provider: 'sendgrid' };
+    } catch (sgError) {
+      console.error('Błąd SendGrid:', sgError);
+      return { success: false, error: sgError };
+    }
+  } else {
+    try {
+      const result = await transporter.sendMail(options);
+      return { success: true, result };
+    } catch (error) {
+      console.error('Błąd Nodemailer:', error);
+      return { success: false, error };
+    }
+  }
+};
 
 const sanitizeContent = (content: string | undefined): string => {
   if (!content) return '';
@@ -111,32 +164,19 @@ export const createEmailTemplate = (params: EmailTemplateParams | string, conten
       <meta http-equiv="X-UA-Compatible" content="ie=edge">
       <meta name="x-apple-disable-message-reformatting">
       <title>${safeTitle}</title>
-      <meta name="color-scheme" content="light dark">
-      <meta name="supported-color-schemes" content="light dark">
+      <meta name="color-scheme" content="dark">
+      <meta name="supported-color-schemes" content="dark">
       <style>
-        @media (prefers-color-scheme: dark) {
-          body { background-color: #121212 !important; color: #ffffff !important; }
-          .email-body { background-color: #1e1e1e !important; }
-          .header, .content, .footer { color: #f5f5f5 !important; }
-        }
-        
-        a[x-apple-data-detectors] {
-          color: inherit !important;
-          text-decoration: none !important;
-          font-size: inherit !important;
-          font-family: inherit !important;
-          font-weight: inherit !important;
-          line-height: inherit !important;
-        }
-        
-          body {
+        /* Globalne style */
+        body {
           margin: 0;
           padding: 0;
           font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-          background-color: #f7f7f7;
-          color: #333333;
+          background-color: #1e1e1e;
+          color: #e8e8e8;
         }
         
+        /* Ukryty preheader */
         .preheader {
           display: none !important;
           visibility: hidden;
@@ -149,6 +189,7 @@ export const createEmailTemplate = (params: EmailTemplateParams | string, conten
           overflow: hidden;
         }
         
+        /* Kontener główny */
         .email-container {
           width: 100%;
           max-width: 600px;
@@ -156,69 +197,118 @@ export const createEmailTemplate = (params: EmailTemplateParams | string, conten
           padding: 20px;
         }
         
+        /* Główne ciało maila */
         .email-body {
-          background-color: #ffffff;
+          background-color: #2d2d2d;
           border-radius: 8px;
-          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
           overflow: hidden;
+          border: 1px solid #3e3e3e;
         }
         
+        /* Nagłówek z logo */
         .header {
-          background-color: #4f45e4;
-          padding: 20px;
+          background-color: #323330;
+          padding: 25px 20px;
           text-align: center;
+          border-bottom: 3px solid #f7df1e;
         }
         
+        /* Tytuł w nagłówku */
         .header h1 {
-          color: #ffffff;
+          color: #f7df1e;
           margin: 0;
           font-size: 24px;
+          letter-spacing: 0.5px;
         }
         
+        /* Zawartość wiadomości */
         .content {
           padding: 30px 20px;
-          color: #333333;
+          color: #e8e8e8;
           line-height: 1.6;
         }
         
+        /* Blok kodu */
         .code-block {
-          background-color: #f5f5f5;
+          background-color: #202020;
           border-radius: 5px;
           padding: 15px;
           margin: 15px 0;
-          font-family: monospace;
+          font-family: 'Courier New', monospace;
           white-space: pre-wrap;
           word-break: break-all;
-          color: #333;
-          border-left: 4px solid #4f45e4;
+          color: #e8e8e8;
+          border-left: 4px solid #f7df1e;
           overflow-x: auto;
         }
         
+        /* Przyciski w stylu JS */
         .btn {
           display: inline-block;
-          background-color: #4f45e4;
-          color: white !important;
+          background-color: #f7df1e;
+          color: #323330 !important;
           text-decoration: none;
           padding: 12px 24px;
           border-radius: 5px;
           font-weight: 600;
           margin: 15px 0;
+          text-align: center;
         }
         
+        /* Stopka */
         .footer {
           padding: 20px;
           text-align: center;
-          color: #666666;
+          color: #a0a0a0;
           font-size: 14px;
-          background-color: #f8f8f8;
+          background-color: #252525;
+          border-top: 1px solid #3e3e3e;
         }
         
+        /* Linki */
+        a {
+          color: #f7df1e;
+          text-decoration: none;
+        }
+        
+        a:hover {
+          text-decoration: underline;
+        }
+        
+        /* Listy */
         ul {
           padding-left: 20px;
         }
         
-        p, ul li {
-          margin-bottom: 10px;
+        ul li {
+          margin-bottom: 8px;
+        }
+        
+        /* Wybrane elementy JavaScript */
+        .js-keyword {
+          color: #f7df1e;
+          font-weight: bold;
+        }
+        
+        /* Fixy dla klientów poczty Apple */
+        a[x-apple-data-detectors] {
+          color: inherit !important;
+          text-decoration: none !important;
+          font-size: inherit !important;
+          font-family: inherit !important;
+          font-weight: inherit !important;
+          line-height: inherit !important;
+        }
+        
+        /* Obsługa dark mode */
+        @media (prefers-color-scheme: dark) {
+          .email-body { background-color: #2d2d2d !important; }
+          .header { background-color: #323330 !important; }
+          .content { color: #e8e8e8 !important; }
+          .code-block { background-color: #202020 !important; }
+          .footer { background-color: #252525 !important; }
+          body { background-color: #1e1e1e !important; color: #e8e8e8 !important; }
         }
       </style>
     </head>
@@ -233,7 +323,7 @@ export const createEmailTemplate = (params: EmailTemplateParams | string, conten
             ${safeContent}
           </div>
           <div class="footer">
-            <p>&copy; ${currentYear} CodeLinesJS. Wszystkie prawa zastrzeżone.</p>
+            <p>© ${currentYear} <span class="js-keyword">CodeLinesJS</span>. Wszystkie prawa zastrzeżone.</p>
             <p>Jeśli nie prosiłeś o tę wiadomość, zignoruj ją lub skontaktuj się z nami.</p>
           </div>
         </div>
