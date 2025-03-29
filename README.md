@@ -10,7 +10,6 @@
 ## Dashboard
 <img width="1440" alt="Screenshot 2025-02-21 at 18 00 56" src="https://github.com/user-attachments/assets/1aeae37b-cdd9-4ff4-9e70-4eed53e8ec66" />
 
-
 # 🚀 CodeLinesJS
 
 CodeLinesJS is an innovative educational platform that transforms learning JavaScript into an engaging and interactive experience. By combining gamification elements with hands-on programming challenges, we create a unique learning environment tailored for beginners and intermediate developers.
