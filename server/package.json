@@ -12,7 +12,7 @@
     "init-data": "node --no-warnings --loader ts-node/esm --experimental-specifier-resolution=node src/scripts/initLearningData.ts",
     "update-stats": "node --no-warnings --loader ts-node/esm --experimental-specifier-resolution=node src/scripts/updateUserStats.ts",
     "init-paths": "node --no-warnings --loader ts-node/esm --experimental-specifier-resolution=node src/scripts/initLearningPaths.ts",
-    "vercel-build": "npx rimraf ./dist && tsc --skipLibCheck || echo 'Compilation completed with errors, continuing anyway.' && cp -r ./public ./dist/public || true"
+    "vercel-build": "tsc"
   },
   "engines": {
     "node": ">=18.x"

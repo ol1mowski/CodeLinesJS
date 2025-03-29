@@ -2,8 +2,12 @@
   "version": 2,
   "builds": [
     {
-      "src": "package.json",
+      "src": "dist/server.js",
       "use": "@vercel/node"
+    },
+    {
+      "src": "public/**",
+      "use": "@vercel/static"
     }
   ],
   "rewrites": [
