@@ -1,6 +1,6 @@
 import { Request } from 'express';
+import { Types } from 'mongoose';
 
-// Rozszerzenie interfejsu Request Express
 declare global {
   namespace Express {
     interface Request {
@@ -14,16 +14,65 @@ declare global {
   }
 }
 
-// Interfejsy dla modeli MongoDB
 interface IUser {
-  _id: string;
-  name: string;
-  email: string;
+  _id?: string | Types.ObjectId;
+  name?: string;
+  username?: string;
+  email?: string;
   password?: string;
-  role: 'user' | 'admin' | 'instructor';
-  isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  role?: 'user' | 'admin' | 'instructor';
+  accountType?: 'local' | 'google';
+  isEmailVerified?: boolean;
+  isActive?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+  stats?: {
+    points?: number;
+    level?: number;
+    xp?: number;
+    streak?: number;
+    bestStreak?: number;
+    pointsToNextLevel?: number;
+    lastActive?: Date;
+    experiencePoints?: number;
+    badges?: Array<{
+      id: string;
+      name: string;
+      icon: string;
+      [key: string]: any;
+    }>;
+    unlockedFeatures?: string[];
+    totalTimeSpent?: number;
+    completedChallenges?: number;
+    nextLevelThreshold?: number;
+    chartData?: {
+      daily?: Array<{
+        date: string;
+        points: number;
+        timeSpent: number;
+        [key: string]: any;
+      }>;
+      [key: string]: any;
+    };
+    daily?: Array<{
+      date: string;
+      points: number;
+      challenges: number;
+      [key: string]: any;
+    }>;
+    [key: string]: any;
+  };
+  preferences?: {
+    theme?: string;
+    language?: string;
+    [key: string]: any;
+  };
+  profile?: {
+    avatar?: string;
+    bio?: string;
+    [key: string]: any;
+  };
+  [key: string]: any;
 }
 
 interface IProgress {
@@ -47,7 +96,6 @@ interface ILesson {
   pathId: string;
 }
 
-// Eksportujemy typy
 export {
   IUser,
   IProgress,

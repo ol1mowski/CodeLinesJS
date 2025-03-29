@@ -1,3 +1,5 @@
+import { NextFunction, Request, Response } from "express";
+
 export const successResponse = (data = null, message = 'Operacja zakończona sukcesem', statusCode = 200) => {
   return {
     status: 'success',
@@ -7,7 +9,7 @@ export const successResponse = (data = null, message = 'Operacja zakończona suk
   };
 };
 
-export const errorResponse = (message = 'Wystąpił błąd', statusCode = 400, errors = []) => {
+export const errorResponse = (message = 'Wystąpił błąd', statusCode = 400, errors: Record<string, string>[] = []) => {
   return {
     status: 'error',
     message,
@@ -16,19 +18,20 @@ export const errorResponse = (message = 'Wystąpił błąd', statusCode = 400, e
   };
 };
 
-export const responseEnhancer = (req, res, next) => {
+export const responseEnhancer = (req: Request, res: Response, next: NextFunction) => {
+  
   res.success = function(data = null, message = 'Operacja zakończona sukcesem', statusCode = 200) {
     return this.status(statusCode).json(successResponse(data, message, statusCode));
   };
 
-  res.error = function(message = 'Wystąpił błąd', statusCode = 400, errors = []) {
+  res.error = function(message = 'Wystąpił błąd', statusCode = 400, errors: Record<string, string>[] = []) {
     return this.status(statusCode).json(errorResponse(message, statusCode, errors));
   };
 
   next();
 };
 
-export const paginatedResponse = (data, page = 1, limit = 10, total) => {
+export const paginatedResponse = (data, page = 1, limit = 10, total: number) => {
   const totalPages = Math.ceil(total / limit);
   const hasNextPage = page < totalPages;
   const hasPrevPage = page > 1;

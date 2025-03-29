@@ -1,5 +1,9 @@
 export class AppError extends Error {
-  constructor(message, statusCode) {
+  statusCode: number;
+  status: string;
+  isOperational: boolean;
+
+  constructor(message: string, statusCode: number) {
     super(message);
     this.statusCode = statusCode;
     this.status = `${statusCode}`.startsWith('4') ? 'fail' : 'error';
@@ -17,7 +21,9 @@ export class AuthError extends AppError {
 }
 
 export class ValidationError extends AppError {
-  constructor(message = 'Nieprawidłowe dane wejściowe', errors = []) {
+  errors: Record<string, string>[];
+
+  constructor(message = 'Nieprawidłowe dane wejściowe', errors: Record<string, string>[] = []) {
     super(message, 400);
     this.name = 'ValidationError';
     this.errors = errors;

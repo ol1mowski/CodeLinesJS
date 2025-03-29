@@ -1,5 +1,43 @@
+import { IUser } from '../types/index.d.js';
+
+interface ProgressData {
+  points?: number;
+  timeSpent?: number;
+  challenges?: number;
+  [key: string]: any;
+}
+
+interface StreakResult {
+  streak: number;
+  bestStreak: number;
+  streakUpdated: boolean;
+  streakBroken: boolean;
+  daysInactive: number;
+}
+
+interface DailyProgressResult {
+  dailyProgress: {
+    date: string;
+    points: number;
+    challenges: number;
+    timeSpent: number;
+  };
+  totalTimeSpent?: number;
+  completedChallenges?: number;
+}
+
+interface ActivityResult extends StreakResult {
+  dailyProgress: {
+    date: string;
+    points: number;
+    challenges: number;
+    timeSpent: number;
+  };
+  [key: string]: any;
+}
+
 export class StreakService {
-  static updateStreak(user, hasEarnedPoints = false) {
+  static updateStreak(user: IUser, hasEarnedPoints = false): StreakResult {
 
     if (!user.stats) {
       user.stats = {
@@ -56,7 +94,7 @@ export class StreakService {
 
     const lastActiveDate = new Date(lastActive.setHours(0, 0, 0, 0));
     const todayDate = new Date(today.setHours(0, 0, 0, 0));
-    const diffTime = Math.abs(todayDate - lastActiveDate);
+    const diffTime = Math.abs(todayDate.getTime() - lastActiveDate.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
 
@@ -98,7 +136,7 @@ export class StreakService {
     };
   }
 
-  static updateDailyProgress(user, progress = {}) {
+  static updateDailyProgress(user: IUser, progress: ProgressData = {}): DailyProgressResult {
     if (!user.stats) {
       user.stats = {
         streak: 0,
@@ -172,7 +210,7 @@ export class StreakService {
     };
   }
 
-  static initializeDailyProgress(user) {
+  static initializeDailyProgress(user: IUser): { date: string; initialized: boolean } {
     if (!user.stats) {
       user.stats = {
         streak: 0,
@@ -226,7 +264,7 @@ export class StreakService {
     };
   }
 
-  static async updateUserActivity(userId, hasEarnedPoints = false, progress = {}) {
+  static async updateUserActivity(userId: string, hasEarnedPoints = false, progress: ProgressData = {}): Promise<ActivityResult> {
     const { User } = await import('../models/user.model.js');
     const user = await User.findById(userId);
 
@@ -234,22 +272,22 @@ export class StreakService {
       throw new Error('Nie znaleziono użytkownika');
     }
 
-    this.initializeDailyProgress(user);
+    this.initializeDailyProgress(user as unknown as IUser);
     user.markModified('stats');
     await user.save();
 
-    const streakUpdate = this.updateStreak(user, hasEarnedPoints);
+    const streakUpdate = this.updateStreak(user as unknown as IUser, hasEarnedPoints);
     user.markModified('stats');
     await user.save();
 
-    const dailyUpdate = this.updateDailyProgress(user, progress);
+    const dailyUpdate = this.updateDailyProgress(user as unknown as IUser, progress);
 
     user.markModified('stats');
     await user.save();
 
     return {
-      streak: streakUpdate,
-      dailyProgress: dailyUpdate
+      ...streakUpdate,
+      dailyProgress: dailyUpdate.dailyProgress
     };
   }
 }

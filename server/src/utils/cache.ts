@@ -1,7 +1,9 @@
+import { Request, Response, NextFunction } from 'express';
+
 const cache = new Map();
 
 export const cacheMiddleware = (duration = 300) => {
-  return (req, res, next) => {
+  return (req: Request, res: Response, next: NextFunction) => {
     if (req.method !== 'GET') {
       return next();
     }
@@ -15,7 +17,7 @@ export const cacheMiddleware = (duration = 300) => {
 
     const originalSend = res.send;
 
-    res.send = function(body) {
+    res.send = function(body): Response {
       if (res.statusCode === 200) {
         cache.set(key, {
           data: body,
@@ -23,21 +25,21 @@ export const cacheMiddleware = (duration = 300) => {
         });
       }
       
-      originalSend.call(this, body);
+      return originalSend.call(this, body);
     };
 
     next();
   };
 };
 
-export const setCache = (key, data, ttl = 300) => {
+export const setCache = (key: string, data, ttl = 300) => {
   cache.set(key, {
     data,
     expiry: Date.now() + ttl * 1000
   });
 };
 
-export const getCache = (key) => {
+export const getCache = (key: string) => {
   const cachedItem = cache.get(key);
   
   if (cachedItem && cachedItem.expiry > Date.now()) {
@@ -47,7 +49,7 @@ export const getCache = (key) => {
   return undefined;
 };
 
-export const deleteCache = (key) => {
+export const deleteCache = (key: string) => {
   cache.delete(key);
 };
 

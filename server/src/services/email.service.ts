@@ -1,6 +1,6 @@
 import { transporter, createEmailTemplate } from '../config/mailer.js';
 
-export const sendBugReportConfirmation = async (email, title) => {
+export const sendBugReportConfirmation = async (email: string, title: string) => {
   try {
     const emailContent = `
       <p>Dziękujemy za zgłoszenie problemu w CodeLinesJS!</p>
@@ -35,7 +35,7 @@ export const sendBugReportConfirmation = async (email, title) => {
     return {
       success: true,
       messageId: result.messageId,
-      previewUrl: process.env.NODE_ENV === 'development' ? result.previewUrl : null
+      previewUrl: process.env.NODE_ENV === 'development' ? (result as any).previewUrl : null
     };
   } catch (error) {
     console.error('Błąd podczas wysyłania potwierdzenia zgłoszenia:', error);
@@ -46,7 +46,7 @@ export const sendBugReportConfirmation = async (email, title) => {
   }
 };
 
-export const sendReportStatusUpdate = async (email, title, status) => {
+export const sendReportStatusUpdate = async (email: string, title: string, status: string) => {
   try {
     let statusText;
     switch (status) {
@@ -88,7 +88,7 @@ export const sendReportStatusUpdate = async (email, title, status) => {
     return {
       success: true,
       messageId: result.messageId,
-      previewUrl: process.env.NODE_ENV === 'development' ? result.previewUrl : null
+      previewUrl: process.env.NODE_ENV === 'development' ? (result as any).previewUrl : null
     };
   } catch (error) {
     console.error('Błąd podczas wysyłania aktualizacji statusu zgłoszenia:', error);

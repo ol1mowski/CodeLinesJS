@@ -1,22 +1,32 @@
 import { Group } from '../models/group.model.js';
+import { Document, Types } from 'mongoose';
 
-export const getGroups = async () => {
+interface GroupDocument extends Document {
+  name: string;
+  description: string;
+  members: Types.ObjectId[];
+  membersCount: number;
+  lastActive: Date;
+  [key: string]: any;
+}
+
+export const getGroups = async (): Promise<GroupDocument[]> => {
   return await Group.find()
     .sort({ lastActive: -1 });
 };
 
-export const joinGroup = async (groupId, userId) => {
-  const group = await Group.findById(groupId);
+export const joinGroup = async (groupId: string, userId: string): Promise<GroupDocument> => {
+  const group = await Group.findById(groupId) as GroupDocument;
   if (!group) {
     throw new Error('Grupa nie istnieje');
   }
 
-  const isMember = group.members.includes(userId);
+  const isMember = group.members.some(member => member.toString() === userId);
   if (isMember) {
-    group.members.pull(userId);
+    group.members = group.members.filter((member) => member.toString() !== userId);
     group.membersCount--;
   } else {
-    group.members.push(userId);
+    group.members.push(new Types.ObjectId(userId));
     group.membersCount++;
   }
 

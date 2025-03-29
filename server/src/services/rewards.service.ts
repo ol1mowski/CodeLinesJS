@@ -1,6 +1,23 @@
+import { IUser } from '../types/index.d.js';
+
+interface Reward {
+  badges: Array<{
+    id: string;
+    name: string;
+    icon: string;
+  }>;
+  bonusPoints: number;
+  unlockedFeatures: string[];
+}
+
+interface RewardResult {
+  stats: IUser['stats'];
+  rewards: Reward;
+}
+
 class RewardsService {
-  getLevelRewards(level) {
-    const baseRewards = {
+  getLevelRewards(level: number): Reward {
+    const baseRewards: Reward = {
       badges: [],
       bonusPoints: 0,
       unlockedFeatures: []
@@ -38,8 +55,8 @@ class RewardsService {
     return baseRewards;
   }
 
-  async processLevelUpRewards(stats, oldLevel, newLevel) {
-    const rewards = {
+  async processLevelUpRewards(stats: IUser['stats'], oldLevel: number, newLevel: number): Promise<RewardResult> {
+    const rewards: Reward = {
       badges: [],
       bonusPoints: 0,
       unlockedFeatures: []

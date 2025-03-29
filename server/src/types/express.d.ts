@@ -13,4 +13,9 @@ declare module 'express-serve-static-core' {
     };
     dbSession?: ClientSession;
   }
+  
+  interface Response {
+    success(data?: any, message?: string, statusCode?: number): this;
+    error(message?: string, statusCode?: number, errors?: Record<string, string>[]): this;
+  }
 } 

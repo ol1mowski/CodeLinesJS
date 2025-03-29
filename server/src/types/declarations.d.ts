@@ -1,7 +1,3 @@
-// Deklaracje dla modułów, które nie mają definicji typów
-declare module '*.js';
-
-// Deklaracja dla bcryptjs
 declare module 'bcryptjs' {
   export function genSalt(rounds?: number): Promise<string>;
   export function hash(data: string, salt: string | number): Promise<string>;
@@ -11,7 +7,6 @@ declare module 'bcryptjs' {
   export function genSaltSync(rounds?: number): string;
 }
 
-// Dodatkowe deklaracje dla innych typów plików
 declare module '*.json' {
   const value: any;
   export default value;

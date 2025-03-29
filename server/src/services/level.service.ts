@@ -1,12 +1,49 @@
+import { IUser } from '../types/index.d.js';
+
+interface LevelUpdateResult {
+  leveledUp: boolean;
+  levelsGained: number;
+  initialLevel: number;
+  currentLevel: number;
+  currentPoints: number;
+  pointsToNextLevel: number;
+  user: IUser;
+}
+
+interface LevelAndStreakResult {
+  level: {
+    level: number;
+    points: number;
+    pointsRequired: number;
+    progress: number;
+    leveledUp: boolean;
+    levelsGained: number;
+  };
+  streak: number;
+  dailyProgress: {
+    date: string;
+    points: number;
+    challenges: number;
+    timeSpent: number;
+  };
+}
+
+interface LevelStats {
+  level: number;
+  points: number;
+  pointsToNextLevel: number;
+  progress: number;
+}
+
 export class LevelService {
   static XP_PER_LEVEL = 1000;
   static LEVEL_MULTIPLIER = 1.35;
   
-  static calculatePointsToNextLevel(level) {
+  static calculatePointsToNextLevel(level: number): number {
     return Math.round(this.XP_PER_LEVEL * Math.pow(this.LEVEL_MULTIPLIER, level - 1));
   }
 
-  static async updateUserLevel(user, earnedPoints = 0) {
+  static async updateUserLevel(user: IUser, earnedPoints = 0): Promise<LevelUpdateResult> {
     if (!user.stats) {
       user.stats = {
         points: 0,
@@ -50,7 +87,7 @@ export class LevelService {
     };
   }
 
-  static async updateUserLevelAndStreak(userId, earnedPoints = 0, progress = {}) {
+  static async updateUserLevelAndStreak(userId: string, earnedPoints = 0, progress: Record<string, any> = {}): Promise<LevelAndStreakResult> {
     const { User } = await import('../models/user.model.js');
     const { StreakService } = await import('./streak.service.js');
     
@@ -69,7 +106,7 @@ export class LevelService {
       hasEarnedPoints
     });
     
-    const levelUpdate = await this.updateUserLevel(user, earnedPoints);
+    const levelUpdate = await this.updateUserLevel(user as unknown as IUser, earnedPoints);
     
     user.markModified('stats');
     await user.save();
@@ -85,7 +122,7 @@ export class LevelService {
       activityUpdateStreak: activityUpdate.streak
     });
     
-    const levelStats = this.getUserLevelStats(updatedUser);
+    const levelStats = this.getUserLevelStats(updatedUser as unknown as IUser);
     
     return {
       level: {
@@ -101,7 +138,7 @@ export class LevelService {
     };
   }
 
-  static getUserLevelStats(user) {
+  static getUserLevelStats(user: IUser): LevelStats {
     const level = user.stats?.level || 1;
     const points = user.stats?.points || 0;
     const pointsToNextLevel = user.stats?.pointsToNextLevel || this.calculatePointsToNextLevel(level);
