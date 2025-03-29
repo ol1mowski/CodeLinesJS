@@ -115,7 +115,7 @@ export const configureServer = (app: Application): Application => {
   
   const apiLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 200,
+    max: 500,
     standardHeaders: true,
     legacyHeaders: false,
     message: {
@@ -126,7 +126,7 @@ export const configureServer = (app: Application): Application => {
   
   const authLimiter = rateLimit({
     windowMs: 10 * 60 * 1000,
-    max: 20,
+    max: 50,
     standardHeaders: true,
     legacyHeaders: false,
     message: {

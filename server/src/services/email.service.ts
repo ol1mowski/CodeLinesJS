@@ -23,7 +23,7 @@ export class EmailService {
           console.log(\`Witaj, \${user.username}!\`);
         </div>
         <p>Możesz zalogować się do swojego konta używając adresu email: <span class="js-keyword">${user.email}</span></p>
-        <a href="https://www.codelinesjs.pl/login" class="btn">Zaloguj się</a>
+        <a href="https://www.codelinesjs.pl/logowanie" class="btn">Zaloguj się</a>
         <p>Pozdrawiamy,<br/>Zespół <span class="js-keyword">CodeLinesJS</span></p>
       `
     });
@@ -99,7 +99,7 @@ export class EmailService {
           };
         </div>
         <p>Możesz zalogować się używając nowego hasła:</p>
-        <a href="https://www.codelinesjs.pl/login" class="btn">Zaloguj się</a>
+        <a href="https://www.codelinesjs.pl/logowanie" class="btn">Zaloguj się</a>
         <p>Jeśli to nie Ty zmieniłeś/aś hasło, natychmiast skontaktuj się z nami.</p>
         <p>Pozdrawiamy,<br/>Zespół <span class="js-keyword">CodeLinesJS</span></p>
       `
@@ -140,7 +140,6 @@ export const sendBugReportConfirmation = async (email: string, title: string) =>
         <li>Nadamy mu odpowiedni <span class="js-keyword">priorytet</span></li>
         <li>Poinformujemy Cię o <span class="js-keyword">rozwiązaniu</span> problemu</li>
       </ul>
-      <a href="https://www.codelinesjs.pl/kontakt" class="btn">Skontaktuj się z nami</a>
       <p>Doceniamy Twój wkład w ulepszanie naszej platformy!</p>
     `;
 
@@ -197,8 +196,6 @@ export const sendReportStatusUpdate = async (email: string, title: string, statu
         // Aktualny stan zgłoszenia
         console.log(\`Status zgłoszenia: \${report.status}\`);
       </div>
-      <p>Śledź postęp swojego zgłoszenia bezpośrednio na platformie:</p>
-      <a href="https://www.codelinesjs.pl/bug-reports" class="btn">Przejdź do zgłoszeń</a>
       <p>Dziękujemy za Twoją cierpliwość i wkład w ulepszanie <span class="js-keyword">CodeLinesJS</span>!</p>
     `;
 

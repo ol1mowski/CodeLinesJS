@@ -54,11 +54,13 @@ export class StreakService {
     const today = new Date();
     const lastActive = user.stats.lastActive ? new Date(user.stats.lastActive) : null;
 
-
     if (!hasEarnedPoints) {
       if (lastActive) {
-        const lastActiveDate = new Date(lastActive.setHours(0, 0, 0, 0));
-        const todayDate = new Date(today.setHours(0, 0, 0, 0));
+        const lastActiveDate = new Date(lastActive.getTime());
+        const todayDate = new Date(today.getTime());
+        
+        lastActiveDate.setHours(0, 0, 0, 0);
+        todayDate.setHours(0, 0, 0, 0);
 
         if (todayDate > lastActiveDate) {
           user.stats.lastActive = today;
@@ -82,6 +84,11 @@ export class StreakService {
       user.stats.bestStreak = 1;
       user.stats.lastActive = today;
 
+      console.log('[DEBUG] updateStreak - Inicjalizacja streaku', {
+        streak: 1,
+        bestStreak: 1,
+        lastActive: today.toISOString()
+      });
 
       return {
         streak: 1,
@@ -92,14 +99,16 @@ export class StreakService {
       };
     }
 
-    const lastActiveDate = new Date(lastActive.setHours(0, 0, 0, 0));
-    const todayDate = new Date(today.setHours(0, 0, 0, 0));
+    const lastActiveDate = new Date(lastActive.getTime());
+    const todayDate = new Date(today.getTime());
+    
+    lastActiveDate.setHours(0, 0, 0, 0);
+    todayDate.setHours(0, 0, 0, 0);
+    
     const diffTime = Math.abs(todayDate.getTime() - lastActiveDate.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-
     if (diffDays === 0) {
-
       return {
         streak: user.stats.streak || 0,
         bestStreak: user.stats.bestStreak || 0,
@@ -125,7 +134,6 @@ export class StreakService {
 
     user.stats.streak = 1;
     user.stats.lastActive = today;
-
 
     return {
       streak: 1,

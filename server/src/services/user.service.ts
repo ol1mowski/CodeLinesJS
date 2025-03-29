@@ -331,7 +331,6 @@ export class UserService {
           isActive: true
         });
 
-        console.log(`Utworzono nowego użytkownika Google: ${newUser.username} (${newUser._id})`);
 
         try {
           await emailService.sendWelcomeEmail(newUser);
