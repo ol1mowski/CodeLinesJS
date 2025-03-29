@@ -5,7 +5,7 @@ import config from '../config/config.js';
 
 export class TokenService {
 
-  generateToken(user: IUser, expiresIn = config.jwt.expiresIn): string {
+  generateToken(user: IUser, expiresIn: any = config.jwt.expiresIn): string {
     const tokenId = crypto.randomBytes(16).toString('hex');
     
     const payload = {
@@ -18,10 +18,10 @@ export class TokenService {
       jti: tokenId,
     };
 
-    const secret = process.env.JWT_SECRET || '';
+    const secret = Buffer.from(process.env.JWT_SECRET || '', 'utf-8');
     
     const options: SignOptions = { 
-      expiresIn: Number(expiresIn),
+      expiresIn,
       algorithm: 'HS256'
     };
 
@@ -43,7 +43,7 @@ export class TokenService {
 
   verifyToken(token: string): any {
     try {
-      const secret = process.env.JWT_SECRET || '';
+      const secret = Buffer.from(process.env.JWT_SECRET || '', 'utf-8');
       return jwt.verify(token, secret);
     } catch (error) {
       console.error('Błąd weryfikacji tokenu:', error);
