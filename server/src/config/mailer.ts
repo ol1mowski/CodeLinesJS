@@ -51,8 +51,8 @@ export const transporter = nodemailer.createTransport({
   connectionTimeout: 60000,
   greetingTimeout: 30000,
   socketTimeout: 60000,
-  debug: process.env.NODE_ENV === 'development',
-  logger: process.env.NODE_ENV === 'development',
+  debug: false,
+  logger: false,
   tls: {
     rejectUnauthorized: false
   }
