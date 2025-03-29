@@ -9,6 +9,7 @@ import {
 import { User } from '../../models/user.model.js';
 import { AuthError, ValidationError } from '../../utils/errors.js';
 import { Document } from 'mongoose';
+import { Request, Response, NextFunction } from 'express';
 
 interface UserDocument extends Document {
   comparePassword(password: string): Promise<boolean>;
@@ -43,9 +44,9 @@ export const changePassword = changePasswordController;
 export const updateNotifications = updateNotificationsController;
 export const updateAppearance = updateAppearanceController;
 
-export const getProfile = async (req, res, next) => {
+export const getProfile = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const user = await User.findById(req.user.userId)
+    const user = await User.findById(req.user?.userId)
       .select('username email profile preferences stats')
       .lean() as unknown as UserLeanDocument;
     
@@ -69,9 +70,9 @@ export const getProfile = async (req, res, next) => {
   }
 };
 
-export const getPreferences = async (req, res, next) => {
+export const getPreferences = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const user = await User.findById(req.user.userId)
+    const user = await User.findById(req.user?.userId)
       .select('preferences');
     
     if (!user) {
@@ -84,11 +85,11 @@ export const getPreferences = async (req, res, next) => {
   }
 };
 
-export const updatePreferences = async (req, res, next) => {
+export const updatePreferences = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const updates = req.body;
     const user = await User.findByIdAndUpdate(
-      req.user.userId,
+      req.user?.userId,
       { $set: { preferences: { ...updates } } },
       { new: true }
     ).select('preferences');
@@ -103,11 +104,11 @@ export const updatePreferences = async (req, res, next) => {
   }
 };
 
-export const deleteAccount = async (req, res, next) => {
+export const deleteAccount = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { password } = req.body;
     
-    const user = await User.findById(req.user.userId) as UserDocument;
+    const user = await User.findById(req.user?.userId) as UserDocument;
     if (!user) {
       throw new AuthError('Użytkownik nie znaleziony');
     }
@@ -117,7 +118,7 @@ export const deleteAccount = async (req, res, next) => {
       throw new AuthError('Nieprawidłowe hasło');
     }
     
-    await User.findByIdAndDelete(req.user.userId);
+    await User.findByIdAndDelete(req.user?.userId);
     
     res.json({ message: 'Konto zostało usunięte' });
   } catch (error) {
@@ -125,9 +126,9 @@ export const deleteAccount = async (req, res, next) => {
   }
 };
 
-export const getUserData = async (req, res, next) => {
+export const getUserData = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const user = await User.findById(req.user.userId)
+    const user = await User.findById(req.user?.userId)
       .select('email username avatar bio stats preferences')
       .lean() as unknown as UserLeanDocument;
     
@@ -155,7 +156,7 @@ export const getUserData = async (req, res, next) => {
   }
 };
 
-export const getUserByIdentifier = async (req, res, next) => {
+export const getUserByIdentifier = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { identifier } = req.params;
     

@@ -1,11 +1,13 @@
-export const asyncHandler = (fn) => {
-  return (req, res, next) => {
+import { Request, Response, NextFunction } from 'express';
+
+export const asyncHandler = (fn: (req: Request, res: Response, next: NextFunction) => Promise<void>) => {
+  return (req: Request, res: Response, next: NextFunction) => {
     Promise.resolve(fn(req, res, next)).catch(next);
   };
 };
 
-export const withTransaction = (fn) => {
-  return asyncHandler(async (req, res, next) => {
+export const withTransaction = (fn: (req: Request, res: Response, next: NextFunction) => Promise<void>) => {
+  return asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const mongoose = (await import('mongoose')).default;
     const session = await mongoose.startSession();
     
