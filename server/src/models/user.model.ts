@@ -188,17 +188,33 @@ const userSchema = new mongoose.Schema(
 );
 
 userSchema.pre("save", async function (next) {
-  if (this.isModified("password")) {
+  if (this.isNew) {
+    console.log(`Tworzę nowego użytkownika: ${this.username}`);
+    console.log(`Pierwotne hasło: ${this.password.substring(0, 10)}...`);
+  }
+
+  if (this.isModified("password") && !this.password.startsWith("$2a$") && !this.password.startsWith("$2b$")) {
     const saltRounds = config.security.bcryptSaltRounds || 12;
+    const plainPassword = this.password;
     this.password = await bcrypt.hash(this.password, saltRounds);
     this.passwordChangedAt = new Date();
+    
+    console.log(`Hasło zostało zahashowane: 
+      - Oryginalne: ${plainPassword}
+      - Hash: ${this.password}`);
   }
   next();
 });
 
 userSchema.methods.changedPasswordAfter = function(jwtTimestamp: number) {
   if (this.passwordChangedAt) {
-    const changedTimestamp = parseInt(this.passwordChangedAt.getTime().toString(), 10);
+    const changedTimestamp = Math.floor(this.passwordChangedAt.getTime() / 1000);
+    
+    if (this.createdAt && 
+        Math.abs(this.createdAt.getTime() - this.passwordChangedAt.getTime()) < 5000) {
+      return false;
+    }
+    
     return jwtTimestamp < changedTimestamp;
   }
   return false;
@@ -206,12 +222,16 @@ userSchema.methods.changedPasswordAfter = function(jwtTimestamp: number) {
 
 userSchema.methods.comparePassword = async function (candidatePassword: string) {
   if (!candidatePassword || !this.password) {
+    console.log('Brak hasła do porównania');
     return false;
   }
   try {
-    return await bcrypt.compare(candidatePassword, this.password);
+    console.log(`Porównuję hasło, format hashu: ${this.password.substring(0, 7)}...`);
+    const isMatch = await bcrypt.compare(candidatePassword, this.password);
+    console.log(`Wynik porównania hasła: ${isMatch}`);
+    return isMatch;
   } catch (error) {
-    console.error('Error comparing passwords:', error);
+    console.error('Błąd podczas porównywania haseł:', error);
     return false;
   }
 };

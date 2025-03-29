@@ -17,56 +17,85 @@ class AuthService {
   }
 
   async loginUser(email: string, password: string, rememberMe = false) {
-    const user = await User.findOne({ email });
-    if (!user) {
-      throw new AuthError('Nieprawidłowe dane logowania');
+    try {
+      const user = await User.findOne({ email });
+      
+      if (!user) {
+        console.log(`Nie znaleziono użytkownika z emailem: ${email}`);
+        throw new AuthError('Nieprawidłowe dane logowania');
+      }
+
+      if (user.accountType === 'google') {
+        console.log(`Użytkownik ${user.username} próbuje zalogować się przez formę, ale ma konto Google`);
+        throw new AuthError('To konto używa logowania przez Google. Użyj przycisku "Zaloguj przez Google".');
+      }
+
+      const bcryptjs = await import('bcryptjs');
+      const isPasswordValid = await bcryptjs.compare(password, user.password);
+      
+      console.log(`Wynik weryfikacji hasła: ${isPasswordValid}, hasło podane: ${password.substring(0, 3)}...`);
+      
+      if (!isPasswordValid) {
+        console.log(`Nieprawidłowe hasło dla użytkownika: ${user.username}`);
+        throw new AuthError('Nieprawidłowe dane logowania');
+      }
+
+      user.lastLogin = new Date();
+      await user.save();
+
+      const expiresIn = rememberMe ? '30d' : '24h';
+      const token = this.tokenService.generateToken(user, String(expiresIn));
+      console.log(`Wygenerowano token dla użytkownika: ${user.username}`);
+
+      return {
+        token,
+        expiresIn,
+        user: this.userService.sanitizeUser(user)
+      };
+    } catch (error) {
+      console.error('Błąd logowania:', error);
+      if (error instanceof AuthError) {
+        throw error;
+      }
+      throw new AuthError('Wystąpił błąd podczas logowania');
     }
-
-    if (user.accountType === 'google') {
-      throw new AuthError('To konto używa logowania przez Google. Użyj przycisku "Zaloguj przez Google".');
-    }
-
-    // @ts-ignore - ignorujemy błąd TypeScript, zakładając że model ma tę metodę
-    const isPasswordValid = await user.comparePassword(password);
-    if (!isPasswordValid) {
-      throw new AuthError('Nieprawidłowe dane logowania');
-    }
-
-    user.lastLogin = new Date();
-    await user.save();
-
-    const expiresIn = rememberMe ? '30d' : '24h';
-    // @ts-ignore - ignorujemy błąd typowania
-    const token = this.tokenService.generateToken(user, expiresIn);
-
-    return {
-      token,
-      expiresIn,
-      // @ts-ignore - ignorujemy błąd typowania
-      user: this.userService.sanitizeUser(user)
-    };
   }
 
   async registerUser(email: string, password: string, username: string) {
-    const user = await this.userService.createUser(email, password, username);
-    const token = this.tokenService.generateToken(user);
-
     try {
-      await this.emailService.sendWelcomeEmail(user);
-    } catch (emailError) {
-      console.error('Błąd wysyłania emaila powitalnego:', emailError);
-    }
-
-    return {
-      token,
-      user: {
-        id: user._id,
-        email: user.email,
-        username: user.username,
-        isNewUser: true,
-        stats: user.stats
+      const user = await this.userService.createUser(email, password, username);
+      console.log(`Użytkownik utworzony: ${user._id}, ${user.username}, hash hasła: ${user.password.substring(0, 15)}...`);
+      
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const freshUser = await User.findById(user._id);
+      if (!freshUser) {
+        throw new AuthError('Błąd podczas tworzenia konta - nie można znaleźć użytkownika');
       }
-    };
+      
+      const token = this.tokenService.generateToken(freshUser, '24h');
+      console.log(`Wygenerowano token dla nowego użytkownika: ${freshUser.username}`);
+      
+      try {
+        await this.emailService.sendWelcomeEmail(freshUser);
+      } catch (emailError) {
+        console.error('Błąd wysyłania emaila powitalnego:', emailError);
+      }
+      
+      return {
+        token, 
+        user: {
+          ...this.userService.sanitizeUser(freshUser),
+          isNewUser: true
+        }
+      };
+    } catch (error) {
+      console.error('Błąd rejestracji:', error);
+      if (error instanceof AuthError) {
+        throw error;
+      }
+      throw new AuthError(`Wystąpił błąd podczas rejestracji: ${error.message}`);
+    }
   }
 
 
@@ -98,7 +127,6 @@ class AuthService {
     const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
 
     try {
-      // @ts-ignore - ignorujemy błąd typowania
       await this.emailService.sendPasswordResetEmail(user, resetUrl);
     } catch (emailError) {
       console.error('Błąd wysyłania emaila resetowania hasła:', emailError);
@@ -152,13 +180,11 @@ class AuthService {
     await user.save();
 
     try {
-      // @ts-ignore - ignorujemy błąd typowania
       await this.emailService.sendPasswordChangedEmail(user);
     } catch (emailError) {
       console.error('Błąd wysyłania emaila potwierdzającego zmianę hasła:', emailError);
     }
 
-    // @ts-ignore - ignorujemy błąd typowania
     const authToken = this.tokenService.generateToken(user);
 
     return {
