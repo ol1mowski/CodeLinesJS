@@ -4,6 +4,7 @@ import { AuthError } from '../utils/errors.js';
 import { EmailService } from './email.service.js';
 import { TokenService } from './token.service.js';
 import { UserService } from './user.service.js';
+import bcrypt from 'bcryptjs';
 
 class AuthService {
   private emailService: EmailService;
@@ -30,10 +31,8 @@ class AuthService {
         throw new AuthError('To konto używa logowania przez Google. Użyj przycisku "Zaloguj przez Google".');
       }
 
-      const bcryptjs = await import('bcryptjs');
-      const isPasswordValid = await bcryptjs.compare(password, user.password);
-      
-      console.log(`Wynik weryfikacji hasła: ${isPasswordValid}, hasło podane: ${password.substring(0, 3)}...`);
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+
       
       if (!isPasswordValid) {
         console.log(`Nieprawidłowe hasło dla użytkownika: ${user.username}`);
@@ -45,7 +44,6 @@ class AuthService {
 
       const expiresIn = rememberMe ? '30d' : '24h';
       const token = this.tokenService.generateToken(user, String(expiresIn));
-      console.log(`Wygenerowano token dla użytkownika: ${user.username}`);
 
       return {
         token,
@@ -64,7 +62,6 @@ class AuthService {
   async registerUser(email: string, password: string, username: string) {
     try {
       const user = await this.userService.createUser(email, password, username);
-      console.log(`Użytkownik utworzony: ${user._id}, ${user.username}, hash hasła: ${user.password.substring(0, 15)}...`);
       
       await new Promise(resolve => setTimeout(resolve, 500));
       
@@ -74,7 +71,6 @@ class AuthService {
       }
       
       const token = this.tokenService.generateToken(freshUser, '24h');
-      console.log(`Wygenerowano token dla nowego użytkownika: ${freshUser.username}`);
       
       try {
         await this.emailService.sendWelcomeEmail(freshUser);
