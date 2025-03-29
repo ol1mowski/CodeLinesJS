@@ -2,17 +2,17 @@
   "name": "codelinesjs-api",
   "version": "1.0.0",
   "description": "API dla platformy CodeLinesJS do nauki JavaScript",
-  "main": "dist/index.js",
+  "main": "dist/server.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "start": "node dist/index.js",
+    "start": "node dist/server.js",
     "dev": "nodemon",
     "init-data": "node --no-warnings --loader ts-node/esm --experimental-specifier-resolution=node src/scripts/initLearningData.ts",
     "update-stats": "node --no-warnings --loader ts-node/esm --experimental-specifier-resolution=node src/scripts/updateUserStats.ts",
     "init-paths": "node --no-warnings --loader ts-node/esm --experimental-specifier-resolution=node src/scripts/initLearningPaths.ts",
-    "vercel-build": "tsc && echo 'Build completed'"
+    "vercel-build": "tsc --skipLibCheck && echo 'Build completed'"
   },
   "engines": {
     "node": ">=18.x"

@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { User } from "../models/user.model.js";
+// @ts-ignore
 import bcrypt from "bcryptjs";
 import dotenv from "dotenv";
 

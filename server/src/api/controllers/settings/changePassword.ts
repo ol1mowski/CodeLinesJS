@@ -1,5 +1,6 @@
 import { User } from "../../../models/user.model.js";
 import { ValidationError } from "../../../utils/errors.js";
+// @ts-ignore
 import bcrypt from "bcryptjs";
 
 export const changePasswordController = async (req, res, next) => {
