@@ -1,8 +1,19 @@
 import AppError from "../utils/appError.js";
 import config from "../config/config.js";
+import { Request, Response, NextFunction } from 'express';
 
+interface ExtendedError extends Error {
+  code?: number;
+  keyValue?: Record<string, any>;
+  statusCode?: number;
+  status?: string;
+  errors?: Record<string, { message: string }>;
+  isOperational?: boolean;
+  path?: string;
+  value?: any;
+}
 
-const sanitizeErrorMessage = (message) => {
+const sanitizeErrorMessage = (message: string | undefined): string => {
   if (!message) return "Wystąpił nieznany błąd";
 
   return String(message)
@@ -17,34 +28,32 @@ const sanitizeErrorMessage = (message) => {
     .substring(0, 500);
 };
 
-
-const handleDuplicateFields = (err) => {
-  const message = sanitizeErrorMessage(`Duplikat wartości pola: ${Object.keys(err.keyValue).join(', ')}. Proszę użyć innej wartości.`);
+const handleDuplicateFields = (err: ExtendedError): AppError => {
+  const message = sanitizeErrorMessage(`Duplikat wartości pola: ${Object.keys(err.keyValue || {}).join(', ')}. Proszę użyć innej wartości.`);
   return new AppError(message, 400);
 };
 
-
-const handleValidationError = (err) => {
-  const errors = Object.values(err.errors).map(val => sanitizeErrorMessage(val.message));
+const handleValidationError = (err: ExtendedError): AppError => {
+  const errors = Object.values(err.errors || {}).map(val => sanitizeErrorMessage(val.message));
   const message = `Nieprawidłowe dane wejściowe: ${errors.join('. ')}`;
   return new AppError(message, 400);
 };
 
-const handleJWTError = () =>
+const handleJWTError = (): AppError =>
   new AppError("Nieprawidłowy token. Zaloguj się ponownie.", 401);
 
-const handleJWTExpiredError = () =>
+const handleJWTExpiredError = (): AppError =>
   new AppError("Token wygasł. Zaloguj się ponownie.", 401);
 
-const handleCastError = (err) => {
+const handleCastError = (err: ExtendedError): AppError => {
   const message = sanitizeErrorMessage(`Nieprawidłowa wartość ${err.path}: ${err.value}`);
   return new AppError(message, 400);
 };
 
-const sendErrorDev = (err, res) => {
+const sendErrorDev = (err: ExtendedError, res: Response): void => {
   const sanitizedMessage = sanitizeErrorMessage(err.message);
 
-  res.status(err.statusCode).json({
+  res.status(err.statusCode || 500).json({
     status: err.status,
     message: sanitizedMessage,
     error: err,
@@ -52,12 +61,11 @@ const sendErrorDev = (err, res) => {
   });
 };
 
-
-const sendErrorProd = (err, res) => {
+const sendErrorProd = (err: ExtendedError, res: Response): void => {
   if (err.isOperational) {
     const sanitizedMessage = sanitizeErrorMessage(err.message);
 
-    res.status(err.statusCode).json({
+    res.status(err.statusCode || 500).json({
       status: err.status,
       message: sanitizedMessage
     });
@@ -71,17 +79,16 @@ const sendErrorProd = (err, res) => {
   }
 };
 
-
-export default (err, req, res, next) => {
+export default (err: ExtendedError, req: Request, res: Response, next: NextFunction): void => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || "error";
 
   res.setHeader('X-Content-Type-Options', 'nosniff');
 
-  if (config.env === "development") {
+  if (process.env.NODE_ENV === "development" || (config as any).env === "development") {
     sendErrorDev(err, res);
   } else {
-    let error = { ...err };
+    let error: ExtendedError = { ...err };
     error.message = err.message;
     error.name = err.name;
 

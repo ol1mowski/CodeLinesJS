@@ -1,8 +1,9 @@
 import { ValidationError } from '../utils/errors.js';
-import { body, validationResult } from 'express-validator';
+import { body, validationResult, ValidationChain, ValidationError as ExpressValidationError } from 'express-validator';
+import { Request, Response, NextFunction } from 'express';
 
-export const validate = (validations) => {
-  return async (req, res, next) => {
+export const validate = (validations: ValidationChain[]) => {
+  return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     await Promise.all(validations.map(validation => validation.run(req)));
 
     const errors = validationResult(req);
@@ -11,7 +12,7 @@ export const validate = (validations) => {
       return next();
     }
 
-    const formattedErrors = errors.array().map(err => ({
+    const formattedErrors = errors.array().map((err: any) => ({
       field: err.path,
       message: err.msg
     }));

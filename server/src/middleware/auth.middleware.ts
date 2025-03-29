@@ -30,7 +30,7 @@ declare global {
 
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    let token;
+    let token: string;
     const authHeader = req.headers.authorization;
 
     if (authHeader && authHeader.startsWith('Bearer ')) {
@@ -43,7 +43,7 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
       throw new AuthError('Brak tokenu autoryzacji. Zaloguj się, aby uzyskać dostęp.');
     }
 
-    let decoded;
+    let decoded: any;
     try {
       decoded = jwt.verify(token, process.env.JWT_SECRET as string, {
         algorithms: ['HS256']

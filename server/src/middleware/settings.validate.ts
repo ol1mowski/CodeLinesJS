@@ -1,9 +1,17 @@
 import { ValidationError } from '../utils/errors.js';
+import { Request, Response, NextFunction } from 'express';
 
-export const validateProfileUpdate = (req, res, next) => {
+interface SocialLinks {
+  github?: string;
+  linkedin?: string;
+  twitter?: string;
+  [key: string]: string | undefined;
+}
+
+export const validateProfileUpdate = (req: Request, res: Response, next: NextFunction): void => {
   const { username, email, bio, socialLinks } = req.body;
   
-  const errors = [];
+  const errors: string[] = [];
   
   if (username && (username.length < 3 || username.length > 30)) {
     errors.push('Nazwa użytkownika musi mieć od 3 do 30 znaków');
@@ -34,7 +42,7 @@ export const validateProfileUpdate = (req, res, next) => {
   next();
 };
 
-export const validatePasswordChange = (req, res, next) => {
+export const validatePasswordChange = (req: Request, res: Response, next: NextFunction): void => {
   const { currentPassword, newPassword } = req.body;
   
   if (!currentPassword || !newPassword) {
@@ -48,7 +56,7 @@ export const validatePasswordChange = (req, res, next) => {
   next();
 };
 
-export const validatePreferencesUpdate = (req, res, next) => {
+export const validatePreferencesUpdate = (req: Request, res: Response, next: NextFunction): void => {
   const { emailNotifications, pushNotifications, language } = req.body;
   
   if (typeof emailNotifications !== 'undefined' && typeof emailNotifications !== 'boolean') {
@@ -66,7 +74,7 @@ export const validatePreferencesUpdate = (req, res, next) => {
   next();
 };
 
-export const validateAccountDeletion = (req, res, next) => {
+export const validateAccountDeletion = (req: Request, res: Response, next: NextFunction): void => {
   const { password, confirmation } = req.body;
   
   if (!password) {
