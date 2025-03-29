@@ -2,13 +2,16 @@
   "version": 2,
   "builds": [
     {
-      "src": "dist/server.js",
+      "src": "package.json",
       "use": "@vercel/node"
     }
   ],
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "dist/server.js" },
-    { "source": "/(.*)", "destination": "dist/server.js" }
+    { "source": "/api/(.*)", "destination": "/dist/server.js" },
+    { "source": "/assets/(.*)", "destination": "/public/assets/$1" },
+    { "source": "/favicon.png", "destination": "/public/favicon.png" },
+    { "source": "/(.*\\.[a-z0-9]{2,}$)", "destination": "/public/$1" },
+    { "source": "/(.*)", "destination": "/public/index.html" }
   ],
   "headers": [
     {
