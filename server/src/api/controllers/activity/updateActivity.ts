@@ -1,70 +1,24 @@
-import { User } from "../../../models/user.model.js";
-import { AuthError, ValidationError } from "../../../utils/errors.js";
-import { LevelService } from "../../../services/level.service.js";
+import { Request, Response, NextFunction } from 'express';
+import { AuthError } from "../../../utils/errors.js";
+import { validateActivityData } from "../../validators/activityValidator.js";
+import { ActivityService } from "../../../services/activity.service.js";
 
-export const updateActivity = async (req, res, next) => {
+export const updateActivity = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const userId = req.user?.userId;
-    if (!userId) throw new AuthError("Brak autoryzacji");
-
-    const { points = 0, challenges = 0, timeSpent = 0 } = req.body;
-
-    if (typeof points !== "number" || points < 0) {
-      throw new ValidationError("Nieprawidłowa wartość punktów");
+    if (!userId) {
+      throw new AuthError("Brak autoryzacji");
     }
 
-    if (typeof challenges !== "number" || challenges < 0) {
-      throw new ValidationError("Nieprawidłowa wartość wyzwań");
-    }
+    const { points = 0, challenges = 0, timeSpent = 0 } = validateActivityData(req.body);
 
-    if (typeof timeSpent !== "number" || timeSpent < 0) {
-      throw new ValidationError("Nieprawidłowa wartość czasu");
-    }
+    const user = await ActivityService.findUserById(userId);
 
-    const user = await User.findById(userId);
-    if (!user) throw new ValidationError("Nie znaleziono użytkownika");
+    const update = await ActivityService.updateUserLevelAndActivity(userId, points, { points, challenges, timeSpent });
 
-    const update = await LevelService.updateUserLevelAndStreak(userId, points, {
-      points,
-      challenges,
-      timeSpent,
-    });
+    const response = ActivityService.prepareActivityResponse(user, update);
 
-    const levelStats = LevelService.getUserLevelStats(user);
-
-    res.json({
-      status: "success",
-      message: update.level.leveledUp
-        ? `Aktywność zaktualizowana! Awansowałeś na poziom ${update.level.level}!`
-        : "Aktywność zaktualizowana pomyślnie",
-      data: {
-        streak: {
-          current: update.streak.streak,
-          best: update.streak.bestStreak,
-          updated: update.streak.streakUpdated,
-          broken: update.streak.streakBroken,
-          daysInactive: update.streak.daysInactive,
-        },
-        dailyProgress: {
-          date: update.dailyProgress.dailyProgress.date,
-          points: update.dailyProgress.dailyProgress.points,
-          challenges: update.dailyProgress.dailyProgress.challenges,
-          timeSpent: update.dailyProgress.dailyProgress.timeSpent,
-        },
-        level: {
-          level: levelStats.level,
-          points: levelStats.points,
-          pointsRequired: levelStats.pointsToNextLevel,
-          progress: levelStats.progress,
-          leveledUp: update.level.leveledUp,
-          levelsGained: update.level.levelsGained,
-        },
-        stats: {
-          totalTimeSpent: update.dailyProgress.totalTimeSpent,
-          completedChallenges: update.dailyProgress.completedChallenges,
-        },
-      },
-    });
+    res.json(response);
   } catch (error) {
     next(error);
   }

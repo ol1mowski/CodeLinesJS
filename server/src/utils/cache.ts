@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 
 const cache = new Map();
 
-export const cacheMiddleware = (duration = 300) => {
+export const cacheMiddleware = (duration = 300): ((req: Request, res: Response, next: NextFunction) => void) => {
   return (req: Request, res: Response, next: NextFunction) => {
     if (req.method !== 'GET') {
       return next();

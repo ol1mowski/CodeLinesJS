@@ -1,30 +1,19 @@
-import { User } from "../../../models/user.model.js";
-import { AuthError, ValidationError } from "../../../utils/errors.js";
-import { LevelService } from "../../../services/level.service.js";
+import { Request, Response, NextFunction } from 'express';
+import { AuthError } from "../../../utils/errors.js";
+import { ActivityService } from "../../../services/activity.service.js";
 
-export const getDailyProgress = async (req, res, next) => {
+export const getDailyProgress = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const userId = req.user?.userId;
-    if (!userId) throw new AuthError("Brak autoryzacji");
+    if (!userId) {
+      throw new AuthError("Brak autoryzacji");
+    }
 
-    const user = await User.findById(userId);
-    if (!user) throw new ValidationError("Nie znaleziono użytkownika");
+    const userData = await ActivityService.findUserById(userId);
 
-    const { dailyProgress } = user.stats;
-    const levelStats = LevelService.getUserLevelStats(user);
+    const response = ActivityService.prepareDailyProgressResponse(userData);
 
-    res.json({
-      status: "success",
-      data: {
-        dailyProgress,
-        level: {
-          level: levelStats.level,
-          points: levelStats.points,
-          pointsRequired: levelStats.pointsToNextLevel,
-          progress: levelStats.progress,
-        },
-      },
-    });
+    res.json(response);
   } catch (error) {
     next(error);
   }

@@ -1,23 +1,19 @@
-import { User } from "../../../models/user.model.js";
-import { AuthError, ValidationError } from "../../../utils/errors.js";
+import { Request, Response, NextFunction } from 'express';
+import { AuthError } from "../../../utils/errors.js";
+import { ActivityService } from "../../../services/activity.service.js";
 
-export const getStreak = async (req, res, next) => {
+export const getStreak = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const userId = req.user?.userId;
-    if (!userId) throw new AuthError("Brak autoryzacji");
+    if (!userId) {
+      throw new AuthError("Brak autoryzacji");
+    }
 
-    const user = await User.findById(userId);
-    if (!user) throw new ValidationError("Nie znaleziono użytkownika");
+    const userData = await ActivityService.findUserById(userId);
 
-    const { streak, bestStreak } = user.stats;
+    const response = ActivityService.prepareStreakResponse(userData);
 
-    res.json({
-      status: "success",
-      data: {
-        streak,
-        bestStreak,
-      },
-    });
+    res.json(response);
   } catch (error) {
     next(error);
   }
