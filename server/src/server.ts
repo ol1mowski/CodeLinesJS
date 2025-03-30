@@ -9,6 +9,16 @@ import cors from "cors";
 
 const app: Application = express();
 
+// Dodajemy podstawowy endpoint diagnostyczny, który powinien zawsze odpowiadać
+app.get('/diagnostic', (req: Request, res: Response) => {
+  res.status(200).json({
+    status: 'ok',
+    message: 'Diagnostyka serwera działa',
+    env: process.env.NODE_ENV,
+    mongodb_uri: process.env.MONGODB_URI ? 'Skonfigurowane' : 'Brak konfiguracji'
+  });
+});
+
 app.use(cors({
   origin: process.env.FRONTEND_URL || "*",
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
