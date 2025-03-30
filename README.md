@@ -207,7 +207,6 @@ CodeLinesJS is licensed under the MIT License. See the LICENSE file for details.
 - **LinkedIn**: [Oliwier Markiewicz](https://www.linkedin.com/in/oliwier-markiewicz-47857228a/)
 - **GitHub**: [@ol1mowski](https://github.com/ol1mowski)
 
----
 
 🚧 *The project is actively being developed. Documentation will be updated regularly.*
 
