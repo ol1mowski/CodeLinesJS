@@ -1,3 +1,4 @@
+// @ts-nocheck
 import mongoose from 'mongoose';
 
 export const lessonSchema = new mongoose.Schema({

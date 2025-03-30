@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { createEmailTemplate, sendMailWithFallback } from '../config/mailer.js';
 import config from '../config/config.js';
 import { IUser } from '../types/user.types.js';

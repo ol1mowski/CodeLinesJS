@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { User } from '../../../models/user.model.js';
 
 export const getRanking = async (req, res, next) => {

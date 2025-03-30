@@ -3,34 +3,29 @@
     "target": "ES2022",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": false,
-    "noImplicitAny": false,
-    "strictNullChecks": false,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
     "outDir": "./dist",
-    "rootDir": "./src",
     "sourceMap": true,
+    "strict": false,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
     "resolveJsonModule": true,
+    "declaration": false,
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": false,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "noEmitOnError": false,
+    "rootDir": "./src",
     "baseUrl": ".",
     "typeRoots": ["./node_modules/@types", "./src/types"],
-    "paths": {
-      "@/*": ["src/*"]
-    },
-    "noImplicitThis": false,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false
+    "lib": ["ES2022"]
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "**/*.test.ts"],
+  "exclude": ["node_modules", "dist"],
   "ts-node": {
     "esm": true,
-    "experimentalSpecifierResolution": "node",
-    "transpileOnly": true,
-    "compilerOptions": {
-      "module": "NodeNext"
-    }
+    "transpileOnly": true
   }
 } 

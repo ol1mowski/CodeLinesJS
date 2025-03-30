@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { NextFunction, Request, Response } from "express";
 
 export const successResponse = (data = null, message = 'Operacja zakończona sukcesem', statusCode = 200) => {

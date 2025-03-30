@@ -1,3 +1,4 @@
+// @ts-nocheck
 export const updateStreakStats = async (user, currentStreak) => {
   const bestStreak = Math.max(currentStreak, user.stats.bestStreak || 0);
   

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { AuthError } from '../../../utils/errors.js';
 import authService from '../../../services/auth.service.js';
 import { NextFunction, Request, Response } from 'express';

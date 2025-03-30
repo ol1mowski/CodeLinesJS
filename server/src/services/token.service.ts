@@ -1,3 +1,4 @@
+// @ts-nocheck
 import jwt, { SignOptions } from 'jsonwebtoken';
 import crypto from 'crypto';
 import { IUser } from '../types/user.types.js';

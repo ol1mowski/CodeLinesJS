@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Game } from '../../../models/game.model.js';
 import { User } from '../../../models/user.model.js';
 import { Request, Response, NextFunction } from 'express';

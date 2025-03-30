@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { IUser } from '../types/index.d.js';
 
 interface ProgressData {

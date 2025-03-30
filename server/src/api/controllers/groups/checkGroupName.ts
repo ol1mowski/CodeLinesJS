@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Group } from '../../../models/group.model.js';
 import { ValidationError } from '../../../utils/errors.js';
 

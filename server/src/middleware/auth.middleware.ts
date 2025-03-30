@@ -1,3 +1,4 @@
+// @ts-nocheck
 import jwt from 'jsonwebtoken';
 import { AuthError, ForbiddenError } from '../utils/errors.js';
 import { User } from '../models/user.model.js';

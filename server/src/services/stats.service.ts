@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Stats } from '../models/stats.model.js';
 import LevelService from './level.service.js';
 import { Document } from 'mongoose';

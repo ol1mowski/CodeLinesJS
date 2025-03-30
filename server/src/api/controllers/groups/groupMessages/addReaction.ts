@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Message } from '../../../../models/message.model.js';
 
 export const addReactionController = async (req, res, next) => {

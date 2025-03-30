@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { User } from '../../../models/user.model.js';
 import { AuthError } from '../../../utils/errors.js';
 

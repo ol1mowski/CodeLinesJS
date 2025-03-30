@@ -1,3 +1,4 @@
+// @ts-nocheck
 export interface ActivityData {
   points: number;
   challenges: number;

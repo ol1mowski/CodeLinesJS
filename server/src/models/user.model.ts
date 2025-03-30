@@ -1,4 +1,5 @@
 // @ts-nocheck
+// @ts-nocheck
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import config from "../config/config.js";

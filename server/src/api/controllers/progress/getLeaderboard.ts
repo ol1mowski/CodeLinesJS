@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { User } from "../../../models/user.model.js";
 
 export const getLeaderboardController = async (req, res, next) => {

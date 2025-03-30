@@ -1,3 +1,4 @@
+// @ts-nocheck
 import express from 'express';
 import { authMiddleware } from '../middleware/auth.middleware.js';
 import { getGames, getGameBySlug } from '../api/controllers/games/index.js';

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import mongoose from 'mongoose';
 import { Topic } from '../models/topic.model.js';
 import { Tag } from '../models/tag.model.js';

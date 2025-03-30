@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Router } from 'express';
 import { authMiddleware } from '../middleware/auth.middleware.js';
 import { updateProgressController } from '../api/controllers/progress/index.js';

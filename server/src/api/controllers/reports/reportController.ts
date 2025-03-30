@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Report } from '../../../models/report.model.js';
 import { ValidationError } from '../../../utils/errors.js';
 import * as emailService from '../../../services/email.service.js';

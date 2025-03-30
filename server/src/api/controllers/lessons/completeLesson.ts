@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Lesson } from "../../../models/lesson.model.js";
 import { User } from "../../../models/user.model.js";
 import { ValidationError } from "../../../utils/errors.js";

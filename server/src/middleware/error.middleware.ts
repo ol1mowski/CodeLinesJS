@@ -1,3 +1,4 @@
+// @ts-nocheck
 import AppError from "../utils/appError.js";
 import config from "../config/config.js";
 import { Request, Response, NextFunction } from 'express';

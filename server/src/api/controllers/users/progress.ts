@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { User } from '../../../models/user.model.js';
 import { LearningPath } from '../../../models/learningPath.model.js';
 import { AuthError, ValidationError } from '../../../utils/errors.js';

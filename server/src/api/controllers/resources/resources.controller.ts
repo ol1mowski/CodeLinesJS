@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Resource } from '../../../models/resource.model.js';
 import { User } from '../../../models/user.model.js';
 

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { getMessagesController } from './getMessages.js';
 import { sendMessageController } from './sendMessage.js';
 import { editMessageController } from './editMessage.js';

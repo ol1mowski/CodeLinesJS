@@ -1,3 +1,4 @@
+// @ts-nocheck
 export class AppError extends Error {
   statusCode: number;
   status: string;

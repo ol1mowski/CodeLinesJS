@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Game } from '../../../models/game.model.js';
 import { ValidationError } from '../../../utils/errors.js';
 

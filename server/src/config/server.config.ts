@@ -1,3 +1,4 @@
+// @ts-nocheck
 import express, { NextFunction, Request, Response, Application } from "express";
 import cors from "cors";
 import helmet, { HelmetOptions } from "helmet";

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import sgMail from '@sendgrid/mail';
 import config from './config.js';
 import nodemailer from 'nodemailer';

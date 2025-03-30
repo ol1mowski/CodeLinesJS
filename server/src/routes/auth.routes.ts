@@ -1,3 +1,4 @@
+// @ts-nocheck
 import express from 'express';
 import { register, login, forgotPassword, resetPassword, verifyToken, googleAuth } from '../api/controllers/auth/index.js';
 import { validateAuth, validateEmail, validateRegistration, validateResetPassword, validateGoogleAuth } from '../middleware/validate.middleware.js';

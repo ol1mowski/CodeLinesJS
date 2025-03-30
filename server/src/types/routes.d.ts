@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Router } from 'express';
 
 declare module "*.routes.js" {

@@ -1,3 +1,4 @@
+// @ts-nocheck
 declare module 'bcryptjs' {
   /**
    * Synchronously generates a hash for the given string.

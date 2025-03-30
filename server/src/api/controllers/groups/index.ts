@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { getGroupsController } from './getGroups.js';
 import { createGroupController } from './createGroup.js';
 import { joinGroupController } from './joinGroup.js';

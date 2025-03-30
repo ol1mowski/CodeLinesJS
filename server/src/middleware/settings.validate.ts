@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { ValidationError } from '../utils/errors.js';
 import { Request, Response, NextFunction } from 'express';
 

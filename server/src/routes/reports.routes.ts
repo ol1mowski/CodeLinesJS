@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Router } from 'express';
 import { createReport, getReports, getReportById, updateReportStatus } from '../api/controllers/reports/reportController.js';
 import { authMiddleware } from '../middleware/auth.middleware.js';

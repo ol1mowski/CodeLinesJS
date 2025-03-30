@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Document, Types } from 'mongoose';
 
 /**

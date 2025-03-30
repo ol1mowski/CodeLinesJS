@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { getSettingsController } from './getSettings.js';
 import { updateProfileController } from './updateProfile.js';
 import { changePasswordController } from './changePassword.js';

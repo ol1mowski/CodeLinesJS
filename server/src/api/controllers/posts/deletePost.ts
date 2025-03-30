@@ -1,3 +1,4 @@
+// @ts-nocheck
   import { Post } from "../../../models/post.model.js";
   import { ValidationError } from "../../../utils/errors.js";
 

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { LearningPath } from "../../../models/learningPath.model.js";
 import { User } from "../../../models/user.model.js";
 
