@@ -9,7 +9,7 @@ import cors from "cors";
 
 const app: Application = express();
 
-// Dodajemy podstawowy endpoint diagnostyczny, który powinien zawsze odpowiadać
+
 app.get('/diagnostic', (req: Request, res: Response) => {
   res.status(200).json({
     status: 'ok',
