@@ -5,6 +5,19 @@ import { FaCopy } from "react-icons/fa";
 
 const SyntaxHighlighterComponent = SyntaxHighlighter as any;
 
+const sanitizeCode = (code: string): string => {
+  if (!code) return '';
+  
+  return code
+    .replace(/<!--[\s\S]*?-->/g, '')
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/javascript:/gi, '')
+    .replace(/on\w+=/gi, '')
+    .replace(/data:/gi, 'nodata:')
+    .replace(/eval\s*\(/gi, '')
+    .replace(/new\s+Function\s*\(/gi, '');
+};
+
 type CodeBlockProps = {
   code: string;
   language: string;
@@ -13,8 +26,10 @@ type CodeBlockProps = {
 }
 
 export const CodeBlock = memo(({ code, language, showLineNumbers = true, className }: CodeBlockProps) => {
+  const sanitizedCode = sanitizeCode(code);
+  
   const handleCopy = () => {
-    navigator.clipboard.writeText(code);
+    navigator.clipboard.writeText(sanitizedCode);
   };
 
   return (
@@ -44,7 +59,7 @@ export const CodeBlock = memo(({ code, language, showLineNumbers = true, classNa
           }
         }}
       >
-        {code}
+        {sanitizedCode}
       </SyntaxHighlighterComponent>
     </div>
   );

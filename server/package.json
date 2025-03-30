@@ -2,16 +2,21 @@
   "name": "codelinesjs-api",
   "version": "1.0.0",
   "description": "API dla platformy CodeLinesJS do nauki JavaScript",
-  "main": "server.js",
+  "main": "dist/server.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
-    "dev": "nodemon server.js",
-    "init-data": "node scripts/initLearningData.js",
-    "update-stats": "node scripts/updateUserStats.js",
-    "init-paths": "node scripts/initLearningPaths.js",
-    "vercel-build": "echo 'Build completed'"
+    "build": "tsc && npm run copy-static",
+    "start": "node dist/server.js",
+    "dev": "nodemon",
+    "init-data": "node --no-warnings --loader ts-node/esm --experimental-specifier-resolution=node src/scripts/initLearningData.ts",
+    "update-stats": "node --no-warnings --loader ts-node/esm --experimental-specifier-resolution=node src/scripts/updateUserStats.ts",
+    "init-paths": "node --no-warnings --loader ts-node/esm --experimental-specifier-resolution=node src/scripts/initLearningPaths.ts",
+    "vercel-build": "npm run build && npm run verify-public",
+    "copy-static": "mkdir -p dist/public && cp -r public/* dist/public/ || true",
+    "prebuild": "mkdir -p dist && mkdir -p dist/public",
+    "postbuild": "npm run copy-static",
+    "verify-public": "ls -la dist/public || true"
   },
   "engines": {
     "node": ">=18.x"
@@ -42,9 +47,21 @@
     "mongoose": "^8.9.3",
     "node-fetch": "^3.3.2",
     "nodemailer": "^6.9.16",
+    "sanitize-html": "^2.15.0",
     "xss-clean": "^0.1.4"
   },
   "devDependencies": {
-    "nodemon": "^3.1.9"
+    "@types/bcryptjs": "^3.0.0",
+    "@types/compression": "^1.7.5",
+    "@types/cookie-parser": "^1.4.8",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.1",
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/node": "^22.13.14",
+    "@types/nodemailer": "^6.4.17",
+    "@types/sanitize-html": "^2.13.0",
+    "nodemon": "^3.1.9",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2"
   }
 }
