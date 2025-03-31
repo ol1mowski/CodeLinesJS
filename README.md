@@ -210,4 +210,3 @@ CodeLinesJS is licensed under the MIT License. See the LICENSE file for details.
 
 🚧 *The project is actively being developed. Documentation will be updated regularly.*
 
-
