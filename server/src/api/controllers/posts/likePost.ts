@@ -1,41 +1,15 @@
-// @ts-nocheck
-import { Post } from "../../../models/post.model.js";
-import { User } from "../../../models/user.model.js";
-import { ValidationError } from "../../../utils/errors.js";
+import { NextFunction, Request, Response } from 'express';
+import { PostService } from '../../../services/post/post.service.js';
+import { asyncHandler } from '../../../utils/asyncHandler.js';
 
-export const likePostController = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const userId = req.user.userId;
-    
-    const post = await Post.findById(id);
-    
-    if (!post) {
-      throw new ValidationError("Post nie został znaleziony");
-    }
-    
-    const user = await User.findById(userId);
-    
-    const isLiked = user.likedPosts.includes(id);
-    
-    if (isLiked) {
-      user.likedPosts = user.likedPosts.filter(
-        postId => postId.toString() !== id
-      );
-      post.likes -= 1;
-    } else {
-      user.likedPosts.push(id);
-      post.likes += 1;
-    }
-    
-    await Promise.all([user.save(), post.save()]);
-    
-    res.json({
-      message: isLiked ? "Polubienie zostało usunięte" : "Post został polubiony",
-      isLiked: !isLiked,
-      likes: post.likes
-    });
-  } catch (error) {
-    next(error);
-  }
-}; 
+export const likePostController = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params;
+  const userId = req.user.id;
+
+  const post = await PostService.likePost(id, userId);
+
+  res.json({
+    status: 'success',
+    data: post
+  });
+}); 

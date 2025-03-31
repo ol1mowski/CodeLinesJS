@@ -1,40 +1,15 @@
-// @ts-nocheck
-import { Post } from "../../../models/post.model.js";
-import { ValidationError } from "../../../utils/errors.js";
+import { NextFunction, Request, Response } from 'express';
+import { PostService } from '../../../services/post/post.service.js';
+import { asyncHandler } from '../../../utils/asyncHandler.js';
 
-export const deleteCommentController = async (req, res, next) => {
-  try {
-    const { postId, commentId } = req.params;
-    const userId = req.user.userId;
+export const deleteCommentController = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  const { postId, commentId } = req.params;
+  const userId = req.user.id;
 
-    const post = await Post.findById(postId);
+  const post = await PostService.deleteComment(postId, commentId, userId);
 
-    if (!post) {
-      throw new ValidationError("Post nie został znaleziony");
-    }
-
-    const comment = post.comments.id(commentId);
-
-    if (!comment) {
-      throw new ValidationError("Komentarz nie został znaleziony");
-    }
-
-    if (
-      comment.author.toString() !== userId &&
-      post.author.toString() !== userId
-    ) {
-      throw new ValidationError(
-        "Nie masz uprawnień do usunięcia tego komentarza"
-      );
-    }
-
-    comment.remove();
-    await post.save();
-
-    res.json({
-      message: "Komentarz został usunięty",
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  res.json({
+    status: 'success',
+    data: post
+  });
+});

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { getPostsController } from './getPosts.js';
 import { getPostByIdController } from './getPostById.js';
 import { createPostController } from './createPost.js';
@@ -17,8 +16,8 @@ export {
   updatePostController,
   deletePostController,
   likePostController,
-  getCommentsController,
   savePostController,
   addCommentController,
-  deleteCommentController
+  deleteCommentController,
+  getCommentsController
 }; 
