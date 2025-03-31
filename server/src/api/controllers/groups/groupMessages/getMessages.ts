@@ -1,23 +1,24 @@
+import { Response, NextFunction } from 'express';
 import { Message } from '../../../../models/message.model.js';
 import { Group } from '../../../../models/group.model.js';
+import { 
+  AuthRequest, 
+  MessageController,
+  MessageWithUserInfo,
+  GetMessagesResponse
+} from './types.js';
+import { formatReactions, hasUserReported } from './utils.js';
 
-const groupReactions = (reactions = []) => {
-  const summary = {};
-  reactions.forEach(reaction => {
-    if (!summary[reaction.emoji]) {
-      summary[reaction.emoji] = 0;
-    }
-    summary[reaction.emoji]++;
-  });
-  return Object.entries(summary).map(([emoji, count]) => ({ emoji, count }));
-};
-
-export const getMessagesController = async (req, res, next) => {
+export const getMessagesController: MessageController = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
     const { groupId } = req.params;
     const userId = req.user.userId;
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 50;
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 50;
     const skip = (page - 1) * limit;
 
     const group = await Group.findOne({
@@ -26,10 +27,11 @@ export const getMessagesController = async (req, res, next) => {
     });
 
     if (!group) {
-      return res.status(403).json({
+      res.status(403).json({
         status: 'error',
         message: 'Brak dostępu do czatu grupy'
       });
+      return;
     }
 
     const [messages, total] = await Promise.all([
@@ -45,33 +47,33 @@ export const getMessagesController = async (req, res, next) => {
     const formattedMessages = messages.map(message => ({
       ...message,
       isAuthor: message.author._id.toString() === userId,
-      reactions: {
-        summary: groupReactions(message.reactions || []),
-        userReactions: (message.reactions || [])
-          .filter(r => r.userId.toString() === userId)
-          .map(r => r.emoji)
-      },
-      hasReported: (message.reports || []).some(r => r.userId.toString() === userId) || false
-    }));
+      reactions: formatReactions(message.reactions, userId),
+      hasReported: hasUserReported(message.reports, userId)
+    } as MessageWithUserInfo));
 
-    await Message.updateMany(
-      { 
-        groupId,
-        'readBy.userId': { $ne: userId }
-      },
-      {
-        $addToSet: {
-          readBy: {
-            userId,
-            readAt: new Date()
+    const bulkOps = messages
+      .filter(msg => !msg.readBy?.some(item => item.userId.toString() === userId))
+      .map(msg => ({
+        updateOne: {
+          filter: { _id: msg._id },
+          update: {
+            $addToSet: {
+              readBy: {
+                userId,
+                readAt: new Date()
+              }
+            }
           }
         }
-      }
-    );
+      }));
+
+    if (bulkOps.length > 0) {
+      await Message.bulkWrite(bulkOps);
+    }
 
     const hasNextPage = skip + messages.length < total;
 
-    res.json({
+    const response: GetMessagesResponse = {
       status: 'success',
       data: {
         messages: formattedMessages.reverse(),
@@ -82,7 +84,9 @@ export const getMessagesController = async (req, res, next) => {
           hasNextPage
         }
       }
-    });
+    };
+
+    res.json(response);
   } catch (error) {
     next(error);
   }

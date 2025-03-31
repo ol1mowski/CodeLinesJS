@@ -1,6 +1,16 @@
+import { Response, NextFunction } from 'express';
 import { Message } from '../../../../models/message.model.js';
+import { 
+  AuthRequest, 
+  MessageController
+} from './types.js';
 
-export const editMessageController = async (req, res, next) => {
+
+export const editMessageController: MessageController = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
     const { groupId, messageId } = req.params;
     const { content } = req.body;
@@ -13,10 +23,11 @@ export const editMessageController = async (req, res, next) => {
     });
 
     if (!message) {
-      return res.status(404).json({
+      res.status(404).json({
         status: 'error',
         message: 'Wiadomość nie istnieje lub nie masz uprawnień do jej edycji'
       });
+      return;
     }
 
     message.content = content;

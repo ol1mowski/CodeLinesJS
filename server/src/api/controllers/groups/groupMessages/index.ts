@@ -12,4 +12,8 @@ export {
   deleteMessageController,
   addReactionController,
   reportMessageController
-}; 
+};
+
+export * from './types.js';
+export * from './utils.js';
+export * from './helpers.js'; 
