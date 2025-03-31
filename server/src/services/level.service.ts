@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { IUser } from '../types/index.d.js';
 
 interface LevelUpdateResult {
@@ -99,13 +98,7 @@ export class LevelService {
     }
     
     const hasEarnedPoints = earnedPoints > 0;
-    
-    console.log('Przed aktualizacją:', { 
-      userId, 
-      streak: user.stats?.streak || 0, 
-      bestStreak: user.stats?.bestStreak || 0,
-      hasEarnedPoints
-    });
+  
     
     const levelUpdate = await this.updateUserLevel(user as unknown as IUser, earnedPoints);
     
@@ -115,13 +108,6 @@ export class LevelService {
     const activityUpdate = await StreakService.updateUserActivity(userId, hasEarnedPoints, progress);
     
     const updatedUser = await User.findById(userId);
-    console.log('Po aktualizacji:', { 
-      userId, 
-      streak: updatedUser.stats?.streak || 0, 
-      bestStreak: updatedUser.stats?.bestStreak || 0,
-      hasEarnedPoints,
-      activityUpdateStreak: activityUpdate.streak
-    });
     
     const levelStats = this.getUserLevelStats(updatedUser as unknown as IUser);
     

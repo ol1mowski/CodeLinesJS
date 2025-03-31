@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { Group } from '../../../models/group.model.js';
 import { GroupMember } from '../../../models/groupMember.model.js';
 import { AuthError, ValidationError } from '../../../utils/errors.js';

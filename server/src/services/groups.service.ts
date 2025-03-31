@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { Group } from '../models/group.model.js';
 import { Document, Types } from 'mongoose';
 

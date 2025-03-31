@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { Message } from '../../../../models/message.model.js';
 import { Group } from '../../../../models/group.model.js';
 

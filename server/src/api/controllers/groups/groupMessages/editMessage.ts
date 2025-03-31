@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { Message } from '../../../../models/message.model.js';
 
 export const editMessageController = async (req, res, next) => {
