@@ -1,7 +1,7 @@
-// @ts-nocheck
 import { Lesson } from "../../../models/lesson.model.js";
 import { User } from "../../../models/user.model.js";
 import { LevelService } from "../../../services/level.service.js";
+import { IUser } from "../../../services/lesson/types.js";
 
 export const getLessonsController = async (req, res, next) => {
   try {
@@ -12,7 +12,16 @@ export const getLessonsController = async (req, res, next) => {
       .select("stats.learningPaths stats.level stats.points stats.pointsToNextLevel stats.streak stats.bestStreak")
       .lean();
 
-    const query = {
+    const query: {
+      isPublished: boolean;
+      isAvailable: boolean;
+      category?: string;
+      difficulty?: string;
+      $or?: Array<{ 
+        title?: { $regex: string; $options: string }; 
+        description?: { $regex: string; $options: string };
+      }>;
+    } = {
       isPublished: true,
       isAvailable: true,
     };
@@ -65,7 +74,7 @@ export const getLessonsController = async (req, res, next) => {
       return acc;
     }, {});
 
-    const levelStats = LevelService.getUserLevelStats(user);
+    const levelStats = LevelService.getUserLevelStats(user as unknown as IUser);
 
     res.json({
       lessons: groupedLessons,

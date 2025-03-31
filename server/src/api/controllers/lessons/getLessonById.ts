@@ -1,11 +1,12 @@
-// @ts-nocheck
 import { Lesson } from "../../../models/lesson.model.js";
 import { User } from "../../../models/user.model.js";
 import { ValidationError } from "../../../utils/errors.js";
 import { LessonContent } from "../../../models/lessonContent.model.js";
 import { LevelService } from "../../../services/level.service.js";
+import { IUser } from "../../../services/lesson/types.js";
+import { NextFunction, Request, Response } from "express";
 
-export const getLessonByIdController = async (req, res, next) => {
+export const getLessonByIdController = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
 
@@ -42,7 +43,7 @@ export const getLessonByIdController = async (req, res, next) => {
 
     if (lesson.requirements?.length > 0) {
       const hasCompletedRequirements = lesson.requirements.every(req =>
-        completedLessons.includes(req._id.toString())
+        completedLessons.some(completedLesson => completedLesson._id.toString() === req._id.toString())
       );
 
       if (!hasCompletedRequirements) {
@@ -52,7 +53,7 @@ export const getLessonByIdController = async (req, res, next) => {
       }
     }
     
-    const levelStats = LevelService.getUserLevelStats(user);
+    const levelStats = LevelService.getUserLevelStats(user as unknown as IUser);
     
     const response = {
       id: lesson._id,

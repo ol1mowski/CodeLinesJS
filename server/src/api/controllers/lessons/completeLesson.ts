@@ -1,10 +1,11 @@
-// @ts-nocheck
 import { Lesson } from "../../../models/lesson.model.js";
 import { User } from "../../../models/user.model.js";
 import { ValidationError } from "../../../utils/errors.js";
 import { LevelService } from "../../../services/level.service.js";
+import { IUser } from "../../../services/lesson/types.js";
+import { NextFunction, Request, Response } from "express";
 
-export const completeLessonController = async (req, res, next) => {
+export const completeLessonController = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
     const userId = req.user.userId;
@@ -42,7 +43,9 @@ export const completeLessonController = async (req, res, next) => {
 
       await user.save();
       
-      const levelStats = LevelService.getUserLevelStats(user);
+      const levelStats = LevelService.getUserLevelStats(user as unknown as IUser);
+
+      const streakData = typeof update.streak === 'object' ? update.streak : { streakUpdated: false };
 
       return res.json({
         message: update.level.leveledUp 
@@ -57,14 +60,14 @@ export const completeLessonController = async (req, res, next) => {
           completedLessons: userLearningPaths.length,
           leveledUp: update.level.leveledUp,
           levelsGained: update.level.levelsGained,
-          streak: update.streak.streak,
-          bestStreak: update.streak.bestStreak,
-          streakUpdated: update.streak.streakUpdated
+          streak: user.stats.streak,
+          bestStreak: user.stats.bestStreak,
+          streakUpdated: streakData.streakUpdated
         },
       });
     }
 
-    const levelStats = LevelService.getUserLevelStats(user);
+    const levelStats = LevelService.getUserLevelStats(user as unknown as IUser);
     
     res.json({
       message: 'Lekcja została już wcześniej ukończona',
