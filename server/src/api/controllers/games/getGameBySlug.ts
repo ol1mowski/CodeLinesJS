@@ -1,42 +1,16 @@
-// @ts-nocheck
-import { Game } from '../../../models/game.model.js';
-import { ValidationError } from '../../../utils/errors.js';
+import { Request, Response, NextFunction } from 'express';
+import { GameService } from '../../../services/game.service.js';
 
-export const getGameBySlug = async (req, res, next) => {
-  const getRandomElements = (array, count) => {
-
-    if (array.length <= count) return array;
-    
-    const shuffled = [...array];
-    
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    
-    return shuffled.slice(0, count);
-  };
+export const getGameBySlug = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { slug } = req.params;
-    const game = await Game.findOne({ slug, isActive: true }).lean();
+    const userId = req.user?.userId;
 
-    if (!game) {
-      throw new ValidationError('Gra nie istnieje');
-    }
+    const result = await GameService.getGameBySlug(slug, userId);
 
     res.json({
       status: 'success',
-      data: {
-        game: {
-          gameData: getRandomElements(game.gameData, 7).map(item => ({
-            ...item,
-            isCompleted: game.completions?.users?.includes(userId),
-            isLevelAvailable: userLevel >= (game.requiredLevel || 1)
-          })),
-          ...game,
-          isCompleted: game.completions.users.includes(req.user?.userId)
-        }
-      }
+      data: result
     });
   } catch (error) {
     next(error);
