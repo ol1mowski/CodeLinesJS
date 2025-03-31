@@ -5,7 +5,9 @@
   "main": "dist/server.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "build": "tsc && npm run copy-static",
     "start": "node dist/server.js",
     "dev": "nodemon",
@@ -62,6 +64,8 @@
     "@types/sanitize-html": "^2.13.0",
     "nodemon": "^3.1.9",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.2",
+    "vitest": "^1.4.0",
+    "@vitest/coverage-v8": "^1.4.0"
   }
 }
