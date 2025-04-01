@@ -1,16 +1,19 @@
-import { FilterQuery } from 'mongoose';
+import { FilterQuery, Document } from 'mongoose';
 import { Group } from '../models/group.model.js';
 import { GroupMember } from '../models/groupMember.model.js';
 import { 
   IGroup, 
   IGroupMember,
   GroupQueryOptions,
-  GroupRole 
+  GroupRole
 } from '../types/group.types.js';
+
+export type LeanGroup = Omit<IGroup, keyof Omit<Document, '_id'>>;
+export type LeanGroupMember = Omit<IGroupMember, keyof Omit<Document, '_id'>>;
 
 export class GroupRepository {
 
-  static async findAll(options: GroupQueryOptions = {}): Promise<IGroup[]> {
+  static async findAll(options: GroupQueryOptions = {}): Promise<LeanGroup[]> {
     const { limit = 20, page = 1, tag, search } = options;
     const skip = (page - 1) * limit;
     
@@ -35,24 +38,24 @@ export class GroupRepository {
       .lean();
   }
 
-  static async findById(groupId: string): Promise<IGroup | null> {
+  static async findById(groupId: string): Promise<LeanGroup | null> {
     return Group.findById(groupId)
       .populate('owner', 'username avatar')
       .lean();
   }
 
-  static async findByName(name: string): Promise<IGroup | null> {
+  static async findByName(name: string): Promise<LeanGroup | null> {
     return Group.findOne({ name }).lean();
   }
 
-  static async create(groupData: Partial<IGroup>): Promise<IGroup> {
+  static async create(groupData: Partial<IGroup>): Promise<LeanGroup> {
     const group = new Group(groupData);
     await group.save();
     return group.toObject();
   }
 
 
-  static async update(groupId: string, data: Partial<IGroup>): Promise<IGroup | null> {
+  static async update(groupId: string, data: Partial<IGroup>): Promise<LeanGroup | null> {
     return Group.findByIdAndUpdate(
       groupId, 
       { ...data, updatedAt: new Date() }, 
@@ -88,25 +91,25 @@ export class GroupRepository {
 }
 
 export class GroupMemberRepository {
-  static async findByGroupId(groupId: string): Promise<IGroupMember[]> {
+  static async findByGroupId(groupId: string): Promise<LeanGroupMember[]> {
     return GroupMember.find({ group: groupId })
       .populate('user', 'username avatar')
       .lean();
   }
 
-  static async findMembership(userId: string, groupId: string): Promise<IGroupMember | null> {
+  static async findMembership(userId: string, groupId: string): Promise<LeanGroupMember | null> {
     return GroupMember.findOne({ 
       user: userId, 
       group: groupId 
     }).lean();
   }
-  static async findByUserId(userId: string): Promise<IGroupMember[]> {
+  static async findByUserId(userId: string): Promise<LeanGroupMember[]> {
     return GroupMember.find({ user: userId })
       .populate('group')
       .lean();
   }
 
-  static async create(memberData: Partial<IGroupMember>): Promise<IGroupMember> {
+  static async create(memberData: Partial<IGroupMember>): Promise<LeanGroupMember> {
     const member = new GroupMember({
       ...memberData,
       createdAt: new Date(),
@@ -120,7 +123,7 @@ export class GroupMemberRepository {
     userId: string, 
     groupId: string, 
     role: GroupRole
-  ): Promise<IGroupMember | null> {
+  ): Promise<LeanGroupMember | null> {
     return GroupMember.findOneAndUpdate(
       { user: userId, group: groupId },
       { role, updatedAt: new Date() },

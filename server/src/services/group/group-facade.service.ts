@@ -2,9 +2,7 @@ import { Types } from 'mongoose';
 import { GroupRepository, GroupMemberRepository } from '../../repositories/group.repository.js';
 import { AuthError, ValidationError } from '../../utils/errors.js';
 import {
-  IGroup,
   IGroupMember,
-  GroupWithUserInfo,
   GroupQueryOptions,
   GroupsResponse,
   GroupResponse,
@@ -18,9 +16,10 @@ import { GroupEnricher } from './group-enricher.service.js';
 import { GroupMembershipService } from './group-membership.service.js';
 import { GroupValidatorService } from './group-validator.service.js';
 
+import { LeanGroupMember } from '../../repositories/group.repository.js';
+
 export class GroupFacadeService {
   static {
-    // Inicjalizujemy referencję na fasadę w serwisie członkostwa
     GroupMembershipService.setGroupFacadeService(GroupFacadeService);
   }
 
@@ -32,7 +31,7 @@ export class GroupFacadeService {
       GroupRepository.count(options)
     ]);
     
-    let userMemberships: IGroupMember[] = [];
+    let userMemberships: LeanGroupMember[] = [];
     if (userId) {
       userMemberships = await GroupMemberRepository.findByUserId(userId);
     }

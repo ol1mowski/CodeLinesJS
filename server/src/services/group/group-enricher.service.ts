@@ -3,8 +3,8 @@ import { Types } from 'mongoose';
 
 export class GroupEnricher {
   static enrichWithUserInfo(
-    group: IGroup,
-    members: IGroupMember[],
+    group: any,
+    members: any[],
     userId?: string
   ): GroupWithUserInfo {
     const userMembership = userId

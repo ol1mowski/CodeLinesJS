@@ -7,16 +7,13 @@ import {
   GroupResponse
 } from '../../types/group.types.js';
 
-// Deklarujemy interfejs dla GroupFacadeService aby uniknąć cyklicznej zależności
 interface IGroupFacadeService {
   getGroupById(groupId: string, userId?: string): Promise<GroupResponse>;
 }
 
-// Referencja do serwisu fasady, którą uzupełnimy po inicjalizacji
 let groupFacadeService: IGroupFacadeService;
 
 export class GroupMembershipService {
-  // Metoda do inicjalizacji referencji
   static setGroupFacadeService(service: IGroupFacadeService) {
     groupFacadeService = service;
   }
