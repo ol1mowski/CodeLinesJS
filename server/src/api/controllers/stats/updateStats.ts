@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { User } from '../../../models/user.model.js';
 import { AuthError, ValidationError } from '../../../utils/errors.js';
 import { LevelService } from '../../../services/level.service.js';

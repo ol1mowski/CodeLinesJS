@@ -1,36 +1,27 @@
-import { User } from "../../../models/user.model.js";
-import { ValidationError } from "../../../utils/errors.js";
-import bcrypt from "bcryptjs";
+import { Response, NextFunction } from 'express';
+import { AuthRequest, ChangePasswordDTO } from '../../../types/settings/index.js';
+import { ValidationError } from '../../../utils/errors.js';
+import { SettingsService } from '../../../services/settings/settings.service.js';
 
-export const changePasswordController = async (req, res, next) => {
+export const changePasswordController = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
-    const { currentPassword, newPassword } = req.body;
-    const userId = req.user.userId;
-    
-    if (!currentPassword || !newPassword) {
-      throw new ValidationError("Obecne i nowe hasło są wymagane");
+    const userId = req.user?.userId;
+
+    if (!userId) {
+      throw new ValidationError('Brak autoryzacji');
     }
+
+    const passwordData: ChangePasswordDTO = req.body;
     
-    if (newPassword.length < 6) {
-      throw new ValidationError("Nowe hasło musi mieć co najmniej 6 znaków");
-    }
-    
-    const user = await User.findById(userId).select("+password");
-    
-    const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
-    
-    if (!isPasswordValid) {
-      throw new ValidationError("Obecne hasło jest nieprawidłowe");
-    }
-    
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(newPassword, salt);
-    
-    user.password = hashedPassword;
-    await user.save();
-    
-    res.json({
-      message: "Hasło zostało zmienione"
+    await SettingsService.changePassword(userId, passwordData);
+
+    res.status(200).json({
+      success: true,
+      message: 'Hasło zostało zmienione'
     });
   } catch (error) {
     next(error);

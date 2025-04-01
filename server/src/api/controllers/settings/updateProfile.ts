@@ -1,45 +1,28 @@
-// @ts-nocheck
-import { User } from "../../../models/user.model.js";
-import { ValidationError } from "../../../utils/errors.js";
+import { Response, NextFunction } from 'express';
+import { AuthRequest, UpdateProfileDTO } from '../../../types/settings/index.js';
+import { ValidationError } from '../../../utils/errors.js';
+import { SettingsService } from '../../../services/settings/settings.service.js';
 
-export const updateProfileController = async (req, res, next) => {
+export const updateProfileController = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
-    const { username, bio, avatar } = req.body;
-    const userId = req.user.userId;
-    
-    if (!username) {
-      throw new ValidationError("Nazwa użytkownika jest wymagana");
+    const userId = req.user?.userId;
+
+    if (!userId) {
+      throw new ValidationError('Brak autoryzacji');
     }
+
+    const profileData: UpdateProfileDTO = req.body;
     
-    const existingUser = await User.findOne({ 
-      username, 
-      _id: { $ne: userId } 
-    });
-    
-    if (existingUser) {
-      throw new ValidationError("Nazwa użytkownika jest już zajęta");
-    }
-    
-    const user = await User.findById(userId);
-    
-    user.username = username;
-    user.bio = bio || user.bio;
-    
-    if (avatar) {
-      user.avatar = avatar;
-    }
-    
-    await user.save();
-    
-    res.json({
-      message: "Profil został zaktualizowany",
-      user: {
-        id: user._id,
-        username: user.username,
-        email: user.email,
-        bio: user.bio,
-        avatar: user.avatar
-      }
+    const updatedProfile = await SettingsService.updateProfile(userId, profileData);
+
+    res.status(200).json({
+      success: true,
+      message: 'Profil został zaktualizowany',
+      data: updatedProfile
     });
   } catch (error) {
     next(error);
