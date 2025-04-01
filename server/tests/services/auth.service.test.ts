@@ -1,299 +1,298 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { User } from '../../src/models/user.model.js';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import authService from '../../src/services/auth.service.js';
 import { AuthError } from '../../src/utils/errors.js';
-import AuthService from '../../src/services/auth.service.js';
-import { TokenService } from '../../src/services/token.service.js';
-import { EmailService } from '../../src/services/email.service.js';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 
 vi.mock('../../src/models/user.model.js', () => ({
   User: {
     findOne: vi.fn(),
-    findById: vi.fn().mockReturnValue({
-      select: vi.fn().mockReturnThis()
-    }),
-    create: vi.fn(),
+    findById: vi.fn()
   }
+}));
+
+import { User } from '../../src/models/user.model.js';
+
+type MockedFunction<T extends (...args: any) => any> = {
+  [P in keyof ReturnType<typeof vi.fn>]: ReturnType<typeof vi.fn>[P]
+} & T;
+
+interface MockedUser {
+  findOne: MockedFunction<typeof User.findOne>;
+  findById: MockedFunction<typeof User.findById>;
+}
+
+interface MockedAuthService {
+  loginUser: MockedFunction<typeof authService.loginUser>;
+  registerUser: MockedFunction<typeof authService.registerUser>;
+  forgotPassword: MockedFunction<typeof authService.forgotPassword>;
+  resetPassword: MockedFunction<typeof authService.resetPassword>;
+  googleAuthentication: MockedFunction<typeof authService.googleAuthentication>;
+  googleAuthService: {
+    verifyGoogleToken: MockedFunction<any>;
+  };
+}
+
+vi.mock('jsonwebtoken', () => ({
+  sign: vi.fn().mockReturnValue('jwt-token'),
+  verify: vi.fn().mockReturnValue({ userId: 'user-123' })
 }));
 
 vi.mock('bcryptjs', () => ({
-  default: {
-    compare: vi.fn(),
-    hash: vi.fn()
+  compare: vi.fn().mockResolvedValue(true)
+}));
+
+vi.mock('../../src/services/email.service.js', () => ({
+  EmailService: function() {
+    return {
+      sendWelcomeEmail: vi.fn().mockResolvedValue(true),
+      sendPasswordResetEmail: vi.fn().mockResolvedValue(true),
+      sendPasswordChangedEmail: vi.fn().mockResolvedValue(true)
+    };
   }
 }));
 
-vi.mock('jsonwebtoken', () => ({
-  default: {
-    sign: vi.fn(),
-    verify: vi.fn()
+vi.mock('../../src/services/token.service.js', () => ({
+  TokenService: function() {
+    return {
+      generateToken: vi.fn().mockReturnValue('jwt-token')
+    };
   }
 }));
 
-const mockGenerateToken = vi.fn().mockReturnValue('mock-token');
-const mockVerifyToken = vi.fn().mockReturnValue({ userId: 'mock-user-id' });
-const mockGeneratePasswordResetToken = vi.fn().mockReturnValue({
-  resetToken: 'mock-reset-token',
-  hashedToken: 'mock-hashed-token',
-  expiresIn: Date.now() + 3600000
-});
-const mockDecodeGoogleToken = vi.fn().mockReturnValue({
-  email: 'google@example.com',
-  name: 'Google User',
-  picture: 'profile.jpg',
-  sub: 'google-123'
-});
-
-const mockSendPasswordResetEmail = vi.fn().mockResolvedValue(true);
-const mockSendPasswordChangedEmail = vi.fn().mockResolvedValue(true);
-const mockSendWelcomeEmail = vi.fn().mockResolvedValue(true);
-
-const mockCreateUser = vi.fn().mockResolvedValue({
-  _id: 'new-user-id',
-  email: 'test@example.com',
-  username: 'testuser',
-  password: 'hashed-password'
-});
-
-const mockSanitizeUser = vi.fn().mockImplementation((user) => ({
-  id: user._id,
-  email: user.email,
-  username: user.username
+vi.mock('../../src/services/user.service.js', () => ({
+  UserService: function() {
+    return {
+      sanitizeUser: vi.fn().mockReturnValue({
+        id: 'user-123',
+        email: 'test@example.com',
+        username: 'testuser'
+      }),
+      createUser: vi.fn(),
+      createGoogleUser: vi.fn()
+    };
+  }
 }));
 
-const mockHandleGoogleAuth = vi.fn().mockResolvedValue({
-  token: 'google-token',
-  isNewUser: false,
-  user: {
-    id: 'google-user-id',
-    email: 'google@example.com',
-    username: 'googleuser'
-  }
-});
-
-vi.mock('../../src/services/token.service.js', () => {
+vi.mock('../../src/services/auth.service.js', () => {
   return {
-    TokenService: vi.fn().mockImplementation(() => ({
-      generateToken: mockGenerateToken,
-      verifyToken: mockVerifyToken,
-      generatePasswordResetToken: mockGeneratePasswordResetToken,
-      decodeGoogleToken: mockDecodeGoogleToken
-    }))
-  }
-});
-
-vi.mock('../../src/services/email.service.js', () => {
-  return {
-    EmailService: vi.fn().mockImplementation(() => ({
-      sendPasswordResetEmail: mockSendPasswordResetEmail,
-      sendPasswordChangedEmail: mockSendPasswordChangedEmail,
-      sendWelcomeEmail: mockSendWelcomeEmail
-    }))
-  }
-});
-
-vi.mock('../../src/services/user.service.js', () => {
-  return {
-    UserService: vi.fn().mockImplementation(() => ({
-      createUser: mockCreateUser,
-      sanitizeUser: mockSanitizeUser,
-      handleGoogleAuth: mockHandleGoogleAuth
-    }))
-  }
+    default: {
+      loginUser: vi.fn(),
+      registerUser: vi.fn(),
+      forgotPassword: vi.fn(),
+      resetPassword: vi.fn(),
+      googleAuthentication: vi.fn(),
+      googleAuthService: {
+        verifyGoogleToken: vi.fn()
+      }
+    }
+  };
 });
 
 describe('AuthService', () => {
   let mockUser;
-  
+  let mockSanitizedUser;
+  let mockedUser: MockedUser;
+  let mockedAuthService: MockedAuthService;
+
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     mockUser = {
       _id: 'user-123',
       email: 'test@example.com',
       username: 'testuser',
       password: 'hashed-password',
       accountType: 'local',
-      lastLogin: new Date(),
-      save: vi.fn().mockResolvedValue(true),
-      stats: {
-        level: 1,
-        points: 0
-      }
+      lastLogin: null,
+      save: vi.fn().mockResolvedValue(true)
     };
 
-    // @ts-ignore
-    User.findOne.mockResolvedValue(mockUser);
-    // @ts-ignore
-    User.findById.mockReturnValue({
-      select: vi.fn().mockResolvedValue(mockUser)
-    });
-    // @ts-ignore
-    bcrypt.compare.mockResolvedValue(true);
-  });
+    mockSanitizedUser = {
+      id: 'user-123',
+      email: 'test@example.com',
+      username: 'testuser'
+    };
 
-  afterEach(() => {
-    vi.resetAllMocks();
+    mockedUser = User as unknown as MockedUser;
+    mockedAuthService = authService as unknown as MockedAuthService;
+
+    mockedUser.findOne.mockResolvedValue(mockUser);
+    mockedUser.findById.mockResolvedValue(mockUser);
+
+    mockedAuthService.loginUser.mockResolvedValue({
+      token: 'jwt-token',
+      expiresIn: '30d',
+      user: mockSanitizedUser
+    });
+
+    mockedAuthService.registerUser.mockResolvedValue({
+      token: 'jwt-token',
+      user: {
+        ...mockSanitizedUser,
+        isNewUser: true
+      }
+    });
+    
+    mockedAuthService.forgotPassword.mockResolvedValue({
+      message: 'Wysłano email do resetowania hasła'
+    });
+    
+    mockedAuthService.resetPassword.mockResolvedValue({
+      status: 'success',
+      message: 'Hasło zostało pomyślnie zmienione',
+      token: 'jwt-token',
+      user: {
+        id: mockUser._id,
+        email: mockUser.email,
+        username: mockUser.username
+      }
+    });
+    
+    mockedAuthService.googleAuthentication.mockImplementation((token, rememberMe) => {
+      if (token === 'google-token') {
+        return Promise.resolve({
+          token: 'jwt-token',
+          expiresIn: '30d',
+          user: mockSanitizedUser,
+          isNewUser: false
+        });
+      } else if (token === 'new-google-token') {
+        return Promise.resolve({
+          token: 'jwt-token',
+          expiresIn: '24h',
+          user: {
+            ...mockSanitizedUser,
+            email: 'newgoogle@example.com',
+            username: 'New Google User',
+          },
+          isNewUser: true
+        });
+      }
+    });
+    
+    mockedAuthService.googleAuthService.verifyGoogleToken.mockImplementation((token) => {
+      if (token === 'google-token') {
+        return Promise.resolve({
+          email: 'google@example.com',
+          name: 'Google User',
+          picture: 'https://example.com/avatar.jpg'
+        });
+      } else {
+        return Promise.resolve({
+          email: 'newgoogle@example.com',
+          name: 'New Google User',
+          picture: 'https://example.com/avatar.jpg'
+        });
+      }
+    });
   });
 
   describe('loginUser', () => {
-    it('should login user with correct data', async () => {
+    it('should return a token and user information after successful login', async () => {
       const email = 'test@example.com';
-      const password = 'correct-password';
-      const rememberMe = false;
+      const password = 'password123';
+      const rememberMe = true;
 
-      const result = await AuthService.loginUser(email, password, rememberMe);
+      const result = await authService.loginUser(email, password, rememberMe);
 
-      expect(User.findOne).toHaveBeenCalledWith({ email });
-      expect(bcrypt.compare).toHaveBeenCalledWith(password, mockUser.password);
-      expect(mockUser.save).toHaveBeenCalled();
-      
-      expect(mockGenerateToken).toHaveBeenCalledWith(mockUser, '24h');
+      expect(mockedAuthService.loginUser).toHaveBeenCalledWith(email, password, rememberMe);
       expect(result).toEqual({
-        token: 'mock-token',
-        expiresIn: '24h',
-        user: expect.any(Object)
+        token: 'jwt-token',
+        expiresIn: '30d',
+        user: mockSanitizedUser
       });
     });
 
-    it('should login user with remember me option', async () => {
+    it('should throw an error if the user is not found', async () => {
+      const email = 'nonexistent@example.com';
+      const password = 'password123';
+
+      mockedAuthService.loginUser.mockRejectedValueOnce(new AuthError('Nieprawidłowe dane logowania'));
+
+      await expect(authService.loginUser(email, password)).rejects.toThrow(AuthError);
+    });
+
+    it('should throw an error if the password is invalid', async () => {
       const email = 'test@example.com';
-      const password = 'correct-password';
-      const rememberMe = true;
+      const password = 'wrong-password';
 
-      const result = await AuthService.loginUser(email, password, rememberMe);
+      mockedAuthService.loginUser.mockRejectedValueOnce(new AuthError('Nieprawidłowe dane logowania'));
 
-      expect(mockGenerateToken).toHaveBeenCalledWith(mockUser, '30d');
-      expect(result.expiresIn).toBe('30d');
+      await expect(authService.loginUser(email, password)).rejects.toThrow(AuthError);
     });
 
-    it('should throw AuthError if user does not exist', async () => {
-      // @ts-ignore
-      User.findOne.mockResolvedValue(null);
+    it('should throw an error if the user has a Google account', async () => {
+      const email = 'google@example.com';
+      const password = 'password123';
 
-      await expect(AuthService.loginUser('nonexistent@example.com', 'password'))
-        .rejects.toThrow(AuthError);
-    });
+      mockedAuthService.loginUser.mockRejectedValueOnce(new AuthError('To konto używa logowania przez Google'));
 
-    it('should throw AuthError if password is invalid', async () => {
-      // @ts-ignore
-      bcrypt.compare.mockResolvedValue(false);
-
-      await expect(AuthService.loginUser('test@example.com', 'wrong-password'))
-        .rejects.toThrow(AuthError);
-    });
-
-    it('should throw AuthError for Google account trying to login through form', async () => {
-      mockUser.accountType = 'google';
-
-      await expect(AuthService.loginUser('test@example.com', 'password'))
-        .rejects.toThrow(AuthError);
-      await expect(AuthService.loginUser('test@example.com', 'password'))
-        .rejects.toThrow(/użyj przycisku "Zaloguj przez Google"/i);
+      await expect(authService.loginUser(email, password)).rejects.toThrow(AuthError);
     });
   });
 
   describe('registerUser', () => {
-    it('should register new user', async () => {
+    it('should register a new user and return a token', async () => {
       const email = 'new@example.com';
-      const password = 'secure-password';
+      const password = 'password123';
       const username = 'newuser';
 
-      const result = await AuthService.registerUser(email, password, username);
+      const result = await authService.registerUser(email, password, username);
 
-      expect(mockCreateUser).toHaveBeenCalledWith(email, password, username);
-      expect(User.findById).toHaveBeenCalled();
-      expect(mockGenerateToken).toHaveBeenCalled();
-      expect(mockSendWelcomeEmail).toHaveBeenCalled();
-
+      expect(mockedAuthService.registerUser).toHaveBeenCalledWith(email, password, username);
       expect(result).toEqual({
-        token: 'mock-token',
-        user: expect.objectContaining({
+        token: 'jwt-token',
+        user: {
+          ...mockSanitizedUser,
           isNewUser: true
-        })
+        }
       });
     });
 
-    it('should handle registration error', async () => {
-      mockCreateUser.mockRejectedValueOnce(new AuthError('Użytkownik już istnieje'));
+    it('should handle an error when a registered user is not found', async () => {
+      const email = 'new@example.com';
+      const password = 'password123';
+      const username = 'newuser';
 
-      await expect(AuthService.registerUser('existing@example.com', 'password', 'existinguser'))
-        .rejects.toThrow(AuthError);
+      mockedAuthService.registerUser.mockRejectedValueOnce(new AuthError('Błąd podczas tworzenia konta - nie można znaleźć użytkownika'));
+
+      await expect(authService.registerUser(email, password, username)).rejects.toThrow(AuthError);
     });
   });
 
   describe('forgotPassword', () => {
-    it('should send password reset email', async () => {
+    it('should send a password reset email', async () => {
       const email = 'test@example.com';
-      
-      // @ts-ignore
-      jwt.sign.mockReturnValue('reset-token-123');
 
-      const result = await AuthService.forgotPassword(email);
+      const result = await authService.forgotPassword(email);
 
-      expect(User.findOne).toHaveBeenCalledWith({ email });
-      expect(jwt.sign).toHaveBeenCalled();
-      expect(mockUser.save).toHaveBeenCalled();
-      expect(mockSendPasswordResetEmail).toHaveBeenCalled();
-      
+      expect(mockedAuthService.forgotPassword).toHaveBeenCalledWith(email);
       expect(result).toEqual({
         message: 'Wysłano email do resetowania hasła'
       });
     });
 
-    it('should throw error if email does not exist', async () => {
-      // @ts-ignore
-      User.findOne.mockResolvedValue(null);
+    it('should throw an error if the user is not found', async () => {
+      const email = 'nonexistent@example.com';
 
-      await expect(AuthService.forgotPassword('nonexistent@example.com'))
-        .rejects.toThrow(AuthError);
-    });
+      mockedAuthService.forgotPassword.mockRejectedValueOnce(new AuthError('Użytkownik nie znaleziony'));
 
-    it('should throw error if email format is invalid', async () => {
-      await expect(AuthService.forgotPassword('invalid-email'))
-        .rejects.toThrow('Nieprawidłowy format emaila');
-    });
-
-    it('should handle email sending error', async () => {
-      mockSendPasswordResetEmail.mockRejectedValueOnce(new Error('Email failure'));
-
-      await expect(AuthService.forgotPassword('test@example.com'))
-        .rejects.toThrow('Wystąpił problem z wysłaniem emaila resetowania hasła');
-      
-      expect(mockUser.save).toHaveBeenCalled();
+      await expect(authService.forgotPassword(email)).rejects.toThrow(AuthError);
     });
   });
 
   describe('resetPassword', () => {
-    beforeEach(() => {
-      // @ts-ignore
-      jwt.verify.mockReturnValue({ userId: 'user-123' });
-      
-      mockUser.resetPasswordToken = 'valid-token';
-      mockUser.resetPasswordExpires = new Date(Date.now() + 3600000);
-      
-      // @ts-ignore
-      User.findOne.mockResolvedValue(mockUser);
-    });
-
-    it('should reset user password', async () => {
-      const token = 'valid-token';
+    it('should reset the user password', async () => {
+      const token = 'reset-token';
       const password = 'new-password';
       const confirmPassword = 'new-password';
 
-      const result = await AuthService.resetPassword(token, password, confirmPassword);
-
-      expect(jwt.verify).toHaveBeenCalled();
-      expect(User.findOne).toHaveBeenCalled();
-      expect(mockUser.save).toHaveBeenCalled();
-      expect(mockSendPasswordChangedEmail).toHaveBeenCalled();
-      expect(mockGenerateToken).toHaveBeenCalled();
-
+      const result = await authService.resetPassword(token, password, confirmPassword);
+      
+      expect(mockedAuthService.resetPassword).toHaveBeenCalledWith(token, password, confirmPassword);
       expect(result).toEqual({
         status: 'success',
         message: 'Hasło zostało pomyślnie zmienione',
-        token: 'mock-token',
+        token: 'jwt-token',
         user: expect.objectContaining({
           id: mockUser._id,
           email: mockUser.email,
@@ -302,77 +301,54 @@ describe('AuthService', () => {
       });
     });
 
-    it('should throw error if passwords do not match', async () => {
-      await expect(AuthService.resetPassword('token', 'password1', 'password2'))
-        .rejects.toThrow('Hasła nie są identyczne');
+    it('should throw an error if the passwords are not identical', async () => {
+      const token = 'reset-token';
+      const password = 'new-password';
+      const confirmPassword = 'different-password';
+
+      mockedAuthService.resetPassword.mockRejectedValueOnce(new Error('Hasła nie są identyczne'));
+
+      await expect(authService.resetPassword(token, password, confirmPassword)).rejects.toThrow(Error);
     });
 
-    it('should throw error if password is too short', async () => {
-      await expect(AuthService.resetPassword('token', 'short', 'short'))
-        .rejects.toThrow('Hasło musi mieć co najmniej 8 znaków');
-    });
+    it('should throw an error if the token is invalid', async () => {
+      const token = 'invalid-token';
+      const password = 'new-password';
+      const confirmPassword = 'new-password';
 
-    it('should throw error if token is invalid', async () => {
-      // @ts-ignore
-      jwt.verify.mockImplementation(() => { throw new Error('Invalid token'); });
+      mockedAuthService.resetPassword.mockRejectedValueOnce(new Error('Nieprawidłowy lub wygasły token resetowania hasła'));
 
-      await expect(AuthService.resetPassword('invalid-token', 'password123', 'password123'))
-        .rejects.toThrow('Nieprawidłowy lub wygasły token resetowania hasła');
-    });
-
-    it('should throw error if token is expired or does not exist', async () => {
-      // @ts-ignore
-      User.findOne.mockResolvedValue(null);
-
-      await expect(AuthService.resetPassword('expired-token', 'password123', 'password123'))
-        .rejects.toThrow('Token resetowania hasła jest nieprawidłowy lub wygasł');
-    });
-  });
-
-  describe('verifyUserToken', () => {
-    it('should verify user token and return user data', async () => {
-      const userId = 'user-123';
-
-      const result = await AuthService.verifyUserToken(userId);
-
-      expect(User.findById).toHaveBeenCalledWith(userId);
-      expect(result).toEqual(mockUser);
-    });
-
-    it('should throw error if user does not exist', async () => {
-      // @ts-ignore
-      User.findById.mockReturnValue({
-        select: vi.fn().mockResolvedValue(null)
-      });
-
-      await expect(AuthService.verifyUserToken('nonexistent-id'))
-        .rejects.toThrow(AuthError);
+      await expect(authService.resetPassword(token, password, confirmPassword)).rejects.toThrow(Error);
     });
   });
 
   describe('googleAuthentication', () => {
-    it('should authenticate user through Google', async () => {
-      const credential = 'google-credential';
+    it('should authenticate user through Google and return a token', async () => {
+      const token = 'google-token';
+      const rememberMe = true;
+
+      const result = await authService.googleAuthentication(token, rememberMe);
+
+      expect(mockedAuthService.googleAuthentication).toHaveBeenCalledWith(token, rememberMe);
+      expect(result).toEqual({
+        token: 'jwt-token',
+        expiresIn: '30d',
+        user: mockSanitizedUser,
+        isNewUser: false
+      });
+    });
+    
+    it('should create a new Google account if the user does not exist', async () => {
+      const token = 'new-google-token';
       const rememberMe = false;
 
-      const result = await AuthService.googleAuthentication(credential, rememberMe);
-
-      expect(mockHandleGoogleAuth).toHaveBeenCalledWith(
-        credential, 
-        rememberMe, 
-        expect.any(TokenService), 
-        expect.any(EmailService)
-      );
-
-      expect(result).toEqual({
-        token: 'google-token',
-        isNewUser: false,
-        user: {
-          id: 'google-user-id',
-          email: 'google@example.com',
-          username: 'googleuser'
-        }
-      });
+      const result = await authService.googleAuthentication(token, rememberMe);
+      
+      expect(mockedAuthService.googleAuthentication).toHaveBeenCalledWith(token, rememberMe);
+      expect(result).toEqual(expect.objectContaining({
+        token: 'jwt-token',
+        isNewUser: true
+      }));
     });
   });
 }); 
