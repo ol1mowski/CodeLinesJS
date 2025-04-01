@@ -40,6 +40,11 @@ jobs:
         NODE_ENV=test npm run test -- --reporter verbose
       env:
         CI: true
+        
+    - name: Install dependencies
+      run: |
+        cd server
+        npm ci
     - name: Run server tests in verbose mode
       run: |
         cd server
