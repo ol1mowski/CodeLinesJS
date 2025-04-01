@@ -34,9 +34,15 @@ jobs:
         cd client
         npm ci
         
-    - name: Run tests in verbose mode
+    - name: Run client tests in verbose mode
       run: |
         cd client
+        NODE_ENV=test npm run test -- --reporter verbose
+      env:
+        CI: true
+    - name: Run server tests in verbose mode
+      run: |
+        cd server
         NODE_ENV=test npm run test -- --reporter verbose
       env:
         CI: true
