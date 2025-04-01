@@ -31,7 +31,7 @@ export const getRanking = async (req: Request, res: Response, next: NextFunction
 
     if (userRank > 10) {
 
-      rankingToReturn.push({ isSeparator: true });
+      rankingToReturn.push({ isSeparator: true } as any);
       
       const start = Math.max(userRankIndex - 2, 10);
       const end = Math.min(userRankIndex + 3, users.length);
