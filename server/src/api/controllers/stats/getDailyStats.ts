@@ -1,20 +1,17 @@
-import { User } from '../../../models/user.model.js';
-import { AuthError, ValidationError } from '../../../utils/errors.js';
+import { StatsService } from '../../../services/stats/stats.service.js';
+import { AuthError } from '../../../utils/errors.js';
+import { Request, Response, NextFunction } from 'express';
 
-export const getDailyStats = async (req, res, next) => {
+export const getDailyStats = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.userId;
     if (!userId) throw new AuthError('Brak autoryzacji');
 
-    const user = await User.findById(userId)
-      .select('stats.chartData.daily')
-      .lean();
-
-    if (!user) throw new ValidationError('Nie znaleziono użytkownika');
+    const dailyStats = await StatsService.getDailyStats(userId);
 
     res.json({
       status: 'success',
-      data: user.stats?.chartData?.daily || []
+      data: dailyStats
     });
   } catch (error) {
     next(error);
