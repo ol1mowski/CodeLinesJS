@@ -1,8 +1,8 @@
-// @ts-nocheck
 import { Resource } from '../../../models/resource.model.js';
 import { User } from '../../../models/user.model.js';
+import { Request, Response, NextFunction } from 'express';
 
-export const getResources = async (req, res, next) => {
+export const getResources = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { category, type, difficulty, search, tag } = req.query;
     const query = { isPublished: true };
