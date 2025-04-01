@@ -1,7 +1,7 @@
-// @ts-nocheck
 import { User } from '../../../models/user.model.js';
+import { Request, Response, NextFunction } from 'express';
 
-export const getRanking = async (req, res, next) => {
+export const getRanking = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.userId;
 

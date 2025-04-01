@@ -1,83 +1,46 @@
-// @ts-nocheck
-import { User } from "../../../models/user.model.js";
-import { LevelService } from "../../../services/level.service.js";
+import { Response, NextFunction } from 'express';
+import { StreakService } from '../../../services/progress/index.js';
+import { IUserRequest } from '../../../types/progress/index.js';
+import { User } from '../../../models/user.model.js';
+import { ValidationError } from '../../../utils/errors.js';
 
-export const updateStreakController = async (req, res, next) => {
+export const updateStreakController = async (
+  req: IUserRequest, 
+  res: Response, 
+  next: NextFunction
+): Promise<void> => {
   try {
     const userId = req.user.userId;
     
-    const user = await User.findById(userId);
+    const userDoc = await User.findById(userId);
     
-    const lastLoginDate = user.lastLogin ? new Date(user.lastLogin) : null;
-    const currentDate = new Date();
-    
-    if (!lastLoginDate) {
-      user.stats.streak = 1;
-      user.stats.bestStreak = 1;
-      user.lastLogin = currentDate;
-      await user.save();
-      
-      return res.json({
-        message: "Pierwszy dzień nauki! Rozpoczęto pasmo sukcesów.",
-        streak: 1,
-        bestStreak: 1,
-        streakUpdated: true
-      });
+    if (!userDoc) {
+      throw new ValidationError("Użytkownik nie znaleziony");
     }
     
-    const lastLoginDay = lastLoginDate.getDate();
-    const lastLoginMonth = lastLoginDate.getMonth();
-    const lastLoginYear = lastLoginDate.getFullYear();
+    const user = userDoc as any;
     
-    const currentDay = currentDate.getDate();
-    const currentMonth = currentDate.getMonth();
-    const currentYear = currentDate.getFullYear();
+    const streakStats = StreakService.updateStreak(user);
     
-    const isConsecutiveDay = 
-      (currentDay - lastLoginDay === 1 && currentMonth === lastLoginMonth && currentYear === lastLoginYear) ||
-      (currentDay === 1 && lastLoginDay === LevelService.getDaysInMonth(lastLoginMonth, lastLoginYear) && 
-        ((currentMonth - lastLoginMonth === 1 && currentYear === lastLoginYear) || 
-         (currentMonth === 0 && lastLoginMonth === 11 && currentYear - lastLoginYear === 1)));
+    await userDoc.save();
     
-    const isSameDay = 
-      currentDay === lastLoginDay && 
-      currentMonth === lastLoginMonth && 
-      currentYear === lastLoginYear;
+    let message = "Pasmo sukcesów nie zostało zaktualizowane";
     
-    if (isConsecutiveDay && !isSameDay) {
-      user.stats.streak += 1;
-      
-      if (user.stats.streak > user.stats.bestStreak) {
-        user.stats.bestStreak = user.stats.streak;
+    if (streakStats.streakUpdated) {
+      if (streakStats.streak === 1 && streakStats.streakBroken) {
+        message = "Rozpoczęto nowe pasmo sukcesów!";
+      } else if (streakStats.streak === 1) {
+        message = "Pierwszy dzień nauki! Rozpoczęto pasmo sukcesów.";
+      } else {
+        message = `Świetnie! Twoje pasmo sukcesów wynosi teraz ${streakStats.streak} dni!`;
       }
-      
-      user.lastLogin = currentDate;
-      await user.save();
-      
-      return res.json({
-        message: `Świetnie! Twoje pasmo sukcesów wynosi teraz ${user.stats.streak} dni!`,
-        streak: user.stats.streak,
-        bestStreak: user.stats.bestStreak,
-        streakUpdated: true
-      });
-    } else if (!isSameDay) {
-      user.stats.streak = 1;
-      user.lastLogin = currentDate;
-      await user.save();
-      
-      return res.json({
-        message: "Rozpoczęto nowe pasmo sukcesów!",
-        streak: 1,
-        bestStreak: user.stats.bestStreak,
-        streakUpdated: true
-      });
     }
     
     res.json({
-      message: "Pasmo sukcesów nie zostało zaktualizowane",
-      streak: user.stats.streak,
-      bestStreak: user.stats.bestStreak,
-      streakUpdated: false
+      message,
+      streak: streakStats.streak,
+      bestStreak: streakStats.bestStreak,
+      streakUpdated: streakStats.streakUpdated
     });
   } catch (error) {
     next(error);

@@ -1,13 +1,4 @@
-// @ts-nocheck
-import { getUserProgressController } from './getUserProgress.js';
-import { getLeaderboardController } from './getLeaderboard.js';
-import { updateStreakController } from './updateStreak.js';
-import { updateProgressController, updateUserProgressController } from './updateProgress.js';
-
-export {
-  getUserProgressController,
-  getLeaderboardController,
-  updateStreakController,
-  updateProgressController,
-  updateUserProgressController
-}; 
+export { getUserProgressController } from './getUserProgress.js';
+export { getLeaderboardController } from './getLeaderboard.js';
+export { updateStreakController } from './updateStreak.js';
+export { updateProgressController, updateUserProgressController } from './updateProgress.js'; 
