@@ -1,40 +1,20 @@
-// @ts-nocheck
-import { Group } from '../../../models/group.model.js';
-import { GroupMember } from '../../../models/groupMember.model.js';
-import { AuthError, ValidationError } from '../../../utils/errors.js';
+import { Request, Response, NextFunction } from 'express';
+import { GroupService } from '../../../services/group.service.js';
+import { AuthError } from '../../../utils/errors.js';
 
-export const deleteGroup = async (req, res, next) => {
+export const deleteGroup = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
+    const { id } = req.params;
     const userId = req.user?.userId;
+    
     if (!userId) throw new AuthError('Brak autoryzacji');
-
-    const { groupId } = req.body;
-
-    if (!groupId) {
-      throw new ValidationError('ID grupy jest wymagane');
-    }
-
-    const group = await Group.findById(groupId);
-    if (!group) {
-      throw new ValidationError('Grupa nie istnieje');
-    }
-
-    const membership = await GroupMember.findOne({
-      user: userId,
-      group: groupId,
-    });
-
-    if (!membership || membership.role !== 'owner') {
-      throw new AuthError('Tylko właściciel może usunąć grupę');
-    }
-
-    await GroupMember.deleteMany({ group: groupId });
-
-    await Group.findByIdAndDelete(groupId);
-
+    
+    const result = await GroupService.deleteGroup(id, userId);
+    
     res.json({
       status: 'success',
-      message: 'Grupa została usunięta pomyślnie',
+      message: result.message,
+      data: { success: result.success }
     });
   } catch (error) {
     next(error);

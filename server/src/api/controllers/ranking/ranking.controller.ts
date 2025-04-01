@@ -1,7 +1,7 @@
-// @ts-nocheck
 import { User } from '../../../models/user.model.js';
+import { Request, Response, NextFunction } from 'express';
 
-export const getRanking = async (req, res, next) => {
+export const getRanking = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.userId;
 
@@ -31,7 +31,7 @@ export const getRanking = async (req, res, next) => {
 
     if (userRank > 10) {
 
-      rankingToReturn.push({ isSeparator: true });
+      rankingToReturn.push({ isSeparator: true } as any);
       
       const start = Math.max(userRankIndex - 2, 10);
       const end = Math.min(userRankIndex + 3, users.length);

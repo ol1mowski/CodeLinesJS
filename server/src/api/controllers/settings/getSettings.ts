@@ -1,44 +1,26 @@
-// @ts-nocheck
-import { User } from "../../../models/user.model.js";
+import { Request, Response, NextFunction } from 'express';
+import { AuthRequest } from '../../../types/settings/index.js';
+import { ValidationError } from '../../../utils/errors.js';
+import { SettingsService } from '../../../services/settings/settings.service.js';
 
-export const getSettingsController = async (req, res, next) => {
+export const getSettingsController = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
-    const userId = req.user.userId;
-    
-    const user = await User.findById(userId)
-      .select("username email bio avatar settings")
-      .lean();
-      
-    if (!user.settings) {
-      user.settings = {
-        notifications: {
-          email: true,
-          push: true,
-          dailyReminders: true,
-          weeklyProgress: true,
-          newFeatures: true,
-          communityUpdates: true
-        },
-        appearance: {
-          theme: "system",
-          fontSize: "medium",
-          codeStyle: "default"
-        }
-      };
+    const userId = req.user?.userId;
+
+    if (!userId) {
+      throw new ValidationError('Brak autoryzacji');
     }
-    
-    const response = {
-      profile: {
-        id: user._id,
-        username: user.username,
-        email: user.email,
-        bio: user.bio || "",
-        avatar: user.avatar
-      },
-      settings: user.settings
-    };
-    
-    res.json(response);
+
+    const settingsResponse = await SettingsService.getSettings(userId);
+
+    res.status(200).json({
+      success: true,
+      data: settingsResponse
+    });
   } catch (error) {
     next(error);
   }

@@ -1,17 +1,29 @@
-// @ts-nocheck
+import { Response, NextFunction } from 'express';
 import { Message } from '../../../../models/message.model.js';
+import { 
+  AuthRequest, 
+  MessageController,
+  MessageActionResponse
+} from './types.js';
+import { addReport } from './helpers.js';
 
-export const reportMessageController = async (req, res, next) => {
+
+export const reportMessageController: MessageController = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
     const { groupId, messageId } = req.params;
     const { reason } = req.body;
     const userId = req.user.userId;
 
     if (!reason) {
-      return res.status(400).json({
+      res.status(400).json({
         status: 'error',
         message: 'Powód zgłoszenia jest wymagany'
       });
+      return;
     }
 
     const message = await Message.findOne({
@@ -20,10 +32,11 @@ export const reportMessageController = async (req, res, next) => {
     });
 
     if (!message) {
-      return res.status(404).json({
+      res.status(404).json({
         status: 'error',
         message: 'Wiadomość nie istnieje'
       });
+      return;
     }
 
     const hasReported = message.reports && message.reports.some(
@@ -31,28 +44,22 @@ export const reportMessageController = async (req, res, next) => {
     );
 
     if (hasReported) {
-      return res.status(400).json({
+      res.status(400).json({
         status: 'error',
         message: 'Już zgłosiłeś tę wiadomość'
       });
+      return;
     }
 
-    if (!message.reports) {
-      message.reports = [];
-    }
-
-    message.reports.push({
-      userId,
-      reason,
-      reportedAt: new Date()
-    });
-
+    addReport(message, userId, reason);
     await message.save();
 
-    res.json({
+    const response: MessageActionResponse = {
       status: 'success',
       message: 'Wiadomość została zgłoszona'
-    });
+    };
+
+    res.json(response);
   } catch (error) {
     next(error);
   }

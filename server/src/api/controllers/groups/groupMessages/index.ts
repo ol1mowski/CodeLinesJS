@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { getMessagesController } from './getMessages.js';
 import { sendMessageController } from './sendMessage.js';
 import { editMessageController } from './editMessage.js';
@@ -13,4 +12,8 @@ export {
   deleteMessageController,
   addReactionController,
   reportMessageController
-}; 
+};
+
+export * from './types.js';
+export * from './utils.js';
+export * from './helpers.js'; 

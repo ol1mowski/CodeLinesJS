@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { Router } from 'express';
 import { authMiddleware } from '../middleware/auth.middleware.js';
 import { 
@@ -11,11 +10,10 @@ import {
 
 const router = Router();
 
-router.get('/active', authMiddleware, getActiveUsers);
+router.get('/active', getActiveUsers);
 router.get('/profile', authMiddleware, getUserProfile);
 router.get('/stats', authMiddleware, getUserStats);
-router.put('/stats', authMiddleware, updateUserStats);
+router.patch('/stats', authMiddleware, updateUserStats);
 router.get('/progress', authMiddleware, getUserProgress);
-
 
 export default router; 

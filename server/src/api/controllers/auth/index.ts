@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { register } from './register.js';
 import { login } from './login.js';
 import { forgotPassword, resetPassword } from './password.js';

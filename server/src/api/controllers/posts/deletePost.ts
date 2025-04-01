@@ -1,28 +1,15 @@
-// @ts-nocheck
-  import { Post } from "../../../models/post.model.js";
-  import { ValidationError } from "../../../utils/errors.js";
+import { NextFunction, Request, Response } from 'express';
+import { PostService } from '../../../services/post/post.service.js';
+import { asyncHandler } from '../../../utils/asyncHandler.js';
 
-export const deletePostController = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const userId = req.user.userId;
-    
-    const post = await Post.findById(id);
-    
-    if (!post) {
-      throw new ValidationError("Post nie został znaleziony");
-    }
-    
-    if (post.author.toString() !== userId) {
-      throw new ValidationError("Nie masz uprawnień do usunięcia tego posta");
-    }
-    
-    await Post.findByIdAndDelete(id);
-    
-    res.json({
-      message: "Post został usunięty"
-    });
-  } catch (error) {
-    next(error);
-  }
-}; 
+export const deletePostController = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params;
+  const userId = req.user.id;
+
+  await PostService.deletePost(id, userId);
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Post został usunięty'
+  });
+}); 

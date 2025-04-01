@@ -1,4 +1,3 @@
-// @ts-nocheck
 export const getTodayAndYesterday = () => {
   const today = new Date();
   const todayStr = today.toISOString().split('T')[0];
@@ -11,7 +10,7 @@ export const getTodayAndYesterday = () => {
 export const calculateStreak = (dailyData) => {
   if (!dailyData?.length) return 0;
 
-  const sortedDays = [...dailyData].sort((a, b) => new Date(b.date) - new Date(a.date));
+  const sortedDays = [...dailyData].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   const { todayStr, yesterdayStr } = getTodayAndYesterday();
   const latestEntry = sortedDays[0];
   

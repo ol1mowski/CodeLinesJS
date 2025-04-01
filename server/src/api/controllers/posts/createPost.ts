@@ -1,33 +1,15 @@
-// @ts-nocheck
-import { Post } from "../../../models/post.model.js";
-import { ValidationError } from "../../../utils/errors.js";
+import { NextFunction, Request, Response } from 'express';
+import { PostService } from '../../../services/post/post.service.js';
+import { asyncHandler } from '../../../utils/asyncHandler.js';
 
-export const createPostController = async (req, res, next) => {
-  try {
-    const { title, content, category, tags } = req.body;
-    const userId = req.user.userId;
-    
-    if (!title || !content || !category) {
-      throw new ValidationError("Tytuł, treść i kategoria są wymagane");
-    }
-    
-    const post = await Post.create({
-      title,
-      content,
-      category,
-      tags: tags || [],
-      author: userId,
-      isPublished: true
-    });
-    
-    const populatedPost = await Post.findById(post._id)
-      .populate("author", "username avatar");
-      
-    res.status(201).json({
-      message: "Post został utworzony",
-      post: populatedPost
-    });
-  } catch (error) {
-    next(error);
-  }
-}; 
+export const createPostController = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  const { content } = req.body;
+  const userId = req.user.id;
+
+  const post = await PostService.createPost(content, userId);
+
+  res.status(201).json({
+    status: 'success',
+    data: post
+  });
+}); 

@@ -1,60 +1,28 @@
-// @ts-nocheck
-import { User } from "../../../models/user.model.js";
+import { Response, NextFunction } from 'express';
+import { AuthRequest, UpdateNotificationsDTO } from '../../../types/settings/index.js';
+import { ValidationError } from '../../../utils/errors.js';
+import { SettingsService } from '../../../services/settings/settings.service.js';
 
-export const updateNotificationsController = async (req, res, next) => {
+export const updateNotificationsController = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
-    const { 
-      emailNotifications, 
-      pushNotifications, 
-      dailyReminders,
-      weeklyProgress,
-      newFeatures,
-      communityUpdates
-    } = req.body;
-    
-    const userId = req.user.userId;
-    
-    const user = await User.findById(userId);
-    
-    if (!user.settings) {
-      user.settings = {};
+    const userId = req.user?.userId;
+
+    if (!userId) {
+      throw new ValidationError('Brak autoryzacji');
     }
+
+    const notificationsData: UpdateNotificationsDTO = req.body;
     
-    if (!user.settings.notifications) {
-      user.settings.notifications = {};
-    }
-    
-    const notifications = user.settings.notifications;
-    
-    if (emailNotifications !== undefined) {
-      notifications.email = emailNotifications;
-    }
-    
-    if (pushNotifications !== undefined) {
-      notifications.push = pushNotifications;
-    }
-    
-    if (dailyReminders !== undefined) {
-      notifications.dailyReminders = dailyReminders;
-    }
-    
-    if (weeklyProgress !== undefined) {
-      notifications.weeklyProgress = weeklyProgress;
-    }
-    
-    if (newFeatures !== undefined) {
-      notifications.newFeatures = newFeatures;
-    }
-    
-    if (communityUpdates !== undefined) {
-      notifications.communityUpdates = communityUpdates;
-    }
-    
-    await user.save();
-    
-    res.json({
-      message: "Ustawienia powiadomień zostały zaktualizowane",
-      notifications: user.settings.notifications
+    const updatedNotifications = await SettingsService.updateNotifications(userId, notificationsData);
+
+    res.status(200).json({
+      success: true,
+      message: 'Ustawienia powiadomień zostały zaktualizowane',
+      data: updatedNotifications
     });
   } catch (error) {
     next(error);

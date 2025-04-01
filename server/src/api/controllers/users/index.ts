@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { getActiveUsers } from './active.js';
 import { getUserProfile } from './profile.js';
 import { getUserStats, updateUserStats } from './stats.js';
@@ -10,4 +9,8 @@ export {
   getUserStats,
   updateUserStats,
   getUserProgress
-}; 
+};
+
+export * from './profile.controller.js';
+
+export * from './stats.controller.js'; 

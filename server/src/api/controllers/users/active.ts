@@ -1,7 +1,7 @@
-// @ts-nocheck
 import { User } from '../../../models/user.model.js';
+import { Request, Response, NextFunction } from 'express';
 
-export const getActiveUsers = async (req, res, next) => {
+export const getActiveUsers = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const users = await User.find({ 'stats.lastActive': { $gt: new Date(Date.now() - 24*60*60*1000) } })
       .select('username')

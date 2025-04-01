@@ -1,4 +1,3 @@
-// @ts-nocheck
 export const STATS_CONFIG = {
   POINTS_PER_LEVEL: 100,
   DEFAULT_POINTS_TO_NEXT_LEVEL: 1000,

@@ -1,25 +1,29 @@
-// @ts-nocheck
-import { User } from '../../../models/user.model.js';
-import { AuthError } from '../../../utils/errors.js';
+import { Response, NextFunction } from 'express';
+import { AuthRequest, DeleteAccountDTO } from '../../../types/settings/index.js';
+import { ValidationError } from '../../../utils/errors.js';
+import { SettingsService } from '../../../services/settings/settings.service.js';
 
-export const deleteAccountController = async (req, res, next) => {
-    try {
-      const { password } = req.body;
-      
-      const user = await User.findById(req.user.userId);
-      if (!user) {
-        throw new AuthError('Użytkownik nie znaleziony');
-      }
-      
-      const isMatch = await user.comparePassword(password);
-      if (!isMatch) {
-        throw new AuthError('Nieprawidłowe hasło');
-      }
-      
-      await User.findByIdAndDelete(req.user.userId);
-      
-      res.json({ message: 'Konto zostało usunięte' });
-    } catch (error) {
-      next(error);
+export const deleteAccountController = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const userId = req.user?.userId;
+
+    if (!userId) {
+      throw new ValidationError('Brak autoryzacji');
     }
-  };
+
+    const { password } = req.body as DeleteAccountDTO;
+    
+    await SettingsService.deleteAccount(userId, password);
+
+    res.status(200).json({
+      success: true,
+      message: 'Konto zostało usunięte'
+    });
+  } catch (error) {
+    next(error);
+  }
+};

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { User } from '../../../models/user.model.js';
 import { LearningPath } from '../../../models/learningPath.model.js';
 import { AuthError, ValidationError } from '../../../utils/errors.js';
@@ -6,8 +5,10 @@ import { STATS_CONFIG } from './config/stats.config.js';
 import { calculateStreak } from './utils/dateUtils.js';
 import { calculateLearningPathsProgress } from './utils/learningPathUtils.js';
 import { updateStreakStats, initializeDailyStats } from './utils/statsUtils.js';
+import { Request, Response, NextFunction } from 'express';
+import { IUser } from '../../../types/user.types.js';
 
-export const getUserStats = async (req, res, next) => {
+export const getUserStats = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.userId;
     if (!userId) throw new AuthError('Brak autoryzacji');
@@ -20,23 +21,25 @@ export const getUserStats = async (req, res, next) => {
     if (!user) throw new ValidationError('Nie znaleziono użytkownika');
 
     const stats = user.stats || {};
-    const learningPathsProgress = calculateLearningPathsProgress(stats, learningPaths);
-    const currentStreak = calculateStreak(stats.chartData?.daily || []);
+    const typedStats = stats as NonNullable<IUser['stats']>;
+    
+    const learningPathsProgress = calculateLearningPathsProgress(typedStats, learningPaths);
+    const currentStreak = calculateStreak(typedStats.chartData?.daily || []);
     const { currentStreak: updatedStreak, bestStreak } = await updateStreakStats(user, currentStreak);
 
     res.json({
       status: 'success',
       data: {
-        points: stats.points || STATS_CONFIG.DEFAULT_VALUES.points,
-        level: stats.level || STATS_CONFIG.DEFAULT_LEVEL,
+        points: typedStats.points || STATS_CONFIG.DEFAULT_VALUES.points,
+        level: typedStats.level || STATS_CONFIG.DEFAULT_LEVEL,
         streak: updatedStreak,
         bestStreak,
-        pointsToNextLevel: stats.pointsToNextLevel || STATS_CONFIG.DEFAULT_POINTS_TO_NEXT_LEVEL,
-        completedChallenges: stats.completedChallenges || STATS_CONFIG.DEFAULT_VALUES.completedChallenges,
-        badges: stats.badges || [],
-        lastActive: stats.lastActive,
+        pointsToNextLevel: typedStats.pointsToNextLevel || STATS_CONFIG.DEFAULT_POINTS_TO_NEXT_LEVEL,
+        completedChallenges: typedStats.completedChallenges || STATS_CONFIG.DEFAULT_VALUES.completedChallenges,
+        badges: typedStats.badges || [],
+        lastActive: typedStats.lastActive,
         learningPaths: learningPathsProgress,
-        chartData: stats.chartData || { daily: [], progress: [] }
+        chartData: typedStats.chartData || { daily: [], progress: [] }
       }
     });
   } catch (error) {
@@ -44,7 +47,7 @@ export const getUserStats = async (req, res, next) => {
   }
 };
 
-export const updateUserStats = async (req, res, next) => {
+export const updateUserStats = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.userId;
     if (!userId) throw new AuthError('Brak autoryzacji');
@@ -56,7 +59,11 @@ export const updateUserStats = async (req, res, next) => {
     const today = new Date().toISOString().split('T')[0];
     
     if (!user.stats.chartData) {
-      user.stats.chartData = { daily: [], progress: [] };
+      user.stats.chartData = { 
+        daily: [] as any, 
+        progress: [] as any 
+      };
+      user.markModified('stats.chartData');
     }
     
     const todayStats = initializeDailyStats(user.stats.chartData, today);

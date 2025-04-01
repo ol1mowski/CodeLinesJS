@@ -1,4 +1,3 @@
-// @ts-nocheck
 export const calculateLearningPathsProgress = (stats, learningPaths) => {
   return learningPaths.map(path => {
     const userPath = stats.learningPaths?.find(

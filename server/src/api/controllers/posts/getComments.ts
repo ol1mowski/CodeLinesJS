@@ -1,23 +1,17 @@
-// @ts-nocheck
-import { Post } from "../../../models/post.model.js";
-import { ValidationError } from "../../../utils/errors.js";
+import { NextFunction, Request, Response } from 'express';
+import { PostService } from '../../../services/post/post.service.js';
+import { asyncHandler } from '../../../utils/asyncHandler.js';
 
-export const getCommentsController = async (req, res, next) => {
-    try {
-        const post = await Post.findById(req.params.id)
-            .populate({
-                path: 'comments.author',
-                select: 'username avatar'
-            })
-            .select('comments');
+export const getCommentsController = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params;
 
-        if (!post) {
-            throw new ValidationError('Post nie istnieje');
-        }
+  const comments = await PostService.getComments(id);
 
-        res.json(post.comments);
-    } catch (error) {
-        next(error);
+  res.json({
+    status: 'success',
+    data: {
+      comments
     }
-}
+  });
+});
 

@@ -1,10 +1,9 @@
-// @ts-nocheck
-import Post from "../../../models/post.model.js";
-import User from "../../../models/user.model.js";
+import { Post } from "../../../models/post.model.js";
+import { User } from "../../../models/user.model.js";
 import AppError from "../../../utils/appError.js";
-import { checkRequiredFields } from "../../../utils/validators.js";
+import { Request, Response, NextFunction } from "express";
 
-const sanitizeHtml = (html) => {
+const sanitizeHtml = (html: string): string => {
   if (!html) return '';
   
   return html
@@ -18,7 +17,15 @@ const sanitizeHtml = (html) => {
     .replace(/data:/gi, 'nodata:');
 };
 
-export const createPost = async (req, res, next) => {
+const checkRequiredFields = (body: any, fields: string[]) => {
+  for (const field of fields) {
+    if (!body[field]) {
+      throw new AppError(`Pole ${field} jest wymagane`, 400);
+    }
+  }
+};
+
+export const createPost = async (req: Request, res: Response, next: NextFunction) => {
   try {
     checkRequiredFields(req.body, ['content']);
 

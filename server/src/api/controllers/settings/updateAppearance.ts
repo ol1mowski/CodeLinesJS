@@ -1,57 +1,28 @@
-// @ts-nocheck
-import { User } from "../../../models/user.model.js";
-import { ValidationError } from "../../../utils/errors.js";
+import { Response, NextFunction } from 'express';
+import { AuthRequest, UpdateAppearanceDTO } from '../../../types/settings/index.js';
+import { ValidationError } from '../../../utils/errors.js';
+import { SettingsService } from '../../../services/settings/settings.service.js';
 
-export const updateAppearanceController = async (req, res, next) => {
+export const updateAppearanceController = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
-    const { theme, fontSize, codeStyle } = req.body;
-    const userId = req.user.userId;
-    
-    const validThemes = ["light", "dark", "system"];
-    const validFontSizes = ["small", "medium", "large"];
-    const validCodeStyles = ["default", "monokai", "github", "vscode"];
-    
-    if (theme && !validThemes.includes(theme)) {
-      throw new ValidationError("Nieprawidłowy motyw");
+    const userId = req.user?.userId;
+
+    if (!userId) {
+      throw new ValidationError('Brak autoryzacji');
     }
+
+    const appearanceData: UpdateAppearanceDTO = req.body;
     
-    if (fontSize && !validFontSizes.includes(fontSize)) {
-      throw new ValidationError("Nieprawidłowy rozmiar czcionki");
-    }
-    
-    if (codeStyle && !validCodeStyles.includes(codeStyle)) {
-      throw new ValidationError("Nieprawidłowy styl kodu");
-    }
-    
-    const user = await User.findById(userId);
-    
-    if (!user.settings) {
-      user.settings = {};
-    }
-    
-    if (!user.settings.appearance) {
-      user.settings.appearance = {};
-    }
-    
-    const appearance = user.settings.appearance;
-    
-    if (theme) {
-      appearance.theme = theme;
-    }
-    
-    if (fontSize) {
-      appearance.fontSize = fontSize;
-    }
-    
-    if (codeStyle) {
-      appearance.codeStyle = codeStyle;
-    }
-    
-    await user.save();
-    
-    res.json({
-      message: "Ustawienia wyglądu zostały zaktualizowane",
-      appearance: user.settings.appearance
+    const updatedAppearance = await SettingsService.updateAppearance(userId, appearanceData);
+
+    res.status(200).json({
+      success: true,
+      message: 'Ustawienia wyglądu zostały zaktualizowane',
+      data: updatedAppearance
     });
   } catch (error) {
     next(error);
