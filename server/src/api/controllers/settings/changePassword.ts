@@ -1,5 +1,3 @@
-// @ts-nocheck
-// @ts-nocheck
 import { User } from "../../../models/user.model.js";
 import { ValidationError } from "../../../utils/errors.js";
 import bcrypt from "bcryptjs";

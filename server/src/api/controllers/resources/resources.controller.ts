@@ -5,7 +5,7 @@ import { Request, Response, NextFunction } from 'express';
 export const getResources = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { category, type, difficulty, search, tag } = req.query;
-    const query = { isPublished: true };
+    const query: Record<string, any> = { isPublished: true };
     
     if (category) query.category = category;
     if (type) query.type = type;
@@ -28,7 +28,7 @@ export const getResources = async (req: Request, res: Response, next: NextFuncti
       .sort({ likes: -1, createdAt: -1 })
       .lean();
     
-    const savedResources = user.preferences?.savedResources || [];
+    const savedResources = (user.preferences as any)?.savedResources || [];
     
     const formattedResources = resources.map(resource => ({
       id: resource._id,
