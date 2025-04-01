@@ -1,9 +1,9 @@
-// @ts-nocheck
 import { User } from '../../../models/user.model.js';
 import { LearningPath } from '../../../models/learningPath.model.js';
 import { AuthError, ValidationError } from '../../../utils/errors.js';
+import { Request, Response, NextFunction } from 'express';
 
-export const getUserProgress = async (req, res, next) => {
+export const getUserProgress = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.userId;
     if (!userId) throw new AuthError('Brak autoryzacji');
