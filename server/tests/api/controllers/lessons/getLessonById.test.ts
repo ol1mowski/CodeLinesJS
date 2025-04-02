@@ -1,10 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { getLessonByIdController } from '../../../../src/api/controllers/lessons/getLessonById.js';
 import { NextFunction, Response, Request } from 'express';
-import { Lesson } from '../../../../src/models/lesson.model.js';
-import { User } from '../../../../src/models/user.model.js';
-import { LessonContent } from '../../../../src/models/lessonContent.model.js';
-import { LevelService } from '../../../../src/services/level.service.js';
 import { ValidationError } from '../../../../src/utils/errors.js';
 import { Types } from 'mongoose';
 
