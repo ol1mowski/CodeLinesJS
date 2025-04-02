@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, MockInstance } from 'vitest';
 import { updateProgressController } from '../../../../src/api/controllers/progress/updateProgress.js';
 import { ProgressService } from '../../../../src/services/progress/index.js';
 import { NextFunction, Response } from 'express';
@@ -14,7 +14,7 @@ vi.mock('../../../../src/services/progress/index.js', () => ({
 describe('updateProgressController', () => {
   let req: Partial<IUserRequest & { body: UpdateProgressDTO }>;
   let res: Partial<Response>;
-  let next: NextFunction;
+  let next: MockInstance;
   
   beforeEach(() => {
     req = {
@@ -32,7 +32,7 @@ describe('updateProgressController', () => {
       json: vi.fn()
     };
     
-    next = vi.fn() as unknown as NextFunction;
+    next = vi.fn();
     
     vi.clearAllMocks();
   });
@@ -60,7 +60,7 @@ describe('updateProgressController', () => {
     
     ProgressService.updateLessonProgress = vi.fn().mockResolvedValue(mockProgressResult);
     
-    await updateProgressController(req as IUserRequest & { body: UpdateProgressDTO }, res as Response, next);
+    await updateProgressController(req as IUserRequest & { body: UpdateProgressDTO }, res as Response, next as unknown as NextFunction);
     
     expect(ProgressService.updateLessonProgress).toHaveBeenCalledWith('user123', 'javascript-basics');
     expect(res.json).toHaveBeenCalledWith(mockProgressResult);
@@ -70,12 +70,14 @@ describe('updateProgressController', () => {
   it('should call next with validation error when lessonId is missing', async () => {
     req.body = {} as UpdateProgressDTO;
     
-    await updateProgressController(req as IUserRequest & { body: UpdateProgressDTO }, res as Response, next);
+    await updateProgressController(req as IUserRequest & { body: UpdateProgressDTO }, res as Response, next as unknown as NextFunction);
     
     expect(ProgressService.updateLessonProgress).not.toHaveBeenCalled();
     expect(res.json).not.toHaveBeenCalled();
     expect(next).toHaveBeenCalledWith(expect.any(ValidationError));
-    expect(next.mock.calls[0][0].message).toBe('Brak ID lekcji');
+    expect(next).toHaveBeenCalledWith(expect.objectContaining({
+      message: 'Brak ID lekcji'
+    }));
   });
   
   it('should call next with error when service throws exception', async () => {
@@ -83,7 +85,7 @@ describe('updateProgressController', () => {
     
     ProgressService.updateLessonProgress = vi.fn().mockRejectedValue(mockError);
     
-    await updateProgressController(req as IUserRequest & { body: UpdateProgressDTO }, res as Response, next);
+    await updateProgressController(req as IUserRequest & { body: UpdateProgressDTO }, res as Response, next as unknown as NextFunction);
     
     expect(ProgressService.updateLessonProgress).toHaveBeenCalledWith('user123', 'javascript-basics');
     expect(res.json).not.toHaveBeenCalled();
