@@ -1,40 +1,48 @@
-import { memo, useMemo } from "react";
+import { memo, useMemo, Suspense } from "react";
 import { motion } from "framer-motion";
 import { WelcomeSection } from "./WelcomeSection/WelcomeSection.component";
 import { NotificationsButton } from "./NotificationsSection/NotificationsButton.component";
 import { topNavigationStyles as styles } from "./style/TopNavigation.styles";
 import { useTopNavAnimation } from "./hooks/useTopNavAnimation";
 import { useUserProfile } from "./hooks/useUserProfile";
+import { ErrorBoundary } from "../../Common/ErrorBoundary.component";
 
 export const TopNavigation = memo(() => {
   const animations = useTopNavAnimation();
-  const { data: userProfile, isLoading } = useUserProfile();
+  const { data: userProfile, isLoading, error } = useUserProfile();
 
   const username = useMemo(() => {
+    if (error) {
+      return 'Użytkowniku';
+    }
+    
     if (isLoading) {
       return 'Ładowanie...';
     }
-    if (!userProfile?.data.username) {
-      return 'Użytkowniku';
-    }
-    return userProfile?.data.username;
-  }, [userProfile?.data.username, isLoading]);
+    
+    return userProfile?.data.username || 'Użytkowniku';
+  }, [userProfile?.data.username, isLoading, error]);
 
   return (
-    <motion.nav
-      variants={animations.container}
-      initial="initial"
-      animate="animate"
-      className={styles.container}
-    >
-      <div className={styles.content}>
-        <WelcomeSection username={username} />
-        
-        <div className={styles.actions}>
-          <NotificationsButton />
+    <ErrorBoundary>
+      <motion.nav
+        variants={animations.container}
+        initial="initial"
+        animate="animate"
+        className={styles.container}
+        aria-label="Górna nawigacja"
+      >
+        <div className={styles.content}>
+          <WelcomeSection username={username} />
+          
+          <div className={styles.actions}>
+            <Suspense fallback={<div className="w-10 h-10 rounded-full bg-gray-700 animate-pulse"></div>}>
+              <NotificationsButton />
+            </Suspense>
+          </div>
         </div>
-      </div>
-    </motion.nav>
+      </motion.nav>
+    </ErrorBoundary>
   );
 });
 
