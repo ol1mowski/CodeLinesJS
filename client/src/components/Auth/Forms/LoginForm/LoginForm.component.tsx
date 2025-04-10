@@ -4,13 +4,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 
-import { Button } from "../../../UI/Button/Button.component";
 import { FormInput } from "../../../UI/Form/FormInput/FormInput.component";
 import { LoginFormData, loginSchema } from "../../../../schemas/auth.schema";
 import { useAuth } from "../../../../hooks/useAuth";
 import { GoogleLoginButton } from "./GoogleLoginButton.component";
 import { RememberMeCheckbox } from "./RememberMeCheckbox.component";
-import { ErrorMessage } from "../../../UI/ErrorMessage/ErrorMessage.component";
+import { FormError } from "../../../UI/FormError/FormError.component";
+import { FormLoadingButton } from "../../../UI/Loading/FormLoadingButton.component";
 
 const LoginForm = () => {
   const { login, loading, error } = useAuth();
@@ -38,7 +38,7 @@ const LoginForm = () => {
       onSubmit={handleSubmit(onSubmit)}
       className="space-y-5"
     >
-      {error && <ErrorMessage message={error} />}
+      {error && <FormError message={error} withIcon variant="standard" />}
 
       <FormInput
         type="email"
@@ -72,13 +72,12 @@ const LoginForm = () => {
       </div>
       
       <div className="pt-2">
-        <Button 
-          type="submit" 
-          className="w-full bg-js hover:bg-js/90 text-black font-bold py-3 transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-js/20" 
-          disabled={loading}
+        <FormLoadingButton 
+          isLoading={loading}
+          loadingText="Logowanie..."
         >
-          {loading ? "Logowanie..." : "Zaloguj się"}
-        </Button>
+          Zaloguj się
+        </FormLoadingButton>
       </div>
 
       <div className="relative flex items-center justify-center my-4">

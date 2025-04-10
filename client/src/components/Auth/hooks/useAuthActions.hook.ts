@@ -4,19 +4,9 @@ import { useForgotPasswordAction } from './actions/useForgotPasswordAction.hook'
 import { useLogoutAction } from './actions/useLogoutAction.hook';
 import { useGoogleLoginAction } from './actions/useGoogleLoginAction.hook';
 import { useResetPasswordAction } from './actions/useResetPasswordAction.hook';
+import { AuthStateContext, AuthActions } from '../../../types/auth.types';
 
-type AuthState = {
-  setLoading: (loading: boolean) => void;
-  setError: (error: string | null) => void;
-  setIsAuthenticated: (isAuthenticated: boolean) => void;
-  setUser: (user: any | null) => void;
-  loading: boolean;
-  error: string | null;
-  isAuthenticated: boolean;
-  user: any | null;
-};
-
-export const useAuthActions = (state: AuthState) => {
+export const useAuthActions = (state: AuthStateContext): AuthActions => {
   const login = useLoginAction(state);
   const register = useRegisterAction(state);
   const forgotPassword = useForgotPasswordAction(state);

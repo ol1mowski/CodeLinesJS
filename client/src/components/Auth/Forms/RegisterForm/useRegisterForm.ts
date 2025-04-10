@@ -1,39 +1,34 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { RegisterFormData, registerSchema } from "../../../../schemas/auth.schema";
 import { useAuth } from "../../../../hooks/useAuth";
-import { useFormStatus } from "../../../Auth/hooks/useFormStatus.hook";
+import { useFormValidator } from "../../hooks/useFormValidator.hook";
+import { useState } from "react";
 
 export const useRegisterForm = () => {
-  const { register: registerUser, loading, error } = useAuth();
-  const formStatus = useFormStatus({ initialError: error });
+  const { register: registerUser, loading } = useAuth();
+  const [submitting, setSubmitting] = useState(false);
   
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<RegisterFormData>({
-    resolver: zodResolver(registerSchema),
+  const form = useFormValidator<RegisterFormData>({
+    schema: registerSchema,
     mode: "onChange",
     defaultValues: {
       acceptPrivacy: false
+    },
+    async onSuccess(data) {
+      try {
+        setSubmitting(true);
+        await registerUser(data.email, data.password, data.username);
+      } finally {
+        setSubmitting(false);
+      }
     }
   });
 
-  const onSubmit = async (data: RegisterFormData) => {
-    try {
-      formStatus.resetStatus();
-      await registerUser(data.email, data.password, data.username);
-    } catch (error) {
-      formStatus.handleError(error);
-    }
-  };
-
   return {
-    register,
-    errors,
-    loading,
-    handleSubmit: handleSubmit(onSubmit),
-    ...formStatus
+    register: form.register,
+    errors: form.formState.errors,
+    loading: loading || submitting || form.isSubmitting,
+    handleSubmit: form.onFormSubmit,
+    errorMessage: form.errorMessage,
+    successMessage: form.successMessage
   };
 }; 

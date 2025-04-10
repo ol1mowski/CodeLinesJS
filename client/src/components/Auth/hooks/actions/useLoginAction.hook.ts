@@ -1,23 +1,19 @@
 import { useNavigate } from 'react-router-dom';
 import { httpClient } from '../../../../api/httpClient.api';
+import { AuthStateContext } from '../../../../types/auth.types';
+import { User } from '../../../../types/user.types';
+import toast from 'react-hot-toast';
 
-type AuthState = {
-  setLoading: (loading: boolean) => void;
-  setError: (error: string | null) => void;
-  setIsAuthenticated: (isAuthenticated: boolean) => void;
-  setUser?: (user: any | null) => void;
-};
-
-export const useLoginAction = (state: AuthState) => {
+export const useLoginAction = (state: AuthStateContext) => {
   const navigate = useNavigate();
   const { setLoading, setError, setIsAuthenticated, setUser } = state;
-
+  
   const login = async (email: string, password: string, rememberMe: boolean = false) => {
     try {
       setLoading(true);
       setError(null);
       
-      const response = await httpClient.post('auth/login', { 
+      const response = await httpClient.post<{ token: string; user: User }>('auth/login', { 
         email, 
         password, 
         rememberMe 
@@ -39,15 +35,19 @@ export const useLoginAction = (state: AuthState) => {
         sessionStorage.setItem('token', token);
       }
       
-      if (setUser && user) {
-        setUser(user);
-      }
-      
+      setUser(user);
       setIsAuthenticated(true);
+      
+      toast.success('Zalogowano pomyślnie!');
       navigate('/dashboard');
     } catch (err) {
       console.error('Błąd logowania:', err);
-      setError(err instanceof Error ? err.message : 'Wystąpił błąd podczas logowania');
+      const errorMessage = err instanceof Error 
+        ? err.message 
+        : 'Wystąpił błąd podczas logowania';
+      
+      setError(errorMessage);
+      toast.error(errorMessage);
       setIsAuthenticated(false);
     } finally {
       setLoading(false);
