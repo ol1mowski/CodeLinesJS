@@ -8,7 +8,7 @@ export const fetchActiveUsers = async (token: string) => {
   });
 
   if (!response.ok) {
-    throw new Error('Failed to fetch active users');
+    throw new Error('Błąd podczas pobierania aktywnych użytkowników');
   }
 
   return response.json();

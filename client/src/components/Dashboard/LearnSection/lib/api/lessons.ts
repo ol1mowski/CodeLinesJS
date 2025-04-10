@@ -14,7 +14,7 @@ export const fetchLesson = async (lessonId: string, token: string): Promise<Less
     if (response.status === 404) {
       throw new Error("lesson_not_found");
     }
-    throw new Error("Failed to fetch lesson");
+    throw new Error("Błąd podczas pobierania lekcji");
   }
 
   return response.json();
@@ -31,7 +31,7 @@ export const completeLesson = async ({
 }) => {
 
   if (!token) {
-    throw new Error('No authentication token found');
+    throw new Error('Brak tokenu autoryzacji');
   }
 
   const response = await fetch(`${API_URL}lessons/${lessonId}/complete`, {
@@ -46,7 +46,7 @@ export const completeLesson = async ({
   if (!response.ok) {
     const error = await response.text();
     console.error('API error:', error);
-    throw new Error(error || 'Failed to complete lesson');
+    throw new Error(error || 'Błąd podczas zakończenia lekcji');
   }
 
   return response.json();
@@ -55,7 +55,7 @@ export const completeLesson = async ({
 export const fetchLessons = async (token: string) => {   
   
   if (!token) {
-    throw new Error('No authentication token found');
+    throw new Error('Brak tokenu autoryzacji');
   }
 
   const response = await fetch(`${API_URL}lessons`, {
@@ -67,9 +67,9 @@ export const fetchLessons = async (token: string) => {
   
   if (!response.ok) {
     if (response.status === 401) {
-      throw new Error('Unauthorized - please log in again');
+      throw new Error('Nieautoryzowany - proszę się zalogować ponownie');
     }
-    throw new Error('Failed to fetch lessons');
+    throw new Error('Błąd podczas pobierania lekcji');
   }
   
   const data = await response.json();

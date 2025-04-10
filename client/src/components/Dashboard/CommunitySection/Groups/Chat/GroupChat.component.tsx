@@ -1,7 +1,7 @@
 import { memo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaPaperPlane, FaSpinner, FaEdit, FaTrash, FaSmile, FaEllipsisV, FaCopy, FaFlag, FaTimes, FaExclamationTriangle } from "react-icons/fa";
-import { useAuth } from "../../../../../Hooks/useAuth";
+import { useAuth } from "../../../../../hooks/useAuth";
 import { format } from "date-fns";
 import { pl } from "date-fns/locale";
 import { Message } from "../../../../../types/messages.types";
@@ -113,7 +113,7 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
     } = useMessageBubble(
       message as any, 
       groupId,
-      user,
+      user as any,
       handleEdit as any, 
       openDeleteModal as any, 
       openReportModal as any

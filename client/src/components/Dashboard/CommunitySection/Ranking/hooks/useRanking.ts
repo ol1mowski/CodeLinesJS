@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient, QueryClient } from '@tanstack/react-query';
 
-import { useAuth } from '../../../../../Hooks/useAuth';
+import { useAuth } from '../../../../../hooks/useAuth';
 import { API_URL } from '../../../../../config/api.config';
 
 const RANKING_QUERY_KEY = 'ranking';
@@ -13,7 +13,7 @@ const fetchRanking = async () => {
     }
   });
   if (!response.ok) {
-    throw new Error('Failed to fetch ranking');
+    throw new Error('Błąd podczas pobierania rankingu');
   }
   return response.json();
 };

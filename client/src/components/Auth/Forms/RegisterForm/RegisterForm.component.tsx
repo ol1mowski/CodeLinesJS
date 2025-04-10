@@ -1,15 +1,12 @@
 import { FaEnvelope, FaUser } from "react-icons/fa";
 import { FormInput } from "../../../UI/Form/FormInput/FormInput.component";
-import { Button } from "../../../UI/Button/Button.component";
 import { FormWrapper } from "../../../UI/Form/FormWrapper/FormWrapper.component";
-import { ErrorAlert } from "../../../UI/Alerts/ErrorAlert.component";
 import { PasswordInput } from "../../../UI/Form/PasswordInput/PasswordInput.component";
 import { PrivacyPolicyCheckbox } from "./PrivacyPolicyCheckbox.component";
 import { useRegisterForm } from "./useRegisterForm";
+import { FormError } from "../../../UI/FormError/FormError.component";
+import { FormLoadingButton } from "../../../UI/Loading/FormLoadingButton.component";
 
-/**
- * Komponent formularza rejestracji
- */
 const RegisterForm = () => {
   const { 
     register, 
@@ -21,7 +18,7 @@ const RegisterForm = () => {
 
   return (
     <FormWrapper onSubmit={handleSubmit}>
-      {errorMessage && <ErrorAlert message={errorMessage} title="Błąd rejestracji" />}
+      {errorMessage && <FormError message={errorMessage} variant="alert" title="Błąd rejestracji" />}
 
       <FormInput
         type="text"
@@ -58,9 +55,12 @@ const RegisterForm = () => {
         error={errors.acceptPrivacy?.message}
       />
 
-      <Button type="submit" className="w-full" disabled={loading}>
-        {loading ? "Rejestracja..." : "Zarejestruj się"}
-      </Button>
+      <FormLoadingButton 
+        isLoading={loading}
+        loadingText="Rejestracja..."
+      >
+        Zarejestruj się
+      </FormLoadingButton>
     </FormWrapper>
   );
 };

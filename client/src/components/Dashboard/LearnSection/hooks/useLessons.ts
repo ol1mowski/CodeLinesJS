@@ -3,7 +3,7 @@ import { fetchLessons } from "../lib/api/lessons";
 import type { Lesson } from "../types/lesson.types";
 import { useState, useMemo } from "react";
 import type { FilterType } from "../types/filter.types";
-import { useAuth } from "../../../../Hooks/useAuth";
+import { useAuth } from "../../../../hooks/useAuth";
 
 type Category = 'javascript' | 'react';
 

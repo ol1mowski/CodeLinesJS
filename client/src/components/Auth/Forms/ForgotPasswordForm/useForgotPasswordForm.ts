@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ForgotPasswordFormData, forgotPasswordSchema } from "../../../../schemas/auth.schema";
-import { useAuth } from "../../../../Hooks/useAuth";
+import { useAuth } from "../../../../hooks/useAuth";
 import { useFormStatus } from "../../../Auth/hooks/useFormStatus.hook";
 
 /**

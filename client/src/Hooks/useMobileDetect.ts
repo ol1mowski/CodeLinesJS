@@ -1,19 +1,31 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
-export const useMobileDetect = () => {
-  const [isMobile, setIsMobile] = useState(false);
+export const MOBILE_BREAKPOINT = 768;
+
+export const useMobileDetect = (): boolean => {
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+  
+  const checkMobile = useCallback(() => {
+    setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
+  }, []);
   
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    
     checkMobile();
     
-    window.addEventListener('resize', checkMobile);
+    let timeoutId: ReturnType<typeof setTimeout>;
     
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+    const handleResize = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(checkMobile, 100);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      clearTimeout(timeoutId);
+    };
+  }, [checkMobile]);
   
   return isMobile;
 }; 

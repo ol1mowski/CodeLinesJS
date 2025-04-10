@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchResources } from "../lib/api/resources";
 import { type Resource } from "../types/resource.types";
-import { useAuth } from "../../../../Hooks/useAuth";
+import { useAuth } from "../../../../hooks/useAuth";
 
 export type ResourcesResponse = {
   resources: Resource[];

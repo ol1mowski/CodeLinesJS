@@ -49,7 +49,7 @@ describe('useLoginAction', () => {
   it('should login user successfully', async () => {
     vi.mocked(httpClient.post).mockResolvedValueOnce(mockResponse);
 
-    const login = useLoginAction(mockState);
+    const login = useLoginAction(mockState as any);
     
     await login('test@example.com', 'password123', false);
 
@@ -68,7 +68,7 @@ describe('useLoginAction', () => {
   it('should save token to localStorage when rememberMe=true', async () => {
     vi.mocked(httpClient.post).mockResolvedValueOnce(mockResponse);
 
-    const login = useLoginAction(mockState);
+    const login = useLoginAction(mockState as any);
     
     await login('test@example.com', 'password123', true);
 
@@ -79,7 +79,7 @@ describe('useLoginAction', () => {
   it('should handle login error', async () => {
     vi.mocked(httpClient.post).mockResolvedValueOnce(mockErrorResponse);
 
-    const login = useLoginAction(mockState);
+    const login = useLoginAction(mockState as any);
     
     await login('test@example.com', 'wrong-password', false);
 
@@ -94,7 +94,7 @@ describe('useLoginAction', () => {
   it('should handle network error', async () => {
     vi.mocked(httpClient.post).mockRejectedValueOnce(new Error('Network error'));
 
-    const login = useLoginAction(mockState);
+    const login = useLoginAction(mockState as any);
     
     await login('test@example.com', 'password123', false);
 
@@ -111,7 +111,7 @@ describe('useLoginAction', () => {
       status: 200
     });
 
-    const login = useLoginAction(mockState);
+    const login = useLoginAction(mockState as any);
     
     await login('test@example.com', 'password123', false);
 

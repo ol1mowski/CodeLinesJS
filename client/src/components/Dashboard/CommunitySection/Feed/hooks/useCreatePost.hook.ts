@@ -1,25 +1,12 @@
 import { useState, useCallback } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createPost } from '../../api/posts.api';
-import { useAuth } from '../../../../../Hooks/useAuth';
+import { useAuth } from '../../../../../hooks/useAuth';
 import toast from 'react-hot-toast';
+import { sanitizeHtml } from '../../../../../utils/security';
 
 const MAX_CHARS = 500;
 const MIN_CHARS = 10;
-
-const sanitizeHtml = (html: string): string => {
-  if (!html) return '';
-  
-  return html
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;')
-    .replace(/javascript:/gi, '')
-    .replace(/on\w+=/gi, '')
-    .replace(/data:/gi, 'nodata:');
-};
 
 export const useCreatePost = () => {
   const [content, setContent] = useState('');
@@ -70,8 +57,6 @@ export const useCreatePost = () => {
       await createPostMutation.mutateAsync(sanitizedContent);
       
       setContent("");
-      
-      toast.success("Post został dodany");
     } catch (error) {
       toast.error("Nie udało się dodać posta");
     }

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAuth } from "../../../../Hooks/useAuth";
+import { useAuth } from "../../../../hooks/useAuth";
 import { reportBug } from "../api/reportBug.api";
 
 export type FormData = {

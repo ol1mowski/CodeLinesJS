@@ -1,6 +1,6 @@
 import { Message, MessagesResponse } from "../../../../types/messages.types";
 import toast from "react-hot-toast";
-import { useAuth } from "../../../../Hooks/useAuth";
+import { useAuth } from "../../../../hooks/useAuth";
 import { API_URL } from "../../../../config/api.config";
 const handleNetworkError = (error: any) => {
   if (!navigator.onLine) {

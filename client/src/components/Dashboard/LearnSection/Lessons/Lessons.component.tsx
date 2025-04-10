@@ -5,7 +5,7 @@ import { LessonsHeader } from "./LessonsHeader.component";
 import { LessonsList } from "./LessonsList.component";
 import { useLessons } from "../hooks/useLessons";
 import { useStats } from "../../../Dashboard/StatsSection/hooks/useStats.hook";
-import { useAuth } from "../../../../Hooks/useAuth";
+import { useAuth } from "../../../../hooks/useAuth";
 
 export const Lessons = memo(() => {
   const { user } = useAuth();

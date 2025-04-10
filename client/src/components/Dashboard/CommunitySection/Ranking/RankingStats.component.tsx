@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { memo } from "react";
 import { FaTrophy, FaStar, FaCalendarDay } from "react-icons/fa";
-import { useRanking } from "../../../../Hooks/useRanking";
+import { useRanking } from "../../../../hooks/useRanking";
 
 export const RankingStats = memo(() => {
   const { data, isLoading } = useRanking();

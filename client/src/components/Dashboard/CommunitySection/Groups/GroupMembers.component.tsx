@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { DeleteMemberModal } from "./Modals/DeleteMemberModal.component";
 import { deleteMember } from "../api/groups/groups.api";
-import { useAuth } from "../../../../Hooks/useAuth";
+import { useAuth } from "../../../../hooks/useAuth";
 
 type GroupMembersProps = {
   members: Array<{

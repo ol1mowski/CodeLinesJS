@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchLesson } from "../lib/api/lessons";
-import { useAuth } from "../../../../Hooks/useAuth";
+import { useAuth } from "../../../../hooks/useAuth";
 import { Lesson } from "../types/lesson.types";
 
 interface ApiError extends Error {

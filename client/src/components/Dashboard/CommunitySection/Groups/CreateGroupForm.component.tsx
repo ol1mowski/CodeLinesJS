@@ -9,7 +9,7 @@ import Select from 'react-select';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { createPortal } from 'react-dom';
-import { useAuth } from "../../../../Hooks/useAuth";
+import { useAuth } from "../../../../hooks/useAuth";
 
 export const AVAILABLE_TAGS = [
   { value: 'javascript', label: 'JavaScript' },

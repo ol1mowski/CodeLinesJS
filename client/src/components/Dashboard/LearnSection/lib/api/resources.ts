@@ -3,7 +3,7 @@ import { API_URL } from "../../../../../config/api.config";
 export const fetchResources = async (token: string) => {
   
   if (!token) {
-    throw new Error('No authentication token found');
+    throw new Error('Brak tokenu autoryzacji');
   }
 
   const response = await fetch(`${API_URL}resources`, {
@@ -15,9 +15,9 @@ export const fetchResources = async (token: string) => {
   
   if (!response.ok) {
     if (response.status === 401) {
-      throw new Error('Unauthorized - please log in again');
+      throw new Error('Nieautoryzowany - proszę się zalogować ponownie');
     }
-    throw new Error('Failed to fetch resources');
+    throw new Error('Błąd podczas pobierania zasobów');
   }
   
   const data = await response.json();

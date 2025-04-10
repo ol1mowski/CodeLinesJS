@@ -1,11 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import toast from 'react-hot-toast';
 
 type FormStatusProps = {
   initialError?: string | null;
   resetOnSuccess?: boolean;
+  showToasts?: boolean;
 };
 
-export const useFormStatus = ({ initialError = null }: FormStatusProps = {}) => {
+export const useFormStatus = ({ 
+  initialError = null, 
+  resetOnSuccess = true, 
+  showToasts = true 
+}: FormStatusProps = {}) => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(initialError);
 
@@ -15,17 +21,31 @@ export const useFormStatus = ({ initialError = null }: FormStatusProps = {}) => 
     }
   }, [initialError]);
 
-  const setSuccess = (message: string) => {
+  const setSuccess = useCallback((message: string) => {
     setSuccessMessage(message);
     setErrorMessage(null);
-  };
+    
+    if (showToasts) {
+      toast.success(message);
+    }
+    
+    if (resetOnSuccess) {
+      setTimeout(() => {
+        setSuccessMessage(null);
+      }, 5000);
+    }
+  }, [resetOnSuccess, showToasts]);
 
-  const setError = (message: string) => {
+  const setError = useCallback((message: string) => {
     setErrorMessage(message);
     setSuccessMessage(null);
-  };
+    
+    if (showToasts) {
+      toast.error(message);
+    }
+  }, [showToasts]);
 
-  const handleError = (error: unknown): string => {
+  const handleError = useCallback((error: unknown): string => {
     let message = '';
     
     if (error instanceof Error) {
@@ -38,12 +58,12 @@ export const useFormStatus = ({ initialError = null }: FormStatusProps = {}) => 
     
     setError(message);
     return message;
-  };
+  }, [setError]);
 
-  const resetStatus = () => {
+  const resetStatus = useCallback(() => {
     setSuccessMessage(null);
     setErrorMessage(null);
-  };
+  }, []);
 
   return {
     successMessage,

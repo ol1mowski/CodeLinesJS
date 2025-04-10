@@ -13,6 +13,32 @@ export type HttpRequestOptions = {
   requiresAuth?: boolean;
 };
 
+const getPolishNetworkErrorMessage = (error: Error): string => {
+  const errorMessage = error.message.toLowerCase();
+  
+  if (errorMessage.includes('failed to fetch')) {
+    return 'Nie można połączyć się z serwerem. Sprawdź swoje połączenie internetowe.';
+  }
+  
+  if (errorMessage.includes('network request failed')) {
+    return 'Błąd połączenia sieciowego. Sprawdź swoje połączenie internetowe.';
+  }
+
+  if (errorMessage.includes('timeout')) {
+    return 'Przekroczono czas oczekiwania na odpowiedź serwera.';
+  }
+
+  if (errorMessage.includes('abort')) {
+    return 'Żądanie zostało przerwane.';
+  }
+
+  if (errorMessage.includes('cors')) {
+    return 'Błąd polityki CORS. Brak dostępu do zasobu z tej domeny.';
+  }
+
+  return error.message;
+};
+
 export const httpClient = {
   async request<T = any>(endpoint: string, options: HttpRequestOptions = {}): Promise<ApiResponse<T>> {
     try {
@@ -76,9 +102,14 @@ export const httpClient = {
       };
     } catch (e) {
       console.error('Błąd zapytania HTTP:', e);
+      
+      const errorMessage = e instanceof Error 
+        ? getPolishNetworkErrorMessage(e)
+        : 'Nieznany błąd zapytania';
+      
       return {
         data: null,
-        error: e instanceof Error ? e.message : 'Nieznany błąd zapytania',
+        error: errorMessage,
         status: 0,
       };
     }

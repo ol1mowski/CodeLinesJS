@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toggleLike } from "../../api/posts.api";
 import { Post } from "../../types/post.types";
 import toast from "react-hot-toast";
-import { useAuth } from "../../../../../Hooks/useAuth";
+import { useAuth } from "../../../../../hooks/useAuth";
 
 export const useLikePost = (post: Post) => {
   const queryClient = useQueryClient();

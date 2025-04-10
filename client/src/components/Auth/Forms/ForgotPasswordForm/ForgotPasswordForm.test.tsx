@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import ForgotPasswordForm from './ForgotPasswordForm.component';
-import { useAuth } from '../../../../Hooks/useAuth';
+import { useAuth } from '../../../../hooks/useAuth';
 
 vi.mock('react-router-dom', () => ({
   useNavigate: () => vi.fn(),

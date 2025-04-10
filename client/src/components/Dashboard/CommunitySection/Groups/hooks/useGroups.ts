@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fetchGroups, joinGroup } from '../../api/groups';
-import { useAuth } from '../../../../../Hooks/useAuth';
+import { useAuth } from '../../../../../hooks/useAuth';
 import { Group } from '../../../../../types/groups.types';
 
 const GROUPS_QUERY_KEY = 'groups';

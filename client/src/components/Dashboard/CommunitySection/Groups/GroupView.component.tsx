@@ -13,7 +13,7 @@ import { LeaveGroupModal } from "./Modals/LeaveGroupModal.component";
 import { useMutation } from "@tanstack/react-query";
 import { leaveGroup } from "../api/groups/groups.api";
 import toast from "react-hot-toast";
-import { useAuth } from "../../../../Hooks/useAuth";
+import { useAuth } from "../../../../hooks/useAuth";
 import { Group } from "../types/groups.types";
 
 type ExtendedGroup = Group & {

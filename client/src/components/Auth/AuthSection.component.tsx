@@ -4,6 +4,7 @@ import { AuthBackground } from "./AuthBackground/AuthBackground.component";
 import { AuthLeftSection } from './components/AuthLeftSection/AuthLeftSection.component';
 import { AuthFormSection } from './components/AuthFormSection/AuthFormSection.component';
 import { Helmet } from 'react-helmet-async';
+import { AuthErrorBoundary } from '../Common/ErrorBoundary/AuthErrorBoundary.component';
 
 type AuthSectionProps = {
   children?: ReactNode;
@@ -20,7 +21,9 @@ export const AuthSection = ({ children, title, subtitle }: AuthSectionProps = {}
     <Container className="relative z-10">
       <div className="flex flex-col md:flex-row items-center justify-between gap-8 md:gap-20 w-full max-w-7xl mx-auto">
         <AuthLeftSection />
-        <AuthFormSection children={children} title={title} subtitle={subtitle} />
+        <AuthErrorBoundary>
+          <AuthFormSection children={children} title={title} subtitle={subtitle} />
+        </AuthErrorBoundary>
       </div>
     </Container>
     <AuthBackground />

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { fetchGames } from '../api/fetchGames.api';
-import { useAuth } from '../../../../Hooks/useAuth';
+import { useAuth } from '../../../../hooks/useAuth';
 
 export const useGamesQuery = () => {
   const { token } = useAuth();
