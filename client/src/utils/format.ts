@@ -1,11 +1,6 @@
 import { format } from 'date-fns';
 import { pl } from 'date-fns/locale';
 
-/**
- * Formatuje datę do czytelnego formatu (HH:mm, dd MMM)
- * @param date Data w formie stringa lub obiektu Date
- * @returns Sformatowana data
- */
 export const formatDate = (date: string | Date): string => {
   try {
     const dateObj = date instanceof Date ? date : new Date(date);
@@ -21,11 +16,6 @@ export const formatDate = (date: string | Date): string => {
   }
 };
 
-/**
- * Formatuje datę do formatu wiadomości (HH:mm, d MMM)
- * @param date Data w formie stringa lub obiektu Date
- * @returns Sformatowana data
- */
 export const formatMessageDate = (date: string | Date): string => {
   try {
     const dateObj = date instanceof Date ? date : new Date(date);
@@ -41,11 +31,7 @@ export const formatMessageDate = (date: string | Date): string => {
   }
 };
 
-/**
- * Formatuje datę tylko do dnia i miesiąca
- * @param date Data w formie stringa lub obiektu Date
- * @returns Sformatowana data (dd MMM yyyy)
- */
+
 export const formatShortDate = (date: string | Date): string => {
   try {
     const dateObj = date instanceof Date ? date : new Date(date);
@@ -54,7 +40,7 @@ export const formatShortDate = (date: string | Date): string => {
       return 'Data nieznana';
     }
     
-    return date.toLocaleDateString('pl-PL', {
+    return dateObj.toLocaleDateString('pl-PL', {
       year: 'numeric',
       month: 'short',
       day: 'numeric'
@@ -65,23 +51,13 @@ export const formatShortDate = (date: string | Date): string => {
   }
 };
 
-/**
- * Zwraca różnicę dni pomiędzy dwoma datami
- * @param date1 Pierwsza data
- * @param date2 Druga data
- * @returns Liczba dni różnicy
- */
+
 export const getDaysDifference = (date1: Date, date2: Date): number => {
   const diffTime = Math.abs(date2.getTime() - date1.getTime());
   return Math.floor(diffTime / (1000 * 60 * 60 * 24));
 };
 
-/**
- * Sprawdza czy dwie daty są tego samego dnia
- * @param date1 Pierwsza data
- * @param date2 Druga data
- * @returns True jeśli daty są tego samego dnia
- */
+
 export const isSameDay = (date1: Date, date2: Date): boolean => {
   return (
     date1.getFullYear() === date2.getFullYear() &&

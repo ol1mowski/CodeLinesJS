@@ -1,6 +1,3 @@
-import { format } from 'date-fns';
-import { pl } from 'date-fns/locale';
+import { formatMessageDate } from '../../../../../../utils/format';
 
-export const formatMessageDate = (date: string | Date) => {
-  return format(new Date(date), 'HH:mm, d MMM', { locale: pl });
-}; 
+export { formatMessageDate }; 

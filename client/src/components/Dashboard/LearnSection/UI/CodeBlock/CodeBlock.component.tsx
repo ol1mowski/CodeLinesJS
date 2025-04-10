@@ -2,21 +2,9 @@ import { memo } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { FaCopy } from "react-icons/fa";
+import { sanitizeCode } from "../../../../../utils/security";
 
 const SyntaxHighlighterComponent = SyntaxHighlighter as any;
-
-const sanitizeCode = (code: string): string => {
-  if (!code) return '';
-  
-  return code
-    .replace(/<!--[\s\S]*?-->/g, '')
-    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-    .replace(/javascript:/gi, '')
-    .replace(/on\w+=/gi, '')
-    .replace(/data:/gi, 'nodata:')
-    .replace(/eval\s*\(/gi, '')
-    .replace(/new\s+Function\s*\(/gi, '');
-};
 
 type CodeBlockProps = {
   code: string;
