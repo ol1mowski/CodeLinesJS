@@ -113,7 +113,7 @@ export const GroupChat = memo(({ groupId }: GroupChatProps) => {
     } = useMessageBubble(
       message as any, 
       groupId,
-      user,
+      user as any,
       handleEdit as any, 
       openDeleteModal as any, 
       openReportModal as any
