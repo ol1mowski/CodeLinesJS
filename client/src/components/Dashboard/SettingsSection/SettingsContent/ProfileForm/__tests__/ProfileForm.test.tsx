@@ -3,7 +3,7 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ProfileForm } from '../ProfileForm.component';
-import { useAuth } from '../../../../../../Hooks/useAuth';
+import { useAuth } from '../../../../../../hooks/useAuth';
 import { useProfile } from '../../../hooks/useProfile';
 import { toast } from 'react-hot-toast';
 import { expect, vi, describe, beforeEach, afterEach, it } from 'vitest';

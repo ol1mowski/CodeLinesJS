@@ -6,7 +6,7 @@ import { GameIntro } from '../GameIntro/GameIntro.component';
 import { useRegexRaiderData } from './hooks/useRegexRaiderData';
 import { useRegexRaiderGame } from './hooks/useRegexRaiderGame';
 import { useAnimations } from './hooks/useAnimations';
-import { useSEO } from '../../../../../../../Hooks/useSEO';
+import { useSEO } from '../../../../../../../hooks/useSEO';
 import { LoadingErrorContainer } from './components/LoadingErrorContainer.component';
 import { GameContent } from './components/GameContent.component';
 

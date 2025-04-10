@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 import { deleteGroup, updateGroupName, updateGroupTags } from "../api/groups/groups.api";
 import { EditTagsModal } from "./Modals/EditTagsModal.component";
 import { DeleteGroupModal } from "./Modals/DeleteGroupModal.component";
-import { useAuth } from "../../../../Hooks/useAuth";
+import { useAuth } from "../../../../hooks/useAuth";
 
 type GroupSettingsProps = {
   group: {

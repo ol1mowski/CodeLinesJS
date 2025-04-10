@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { FaUsers } from "react-icons/fa";
-import { useGroups } from "../../../../Hooks/useGroups";
+import { useGroups } from "../../../../hooks/useGroups";
 import { Link } from "react-router-dom";
 
 type Group = {

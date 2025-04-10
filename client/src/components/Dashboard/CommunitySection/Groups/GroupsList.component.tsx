@@ -6,7 +6,7 @@ import { HiOutlineUserGroup } from "react-icons/hi2";
 import { formatDistanceToNow } from "date-fns";
 import { pl } from "date-fns/locale";
 import { Group } from "../../../../types/groups.types";
-import { useGroups } from "../../../../Hooks/useGroups";
+import { useGroups } from "../../../../hooks/useGroups";
 import { useGroupsSearch } from "./context/GroupsSearchContext";
 
 type ExtendedGroup = Omit<Group, 'id'> & {

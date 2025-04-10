@@ -6,7 +6,7 @@ import { LearningPaths } from "../LearningPaths/LearningPaths.component";
 import { Lessons } from "../Lessons/Lessons.component";
 import { Resources } from "../Resources/Resources.component";
 import { SectionTitle } from "../../../UI/SectionTitle/SectionTitle.component";
-import { useAuth } from "../../../../Hooks/useAuth";
+import { useAuth } from "../../../../hooks/useAuth";
 
 type TabType = "paths" | "lessons" | "resources";
 const LearnTabs = ({ activeTab, onTabChange }: { activeTab: TabType; onTabChange: (tab: TabType) => void }) => {

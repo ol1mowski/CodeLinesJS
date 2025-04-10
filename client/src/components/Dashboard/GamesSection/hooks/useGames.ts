@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Game } from '../types/api.types';
 import { fetchGames } from '../api/fetchGames.api';
-import { useAuth } from '../../../../Hooks/useAuth';
+import { useAuth } from '../../../../hooks/useAuth';
 import { GameDifficulty, SortOption } from '../types/games.types';
 
 type UseGamesReturn = {

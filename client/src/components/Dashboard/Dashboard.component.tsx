@@ -1,11 +1,11 @@
 import { Link, Outlet } from 'react-router-dom';
 import { DashboardNavigation } from "./Navigation/DashboardNavigation.component";
 import { TopNavigation } from "./TopNavigation/TopNavigation.component";
-import { useIsHiddenPath } from '../../Hooks/useIsHiddingPath.hook';
+import { useIsHiddenPath } from '../../hooks/useIsHiddingPath.hook';
 import { Helmet } from 'react-helmet-async';
 import { useMobileDetect } from '../../hooks/useMobileDetect';
 import { FaSignOutAlt } from "react-icons/fa";
-import { useAuth } from '../../Hooks/useAuth';
+import { useAuth } from '../../hooks/useAuth';
 
 const Dashboard = () => {
   const isHiddenPath = useIsHiddenPath();

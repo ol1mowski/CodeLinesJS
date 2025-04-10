@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { ResetPasswordFormData, resetPasswordSchema } from "../../../../schemas/auth.schema";
-import { useAuth } from "../../../../Hooks/useAuth";
+import { useAuth } from "../../../../hooks/useAuth";
 import { useFormStatus } from "../../../Auth/hooks/useFormStatus.hook";
 
 export const useResetPasswordForm = () => {

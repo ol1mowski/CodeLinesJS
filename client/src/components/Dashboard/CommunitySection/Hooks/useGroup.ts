@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { groupsApi } from "../api/groups/groups.api";
 import { Group } from "../types/groups.types";
-import { useAuth } from "../../../../Hooks/useAuth";
+import { useAuth } from "../../../../hooks/useAuth";
 
 export const useGroup = (groupId: string) => {
   const { token } = useAuth();

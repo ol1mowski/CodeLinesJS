@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { API_URL } from "../../../../../config/api.config";
-import { useAuth } from "../../../../../Hooks/useAuth";
+import { useAuth } from "../../../../../hooks/useAuth";
 
 export const useNotifications = () => {
   const { token } = useAuth();

@@ -1,6 +1,6 @@
 import { memo, useState } from "react";
 import { GoogleLogin } from '@react-oauth/google';
-import { useAuth } from "../../../../Hooks/useAuth";
+import { useAuth } from "../../../../hooks/useAuth";
 
 type GoogleLoginButtonProps = {
   rememberMe: boolean;

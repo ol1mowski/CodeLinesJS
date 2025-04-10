@@ -1,12 +1,12 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { FaSignOutAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../../Hooks/useAuth";
-import { useNavigation } from "../../../Hooks/useNavigation";
+import { useAuth } from "../../../hooks/useAuth";
+import { useNavigation } from "../../../hooks/useNavigation";
 import { NavigationLogo } from "./components/NavigationLogo";
 import { NavigationButton } from "./components/NavigationButton";
 import { NavigationSection } from "./components/NavigationSection";
-import { useIsHiddenPath } from "../../../Hooks/useIsHiddingPath.hook";
+import { useIsHiddenPath } from "../../../hooks/useIsHiddingPath.hook";
 import { navVariants } from "./animations/navigationAnimations";
 import { useMemo, useCallback } from "react";
 import type { NavigationItem } from ".";

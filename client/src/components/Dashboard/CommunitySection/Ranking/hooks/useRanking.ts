@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient, QueryClient } from '@tanstack/react-query';
 
-import { useAuth } from '../../../../../Hooks/useAuth';
+import { useAuth } from '../../../../../hooks/useAuth';
 import { API_URL } from '../../../../../config/api.config';
 
 const RANKING_QUERY_KEY = 'ranking';
