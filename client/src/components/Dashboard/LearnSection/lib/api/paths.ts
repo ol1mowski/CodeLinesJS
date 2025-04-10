@@ -3,7 +3,7 @@ import { API_URL } from "../../../../../config/api.config";
 export const fetchLearningPaths = async (token: string) => {
   
   if (!token) {
-    throw new Error('No authentication token found');
+    throw new Error('Brak tokenu autoryzacji');
   }
 
   const response = await fetch(`${API_URL}Learning-paths`, {
@@ -15,9 +15,9 @@ export const fetchLearningPaths = async (token: string) => {
   
   if (!response.ok) {
     if (response.status === 401) {
-      throw new Error('Unauthorized - please log in again');
+      throw new Error('Nieautoryzowany - proszę się zalogować ponownie');
     }
-    throw new Error('Failed to fetch learning paths');
+    throw new Error('Błąd podczas pobierania ścieżek nauki');
   }
   
   const data = await response.json();
@@ -27,7 +27,7 @@ export const fetchLearningPaths = async (token: string) => {
 export const fetchLearningPathProgress = async (userId: string, pathId: string, token: string) => {
 
   if (!token) {
-    throw new Error('No authentication token found');
+    throw new Error('Brak tokenu autoryzacji');
   }
 
   const response = await fetch(`${API_URL}users/${userId}/paths/${pathId}/progress`, {
@@ -37,7 +37,7 @@ export const fetchLearningPathProgress = async (userId: string, pathId: string, 
     },
   });
   if (!response.ok) {
-    throw new Error('Failed to fetch path progress');
+    throw new Error('Błąd podczas pobierania postępu ścieżki');
   }
   return response.json();
 }; 

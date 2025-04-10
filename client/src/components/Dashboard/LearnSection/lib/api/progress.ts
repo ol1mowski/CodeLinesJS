@@ -10,7 +10,7 @@ export const fetchUserProgress = async (userId: string, token: string) => {
     },
   });
   if (!response.ok) {
-    throw new Error('Failed to fetch progress');
+    throw new Error('Błąd podczas pobierania postępu');
   }
   const data = await response.json();
   return data;
@@ -24,7 +24,7 @@ export const fetchLessonProgress = async (userId: string, lessonId: string, toke
     },
   });
   if (!response.ok) {
-    throw new Error('Failed to fetch progress');
+      throw new Error('Błąd podczas pobierania postępu');
   }
   return response.json();
 };
@@ -43,7 +43,7 @@ export const updateLessonProgress = async (userId: string, lessonId: string, pro
     
   );
   if (!response.ok) {
-    throw new Error('Failed to update progress');
+    throw new Error('Błąd podczas aktualizacji postępu');
   }
   return response.json();
 }; 

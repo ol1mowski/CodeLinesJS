@@ -2,7 +2,6 @@ import { useNavigate } from 'react-router-dom';
 import { httpClient } from '../../../../api/httpClient.api';
 import { AuthStateContext } from '../../../../types/auth.types';
 import { User } from '../../../../types/user.types';
-import toast from 'react-hot-toast';
 
 export const useLoginAction = (state: AuthStateContext) => {
   const navigate = useNavigate();
@@ -38,7 +37,6 @@ export const useLoginAction = (state: AuthStateContext) => {
       setUser(user);
       setIsAuthenticated(true);
       
-      toast.success('Zalogowano pomyślnie!');
       navigate('/dashboard');
     } catch (err) {
       console.error('Błąd logowania:', err);
@@ -47,7 +45,6 @@ export const useLoginAction = (state: AuthStateContext) => {
         : 'Wystąpił błąd podczas logowania';
       
       setError(errorMessage);
-      toast.error(errorMessage);
       setIsAuthenticated(false);
     } finally {
       setLoading(false);

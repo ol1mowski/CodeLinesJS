@@ -14,12 +14,12 @@ export const useRegisterForm = () => {
       acceptPrivacy: false
     },
     async onSuccess(data) {
-      try {
+    try {
         setSubmitting(true);
-        await registerUser(data.email, data.password, data.username);
+      await registerUser(data.email, data.password, data.username);
       } finally {
         setSubmitting(false);
-      }
+    }
     }
   });
 

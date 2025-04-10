@@ -57,8 +57,6 @@ export const useCreatePost = () => {
       await createPostMutation.mutateAsync(sanitizedContent);
       
       setContent("");
-      
-      toast.success("Post został dodany");
     } catch (error) {
       toast.error("Nie udało się dodać posta");
     }

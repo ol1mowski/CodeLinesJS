@@ -17,7 +17,7 @@ export const groupsApi = {
       }
     });
     if (!response.ok) {
-      throw new Error('Failed to fetch groups');
+      throw new Error('Błąd podczas pobierania grup');
     }
     return response.json();
   },
@@ -32,7 +32,7 @@ export const groupsApi = {
       }
     });
     if (!response.ok) {
-      throw new Error('Failed to join group');
+      throw new Error('Błąd podczas dołączania do grupy');
     }
   }
 }; 

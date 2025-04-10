@@ -13,7 +13,7 @@ const fetchRanking = async () => {
     }
   });
   if (!response.ok) {
-    throw new Error('Failed to fetch ranking');
+    throw new Error('Błąd podczas pobierania rankingu');
   }
   return response.json();
 };

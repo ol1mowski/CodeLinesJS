@@ -12,7 +12,7 @@ export const fetchUserProfile = async (token: string): Promise<UserProfile> => {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to fetch profile");
+    throw new Error("Błąd podczas pobierania profilu");
   }
 
   const data = await response.json();
@@ -33,7 +33,7 @@ export const updateUserProfile = async (data: UserProfile, token: string) => {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to update profile");
+    throw new Error("Błąd podczas aktualizacji profilu");
   }
 
   return response.json();

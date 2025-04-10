@@ -66,7 +66,7 @@ export const fetchGroups = async (token: string): Promise<Group[]> => {
     }
   });
   if (!response.ok) {
-    throw new Error('Failed to fetch groups');
+    throw new Error('Błąd podczas pobierania grup');
   }
   const data = await response.json();
   console.log(data);

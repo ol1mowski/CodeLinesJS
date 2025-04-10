@@ -17,7 +17,7 @@ export const fetchPreferences = async (token: string): Promise<PreferencesData> 
   });
   
   if (!response.ok) {
-    throw new Error('Failed to fetch preferences');
+    throw new Error('Błąd podczas pobierania preferencji');
   }
   
   const data = await response.json();
