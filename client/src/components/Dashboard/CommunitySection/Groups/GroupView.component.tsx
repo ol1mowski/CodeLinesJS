@@ -2,7 +2,7 @@ import { memo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FaArrowLeft, FaUsers,  FaClock, FaCalendar, FaTag, FaSignOutAlt } from "react-icons/fa";
-import { useGroup } from "../Hooks/useGroup";
+import { useGroup } from "../hooks/useGroup";
 import { GroupChat } from "./Chat/GroupChat.component";
 import { format } from "date-fns";
 import { pl } from "date-fns/locale";

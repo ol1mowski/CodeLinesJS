@@ -1,11 +1,17 @@
-import { memo, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { memo, useEffect, lazy, Suspense } from 'react';
+import { useLocation, Routes, Route } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCommunity } from './Feed/hooks/useCommunity.hook';
 import { prefetchRanking } from './Ranking/hooks/useRanking';
-// import { CommunityNav } from './Feed/components/Comments/CommunityNav.component';
+import { CommunityNav } from './Feed/components/Comments/CommunityNav.component';
 import { CommunityView } from './types/community.types';
 import { Helmet } from 'react-helmet';
+import { LoadingSpinner } from '../../../components/UI/LoadingSpinner/LoadingSpinner.component';
+
+const CommunityFeed = lazy(() => import('./Feed/CommunityFeed.component'));
+const CommunityRanking = lazy(() => import('./Ranking/CommunityRanking.component'));
+const CommunityGroups = lazy(() => import('./Groups/CommunityGroups.component'));
+
 export const CommunitySection = memo(() => {
   const location = useLocation();
   const { state: { activeView }, setActiveView } = useCommunity();
@@ -31,13 +37,26 @@ export const CommunitySection = memo(() => {
         <meta name="description" content="Community CodeLinesJS - dołącz do nas i rozwijaj swoje umiejętności w przyjaznym środowisku." />
       </Helmet>
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold font-space text-js mb-8">
-          Wkrótce
-        </h1>
-        {/* <CommunityNav activeView={activeView} />
+        <CommunityNav activeView={activeView} />
         <div className="bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10 p-6 shadow-lg">
-          <Outlet />
-        </div> */}
+          <Routes>
+            <Route index element={
+              <Suspense fallback={<LoadingSpinner text="Ładowanie aktualności..." />}>
+                <CommunityFeed />
+              </Suspense>
+            } />
+            <Route path="ranking" element={
+              <Suspense fallback={<LoadingSpinner text="Ładowanie rankingu..." />}>
+                <CommunityRanking />
+              </Suspense>
+            } />
+            <Route path="groups/*" element={
+              <Suspense fallback={<LoadingSpinner text="Ładowanie grup..." />}>
+                <CommunityGroups />
+              </Suspense>
+            } />
+          </Routes>
+        </div>
       </div>
     </div>
   );
