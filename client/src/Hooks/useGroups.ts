@@ -1,8 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { groupsApi, GroupApiResponse } from '../api/groups/groups.api';
+import { useState } from 'react';
 
 export const useGroups = () => {
   const queryClient = useQueryClient();
+  const [processingGroupId, setProcessingGroupId] = useState<string | null>(null);
 
   const { data, isLoading, error } = useQuery<GroupApiResponse>({
     queryKey: ['groups'],
@@ -10,16 +12,30 @@ export const useGroups = () => {
   });
 
   const joinGroupMutation = useMutation({
-    mutationFn: groupsApi.joinGroup,
+    mutationFn: (groupId: string) => {
+      setProcessingGroupId(groupId);
+      return groupsApi.joinGroup(groupId);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['groups'] });
+      setProcessingGroupId(null);
+    },
+    onError: () => {
+      setProcessingGroupId(null);
     }
   });
 
   const leaveGroupMutation = useMutation({
-    mutationFn: groupsApi.leaveGroup,
+    mutationFn: (groupId: string) => {
+      setProcessingGroupId(groupId);
+      return groupsApi.leaveGroup(groupId);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['groups'] });
+      setProcessingGroupId(null);
+    },
+    onError: () => {
+      setProcessingGroupId(null);
     }
   });
 
@@ -50,6 +66,7 @@ export const useGroups = () => {
     joinGroup: joinGroupMutation.mutate,
     leaveGroup: leaveGroupMutation.mutate,
     isJoining: joinGroupMutation.isPending,
-    isLeaving: leaveGroupMutation.isPending
+    isLeaving: leaveGroupMutation.isPending,
+    processingGroupId
   };
 }; 

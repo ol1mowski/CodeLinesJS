@@ -3,7 +3,7 @@ import { useGroupsSearch } from '../context/GroupsSearchContext';
 import { useCallback, useMemo, useState } from 'react';
 
 export const useGroups = () => {
-  const { groups: groupsData, isLoading, joinGroup, leaveGroup, isJoining, isLeaving, error } = useGlobalGroups();
+  const { groups: groupsData, isLoading, joinGroup, leaveGroup, processingGroupId, error } = useGlobalGroups();
   const { searchQuery, selectedTags } = useGroupsSearch();
   const [groupToLeave, setGroupToLeave] = useState<string | null>(null);
   
@@ -39,13 +39,16 @@ export const useGroups = () => {
     };
   }, [groupsData, searchQuery, selectedTags]);
 
+  const isGroupProcessing = useCallback((groupId: string) => {
+    return processingGroupId === groupId;
+  }, [processingGroupId]);
+
   return {
     groups: filteredGroups,
     isLoading,
     joinGroup: handleJoinGroup,
     leaveGroup: handleLeaveGroup,
-    isJoining,
-    isLeaving,
+    isGroupProcessing,
     isEmpty,
     groupToLeave,
     setGroupToLeave,

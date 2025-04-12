@@ -11,8 +11,9 @@ import type { Group } from "../../../../types/groups.types";
 import { LeaveGroupModal } from "./Modals/LeaveGroupModal.component";
 
 export const GroupsList = memo(() => {
-  const { groups, isLoading, joinGroup, leaveGroup, isJoining, isLeaving } = useGroups();
+  const { groups, isLoading, joinGroup, leaveGroup, isGroupProcessing } = useGroups();
   const [groupToLeave, setGroupToLeave] = useState<Group | null>(null);
+  const { searchQuery, selectedTags } = useGroupsSearch();
   
   const handleJoinGroup = useCallback((groupId: string) => {
     joinGroup(groupId);
@@ -30,8 +31,6 @@ export const GroupsList = memo(() => {
   const handleCloseModal = useCallback(() => {
     setGroupToLeave(null);
   }, []);
-
-  const { searchQuery, selectedTags } = useGroupsSearch();
   
   const { filteredGroups, isEmpty } = useMemo(() => {
     if (!groups) {
@@ -90,8 +89,7 @@ export const GroupsList = memo(() => {
             group={group as Group} 
             onJoin={handleJoinGroup}
             onLeave={handleLeaveClick}
-            isJoining={isJoining}
-            isLeaving={isLeaving}
+            isProcessing={isGroupProcessing(group._id || group.id)}
           />
         ))}
       </div>
@@ -111,12 +109,13 @@ interface GroupCardProps {
   group: Group;
   onJoin: (groupId: string) => void;
   onLeave: (group: Group) => void;
-  isJoining: boolean;
-  isLeaving: boolean;
+  isProcessing: boolean;
 }
 
-const GroupCard = memo(({ group, onJoin, onLeave, isJoining, isLeaving }: GroupCardProps) => {
+const GroupCard = memo(({ group, onJoin, onLeave, isProcessing }: GroupCardProps) => {
   const handleActionClick = useCallback(() => {
+    if (isProcessing) return;
+    
     const groupId = group._id || group.id;
     
     if (group.isJoined) {
@@ -126,9 +125,7 @@ const GroupCard = memo(({ group, onJoin, onLeave, isJoining, isLeaving }: GroupC
       console.log('Kliknięto dołącz do grupy z ID:', groupId);
       onJoin(groupId);
     }
-  }, [group, onJoin, onLeave]);
-
-  const isProcessing = isJoining || isLeaving;
+  }, [group, onJoin, onLeave, isProcessing]);
 
   return (
     <motion.div
