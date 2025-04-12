@@ -43,10 +43,8 @@ const postSchema = new mongoose.Schema({
   }
 });
 
-// Dodanie pluginu paginacji do schematu
 postSchema.plugin(mongoosePaginate);
 
-// Dodanie interface dla dokumentu paginacji - zgodny z mongoose-paginate-v2
 postSchema.statics.paginate = function() {
   return mongoosePaginate.paginate.apply(this, arguments);
 };

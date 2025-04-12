@@ -5,7 +5,7 @@ import { useCommunity } from './Feed/hooks/useCommunity.hook';
 import { prefetchRanking } from './Ranking/hooks/useRanking';
 import { CommunityNav } from './Feed/components/Comments/CommunityNav.component';
 import { CommunityView } from './types/community.types';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { LoadingSpinner } from '../../../components/UI/LoadingSpinner/LoadingSpinner.component';
 import { useAuth } from '../../../hooks/useAuth';
 

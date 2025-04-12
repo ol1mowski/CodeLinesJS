@@ -1,53 +1,62 @@
 import { memo, useCallback, useMemo } from "react";
 import { motion } from "framer-motion";
-import { FaUsers, FaComments, FaClock } from "react-icons/fa";
+import { FaUsers, FaClock } from "react-icons/fa";
 import { HiOutlineUserGroup } from "react-icons/hi2";
 import { formatDistanceToNow } from "date-fns";
 import { pl } from "date-fns/locale";
 import { LoadingSpinner } from "../../../../components/UI/LoadingSpinner/LoadingSpinner.component";
-import { useGroups, Group } from "./hooks/useGroups.hook";
+import { useGroups } from "./hooks/useGroups";
 import { useGroupsSearch } from "./context/GroupsSearchContext";
+import type { Group } from "../../../../types/groups.types";
 
 export const GroupsList = memo(() => {
-  const { data, isLoading, error } = useGroups();
+  const { groups, isLoading, joinGroup, isJoining } = useGroups();
   const { searchQuery, selectedTags } = useGroupsSearch();
   
-  const isJoining = false; // Placeholder dla obsługi dołączania
+  const handleJoinGroup = useCallback((groupId: string) => {
+    joinGroup(groupId);
+  }, [joinGroup]);
+
+  const { filteredGroups, isEmpty } = useMemo(() => {
+    if (!groups) {
+      return { filteredGroups: [], isEmpty: true };
+    }
+    
+    const groupsArray = Array.isArray(groups) ? groups : [];
+    
+    const filtered = groupsArray.filter(group => {
+      const matchesSearch = searchQuery.toLowerCase().trim() === '' || 
+        group.name.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
+        group.description.toLowerCase().includes(searchQuery.toLowerCase().trim());
+
+      const matchesTags = selectedTags.length === 0 || 
+        selectedTags.every(tag => group.tags.includes(tag));
+
+      return matchesSearch && matchesTags;
+    });
+    
+    return { 
+      filteredGroups: filtered, 
+      isEmpty: filtered.length === 0 
+    };
+  }, [groups, searchQuery, selectedTags]);
 
   if (isLoading) {
     return <LoadingSpinner text="Ładowanie grup..." />;
   }
 
-  if (error) {
+  if (!groups) {
     return (
       <div className="text-center p-8 bg-dark/30 rounded-lg">
         <div className="text-red-500 text-2xl mb-2">Błąd ładowania</div>
         <p className="text-gray-400">
-          {error instanceof Error ? error.message : 'Nie udało się załadować grup. Spróbuj ponownie później.'}
+          Nie udało się załadować grup. Spróbuj ponownie później.
         </p>
       </div>
     );
   }
 
-  const groups = data?.groups || [];
-
-  const filteredGroups = groups.filter(group => {
-    const matchesSearch = searchQuery.toLowerCase().trim() === '' || 
-      group.name.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
-      group.description.toLowerCase().includes(searchQuery.toLowerCase().trim());
-
-    const matchesTags = selectedTags.length === 0 || 
-      selectedTags.every(tag => group.tags.includes(tag));
-
-    return matchesSearch && matchesTags;
-  });
-
-  const handleJoinGroup = useCallback((groupId: string) => {
-    // Implementacja dołączania do grupy (będzie dodana później)
-    console.log("Dołączanie do grupy:", groupId);
-  }, []);
-
-  if (!filteredGroups.length) {
+  if (isEmpty) {
     return (
       <div className="text-center text-gray-400 py-8">
         <HiOutlineUserGroup className="w-12 h-12 mx-auto mb-3 opacity-50" />
@@ -58,9 +67,9 @@ export const GroupsList = memo(() => {
 
   return (
     <div className="space-y-4">
-      {filteredGroups.map((group) => (
+      {filteredGroups.map(group => (
         <GroupCard 
-          key={group._id} 
+          key={group.id} 
           group={group} 
           onJoin={handleJoinGroup}
           isJoining={isJoining}
@@ -70,19 +79,17 @@ export const GroupsList = memo(() => {
   );
 });
 
-
-const GroupCard = memo(({ 
-  group, 
-  onJoin,
-  isJoining
-}: { 
+// Definiowanie interfejsu dla komponentu GroupCard
+interface GroupCardProps {
   group: Group;
   onJoin: (groupId: string) => void;
   isJoining: boolean;
-}) => {
+}
+
+const GroupCard = memo(({ group, onJoin, isJoining }: GroupCardProps) => {
   const handleJoinClick = useCallback(() => {
-    onJoin(group._id);
-  }, [group._id, onJoin]);
+    onJoin(group.id);
+  }, [group.id, onJoin]);
 
   return (
     <motion.div
@@ -150,13 +157,13 @@ const GroupCard = memo(({
                 <FaClock className="w-3 h-3 text-js" />
               </div>
               <span>
-                Utworzona {formatDistanceToNow(new Date(group.createdAt), { addSuffix: true, locale: pl })}
+                Utworzona {formatDistanceToNow(new Date(group.lastActive), { addSuffix: true, locale: pl })}
               </span>
             </div>
           </div>
           
           <div className="flex flex-wrap gap-2 mt-3">
-            {group.tags.map((tag) => (
+            {group.tags.map(tag => (
               <motion.span
                 key={tag}
                 whileHover={{ scale: 1.05 }}

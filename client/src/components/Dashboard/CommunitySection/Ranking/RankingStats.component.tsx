@@ -1,15 +1,13 @@
 import { motion } from "framer-motion";
 import { memo } from "react";
 import { FaTrophy, FaStar, FaCalendarDay } from "react-icons/fa";
-import { useRanking } from "../../../../hooks/useRanking";
+import { useRanking } from "./hooks/useRanking";
 
 export const RankingStats = memo(() => {
   const { data, isLoading } = useRanking();
-  const userStats = data?.userStats;
-
+  
   console.log(data);
   
-
   if (isLoading) {
     return (
       <motion.div className="bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10 p-6 shadow-lg animate-pulse">
@@ -27,33 +25,31 @@ export const RankingStats = memo(() => {
     );
   }
 
+  // Znajdowanie danych użytkownika
+  const currentUser = data?.find(u => u.rank !== undefined);
+  
   const stats = [
     {
       icon: FaTrophy,
       label: "Twoja pozycja",
-      value: `#${userStats?.rank || '-'}`,
+      value: `#${currentUser?.position || '-'}`,
       gradient: "from-js/20 to-js/30",
     },
     {
       icon: FaStar,
       label: "Poziom",
-      value: userStats?.level?.toLocaleString() || '-',
-      change: userStats?.level !== undefined
-        ? userStats.level > 0
-          ? `+${userStats.level}`
-          : userStats.level.toString()
+      value: currentUser?.level?.toLocaleString() || '-',
+      change: currentUser?.level !== undefined
+        ? currentUser.level > 0
+          ? `+${currentUser.level}`
+          : currentUser.level.toString()
         : undefined,
       gradient: "from-js/20 to-js/30",
     },
     {
       icon: FaCalendarDay,
       label: "Streak",
-      value: userStats?.streak?.toLocaleString() || '-',
-      change: userStats?.streak !== undefined
-        ? userStats.streak > 0
-          ? `+${userStats.streak}`
-          : userStats.streak.toString()
-        : undefined,
+      value: currentUser?.points?.toLocaleString() || '-',
       gradient: "from-js/20 to-js/30",
     },
   ];
