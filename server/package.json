@@ -47,6 +47,7 @@
     "hpp": "^0.2.3",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.9.3",
+    "mongoose-paginate-v2": "^1.9.0",
     "node-fetch": "^3.3.2",
     "nodemailer": "^6.9.16",
     "sanitize-html": "^2.15.0",
@@ -62,10 +63,10 @@
     "@types/node": "^22.13.14",
     "@types/nodemailer": "^6.4.17",
     "@types/sanitize-html": "^2.13.0",
+    "@vitest/coverage-v8": "^1.4.0",
     "nodemon": "^3.1.9",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.2",
-    "vitest": "^1.4.0",
-    "@vitest/coverage-v8": "^1.4.0"
+    "vitest": "^1.4.0"
   }
 }

@@ -2,72 +2,50 @@ import { memo, useCallback, useMemo } from "react";
 import { motion } from "framer-motion";
 import { FaUsers, FaComments, FaClock } from "react-icons/fa";
 import { HiOutlineUserGroup } from "react-icons/hi2";
-
 import { formatDistanceToNow } from "date-fns";
 import { pl } from "date-fns/locale";
-import { Group } from "../../../../types/groups.types";
-import { useGroups } from "../../../../hooks/useGroups";
+import { LoadingSpinner } from "../../../../components/UI/LoadingSpinner/LoadingSpinner.component";
+import { useGroups, Group } from "./hooks/useGroups.hook";
 import { useGroupsSearch } from "./context/GroupsSearchContext";
 
-type ExtendedGroup = Omit<Group, 'id'> & {
-  _id: string;
-}
-
-type GroupsResponse = {
-  groups: ExtendedGroup[];
-  userGroups: ExtendedGroup[];
-}
-
 export const GroupsList = memo(() => {
-  const { groups, isLoading, joinGroup } = useGroups();
+  const { data, isLoading, error } = useGroups();
   const { searchQuery, selectedTags } = useGroupsSearch();
   
-  const isJoining = false; 
-
-  const filteredGroups = useMemo(() => {
-    if (!groups) return [];
-    
-    const groupsData = groups as unknown as GroupsResponse;
-    
-    return groupsData.groups?.filter((group: ExtendedGroup) => {
-      const matchesSearch = searchQuery.toLowerCase().trim() === '' || 
-        group.name.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
-        group.description.toLowerCase().includes(searchQuery.toLowerCase().trim());
-
-      const matchesTags = selectedTags.length === 0 || 
-        selectedTags.every(tag => group.tags.includes(tag));
-
-      return matchesSearch && matchesTags;
-    }).map((group: ExtendedGroup) => ({
-      ...group,
-      isJoined: groupsData.userGroups.some((userGroup: ExtendedGroup) => userGroup._id === group._id)
-    }));
-  }, [groups, searchQuery, selectedTags]);
-
-  const handleJoinGroup = useCallback((groupId: string) => {
-    joinGroup(groupId);
-  }, [joinGroup]);
+  const isJoining = false; // Placeholder dla obsługi dołączania
 
   if (isLoading) {
+    return <LoadingSpinner text="Ładowanie grup..." />;
+  }
+
+  if (error) {
     return (
-      <div className="space-y-4">
-        {Array.from({ length: 3 }).map((_, i) => (
-          <motion.div
-            key={`skeleton-${i}`}
-            className="bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10 p-6 shadow-lg animate-pulse"
-          >
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-lg bg-js/10" />
-              <div className="flex-1">
-                <div className="h-5 w-32 bg-js/10 rounded mb-2" />
-                <div className="h-4 w-48 bg-js/10 rounded" />
-              </div>
-            </div>
-          </motion.div>
-        ))}
+      <div className="text-center p-8 bg-dark/30 rounded-lg">
+        <div className="text-red-500 text-2xl mb-2">Błąd ładowania</div>
+        <p className="text-gray-400">
+          {error instanceof Error ? error.message : 'Nie udało się załadować grup. Spróbuj ponownie później.'}
+        </p>
       </div>
     );
   }
+
+  const groups = data?.groups || [];
+
+  const filteredGroups = groups.filter(group => {
+    const matchesSearch = searchQuery.toLowerCase().trim() === '' || 
+      group.name.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
+      group.description.toLowerCase().includes(searchQuery.toLowerCase().trim());
+
+    const matchesTags = selectedTags.length === 0 || 
+      selectedTags.every(tag => group.tags.includes(tag));
+
+    return matchesSearch && matchesTags;
+  });
+
+  const handleJoinGroup = useCallback((groupId: string) => {
+    // Implementacja dołączania do grupy (będzie dodana później)
+    console.log("Dołączanie do grupy:", groupId);
+  }, []);
 
   if (!filteredGroups.length) {
     return (
@@ -80,7 +58,7 @@ export const GroupsList = memo(() => {
 
   return (
     <div className="space-y-4">
-      {filteredGroups.map((group: ExtendedGroup) => (
+      {filteredGroups.map((group) => (
         <GroupCard 
           key={group._id} 
           group={group} 
@@ -98,15 +76,13 @@ const GroupCard = memo(({
   onJoin,
   isJoining
 }: { 
-  group: ExtendedGroup;
+  group: Group;
   onJoin: (groupId: string) => void;
   isJoining: boolean;
 }) => {
   const handleJoinClick = useCallback(() => {
     onJoin(group._id);
   }, [group._id, onJoin]);
-
-  const isLoading = isJoining;
 
   return (
     <motion.div
@@ -117,26 +93,15 @@ const GroupCard = memo(({
                 hover:border-js/20 hover:shadow-lg hover:shadow-js/5"
     >
       <div className="flex gap-6">
-        {group.image ? (
-          <div className="relative w-24 h-24 group">
-            <img
-              src={group.image}
-              alt={group.name}
-              className="w-full h-full rounded-lg object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-dark/60 to-transparent rounded-lg opacity-0 group-hover:opacity-100 transition-opacity" />
-          </div>
-        ) : (
-          <div className="relative w-24 h-24 rounded-lg overflow-hidden group">
-            <div className="absolute inset-0 bg-gradient-to-br from-js/20 via-js/10 to-dark/20" />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="bg-js/10 p-4 rounded-full">
-                <FaUsers className="w-8 h-8 text-js" />
-              </div>
+        <div className="relative w-24 h-24 rounded-lg overflow-hidden group">
+          <div className="absolute inset-0 bg-gradient-to-br from-js/20 via-js/10 to-dark/20" />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="bg-js/10 p-4 rounded-full">
+              <FaUsers className="w-8 h-8 text-js" />
             </div>
-            <div className="absolute inset-0 bg-gradient-to-t from-dark/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
           </div>
-        )}
+          <div className="absolute inset-0 bg-gradient-to-t from-dark/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+        </div>
         
         <div className="flex-1">
           <div className="flex items-start justify-between mb-2">
@@ -151,13 +116,13 @@ const GroupCard = memo(({
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               transition={{ duration: 0.2 }}
-              disabled={isLoading}
+              disabled={isJoining}
               className={`
                 px-4 py-2 rounded-lg transition-all duration-300
                 ${group.isJoined 
                   ? "bg-red-500/20 text-red-400 hover:bg-red-500/30 border border-red-500/30 hover:border-red-500/50" 
                   : "bg-js text-dark hover:bg-js/90 hover:shadow-md hover:shadow-js/20"}
-                ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}
+                ${isJoining ? 'opacity-50 cursor-not-allowed' : ''}
               `}
             >
               <motion.span
@@ -166,7 +131,7 @@ const GroupCard = memo(({
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
               >
-                {isLoading 
+                {isJoining 
                   ? (group.isJoined ? "Opuszczanie..." : "Dołączanie...") 
                   : (group.isJoined ? "Opuść grupę" : "Dołącz")}
               </motion.span>
@@ -182,16 +147,10 @@ const GroupCard = memo(({
             </div>
             <div className="flex items-center gap-2">
               <div className="p-1.5 rounded-full bg-js/10">
-                <FaComments className="w-3 h-3 text-js" />
-              </div>
-              <span>{group.postsCount} postów</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-full bg-js/10">
                 <FaClock className="w-3 h-3 text-js" />
               </div>
               <span>
-                Ostatnia aktywność {formatDistanceToNow(group.lastActive, { addSuffix: true, locale: pl })}
+                Utworzona {formatDistanceToNow(new Date(group.createdAt), { addSuffix: true, locale: pl })}
               </span>
             </div>
           </div>

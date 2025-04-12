@@ -1,5 +1,6 @@
 // @ts-nocheck
 import mongoose from 'mongoose';
+import mongoosePaginate from 'mongoose-paginate-v2';
 
 const postSchema = new mongoose.Schema({
   content: {
@@ -41,5 +42,13 @@ const postSchema = new mongoose.Schema({
     default: Date.now
   }
 });
+
+// Dodanie pluginu paginacji do schematu
+postSchema.plugin(mongoosePaginate);
+
+// Dodanie interface dla dokumentu paginacji - zgodny z mongoose-paginate-v2
+postSchema.statics.paginate = function() {
+  return mongoosePaginate.paginate.apply(this, arguments);
+};
 
 export const Post = mongoose.model('Post', postSchema); 

@@ -7,6 +7,7 @@ import { CommunityNav } from './Feed/components/Comments/CommunityNav.component'
 import { CommunityView } from './types/community.types';
 import { Helmet } from 'react-helmet';
 import { LoadingSpinner } from '../../../components/UI/LoadingSpinner/LoadingSpinner.component';
+import { useAuth } from '../../../hooks/useAuth';
 
 const CommunityFeed = lazy(() => import('./Feed/CommunityFeed.component'));
 const CommunityRanking = lazy(() => import('./Ranking/CommunityRanking.component'));
@@ -16,6 +17,7 @@ export const CommunitySection = memo(() => {
   const location = useLocation();
   const { state: { activeView }, setActiveView } = useCommunity();
   const queryClient = useQueryClient();
+  const { token } = useAuth();
 
   useEffect(() => {
     const path = location.pathname.split('community').pop() || 'community';
@@ -26,9 +28,9 @@ export const CommunitySection = memo(() => {
 
   useEffect(() => {
     if (activeView === 'community' || activeView === 'ranking') {
-      prefetchRanking(queryClient);
+      prefetchRanking(queryClient, token);
     }
-  }, [activeView, queryClient]);
+  }, [activeView, queryClient, token]);
 
   return (
     <div className="p-8 w-full min-h-screen bg-dark/50 backdrop-blur-sm">
