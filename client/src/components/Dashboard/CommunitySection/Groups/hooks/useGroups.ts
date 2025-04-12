@@ -19,6 +19,7 @@ export const useGroups = () => {
     const { _id, ...restGroup } = group;
     return {
       id: _id,
+      _id,
       isJoined: group.isJoined || false,
       lastActive: new Date(group.lastActive || new Date()),
       tags: group.tags || [],

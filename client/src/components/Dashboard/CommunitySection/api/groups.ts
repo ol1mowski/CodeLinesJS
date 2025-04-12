@@ -1,6 +1,10 @@
 import { Message } from "react-hook-form";
 import { API_URL } from "../../../../config/api.config";
 
+const isValidMongoId = (id: string): boolean => {
+  return /^[0-9a-fA-F]{24}$/.test(id);
+};
+
 export interface GroupApiResponse {
   status: string;
   data: {
@@ -94,6 +98,14 @@ export const fetchGroups = async (token: string): Promise<GroupApiResponse> => {
 
 export const joinGroup = async (groupId: string, token: string): Promise<void> => {
   
+  console.log('Próba dołączenia do grupy o ID:', groupId);
+  
+  // Sprawdź, czy ID jest poprawnym MongoDB ObjectId
+  if (!isValidMongoId(groupId)) {
+    console.error('Nieprawidłowy format ID MongoDB:', groupId);
+    throw new Error('Nieprawidłowy format ID grupy');
+  }
+  
   const response = await fetch(`${API_URL}groups/${groupId}/join`, {
     method: 'POST',
     headers: {
@@ -102,12 +114,13 @@ export const joinGroup = async (groupId: string, token: string): Promise<void> =
     }
   });
   
-
   if (!response.ok) {
     if (response.status === 401) {
       throw new Error('Sesja wygasła. Zaloguj się ponownie.');
     }
-    throw new Error('Nie udało się dołączyć do grupy');
+    const errorData = await response.json();
+    console.error('Błąd dołączania do grupy:', errorData);
+    throw new Error(`Nie udało się dołączyć do grupy: ${errorData.message || 'Nieznany błąd'}`);
   }
 };
 

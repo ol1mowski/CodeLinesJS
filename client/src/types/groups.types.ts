@@ -1,5 +1,6 @@
 export type Group = {
   id: string;
+  _id?: string;
   name: string;
   description: string;
   image?: string;

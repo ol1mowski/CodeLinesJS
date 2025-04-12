@@ -87,8 +87,10 @@ interface GroupCardProps {
 
 const GroupCard = memo(({ group, onJoin, isJoining }: GroupCardProps) => {
   const handleJoinClick = useCallback(() => {
-    onJoin(group.id);
-  }, [group.id, onJoin]);
+    const groupId = group._id || group.id;
+    console.log('Kliknięto dołącz do grupy z ID:', groupId);
+    onJoin(groupId);
+  }, [group, onJoin]);
 
   return (
     <motion.div
