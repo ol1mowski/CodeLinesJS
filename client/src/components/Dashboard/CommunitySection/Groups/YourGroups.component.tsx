@@ -9,16 +9,10 @@ type Group = {
   membersCount: number;
 }
 
-type GroupsResponse = {
-  groups: Group[];
-  userGroups: Group[];
-}
-
 export const YourGroups = memo(() => {
   const { groups, isLoading } = useGroups();
-
-  const groupsData = groups as unknown as GroupsResponse;
-  const userGroups = groupsData?.userGroups || [];
+  
+  const userGroups = groups?.userGroups || [];
 
   if (isLoading) {
     return (

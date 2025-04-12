@@ -64,7 +64,7 @@ export const router = createBrowserRouter([
         element: <LazyLoadWrapper><StatsSection /></LazyLoadWrapper>
       },
       {
-        path: "community",
+        path: "community/*",
         element: <LazyLoadWrapper><CommunitySection /></LazyLoadWrapper>
       },
       {

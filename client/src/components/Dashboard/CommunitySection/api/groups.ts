@@ -1,6 +1,30 @@
 import { Message } from "react-hook-form";
-import { Group } from "../../../../types/groups.types";
 import { API_URL } from "../../../../config/api.config";
+
+const isValidMongoId = (id: string): boolean => {
+  return /^[0-9a-fA-F]{24}$/.test(id);
+};
+
+export interface GroupApiResponse {
+  status: string;
+  data: {
+    groups: Array<{
+      _id: string;
+      name: string;
+      description: string;
+      membersCount: number;
+      postsCount: number;
+      isJoined?: boolean;
+      lastActive?: string;
+      tags?: string[];
+      [key: string]: any;
+    }>;
+    hasNextPage: boolean;
+    limit: number;
+    page: number;
+    total: number;
+  };
+}
 
 export const checkGroupNameAvailability = async (name: string, token: string): Promise<boolean> => {
   try {
@@ -59,7 +83,7 @@ export const createGroup = async (groupData: {
   }
 };
 
-export const fetchGroups = async (token: string): Promise<Group[]> => {
+export const fetchGroups = async (token: string): Promise<GroupApiResponse> => {
   const response = await fetch(`${API_URL}groups`, {
     headers: {
       'Authorization': `Bearer ${token}`
@@ -69,11 +93,18 @@ export const fetchGroups = async (token: string): Promise<Group[]> => {
     throw new Error('Błąd podczas pobierania grup');
   }
   const data = await response.json();
-  console.log(data);
   return data;
 };
 
 export const joinGroup = async (groupId: string, token: string): Promise<void> => {
+  
+  console.log('Próba dołączenia do grupy o ID:', groupId);
+  
+  // Sprawdź, czy ID jest poprawnym MongoDB ObjectId
+  if (!isValidMongoId(groupId)) {
+    console.error('Nieprawidłowy format ID MongoDB:', groupId);
+    throw new Error('Nieprawidłowy format ID grupy');
+  }
   
   const response = await fetch(`${API_URL}groups/${groupId}/join`, {
     method: 'POST',
@@ -83,12 +114,13 @@ export const joinGroup = async (groupId: string, token: string): Promise<void> =
     }
   });
   
-
   if (!response.ok) {
     if (response.status === 401) {
       throw new Error('Sesja wygasła. Zaloguj się ponownie.');
     }
-    throw new Error('Nie udało się dołączyć do grupy');
+    const errorData = await response.json();
+    console.error('Błąd dołączania do grupy:', errorData);
+    throw new Error(`Nie udało się dołączyć do grupy: ${errorData.message || 'Nieznany błąd'}`);
   }
 };
 

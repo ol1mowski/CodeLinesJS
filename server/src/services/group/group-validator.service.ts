@@ -1,6 +1,7 @@
 import { GroupRepository } from '../../repositories/group.repository.js';
 import { AuthError, ValidationError } from '../../utils/errors.js';
 import { GroupCreateData } from '../../types/group.types.js';
+import { Types } from 'mongoose';
 
 export class GroupValidatorService {
   static async validateGroupCreate(data: GroupCreateData): Promise<void> {
@@ -30,6 +31,25 @@ export class GroupValidatorService {
     const existingGroup = await GroupRepository.findByName(name);
     if (existingGroup && existingGroup._id.toString() !== groupId) {
       throw new ValidationError('Grupa o takiej nazwie już istnieje');
+    }
+  }
+  
+  static validateGroupId(groupId: string): void {
+    if (!groupId) {
+      console.error('Próba walidacji pustego ID grupy');
+      throw new ValidationError('ID grupy jest wymagane');
+    }
+    
+    console.log(`Walidacja ID grupy: ${groupId}, typ: ${typeof groupId}`);
+    
+    if (typeof groupId !== 'string') {
+      console.error(`Nieprawidłowy typ ID grupy: ${typeof groupId}`);
+      throw new ValidationError('ID grupy musi być ciągiem znaków');
+    }
+    
+    if (!Types.ObjectId.isValid(groupId)) {
+      console.error(`Nieprawidłowy format ID grupy: ${groupId}`);
+      throw new ValidationError(`Nieprawidłowy format ID grupy: ${groupId}`);
     }
   }
 

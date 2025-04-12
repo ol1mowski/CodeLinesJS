@@ -4,7 +4,7 @@ import { AuthError } from '../../../utils/errors.js';
 
 export const leaveGroup = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { id: groupId } = req.params;
+    const { groupId } = req.params;
     const userId = req.user?.userId;
     
     if (!userId) throw new AuthError('Brak autoryzacji');

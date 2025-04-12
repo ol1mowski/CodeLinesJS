@@ -1,5 +1,6 @@
 export type Group = {
   id: string;
+  _id?: string;
   name: string;
   description: string;
   image?: string;
@@ -7,7 +8,7 @@ export type Group = {
   postsCount: number;
   tags: string[];
   isJoined: boolean;
-  lastActive: Date;
+  lastActive: Date | string;
   owner: {
     id: string;
     name: string;

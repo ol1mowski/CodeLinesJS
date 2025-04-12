@@ -1,35 +1,45 @@
-import { memo, useCallback, useMemo } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { FaUsers, FaComments, FaClock } from "react-icons/fa";
+import { FaUsers, FaClock } from "react-icons/fa";
 import { HiOutlineUserGroup } from "react-icons/hi2";
-
 import { formatDistanceToNow } from "date-fns";
 import { pl } from "date-fns/locale";
-import { Group } from "../../../../types/groups.types";
-import { useGroups } from "../../../../hooks/useGroups";
+import { LoadingSpinner } from "../../../../components/UI/LoadingSpinner/LoadingSpinner.component";
+import { useGroups } from "./hooks/useGroups";
 import { useGroupsSearch } from "./context/GroupsSearchContext";
-
-type ExtendedGroup = Omit<Group, 'id'> & {
-  _id: string;
-}
-
-type GroupsResponse = {
-  groups: ExtendedGroup[];
-  userGroups: ExtendedGroup[];
-}
+import type { Group } from "../../../../types/groups.types";
+import { LeaveGroupModal } from "./Modals/LeaveGroupModal.component";
 
 export const GroupsList = memo(() => {
-  const { groups, isLoading, joinGroup } = useGroups();
+  const { groups, isLoading, joinGroup, leaveGroup, isGroupProcessing } = useGroups();
+  const [groupToLeave, setGroupToLeave] = useState<Group | null>(null);
   const { searchQuery, selectedTags } = useGroupsSearch();
   
-  const isJoining = false; 
+  const handleJoinGroup = useCallback((groupId: string) => {
+    joinGroup(groupId);
+  }, [joinGroup]);
 
-  const filteredGroups = useMemo(() => {
-    if (!groups) return [];
+  const handleLeaveGroup = useCallback((groupId: string) => {
+    leaveGroup(groupId);
+    setGroupToLeave(null);
+  }, [leaveGroup]);
+
+  const handleLeaveClick = useCallback((group: Group) => {
+    setGroupToLeave(group);
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setGroupToLeave(null);
+  }, []);
+  
+  const { filteredGroups, isEmpty } = useMemo(() => {
+    if (!groups) {
+      return { filteredGroups: [], isEmpty: true };
+    }
     
-    const groupsData = groups as unknown as GroupsResponse;
+    const groupsArray = Array.isArray(groups) ? groups : [];
     
-    return groupsData.groups?.filter((group: ExtendedGroup) => {
+    const filtered = groupsArray.filter(group => {
       const matchesSearch = searchQuery.toLowerCase().trim() === '' || 
         group.name.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
         group.description.toLowerCase().includes(searchQuery.toLowerCase().trim());
@@ -38,38 +48,30 @@ export const GroupsList = memo(() => {
         selectedTags.every(tag => group.tags.includes(tag));
 
       return matchesSearch && matchesTags;
-    }).map((group: ExtendedGroup) => ({
-      ...group,
-      isJoined: groupsData.userGroups.some((userGroup: ExtendedGroup) => userGroup._id === group._id)
-    }));
+    });
+    
+    return { 
+      filteredGroups: filtered, 
+      isEmpty: filtered.length === 0 
+    };
   }, [groups, searchQuery, selectedTags]);
 
-  const handleJoinGroup = useCallback((groupId: string) => {
-    joinGroup(groupId);
-  }, [joinGroup]);
-
   if (isLoading) {
+    return <LoadingSpinner text="Ładowanie grup..." />;
+  }
+
+  if (!groups) {
     return (
-      <div className="space-y-4">
-        {Array.from({ length: 3 }).map((_, i) => (
-          <motion.div
-            key={`skeleton-${i}`}
-            className="bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10 p-6 shadow-lg animate-pulse"
-          >
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-lg bg-js/10" />
-              <div className="flex-1">
-                <div className="h-5 w-32 bg-js/10 rounded mb-2" />
-                <div className="h-4 w-48 bg-js/10 rounded" />
-              </div>
-            </div>
-          </motion.div>
-        ))}
+      <div className="text-center p-8 bg-dark/30 rounded-lg">
+        <div className="text-red-500 text-2xl mb-2">Błąd ładowania</div>
+        <p className="text-gray-400">
+          Nie udało się załadować grup. Spróbuj ponownie później.
+        </p>
       </div>
     );
   }
 
-  if (!filteredGroups.length) {
+  if (isEmpty) {
     return (
       <div className="text-center text-gray-400 py-8">
         <HiOutlineUserGroup className="w-12 h-12 mx-auto mb-3 opacity-50" />
@@ -79,34 +81,51 @@ export const GroupsList = memo(() => {
   }
 
   return (
-    <div className="space-y-4">
-      {filteredGroups.map((group: ExtendedGroup) => (
-        <GroupCard 
-          key={group._id} 
-          group={group} 
-          onJoin={handleJoinGroup}
-          isJoining={isJoining}
+    <>
+      <div className="space-y-4">
+        {filteredGroups.map(group => (
+          <GroupCard 
+            key={group.id} 
+            group={group as Group} 
+            onJoin={handleJoinGroup}
+            onLeave={handleLeaveClick}
+            isProcessing={isGroupProcessing(group._id || group.id)}
+          />
+        ))}
+      </div>
+      
+      {groupToLeave && (
+        <LeaveGroupModal 
+          groupName={groupToLeave.name}
+          onClose={handleCloseModal}
+          onConfirm={() => handleLeaveGroup(groupToLeave._id || groupToLeave.id)}
         />
-      ))}
-    </div>
+      )}
+    </>
   );
 });
 
-
-const GroupCard = memo(({ 
-  group, 
-  onJoin,
-  isJoining
-}: { 
-  group: ExtendedGroup;
+interface GroupCardProps {
+  group: Group;
   onJoin: (groupId: string) => void;
-  isJoining: boolean;
-}) => {
-  const handleJoinClick = useCallback(() => {
-    onJoin(group._id);
-  }, [group._id, onJoin]);
+  onLeave: (group: Group) => void;
+  isProcessing: boolean;
+}
 
-  const isLoading = isJoining;
+const GroupCard = memo(({ group, onJoin, onLeave, isProcessing }: GroupCardProps) => {
+  const handleActionClick = useCallback(() => {
+    if (isProcessing) return;
+    
+    const groupId = group._id || group.id;
+    
+    if (group.isJoined) {
+      console.log('Kliknięto opuść grupę z ID:', groupId);
+      onLeave(group);
+    } else {
+      console.log('Kliknięto dołącz do grupy z ID:', groupId);
+      onJoin(groupId);
+    }
+  }, [group, onJoin, onLeave, isProcessing]);
 
   return (
     <motion.div
@@ -117,26 +136,15 @@ const GroupCard = memo(({
                 hover:border-js/20 hover:shadow-lg hover:shadow-js/5"
     >
       <div className="flex gap-6">
-        {group.image ? (
-          <div className="relative w-24 h-24 group">
-            <img
-              src={group.image}
-              alt={group.name}
-              className="w-full h-full rounded-lg object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-dark/60 to-transparent rounded-lg opacity-0 group-hover:opacity-100 transition-opacity" />
-          </div>
-        ) : (
-          <div className="relative w-24 h-24 rounded-lg overflow-hidden group">
-            <div className="absolute inset-0 bg-gradient-to-br from-js/20 via-js/10 to-dark/20" />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="bg-js/10 p-4 rounded-full">
-                <FaUsers className="w-8 h-8 text-js" />
-              </div>
+        <div className="relative w-24 h-24 rounded-lg overflow-hidden group">
+          <div className="absolute inset-0 bg-gradient-to-br from-js/20 via-js/10 to-dark/20" />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="bg-js/10 p-4 rounded-full">
+              <FaUsers className="w-8 h-8 text-js" />
             </div>
-            <div className="absolute inset-0 bg-gradient-to-t from-dark/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
           </div>
-        )}
+          <div className="absolute inset-0 bg-gradient-to-t from-dark/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+        </div>
         
         <div className="flex-1">
           <div className="flex items-start justify-between mb-2">
@@ -147,17 +155,17 @@ const GroupCard = memo(({
               <p className="text-gray-400 text-sm mb-3">{group.description}</p>
             </div>
             <motion.button
-              onClick={handleJoinClick}
+              onClick={handleActionClick}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               transition={{ duration: 0.2 }}
-              disabled={isLoading}
+              disabled={isProcessing}
               className={`
                 px-4 py-2 rounded-lg transition-all duration-300
                 ${group.isJoined 
                   ? "bg-red-500/20 text-red-400 hover:bg-red-500/30 border border-red-500/30 hover:border-red-500/50" 
                   : "bg-js text-dark hover:bg-js/90 hover:shadow-md hover:shadow-js/20"}
-                ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}
+                ${isProcessing ? 'opacity-50 cursor-not-allowed' : ''}
               `}
             >
               <motion.span
@@ -166,7 +174,7 @@ const GroupCard = memo(({
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
               >
-                {isLoading 
+                {isProcessing 
                   ? (group.isJoined ? "Opuszczanie..." : "Dołączanie...") 
                   : (group.isJoined ? "Opuść grupę" : "Dołącz")}
               </motion.span>
@@ -182,22 +190,16 @@ const GroupCard = memo(({
             </div>
             <div className="flex items-center gap-2">
               <div className="p-1.5 rounded-full bg-js/10">
-                <FaComments className="w-3 h-3 text-js" />
-              </div>
-              <span>{group.postsCount} postów</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-full bg-js/10">
                 <FaClock className="w-3 h-3 text-js" />
               </div>
               <span>
-                Ostatnia aktywność {formatDistanceToNow(group.lastActive, { addSuffix: true, locale: pl })}
+                Utworzona {formatDistanceToNow(new Date(group.lastActive), { addSuffix: true, locale: pl })}
               </span>
             </div>
           </div>
           
           <div className="flex flex-wrap gap-2 mt-3">
-            {group.tags.map((tag) => (
+            {group.tags && group.tags.map(tag => (
               <motion.span
                 key={tag}
                 whileHover={{ scale: 1.05 }}

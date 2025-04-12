@@ -1,15 +1,31 @@
 import { motion } from "framer-motion";
-import { memo } from "react";
+import { memo, useMemo } from "react";
 import { FaTrophy, FaStar, FaCalendarDay } from "react-icons/fa";
-import { useRanking } from "../../../../hooks/useRanking";
+import { useRanking } from "./hooks/useRanking";
 
 export const RankingStats = memo(() => {
   const { data, isLoading } = useRanking();
-  const userStats = data?.userStats;
-
-  console.log(data);
   
-
+  const currentUser = useMemo(() => {
+    if (!data) return null;
+    
+    if (Array.isArray(data)) {
+      return data.find(u => u.rank !== undefined || u.position !== undefined);
+    } 
+    else if (data && typeof data === 'object') {
+      const dataObj: any = data;
+      
+      if (dataObj.userStats) {
+        return dataObj.userStats;
+      }
+      else if (dataObj.rank !== undefined || dataObj.position !== undefined) {
+        return dataObj;
+      }
+    }
+    
+    return null;
+  }, [data]);
+  
   if (isLoading) {
     return (
       <motion.div className="bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10 p-6 shadow-lg animate-pulse">
@@ -27,33 +43,43 @@ export const RankingStats = memo(() => {
     );
   }
 
+  const getUserRank = () => {
+    if (!currentUser) return '-';
+    if ('position' in currentUser) return currentUser.position;
+    if ('rank' in currentUser) return currentUser.rank;
+    return '-';
+  };
+  
+  const getUserLevel = () => {
+    if (!currentUser) return '-';
+    if ('level' in currentUser) return currentUser.level;
+    return '-';
+  };
+  
+  const getUserPoints = () => {
+    if (!currentUser) return '-';
+    if ('points' in currentUser) return currentUser.points;
+    if ('streak' in currentUser) return currentUser.streak;
+    return '-';
+  };
+  
   const stats = [
     {
       icon: FaTrophy,
       label: "Twoja pozycja",
-      value: `#${userStats?.rank || '-'}`,
+      value: `#${getUserRank()}`,
       gradient: "from-js/20 to-js/30",
     },
     {
       icon: FaStar,
       label: "Poziom",
-      value: userStats?.level?.toLocaleString() || '-',
-      change: userStats?.level !== undefined
-        ? userStats.level > 0
-          ? `+${userStats.level}`
-          : userStats.level.toString()
-        : undefined,
+      value: typeof getUserLevel() === 'number' ? getUserLevel().toLocaleString() : '-',
       gradient: "from-js/20 to-js/30",
     },
     {
       icon: FaCalendarDay,
-      label: "Streak",
-      value: userStats?.streak?.toLocaleString() || '-',
-      change: userStats?.streak !== undefined
-        ? userStats.streak > 0
-          ? `+${userStats.streak}`
-          : userStats.streak.toString()
-        : undefined,
+      label: "Punkty",
+      value: typeof getUserPoints() === 'number' ? getUserPoints().toLocaleString() : '-',
       gradient: "from-js/20 to-js/30",
     },
   ];

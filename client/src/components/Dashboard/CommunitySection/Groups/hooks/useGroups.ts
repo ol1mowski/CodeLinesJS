@@ -1,32 +1,57 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { fetchGroups, joinGroup } from '../../api/groups';
-import { useAuth } from '../../../../../hooks/useAuth';
-import { Group } from '../../../../../types/groups.types';
-
-const GROUPS_QUERY_KEY = 'groups';
+import { useGroups as useGlobalGroups } from '../../../../../hooks/useGroups';
+import { useGroupsSearch } from '../context/GroupsSearchContext';
+import { useCallback, useMemo, useState } from 'react';
 
 export const useGroups = () => {
-  const queryClient = useQueryClient();
-  const { token } = useAuth();
+  const { groups: groupsData, isLoading, joinGroup, leaveGroup, processingGroupId, error } = useGlobalGroups();
+  const { searchQuery, selectedTags } = useGroupsSearch();
+  const [groupToLeave, setGroupToLeave] = useState<string | null>(null);
+  
+  const handleJoinGroup = useCallback((groupId: string) => {
+    joinGroup(groupId);
+  }, [joinGroup]);
 
-  const { data: groups, isLoading } = useQuery<Group[]>({
-    queryKey: [GROUPS_QUERY_KEY],
-    queryFn: () => fetchGroups(token || ''),
-    staleTime: 5 * 60 * 1000,
-    enabled: !!token
-  });
+  const handleLeaveGroup = useCallback((groupId: string) => {
+    leaveGroup(groupId);
+  }, [leaveGroup]);
 
-  const joinGroupMutation = useMutation({
-    mutationFn: (groupId: string) => joinGroup(groupId, token || ''),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [GROUPS_QUERY_KEY] });
+  const { filteredGroups, isEmpty } = useMemo(() => {
+    if (!groupsData?.groups) {
+      return { filteredGroups: [], isEmpty: true };
     }
-  });
+    
+    const groupsArray = groupsData.groups || [];
+    
+    const filtered = groupsArray.filter(group => {
+      const matchesSearch = searchQuery.toLowerCase().trim() === '' || 
+        group.name.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
+        (group.description && group.description.toLowerCase().includes(searchQuery.toLowerCase().trim()));
+
+      const matchesTags = selectedTags.length === 0 || 
+        selectedTags.every(tag => group.tags?.includes(tag));
+
+      return matchesSearch && matchesTags;
+    });
+    
+    return { 
+      filteredGroups: filtered, 
+      isEmpty: filtered.length === 0 
+    };
+  }, [groupsData, searchQuery, selectedTags]);
+
+  const isGroupProcessing = useCallback((groupId: string) => {
+    return processingGroupId === groupId;
+  }, [processingGroupId]);
 
   return {
-    groups,
+    groups: filteredGroups,
     isLoading,
-    joinGroup: joinGroupMutation.mutate,
-    isJoining: joinGroupMutation.isPending
+    joinGroup: handleJoinGroup,
+    leaveGroup: handleLeaveGroup,
+    isGroupProcessing,
+    isEmpty,
+    groupToLeave,
+    setGroupToLeave,
+    error
   };
 }; 
