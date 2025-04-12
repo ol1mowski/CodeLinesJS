@@ -1,18 +1,21 @@
 import { useGroups as useGlobalGroups } from '../../../../../hooks/useGroups';
 import { useGroupsSearch } from '../context/GroupsSearchContext';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 export const useGroups = () => {
-  const { groups: groupsData, isLoading, joinGroup, error } = useGlobalGroups();
+  const { groups: groupsData, isLoading, joinGroup, leaveGroup, isJoining, isLeaving, error } = useGlobalGroups();
   const { searchQuery, selectedTags } = useGroupsSearch();
-  
-  const isJoining = false; 
+  const [groupToLeave, setGroupToLeave] = useState<string | null>(null);
   
   const handleJoinGroup = useCallback((groupId: string) => {
     joinGroup(groupId);
   }, [joinGroup]);
 
-  const { filteredGroups } = useMemo(() => {
+  const handleLeaveGroup = useCallback((groupId: string) => {
+    leaveGroup(groupId);
+  }, [leaveGroup]);
+
+  const { filteredGroups, isEmpty } = useMemo(() => {
     if (!groupsData?.groups) {
       return { filteredGroups: [], isEmpty: true };
     }
@@ -40,7 +43,12 @@ export const useGroups = () => {
     groups: filteredGroups,
     isLoading,
     joinGroup: handleJoinGroup,
+    leaveGroup: handleLeaveGroup,
     isJoining,
+    isLeaving,
+    isEmpty,
+    groupToLeave,
+    setGroupToLeave,
     error
   };
 }; 

@@ -16,6 +16,13 @@ export const useGroups = () => {
     }
   });
 
+  const leaveGroupMutation = useMutation({
+    mutationFn: groupsApi.leaveGroup,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['groups'] });
+    }
+  });
+
   const groups = data?.data?.groups ? {
     groups: data.data.groups.map((group) => ({
       _id: group._id,
@@ -40,6 +47,9 @@ export const useGroups = () => {
     groups,
     isLoading,
     error,
-    joinGroup: joinGroupMutation.mutate
+    joinGroup: joinGroupMutation.mutate,
+    leaveGroup: leaveGroupMutation.mutate,
+    isJoining: joinGroupMutation.isPending,
+    isLeaving: leaveGroupMutation.isPending
   };
 }; 

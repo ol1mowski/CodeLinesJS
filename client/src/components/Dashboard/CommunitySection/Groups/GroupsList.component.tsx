@@ -1,4 +1,4 @@
-import { memo, useCallback, useMemo } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { FaUsers, FaClock } from "react-icons/fa";
 import { HiOutlineUserGroup } from "react-icons/hi2";
@@ -8,15 +8,31 @@ import { LoadingSpinner } from "../../../../components/UI/LoadingSpinner/Loading
 import { useGroups } from "./hooks/useGroups";
 import { useGroupsSearch } from "./context/GroupsSearchContext";
 import type { Group } from "../../../../types/groups.types";
+import { LeaveGroupModal } from "./Modals/LeaveGroupModal.component";
 
 export const GroupsList = memo(() => {
-  const { groups, isLoading, joinGroup, isJoining } = useGroups();
-  const { searchQuery, selectedTags } = useGroupsSearch();
+  const { groups, isLoading, joinGroup, leaveGroup, isJoining, isLeaving } = useGroups();
+  const [groupToLeave, setGroupToLeave] = useState<Group | null>(null);
   
   const handleJoinGroup = useCallback((groupId: string) => {
     joinGroup(groupId);
   }, [joinGroup]);
 
+  const handleLeaveGroup = useCallback((groupId: string) => {
+    leaveGroup(groupId);
+    setGroupToLeave(null);
+  }, [leaveGroup]);
+
+  const handleLeaveClick = useCallback((group: Group) => {
+    setGroupToLeave(group);
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setGroupToLeave(null);
+  }, []);
+
+  const { searchQuery, selectedTags } = useGroupsSearch();
+  
   const { filteredGroups, isEmpty } = useMemo(() => {
     if (!groups) {
       return { filteredGroups: [], isEmpty: true };
@@ -66,31 +82,53 @@ export const GroupsList = memo(() => {
   }
 
   return (
-    <div className="space-y-4">
-      {filteredGroups.map(group => (
-        <GroupCard 
-          key={group.id} 
-          group={group as Group} 
-          onJoin={handleJoinGroup}
-          isJoining={isJoining}
+    <>
+      <div className="space-y-4">
+        {filteredGroups.map(group => (
+          <GroupCard 
+            key={group.id} 
+            group={group as Group} 
+            onJoin={handleJoinGroup}
+            onLeave={handleLeaveClick}
+            isJoining={isJoining}
+            isLeaving={isLeaving}
+          />
+        ))}
+      </div>
+      
+      {groupToLeave && (
+        <LeaveGroupModal 
+          groupName={groupToLeave.name}
+          onClose={handleCloseModal}
+          onConfirm={() => handleLeaveGroup(groupToLeave._id || groupToLeave.id)}
         />
-      ))}
-    </div>
+      )}
+    </>
   );
 });
 
 interface GroupCardProps {
   group: Group;
   onJoin: (groupId: string) => void;
+  onLeave: (group: Group) => void;
   isJoining: boolean;
+  isLeaving: boolean;
 }
 
-const GroupCard = memo(({ group, onJoin, isJoining }: GroupCardProps) => {
-  const handleJoinClick = useCallback(() => {
+const GroupCard = memo(({ group, onJoin, onLeave, isJoining, isLeaving }: GroupCardProps) => {
+  const handleActionClick = useCallback(() => {
     const groupId = group._id || group.id;
-    console.log('Kliknięto dołącz do grupy z ID:', groupId);
-    onJoin(groupId);
-  }, [group, onJoin]);
+    
+    if (group.isJoined) {
+      console.log('Kliknięto opuść grupę z ID:', groupId);
+      onLeave(group);
+    } else {
+      console.log('Kliknięto dołącz do grupy z ID:', groupId);
+      onJoin(groupId);
+    }
+  }, [group, onJoin, onLeave]);
+
+  const isProcessing = isJoining || isLeaving;
 
   return (
     <motion.div
@@ -120,17 +158,17 @@ const GroupCard = memo(({ group, onJoin, isJoining }: GroupCardProps) => {
               <p className="text-gray-400 text-sm mb-3">{group.description}</p>
             </div>
             <motion.button
-              onClick={handleJoinClick}
+              onClick={handleActionClick}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               transition={{ duration: 0.2 }}
-              disabled={isJoining}
+              disabled={isProcessing}
               className={`
                 px-4 py-2 rounded-lg transition-all duration-300
                 ${group.isJoined 
                   ? "bg-red-500/20 text-red-400 hover:bg-red-500/30 border border-red-500/30 hover:border-red-500/50" 
                   : "bg-js text-dark hover:bg-js/90 hover:shadow-md hover:shadow-js/20"}
-                ${isJoining ? 'opacity-50 cursor-not-allowed' : ''}
+                ${isProcessing ? 'opacity-50 cursor-not-allowed' : ''}
               `}
             >
               <motion.span
@@ -139,7 +177,7 @@ const GroupCard = memo(({ group, onJoin, isJoining }: GroupCardProps) => {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
               >
-                {isJoining 
+                {isProcessing 
                   ? (group.isJoined ? "Opuszczanie..." : "Dołączanie...") 
                   : (group.isJoined ? "Opuść grupę" : "Dołącz")}
               </motion.span>

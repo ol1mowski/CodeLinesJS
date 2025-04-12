@@ -27,7 +27,7 @@ const getToken = () => {
 export const groupsApi = {
   getGroups: async (): Promise<GroupApiResponse> => {
     const token = getToken();
-    const response = await fetch(`${API_URL}/api/groups`, {
+    const response = await fetch(`${API_URL}groups`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -41,7 +41,7 @@ export const groupsApi = {
   
   joinGroup: async (groupId: string): Promise<void> => {
     const token = getToken();
-    const response = await fetch(`${API_URL}/api/groups/${groupId}/join`, {
+    const response = await fetch(`${API_URL}groups/${groupId}/join`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -50,6 +50,21 @@ export const groupsApi = {
     });
     if (!response.ok) {
       throw new Error('Błąd podczas dołączania do grupy');
+    }
+  },
+
+  leaveGroup: async (groupId: string): Promise<void> => {
+    const token = getToken();
+    const response = await fetch(`${API_URL}groups/${groupId}/leave`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Błąd podczas opuszczania grupy');
     }
   }
 }; 
