@@ -1,17 +1,33 @@
-import { Group } from '../../types/groups.types';
+import { API_URL } from "../../config/api.config";
 
-const BASE_URL = 'http://localhost:5001';
+export interface GroupApiResponse {
+  status: string;
+  data: {
+    groups: Array<{
+      _id: string;
+      name: string;
+      description?: string;
+      members?: any[];
+      isMember?: boolean;
+      tags?: string[];
+      updatedAt?: Date | string;
+      [key: string]: any;
+    }>;
+    total: number;
+    page?: number;
+    limit?: number;
+    hasNextPage?: boolean;
+  };
+}
 
 const getToken = () => {
   return sessionStorage.getItem('token') || localStorage.getItem('token');
 };
 
-const token = getToken();
-
-
 export const groupsApi = {
-  getGroups: async (): Promise<Group[]> => {
-    const response = await fetch(`${BASE_URL}/api/groups`, {
+  getGroups: async (): Promise<GroupApiResponse> => {
+    const token = getToken();
+    const response = await fetch(`${API_URL}/api/groups`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -24,7 +40,8 @@ export const groupsApi = {
 
   
   joinGroup: async (groupId: string): Promise<void> => {
-    const response = await fetch(`${BASE_URL}/api/groups/${groupId}/join`, {
+    const token = getToken();
+    const response = await fetch(`${API_URL}/api/groups/${groupId}/join`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
