@@ -1,7 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { fetchGroups, joinGroup } from '../../api/groups';
+import { fetchGroups, joinGroup, GroupApiResponse } from '../../api/groups';
 import { useAuth } from '../../../../../hooks/useAuth';
-import { Group } from '../../../../../types/groups.types';
 
 const GROUPS_QUERY_KEY = 'groups';
 
@@ -9,11 +8,26 @@ export const useGroups = () => {
   const queryClient = useQueryClient();
   const { token } = useAuth();
 
-  const { data: groups, isLoading } = useQuery<Group[]>({
+  const { data: groupsResponse, isLoading } = useQuery<GroupApiResponse>({
     queryKey: [GROUPS_QUERY_KEY],
     queryFn: () => fetchGroups(token || ''),
     staleTime: 5 * 60 * 1000,
     enabled: !!token
+  });
+
+  const groups = groupsResponse?.data?.groups?.map(group => {
+    const { _id, ...restGroup } = group;
+    return {
+      id: _id,
+      isJoined: group.isJoined || false,
+      lastActive: new Date(group.lastActive || new Date()),
+      tags: group.tags || [],
+      owner: group.owner || {
+        id: "unknown",
+        name: "Nieznany"
+      },
+      ...restGroup
+    };
   });
 
   const joinGroupMutation = useMutation({

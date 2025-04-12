@@ -1,6 +1,26 @@
 import { Message } from "react-hook-form";
-import { Group } from "../../../../types/groups.types";
 import { API_URL } from "../../../../config/api.config";
+
+export interface GroupApiResponse {
+  status: string;
+  data: {
+    groups: Array<{
+      _id: string;
+      name: string;
+      description: string;
+      membersCount: number;
+      postsCount: number;
+      isJoined?: boolean;
+      lastActive?: string;
+      tags?: string[];
+      [key: string]: any;
+    }>;
+    hasNextPage: boolean;
+    limit: number;
+    page: number;
+    total: number;
+  };
+}
 
 export const checkGroupNameAvailability = async (name: string, token: string): Promise<boolean> => {
   try {
@@ -59,7 +79,7 @@ export const createGroup = async (groupData: {
   }
 };
 
-export const fetchGroups = async (token: string): Promise<Group[]> => {
+export const fetchGroups = async (token: string): Promise<GroupApiResponse> => {
   const response = await fetch(`${API_URL}groups`, {
     headers: {
       'Authorization': `Bearer ${token}`
@@ -69,7 +89,6 @@ export const fetchGroups = async (token: string): Promise<Group[]> => {
     throw new Error('Błąd podczas pobierania grup');
   }
   const data = await response.json();
-  console.log(data);
   return data;
 };
 

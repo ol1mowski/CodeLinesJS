@@ -70,7 +70,7 @@ export const GroupsList = memo(() => {
       {filteredGroups.map(group => (
         <GroupCard 
           key={group.id} 
-          group={group} 
+          group={group as Group} 
           onJoin={handleJoinGroup}
           isJoining={isJoining}
         />
@@ -79,7 +79,6 @@ export const GroupsList = memo(() => {
   );
 });
 
-// Definiowanie interfejsu dla komponentu GroupCard
 interface GroupCardProps {
   group: Group;
   onJoin: (groupId: string) => void;
@@ -163,7 +162,7 @@ const GroupCard = memo(({ group, onJoin, isJoining }: GroupCardProps) => {
           </div>
           
           <div className="flex flex-wrap gap-2 mt-3">
-            {group.tags.map(tag => (
+            {group.tags && group.tags.map(tag => (
               <motion.span
                 key={tag}
                 whileHover={{ scale: 1.05 }}
