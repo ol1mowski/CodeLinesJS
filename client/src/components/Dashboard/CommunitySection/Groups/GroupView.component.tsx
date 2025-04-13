@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { FaArrowLeft, FaUsers,  FaClock, FaCalendar, FaTag, FaSignOutAlt } from "react-icons/fa";
 import { useGroup } from "../hooks/useGroup";
 import { GroupChat } from "./Chat/GroupChat.component";
-import { format } from "date-fns";
+import { format, isValid } from "date-fns";
 import { pl } from "date-fns/locale";
 import { GroupMembers } from "./GroupMembers.component";
 import { GroupTabs } from "./GroupTabs.component";
@@ -22,7 +22,21 @@ type ExtendedGroup = Group & {
   isAdmin: boolean;
 }
 
-export const GroupView = memo(() => {
+const formatDate = (dateString: string | undefined, formatStr: string): string => {
+  if (!dateString) return "Brak daty";
+  
+  try {
+    const date = new Date(dateString);
+    if (!isValid(date)) return "Nieprawidłowa data";
+    
+    return format(date, formatStr, { locale: pl });
+  } catch (error) {
+    console.error("Błąd formatowania daty:", error);
+    return "Błąd daty";
+  }
+};
+
+const GroupView = memo(() => {
   const { groupId } = useParams<{ groupId: string }>();
   const navigate = useNavigate();
   const { data: group, isLoading, error } = useGroup(groupId!);
@@ -131,7 +145,7 @@ export const GroupView = memo(() => {
             <div>
               <p className="text-gray-400 text-sm">Ostatnia aktywność</p>
               <p className="text-white font-medium">
-                {format(new Date(group.lastActive), 'dd MMM, HH:mm', { locale: pl })}
+                {formatDate(group.lastActive, 'dd MMM, HH:mm')}
               </p>
             </div>
           </div>
@@ -140,7 +154,7 @@ export const GroupView = memo(() => {
             <div>
               <p className="text-gray-400 text-sm">Utworzono</p>
               <p className="text-white font-medium">
-                {format(new Date(extendedGroup.createdAt), 'dd MMM yyyy', { locale: pl })}
+                {formatDate(extendedGroup.createdAt, 'dd MMM yyyy')}
               </p>
             </div>
           </div>
@@ -152,7 +166,7 @@ export const GroupView = memo(() => {
         </div>
 
         <div className="flex flex-wrap gap-2">
-          {group.tags.map((tag: string) => (
+          {group.tags?.map((tag: string) => (
             <span
               key={tag}
               className="px-3 py-1 rounded-full text-sm bg-js/10 text-js border border-js/20 
@@ -187,4 +201,6 @@ export const GroupView = memo(() => {
   );
 });
 
-GroupView.displayName = "GroupView"; 
+GroupView.displayName = "GroupView";
+
+export default GroupView; 
