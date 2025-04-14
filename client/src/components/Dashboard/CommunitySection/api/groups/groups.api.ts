@@ -3,18 +3,45 @@ import { API_URL } from "../../../../../config/api.config";
 
 export const groupsApi = {
   fetchGroup: async (groupId: string, token: string): Promise<Group> => {
-    const response = await fetch(`${API_URL}groups/${groupId}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
+    console.log(`[API] Pobieranie grupy o ID: ${groupId}`);
+    
+    try {
+      const response = await fetch(`${API_URL}groups/${groupId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`[API] Błąd HTTP ${response.status}: ${errorText}`);
+        throw new Error(`Nie udało się pobrać grupy (${response.status})`);
       }
-    });
 
-    if (!response.ok) {
-      throw new Error('Nie udało się pobrać grupy');
+      const responseData = await response.json();
+
+      const groupData = responseData.data?.group || {};
+      
+      const group: Group = {
+        _id: groupData._id || groupId,
+        name: groupData.name || 'Nieznana grupa',
+        description: groupData.description || '',
+        tags: Array.isArray(groupData.tags) ? groupData.tags : [],
+        lastActive: groupData.lastActive || new Date().toISOString(),
+        members: Array.isArray(groupData.members) ? groupData.members : [],
+        membersCount: groupData.membersCount || (Array.isArray(groupData.members) ? groupData.members.length : 0),
+        postsCount: groupData.postsCount || 0,
+        isJoined: groupData.isMember || false,
+        userRole: groupData.role || 'member',
+        isAdmin: groupData.role === 'admin' || groupData.isOwner === true,
+        createdAt: groupData.createdAt || new Date().toISOString()
+      };
+      
+      return group;
+    } catch (error) {
+      console.error('[API] Błąd podczas pobierania grupy:', error);
+      throw error;
     }
-
-    const data = await response.json();
-    return data;
   }
 };
 
@@ -75,7 +102,7 @@ export const deleteGroup = async (groupId: string, token: string) => {
   }
 };
 
-  export const deleteMember = async (groupId: string, memberId: string, token: string) => {
+export const deleteMember = async (groupId: string, memberId: string, token: string) => {
   const response = await fetch(`${API_URL}groups/${groupId}/members/${memberId}`, {
     method: "DELETE",
     headers: {

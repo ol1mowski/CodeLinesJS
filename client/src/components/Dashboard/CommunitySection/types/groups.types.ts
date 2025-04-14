@@ -15,6 +15,13 @@ export type Group = {
   postsCount: number;
   isJoined?: boolean;
   image?: string;
+  userRole?: string;
+  createdAt?: string;
+  isAdmin?: boolean;
+  isMember?: boolean;
+  role?: string;
+  joinedAt?: string;
+  updatedAt?: string;
 }
 
 export type GroupsResponse = {
