@@ -1,20 +1,85 @@
-import { Group } from "../../types/groups.types";
+import { Group, GroupMember } from "../../types/groups.types";
 import { API_URL } from "../../../../../config/api.config";
 
 export const groupsApi = {
   fetchGroup: async (groupId: string, token: string): Promise<Group> => {
-    const response = await fetch(`${API_URL}groups/${groupId}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
+    console.log(`[API] Pobieranie grupy o ID: ${groupId}`);
+    
+    try {
+      const response = await fetch(`${API_URL}groups/${groupId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`[API] Błąd HTTP ${response.status}: ${errorText}`);
+        throw new Error(`Nie udało się pobrać grupy (${response.status})`);
       }
-    });
 
-    if (!response.ok) {
-      throw new Error('Nie udało się pobrać grupy');
+      const responseData = await response.json();
+      console.log('[API] Pełna odpowiedź z serwera:', responseData);
+
+      // Pobierz dane grupy z zagnieżdżonej struktury
+      const groupData = responseData.data?.group || {};
+      console.log('[API] Wyodrębnione dane grupy:', groupData);
+      
+      // Przetwarzanie członków grupy - bardzo dokładne sprawdzanie
+      let members: GroupMember[] = [];
+      
+      if (Array.isArray(groupData.members)) {
+        console.log('[API] Przetwarzanie tablicy członków:', groupData.members);
+        
+        members = groupData.members.map((memberData: any) => {
+          // Sprawdzenie, czy member jest obiektem
+          if (typeof memberData !== 'object' || memberData === null) {
+            console.warn('[API] Nieprawidłowy format członka grupy:', memberData);
+            return {
+              _id: 'unknown-id',
+              username: 'Nieznany użytkownik',
+              role: 'member'
+            };
+          }
+          
+          // Wyciągnięcie danych użytkownika
+          let userData = memberData.user || memberData;
+          
+          return {
+            _id: memberData._id || userData._id || 'unknown-id',
+            username: userData.username || userData.name || userData.email || 'Nieznany użytkownik',
+            avatar: userData.avatar || undefined,
+            role: memberData.role || userData.role || 'member'
+          };
+        });
+      } else {
+        console.warn('[API] Brak tablicy członków w danych grupy');
+      }
+      
+      console.log('[API] Przetworzeni członkowie grupy:', members);
+      
+      // Przygotowanie obiektu grupy z odpowiednimi polami
+      const group: Group = {
+        _id: groupData._id || groupId,
+        name: groupData.name || 'Nieznana grupa',
+        description: groupData.description || '',
+        tags: Array.isArray(groupData.tags) ? groupData.tags : [],
+        lastActive: groupData.lastActive || new Date().toISOString(),
+        members: members,
+        membersCount: groupData.membersCount || members.length || 0,
+        postsCount: groupData.postsCount || 0,
+        isJoined: groupData.isMember || false,
+        userRole: groupData.role || 'member',
+        isAdmin: groupData.role === 'admin' || groupData.isOwner === true,
+        createdAt: groupData.createdAt || new Date().toISOString()
+      };
+      
+      console.log('[API] Przetworzony obiekt grupy do zwrócenia:', group);
+      return group;
+    } catch (error) {
+      console.error('[API] Błąd podczas pobierania grupy:', error);
+      throw error;
     }
-
-    const data = await response.json();
-    return data;
   }
 };
 
@@ -75,7 +140,7 @@ export const deleteGroup = async (groupId: string, token: string) => {
   }
 };
 
-  export const deleteMember = async (groupId: string, memberId: string, token: string) => {
+export const deleteMember = async (groupId: string, memberId: string, token: string) => {
   const response = await fetch(`${API_URL}groups/${groupId}/members/${memberId}`, {
     method: "DELETE",
     headers: {

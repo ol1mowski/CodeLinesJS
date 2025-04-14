@@ -4,7 +4,7 @@ import { connectDB } from "./config/db.config.js";
 import { configureRoutes } from "./routes/index.js";
 import { configureGoogleSignIn } from "./middleware/google.middleware.js";
 import { configureStaticFiles } from "./middleware/static.middleware.js";
-import errorHandler from "./middleware/error.middleware.js";
+// import errorHandler from "./middleware/error.middleware.js";
 
 const app: Application = express();
 
@@ -21,7 +21,17 @@ configureGoogleSignIn(app);
 
 configureStaticFiles(app);
 
-app.use(errorHandler);
+// app.use(errorHandler);
+
+// Dodaję prosty handler błędów, który tylko loguje i przekazuje surowe dane
+app.use((err: any, req: Request, res: Response, next: any) => {
+  console.error('Surowy błąd:', err);
+  res.status(err.statusCode || 500).json({
+    error: err,
+    message: err.message,
+    stack: err.stack
+  });
+});
 
 const PORT: number = parseInt(process.env.PORT || "5001", 10);
 
