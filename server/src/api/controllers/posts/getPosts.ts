@@ -33,10 +33,11 @@ export const getPostsController = asyncHandler(async (req: Request, res: Respons
     
     if (!result) {
       console.error('[getPostsController] Usługa zwróciła undefined');
-      return res.status(500).json({
+      res.status(500).json({
         status: 'error',
         message: 'Błąd serwera podczas pobierania postów'
       });
+      return;
     }
     
     console.log('[getPostsController] Pobrano postów:', result.posts?.length || 0);

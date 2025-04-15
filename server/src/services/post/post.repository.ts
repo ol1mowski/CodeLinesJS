@@ -93,30 +93,60 @@ export class PostRepository {
     return post as unknown as IPost;
   }
 
-  static async incrementLikes(postId: string): Promise<IPost | null> {
+  static async incrementLikes(postId: string, userId?: string): Promise<IPost | null> {
     if (!Types.ObjectId.isValid(postId)) {
       throw new ValidationError('Nieprawidłowy format ID posta');
     }
     
+    const update: any = { $inc: { 'likes.count': 1 } };
+    
+    // Jeśli podano userId, dodaj go do listy userIds
+    if (userId && Types.ObjectId.isValid(userId)) {
+      update.$addToSet = { 'likes.userIds': new Types.ObjectId(userId) };
+    }
     
     const post = await Post.findByIdAndUpdate(
       postId,
-      { $inc: { 'likes.count': 1 } },
+      update,
       { new: true }
     );
     
     return post as unknown as IPost;
   }
 
-  static async decrementLikes(postId: string): Promise<IPost | null> {
+  static async decrementLikes(postId: string, userId?: string): Promise<IPost | null> {
     if (!Types.ObjectId.isValid(postId)) {
       throw new ValidationError('Nieprawidłowy format ID posta');
     }
     
-
+    const update: any = { $inc: { 'likes.count': -1 } };
+    
+    // Jeśli podano userId, usuń go z listy userIds
+    if (userId && Types.ObjectId.isValid(userId)) {
+      update.$pull = { 'likes.userIds': new Types.ObjectId(userId) };
+    }
+    
     const post = await Post.findByIdAndUpdate(
       postId,
-      { $inc: { 'likes.count': -1 } },
+      update,
+      { new: true }
+    );
+    
+    return post as unknown as IPost;
+  }
+
+  static async updateLikeStatus(postId: string, userId: string, isLiked: boolean): Promise<IPost | null> {
+    if (!Types.ObjectId.isValid(postId) || !Types.ObjectId.isValid(userId)) {
+      throw new ValidationError('Nieprawidłowy format ID');
+    }
+    
+    const update = isLiked 
+      ? { $addToSet: { 'likes.userIds': new Types.ObjectId(userId) } }
+      : { $pull: { 'likes.userIds': new Types.ObjectId(userId) } };
+    
+    const post = await Post.findByIdAndUpdate(
+      postId,
+      update,
       { new: true }
     );
     

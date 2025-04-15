@@ -29,12 +29,12 @@ export class PostInteractionService {
     
     if (isLiked) {
       await Promise.all([
-        PostRepository.decrementLikes(postId),
+        PostRepository.decrementLikes(postId, userId),
         UserRepository.removeLikedPost(userId, postId)
       ]);
     } else {
       await Promise.all([
-        PostRepository.incrementLikes(postId),
+        PostRepository.incrementLikes(postId, userId),
         UserRepository.addLikedPost(userId, postId)
       ]);
     }

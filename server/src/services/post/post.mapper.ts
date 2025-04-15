@@ -16,7 +16,10 @@ export class PostMapper {
         },
         comments: [],
         commentsCount: 0,
-        likes: 0,
+        likes: {
+          count: 0,
+          isLiked: false
+        },
         createdAt: new Date(),
         updatedAt: new Date(),
         isLiked: false,
@@ -26,7 +29,20 @@ export class PostMapper {
       };
     }
 
-    return {
+    // Obliczanie liczby polubień
+    let likesCount = 0;
+    if (post.likes !== undefined) {
+      if (typeof post.likes === 'number') {
+        likesCount = post.likes;
+      } else if (typeof post.likes === 'object' && post.likes !== null) {
+        if (post.likes.count !== undefined) {
+          likesCount = parseInt(post.likes.count) || 0;
+        }
+      }
+    }
+
+    // Struktura zgodna z frontendem
+    const result = {
       _id: post._id,
       content: post.content,
       author: {
@@ -37,7 +53,10 @@ export class PostMapper {
       },
       comments: post.comments || [],
       commentsCount: post.comments?.length || 0,
-      likes: post.likes || 0,
+      likes: {
+        count: likesCount,
+        isLiked: isLiked
+      },
       createdAt: post.createdAt,
       updatedAt: post.updatedAt,
       isLiked,
@@ -45,6 +64,8 @@ export class PostMapper {
       title: post.title,
       category: post.category
     };
+
+    return result;
   }
 
   static toPostsResponse(
@@ -62,7 +83,22 @@ export class PostMapper {
     return validPosts.map(post => {
       try {
         const postId = post._id.toString();
-        const isLiked = Array.isArray(userLikedPosts) && userLikedPosts.some(id => id && id.toString() === postId);
+        
+        // Sprawdź, czy użytkownik polubił post na podstawie userLikedPosts lub post.likes.userIds
+        let isLiked = false;
+        
+        // Sprawdź na podstawie userLikedPosts
+        if (Array.isArray(userLikedPosts)) {
+          isLiked = userLikedPosts.some(id => id && id.toString() === postId);
+        }
+        
+        // Jeśli nie polubiony, sprawdź też post.likes.userIds jeśli istnieje
+        if (!isLiked && post.likes && Array.isArray(post.likes.userIds) && userLikedPosts && userLikedPosts.length > 0) {
+          // Pobierz pierwszy element z userLikedPosts, aby uzyskać ID użytkownika
+          const userId = userLikedPosts[0].valueOf();
+          isLiked = post.likes.userIds.some((id: any) => id && id.toString() === userId.toString());
+        }
+        
         const isSaved = Array.isArray(userSavedPosts) && userSavedPosts.some(id => id && id.toString() === postId);
         
         return this.toPostResponse(post, isLiked, isSaved);

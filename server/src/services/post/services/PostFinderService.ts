@@ -20,16 +20,13 @@ export class PostFinderService {
     const paginationOptions = PostQueryFactory.createPaginationOptions(options);
     
     try {
-      const allPosts = await Post.find({}).limit(10);
-
       const [postsResult, user] = await Promise.all([
         PostRepository.findAll(query, paginationOptions),
         UserRepository.findUserPostInfo(userId)
       ]);
       
-      
-      const likedPosts = user?.likedPosts || [];
-      const savedPosts = user?.savedPosts || [];
+      const likedPosts = Array.isArray(user?.likedPosts) ? user.likedPosts : [];
+      const savedPosts = Array.isArray(user?.savedPosts) ? user.savedPosts : [];
       
       const formattedPosts = PostMapper.toPostsResponse(
         postsResult.docs,
@@ -58,8 +55,15 @@ export class PostFinderService {
       throw new ValidationError('Post nie został znaleziony');
     }
     
-    const isLiked = user.likedPosts.some(id => id.toString() === postId);
-    const isSaved = user.savedPosts.some(id => id.toString() === postId);
+    if (!user) {
+      throw new ValidationError('Użytkownik nie został znaleziony');
+    }
+    
+    const likedPosts = Array.isArray(user.likedPosts) ? user.likedPosts : [];
+    const savedPosts = Array.isArray(user.savedPosts) ? user.savedPosts : [];
+    
+    const isLiked = likedPosts.some(id => id && id.toString() === postId);
+    const isSaved = savedPosts.some(id => id && id.toString() === postId);
     
     return PostMapper.toPostResponse(post, isLiked, isSaved);
   }

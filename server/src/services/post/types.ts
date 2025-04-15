@@ -11,7 +11,11 @@ export interface IPost {
     accountType: string;
   };
   comments: IComment[];
-  likes: number;
+  likes: {
+    count: number;
+    userIds: Types.ObjectId[];
+    isLiked?: boolean;
+  };
   createdAt: Date;
   updatedAt: Date;
   category?: string;
@@ -72,7 +76,10 @@ export interface PostResponse {
   };
   comments: IComment[];
   commentsCount: number;
-  likes: number;
+  likes: {
+    count: number;
+    isLiked: boolean;
+  };
   createdAt: Date;
   updatedAt: Date;
   isLiked: boolean;
