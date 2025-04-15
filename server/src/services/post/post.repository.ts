@@ -134,14 +134,31 @@ export class UserRepository {
   }
 
   static async incrementPostCount(userId: string): Promise<any> {
+    console.log("[incrementPostCount] Próba zwiększenia liczby postów dla użytkownika:", userId);
+    console.log("[incrementPostCount] Typ userId:", typeof userId);
+    console.log("[incrementPostCount] Walidacja ID:", Types.ObjectId.isValid(userId));
+    
+    if (!userId) {
+      console.error("[incrementPostCount] userId jest puste lub undefined");
+      throw new ValidationError('Brak ID użytkownika');
+    }
+    
     if (!Types.ObjectId.isValid(userId)) {
+      console.error("[incrementPostCount] Nieprawidłowy format ID użytkownika:", userId);
       throw new ValidationError('Nieprawidłowy format ID użytkownika');
     }
     
-    return User.findByIdAndUpdate(
-      userId,
-      { $inc: { postsCount: 1 } }
-    );
+    try {
+      const result = await User.findByIdAndUpdate(
+        userId,
+        { $inc: { postsCount: 1 } }
+      );
+      console.log("[incrementPostCount] Rezultat operacji:", result ? "Sukces" : "Użytkownik nie znaleziony");
+      return result;
+    } catch (error) {
+      console.error("[incrementPostCount] Błąd podczas aktualizacji:", error);
+      throw error;
+    }
   }
 
   static async decrementPostCount(userId: string): Promise<any> {

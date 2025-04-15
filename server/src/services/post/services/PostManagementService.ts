@@ -11,21 +11,53 @@ export class PostManagementService {
   private static contentSanitizer = new ContentSanitizer();
   
   static async createPost(content: string, userId: string): Promise<PostResponse> {
+    console.log("[PostManagementService.createPost] Rozpoczęcie tworzenia posta");
+    console.log("[PostManagementService.createPost] userId:", userId);
+    console.log("[PostManagementService.createPost] Typ userId:", typeof userId);
+    
     this.contentValidator.validate(content);
     
     const sanitizedContent = this.contentSanitizer.sanitize(content);
     
-    const post = await PostRepository.create({
-      content: sanitizedContent,
-      author: new Types.ObjectId(userId),
-      isPublished: true
-    });
-    
-    await UserRepository.incrementPostCount(userId);
-    
-    const populatedPost = await PostRepository.findById(post._id.toString());
-    
-    return PostMapper.toPostResponse(populatedPost, false, false);
+    try {
+      console.log("[PostManagementService.createPost] Przed utworzeniem posta");
+      
+      // Sprawdzenie poprawności userId przed użyciem
+      if (!userId || typeof userId !== 'string') {
+        console.error("[PostManagementService.createPost] Nieprawidłowy userId:", userId);
+        throw new ValidationError('Nieprawidłowy identyfikator użytkownika');
+      }
+      
+      // Próba konwersji userId na ObjectId dla walidacji
+      let userObjectId;
+      try {
+        userObjectId = new Types.ObjectId(userId);
+        console.log("[PostManagementService.createPost] Konwersja userId do ObjectId udana:", userObjectId);
+      } catch (error) {
+        console.error("[PostManagementService.createPost] Błąd konwersji userId do ObjectId:", error);
+        throw new ValidationError('Nieprawidłowy format ID użytkownika');
+      }
+      
+      const post = await PostRepository.create({
+        content: sanitizedContent,
+        author: userObjectId,
+        isPublished: true
+      });
+      
+      console.log("[PostManagementService.createPost] Post utworzony:", post._id.toString());
+      console.log("[PostManagementService.createPost] Przed zwiększeniem licznika postów użytkownika");
+      
+      await UserRepository.incrementPostCount(userId);
+      
+      console.log("[PostManagementService.createPost] Po zwiększeniu licznika postów użytkownika");
+      
+      const populatedPost = await PostRepository.findById(post._id.toString());
+      
+      return PostMapper.toPostResponse(populatedPost, false, false);
+    } catch (error) {
+      console.error("[PostManagementService.createPost] Błąd podczas tworzenia posta:", error);
+      throw error;
+    }
   }
   
   static async updatePost(postId: string, content: string, userId: string): Promise<PostResponse> {

@@ -3,10 +3,10 @@ import { PostService } from '../../../services/post/post.service.js';
 import { asyncHandler } from '../../../utils/asyncHandler.js';
 
 export const likePostController = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-  const { id } = req.params;
-  const userId = req.user.id;
+  const { postId } = req.params;
+  const userId = req.user.userId;
 
-  const post = await PostService.likePost(id, userId);
+  const post = await PostService.likePost(postId, userId);
 
   res.json({
     status: 'success',

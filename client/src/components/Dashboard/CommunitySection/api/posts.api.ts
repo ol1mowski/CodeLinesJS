@@ -107,7 +107,7 @@ export const toggleLike = async (postId: string, isLiked: boolean, token: string
 };
 
 export const deletePost = async (id: string, token: string) => {
-  const response = await fetch(`${API_URL}/${id}`, {
+  const response = await fetch(`${API_URL}posts/${id}`, {
     method: 'DELETE',
     headers: {
       Authorization: `Bearer ${token}`,
@@ -117,7 +117,7 @@ export const deletePost = async (id: string, token: string) => {
 };
 
 export const updatePost = async (id: string, updatedData: Partial<Post>, token: string) => {
-  const response = await fetch(`${API_URL}/${id}`, {
+  const response = await fetch(`${API_URL}posts/${id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',

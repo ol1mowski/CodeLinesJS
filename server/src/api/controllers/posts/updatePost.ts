@@ -3,11 +3,11 @@ import { PostService } from '../../../services/post/post.service.js';
 import { asyncHandler } from '../../../utils/asyncHandler.js';
 
 export const updatePostController = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-  const { id } = req.params;
+  const { postId } = req.params;
   const { content } = req.body;
-  const userId = req.user.id;
+  const userId = req.user.userId;
 
-  const post = await PostService.updatePost(id, content, userId);
+  const post = await PostService.updatePost(postId, content, userId);
 
   res.json({
     status: 'success',

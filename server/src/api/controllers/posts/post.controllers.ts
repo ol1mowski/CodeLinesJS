@@ -41,10 +41,10 @@ export const createPost = async (req: Request, res: Response, next: NextFunction
 
     const post = await Post.create({
       content: sanitizedContent,
-      author: req.user.id,
+      author: req.user.userId,
     });
     
-    await User.findByIdAndUpdate(req.user.id, {
+    await User.findByIdAndUpdate(req.user.userId, {
       $inc: { postsCount: 1 },
     });
 
