@@ -3,7 +3,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FaArrowLeft, FaUsers,  FaClock, FaCalendar, FaTag, FaSignOutAlt } from "react-icons/fa";
 import { useGroup } from "../hooks/useGroup";
-import { GroupChat } from "./Chat/GroupChat.component";
 import { format, isValid } from "date-fns";
 import { pl } from "date-fns/locale";
 import { GroupMembers } from "./GroupMembers.component";
@@ -45,18 +44,11 @@ const GroupView = memo(() => {
   const { token } = useAuth();
 
   useEffect(() => {
-    console.log("GroupId:", groupId);
-    console.log("Token dostępny:", !!token);
     if (groupId && token) {
       refetch();
     }
   }, [groupId, token, refetch]);
 
-  useEffect(() => {
-    if (group) {
-      console.log("Otrzymane dane grupy:", group);
-    }
-  }, [group]);
 
   const leaveGroupMutation = useMutation({
     mutationFn: async () => {
@@ -110,8 +102,6 @@ const GroupView = memo(() => {
 
   const renderContent = () => {
     switch (activeTab) {
-      case 'chat':
-        return <GroupChat groupId={groupId!} />;
       case 'members':
         return (
           <GroupMembers 

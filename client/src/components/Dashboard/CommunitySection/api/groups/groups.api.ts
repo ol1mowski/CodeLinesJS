@@ -3,7 +3,6 @@ import { API_URL } from "../../../../../config/api.config";
 
 export const groupsApi = {
   fetchGroup: async (groupId: string, token: string): Promise<Group> => {
-    console.log(`[API] Pobieranie grupy o ID: ${groupId}`);
     
     try {
       const response = await fetch(`${API_URL}groups/${groupId}`, {
@@ -19,20 +18,15 @@ export const groupsApi = {
       }
 
       const responseData = await response.json();
-      console.log('[API] Pełna odpowiedź z serwera:', responseData);
 
-      // Pobierz dane grupy z zagnieżdżonej struktury
       const groupData = responseData.data?.group || {};
-      console.log('[API] Wyodrębnione dane grupy:', groupData);
       
-      // Przetwarzanie członków grupy - bardzo dokładne sprawdzanie
       let members: GroupMember[] = [];
       
       if (Array.isArray(groupData.members)) {
-        console.log('[API] Przetwarzanie tablicy członków:', groupData.members);
         
         members = groupData.members.map((memberData: any) => {
-          // Sprawdzenie, czy member jest obiektem
+  
           if (typeof memberData !== 'object' || memberData === null) {
             console.warn('[API] Nieprawidłowy format członka grupy:', memberData);
             return {
@@ -42,7 +36,6 @@ export const groupsApi = {
             };
           }
           
-          // Wyciągnięcie danych użytkownika
           let userData = memberData.user || memberData;
           
           return {
@@ -55,10 +48,7 @@ export const groupsApi = {
       } else {
         console.warn('[API] Brak tablicy członków w danych grupy');
       }
-      
-      console.log('[API] Przetworzeni członkowie grupy:', members);
-      
-      // Przygotowanie obiektu grupy z odpowiednimi polami
+    
       const group: Group = {
         _id: groupData._id || groupId,
         name: groupData.name || 'Nieznana grupa',
@@ -74,7 +64,6 @@ export const groupsApi = {
         createdAt: groupData.createdAt || new Date().toISOString()
       };
       
-      console.log('[API] Przetworzony obiekt grupy do zwrócenia:', group);
       return group;
     } catch (error) {
       console.error('[API] Błąd podczas pobierania grupy:', error);

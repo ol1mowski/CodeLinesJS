@@ -11,8 +11,6 @@ import { useAuth } from '../../../hooks/useAuth';
 
 const CommunityFeed = lazy(() => import('./Feed/CommunityFeed.component'));
 const CommunityRanking = lazy(() => import('./Ranking/CommunityRanking.component'));
-const CommunityGroups = lazy(() => import('./Groups/CommunityGroups.component'));
-const GroupView = lazy(() => import('./Groups/GroupView.component'));
 
 export const CommunitySection = memo(() => {
   const location = useLocation();
@@ -53,18 +51,6 @@ export const CommunitySection = memo(() => {
                 <CommunityRanking />
               </Suspense>
             } />
-            <Route path="groups">
-              <Route index element={
-                <Suspense fallback={<LoadingSpinner text="Ładowanie grup..." />}>
-                  <CommunityGroups />
-                </Suspense>
-              } />
-              <Route path=":groupId" element={
-                <Suspense fallback={<LoadingSpinner text="Ładowanie grupy..." />}>
-                  <GroupView />
-                </Suspense>
-              } />
-            </Route>
           </Routes>
         </div>
       </div>
