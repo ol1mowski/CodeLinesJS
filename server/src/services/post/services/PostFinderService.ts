@@ -3,6 +3,7 @@ import { PostMapper } from '../post.mapper.js';
 import { ValidationError } from '../../../utils/errors.js';
 import { PostsResponse, PostResponse } from '../types.js';
 import { PostQueryFactory } from '../factories/PostQueryFactory.js';
+import { Post } from '../../../models/post.model.js';
 
 export class PostFinderService {
   static async getPosts(
@@ -14,26 +15,51 @@ export class PostFinderService {
       search?: string;
     }
   ): Promise<PostsResponse> {
+    console.log('[PostFinderService.getPosts] Rozpoczęto pobieranie postów dla użytkownika:', userId);
+    console.log('[PostFinderService.getPosts] Opcje:', options);
+    
     const query = PostQueryFactory.createCompleteQuery(options);
     const paginationOptions = PostQueryFactory.createPaginationOptions(options);
     
-    const [postsResult, user] = await Promise.all([
-      PostRepository.findAll(query, paginationOptions),
-      UserRepository.findUserPostInfo(userId)
-    ]);
+    console.log('[PostFinderService.getPosts] Wygenerowane query:', JSON.stringify(query));
+    console.log('[PostFinderService.getPosts] Opcje paginacji:', JSON.stringify(paginationOptions));
     
-    const formattedPosts = PostMapper.toPostsResponse(
-      postsResult.docs,
-      user.likedPosts || [],
-      user.savedPosts || []
-    );
-    
-    return {
-      posts: formattedPosts,
-      totalPages: postsResult.totalPages,
-      currentPage: postsResult.page,
-      totalPosts: postsResult.totalDocs
-    };
+    try {
+      // Pobieramy wszystkie posty bez filtrów, żeby sprawdzić czy w ogóle istnieją
+      const allPosts = await Post.find({}).limit(10);
+      console.log('[PostFinderService.getPosts] Liczba wszystkich postów w bazie (sample):', allPosts.length);
+      
+      const [postsResult, user] = await Promise.all([
+        PostRepository.findAll(query, paginationOptions),
+        UserRepository.findUserPostInfo(userId)
+      ]);
+      
+      console.log('[PostFinderService.getPosts] Znalezione posty:', postsResult.docs.length);
+      console.log('[PostFinderService.getPosts] Informacje o użytkowniku (likedPosts, savedPosts):', 
+        user?.likedPosts?.length || 0, user?.savedPosts?.length || 0);
+      
+      // Sprawdzamy, czy user.likedPosts i user.savedPosts są zdefiniowane
+      const likedPosts = user?.likedPosts || [];
+      const savedPosts = user?.savedPosts || [];
+      
+      const formattedPosts = PostMapper.toPostsResponse(
+        postsResult.docs,
+        likedPosts,
+        savedPosts
+      );
+      
+      console.log('[PostFinderService.getPosts] Sformatowane posty:', formattedPosts.length);
+      
+      return {
+        posts: formattedPosts,
+        totalPages: postsResult.totalPages,
+        currentPage: postsResult.page,
+        totalPosts: postsResult.totalDocs
+      };
+    } catch (error) {
+      console.error('[PostFinderService.getPosts] Błąd podczas pobierania postów:', error);
+      throw error;
+    }
   }
   
   static async getPostById(postId: string, userId: string): Promise<PostResponse> {

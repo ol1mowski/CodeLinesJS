@@ -6,8 +6,19 @@ import { PostQuery, PaginationOptions, IPost } from './types.js';
 
 export class PostRepository {
   static async findAll(query: PostQuery, options: PaginationOptions): Promise<any> {
-    // @ts-ignore - paginate jest dodawane przez plugin, ale TypeScript tego nie widzi
-    return Post.paginate(query, options);
+    console.log('[PostRepository.findAll] Szukam postów z query:', query);
+    console.log('[PostRepository.findAll] Opcje paginacji:', options);
+    
+    try {
+      // @ts-ignore - paginate jest dodawane przez plugin, ale TypeScript tego nie widzi
+      const result = await Post.paginate(query, options);
+      console.log('[PostRepository.findAll] Znaleziono dokumentów:', result.docs.length);
+      console.log('[PostRepository.findAll] Całkowita liczba dokumentów:', result.totalDocs);
+      return result;
+    } catch (error) {
+      console.error('[PostRepository.findAll] Błąd podczas pobierania postów:', error);
+      throw error;
+    }
   }
 
   static async findById(id: string): Promise<IPost | null> {

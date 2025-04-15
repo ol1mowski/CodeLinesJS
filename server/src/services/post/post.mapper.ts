@@ -3,14 +3,37 @@ import { Types } from 'mongoose';
 
 export class PostMapper {
   static toPostResponse(post: any, isLiked: boolean, isSaved: boolean): PostResponse {
+    if (!post) {
+      console.error('PostMapper.toPostResponse: Otrzymano null post');
+      return {
+        _id: null,
+        content: '',
+        author: {
+          _id: null,
+          username: 'Usunięty użytkownik',
+          avatar: '',
+          accountType: 'user'
+        },
+        comments: [],
+        commentsCount: 0,
+        likes: 0,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        isLiked: false,
+        isSaved: false,
+        title: '',
+        category: ''
+      };
+    }
+
     return {
       _id: post._id,
       content: post.content,
       author: {
-        _id: post.author._id,
-        username: post.author.username,
-        avatar: post.author.avatar,
-        accountType: post.author.accountType
+        _id: post.author?._id,
+        username: post.author?.username || 'Nieznany',
+        avatar: post.author?.avatar || '',
+        accountType: post.author?.accountType || 'user'
       },
       comments: post.comments || [],
       commentsCount: post.comments?.length || 0,
@@ -29,11 +52,27 @@ export class PostMapper {
     userLikedPosts: Types.ObjectId[],
     userSavedPosts: Types.ObjectId[]
   ): PostResponse[] {
-    return posts.map(post => {
-      const isLiked = userLikedPosts.some(id => id.toString() === post._id.toString());
-      const isSaved = userSavedPosts.some(id => id.toString() === post._id.toString());
-      
-      return this.toPostResponse(post, isLiked, isSaved);
-    });
+    console.log('PostMapper.toPostsResponse: Otrzymane posty:', posts ? posts.length : 0);
+    
+    if (!Array.isArray(posts)) {
+      console.error('PostMapper.toPostsResponse: posts nie jest tablicą:', posts);
+      return [];
+    }
+    
+    const validPosts = posts.filter(post => post && post._id);
+    console.log('PostMapper.toPostsResponse: Prawidłowe posty:', validPosts.length);
+    
+    return validPosts.map(post => {
+      try {
+        const postId = post._id.toString();
+        const isLiked = Array.isArray(userLikedPosts) && userLikedPosts.some(id => id && id.toString() === postId);
+        const isSaved = Array.isArray(userSavedPosts) && userSavedPosts.some(id => id && id.toString() === postId);
+        
+        return this.toPostResponse(post, isLiked, isSaved);
+      } catch (error) {
+        console.error('PostMapper.toPostsResponse: Błąd podczas mapowania posta:', error, 'Post:', post);
+        return null;
+      }
+    }).filter(Boolean);
   }
 } 
