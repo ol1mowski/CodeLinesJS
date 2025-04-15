@@ -2,6 +2,7 @@
 import mongoose from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
 
+
 const postSchema = new mongoose.Schema({
   content: {
     type: String,
@@ -11,6 +12,10 @@ const postSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
+  },
+  isPublished: {
+    type: Boolean,
+    default: true
   },
   likes: {
     count: {
@@ -46,7 +51,8 @@ const postSchema = new mongoose.Schema({
 postSchema.plugin(mongoosePaginate);
 
 postSchema.statics.paginate = function() {
-  return mongoosePaginate.paginate.apply(this, arguments);
+  const result = mongoosePaginate.paginate.apply(this, arguments);
+  return result;
 };
 
-export const Post = mongoose.model('Post', postSchema); 
+export const Post = mongoose.model('Post', postSchema);

@@ -3,10 +3,10 @@ import { PostService } from '../../../services/post/post.service.js';
 import { asyncHandler } from '../../../utils/asyncHandler.js';
 
 export const deletePostController = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-  const { id } = req.params;
-  const userId = req.user.id;
+  const { postId } = req.params;
+  const userId = req.user.userId;
 
-  await PostService.deletePost(id, userId);
+  await PostService.deletePost(postId, userId);
 
   res.status(200).json({
     status: 'success',

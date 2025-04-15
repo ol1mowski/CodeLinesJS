@@ -26,14 +26,6 @@ export const CommunityNav = memo(({ activeView }: CommunityNavProps) => {
       >
         Ranking
       </button>
-      <button
-        onClick={() => navigate('/dashboard/community/groups')}
-        className={`px-4 py-2 rounded-lg transition-colors ${
-          activeView === 'groups' ? 'bg-js text-dark' : 'text-gray-400 hover:text-js'
-        }`}
-      >
-        Grupy
-      </button>
     </nav>
   );
 });

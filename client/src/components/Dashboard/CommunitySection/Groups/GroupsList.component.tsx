@@ -119,10 +119,8 @@ const GroupCard = memo(({ group, onJoin, onLeave, isProcessing }: GroupCardProps
     const groupId = group._id || group.id;
     
     if (group.isJoined) {
-      console.log('Kliknięto opuść grupę z ID:', groupId);
       onLeave(group);
     } else {
-      console.log('Kliknięto dołącz do grupy z ID:', groupId);
       onJoin(groupId);
     }
   }, [group, onJoin, onLeave, isProcessing]);

@@ -2,7 +2,8 @@ import { PostQuery, PaginationOptions } from '../types.js';
 
 export class PostQueryFactory {
   static createBasicQuery(): PostQuery {
-    return { isPublished: true };
+    console.log('[PostQueryFactory] Tworzę podstawowe zapytanie');
+    return {};
   }
   
   static createSearchQuery(search?: string): Partial<PostQuery> {

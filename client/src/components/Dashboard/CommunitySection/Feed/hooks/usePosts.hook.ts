@@ -1,6 +1,7 @@
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { useAuth } from '../../../../../hooks/useAuth';
 import { API_URL } from '../../../../../config/api.config';
+import toast from 'react-hot-toast';
 
 export interface PostAuthor {
   _id: string;
@@ -77,6 +78,45 @@ const fetchPosts = async (token: string | null, page: number = 1): Promise<Posts
   }
 };
 
+// Funkcja do usuwania postów
+const deletePostFromApi = async (postId: string, token: string | null): Promise<any> => {
+  if (!token) throw new Error('Brak autoryzacji');
+  
+  const response = await fetch(`${API_URL}posts/${postId}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    }
+  });
+  
+  if (!response.ok) throw new Error('Nie udało się usunąć posta');
+  
+  return await response.json();
+};
+
+// Funkcja do aktualizacji postów
+const updatePostInApi = async (
+  postId: string, 
+  updateData: { content: string }, 
+  token: string | null
+): Promise<any> => {
+  if (!token) throw new Error('Brak autoryzacji');
+  
+  const response = await fetch(`${API_URL}posts/${postId}`, {
+    method: 'PATCH',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(updateData)
+  });
+  
+  if (!response.ok) throw new Error('Nie udało się zaktualizować posta');
+  
+  return await response.json();
+};
+
 export const usePosts = () => {
   const { token } = useAuth();
   const queryClient = useQueryClient();
@@ -102,6 +142,34 @@ export const usePosts = () => {
     }
   });
 
+  // Dodane mutacje
+  const deletePostMutation = useMutation({
+    mutationFn: (postId: string) => deletePostFromApi(postId, token),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [POSTS_QUERY_KEY] });
+      toast.success('Post został usunięty');
+    },
+    onError: () => {
+      toast.error('Nie udało się usunąć posta');
+    }
+  });
+
+  const updatePostMutation = useMutation({
+    mutationFn: ({ postId, data }: { postId: string, data: { content: string } }) => 
+      updatePostInApi(postId, data, token),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [POSTS_QUERY_KEY] });
+      toast.success('Post został zaktualizowany');
+    },
+    onError: () => {
+      toast.error('Nie udało się zaktualizować posta');
+    }
+  });
+
+  const deletePost = (postId: string) => deletePostMutation.mutate(postId);
+  const updatePost = (postId: string, data: { content: string }) => 
+    updatePostMutation.mutate({ postId, data });
+
   // Spłaszczamy dane z wszystkich stron
   const posts = data?.pages.flatMap(page => page.posts) || [];
 
@@ -111,6 +179,8 @@ export const usePosts = () => {
     fetchNextPage,
     isFetchingNextPage,
     isLoading,
-    error
+    error,
+    deletePost,
+    updatePost
   };
 }; 

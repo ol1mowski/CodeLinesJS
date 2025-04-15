@@ -4,7 +4,7 @@ import { asyncHandler } from '../../../utils/asyncHandler.js';
 
 export const deleteCommentController = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   const { postId, commentId } = req.params;
-  const userId = req.user.id;
+  const userId = req.user.userId;
 
   const post = await PostService.deleteComment(postId, commentId, userId);
 

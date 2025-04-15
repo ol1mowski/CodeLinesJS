@@ -84,13 +84,12 @@ type LikeResponse = {
 
 export const toggleLike = async (postId: string, isLiked: boolean, token: string): Promise<LikeResponse> => {
 
-    const response = await fetch(`${API_URL}posts/${postId}/like`, {
+  const response = await fetch(`${API_URL}posts/${postId}/like`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
       "Authorization": `Bearer ${token}`,
-    },
-    body: JSON.stringify({ isLiked: !isLiked })
+    }
   });
   
 
@@ -99,15 +98,19 @@ export const toggleLike = async (postId: string, isLiked: boolean, token: string
   }
 
   const data = await response.json();
+
+  const responseData = data.data || data;
+  
+  const resultLikesCount = Number(responseData.likes?.count || 0);
   
   return {
-    isLiked: Boolean(data.isLiked),
-    likesCount: Number(data.likes.count)
+    isLiked: !isLiked,
+    likesCount: resultLikesCount
   };
 };
 
 export const deletePost = async (id: string, token: string) => {
-  const response = await fetch(`${API_URL}/${id}`, {
+  const response = await fetch(`${API_URL}posts/${id}`, {
     method: 'DELETE',
     headers: {
       Authorization: `Bearer ${token}`,
@@ -117,7 +120,7 @@ export const deletePost = async (id: string, token: string) => {
 };
 
 export const updatePost = async (id: string, updatedData: Partial<Post>, token: string) => {
-  const response = await fetch(`${API_URL}/${id}`, {
+  const response = await fetch(`${API_URL}posts/${id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
