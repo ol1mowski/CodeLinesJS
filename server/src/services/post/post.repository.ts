@@ -6,17 +6,12 @@ import { PostQuery, PaginationOptions, IPost } from './types.js';
 
 export class PostRepository {
   static async findAll(query: PostQuery, options: PaginationOptions): Promise<any> {
-    console.log('[PostRepository.findAll] Szukam postów z query:', query);
-    console.log('[PostRepository.findAll] Opcje paginacji:', options);
     
     try {
       // @ts-ignore - paginate jest dodawane przez plugin, ale TypeScript tego nie widzi
       const result = await Post.paginate(query, options);
-      console.log('[PostRepository.findAll] Znaleziono dokumentów:', result.docs.length);
-      console.log('[PostRepository.findAll] Całkowita liczba dokumentów:', result.totalDocs);
       return result;
     } catch (error) {
-      console.error('[PostRepository.findAll] Błąd podczas pobierania postów:', error);
       throw error;
     }
   }
@@ -103,9 +98,10 @@ export class PostRepository {
       throw new ValidationError('Nieprawidłowy format ID posta');
     }
     
+    
     const post = await Post.findByIdAndUpdate(
       postId,
-      { $inc: { likes: 1 } },
+      { $inc: { 'likes.count': 1 } },
       { new: true }
     );
     
@@ -117,9 +113,10 @@ export class PostRepository {
       throw new ValidationError('Nieprawidłowy format ID posta');
     }
     
+
     const post = await Post.findByIdAndUpdate(
       postId,
-      { $inc: { likes: -1 } },
+      { $inc: { 'likes.count': -1 } },
       { new: true }
     );
     
@@ -145,17 +142,12 @@ export class UserRepository {
   }
 
   static async incrementPostCount(userId: string): Promise<any> {
-    console.log("[incrementPostCount] Próba zwiększenia liczby postów dla użytkownika:", userId);
-    console.log("[incrementPostCount] Typ userId:", typeof userId);
-    console.log("[incrementPostCount] Walidacja ID:", Types.ObjectId.isValid(userId));
     
     if (!userId) {
-      console.error("[incrementPostCount] userId jest puste lub undefined");
       throw new ValidationError('Brak ID użytkownika');
     }
     
     if (!Types.ObjectId.isValid(userId)) {
-      console.error("[incrementPostCount] Nieprawidłowy format ID użytkownika:", userId);
       throw new ValidationError('Nieprawidłowy format ID użytkownika');
     }
     
@@ -164,10 +156,8 @@ export class UserRepository {
         userId,
         { $inc: { postsCount: 1 } }
       );
-      console.log("[incrementPostCount] Rezultat operacji:", result ? "Sukces" : "Użytkownik nie znaleziony");
       return result;
     } catch (error) {
-      console.error("[incrementPostCount] Błąd podczas aktualizacji:", error);
       throw error;
     }
   }

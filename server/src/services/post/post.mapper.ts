@@ -52,15 +52,12 @@ export class PostMapper {
     userLikedPosts: Types.ObjectId[],
     userSavedPosts: Types.ObjectId[]
   ): PostResponse[] {
-    console.log('PostMapper.toPostsResponse: Otrzymane posty:', posts ? posts.length : 0);
     
     if (!Array.isArray(posts)) {
-      console.error('PostMapper.toPostsResponse: posts nie jest tablicą:', posts);
       return [];
     }
     
     const validPosts = posts.filter(post => post && post._id);
-    console.log('PostMapper.toPostsResponse: Prawidłowe posty:', validPosts.length);
     
     return validPosts.map(post => {
       try {

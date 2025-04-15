@@ -3,9 +3,6 @@ import { PostService } from '../../../services/post/post.service.js';
 import { asyncHandler } from '../../../utils/asyncHandler.js';
 
 export const getPostsController = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-  console.log('[getPostsController] Rozpoczęto pobieranie postów');
-  console.log('[getPostsController] Query params:', req.query);
-  console.log('[getPostsController] User:', req.user);
   
   const { page, limit, category, search } = req.query as {
     page?: string;

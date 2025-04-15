@@ -19,8 +19,13 @@ export class PostInteractionService {
     if (!post) {
       throw new ValidationError('Post nie został znaleziony');
     }
+
+    if (!user) {
+      throw new ValidationError('Użytkownik nie został znaleziony');
+    }
     
-    const isLiked = user.likedPosts.some(id => id.toString() === postId);
+    const likedPosts = Array.isArray(user.likedPosts) ? user.likedPosts : [];
+    const isLiked = likedPosts.some(id => id && id.toString() === postId);
     
     if (isLiked) {
       await Promise.all([
@@ -37,8 +42,15 @@ export class PostInteractionService {
     const updatedPost = await PostRepository.findById(postId);
     const updatedUser = await UserRepository.findUserPostInfo(userId);
     
-    const newIsLiked = updatedUser.likedPosts.some(id => id.toString() === postId);
-    const isSaved = updatedUser.savedPosts.some(id => id.toString() === postId);
+    if (!updatedUser) {
+      throw new ValidationError('Nie można zaktualizować informacji o użytkowniku');
+    }
+
+    const updatedLikedPosts = Array.isArray(updatedUser.likedPosts) ? updatedUser.likedPosts : [];
+    const updatedSavedPosts = Array.isArray(updatedUser.savedPosts) ? updatedUser.savedPosts : [];
+    
+    const newIsLiked = updatedLikedPosts.some(id => id && id.toString() === postId);
+    const isSaved = updatedSavedPosts.some(id => id && id.toString() === postId);
     
     return PostMapper.toPostResponse(updatedPost, newIsLiked, isSaved);
   }
@@ -52,8 +64,13 @@ export class PostInteractionService {
     if (!post) {
       throw new ValidationError('Post nie został znaleziony');
     }
+
+    if (!user) {
+      throw new ValidationError('Użytkownik nie został znaleziony');
+    }
     
-    const isSaved = user.savedPosts.some(id => id.toString() === postId);
+    const savedPosts = Array.isArray(user.savedPosts) ? user.savedPosts : [];
+    const isSaved = savedPosts.some(id => id && id.toString() === postId);
     
     if (isSaved) {
       await UserRepository.removeSavedPost(userId, postId);
@@ -63,8 +80,15 @@ export class PostInteractionService {
     
     const updatedUser = await UserRepository.findUserPostInfo(userId);
     
-    const isLiked = updatedUser.likedPosts.some(id => id.toString() === postId);
-    const newIsSaved = updatedUser.savedPosts.some(id => id.toString() === postId);
+    if (!updatedUser) {
+      throw new ValidationError('Nie można zaktualizować informacji o użytkowniku');
+    }
+
+    const updatedLikedPosts = Array.isArray(updatedUser.likedPosts) ? updatedUser.likedPosts : [];
+    const updatedSavedPosts = Array.isArray(updatedUser.savedPosts) ? updatedUser.savedPosts : [];
+    
+    const isLiked = updatedLikedPosts.some(id => id && id.toString() === postId);
+    const newIsSaved = updatedSavedPosts.some(id => id && id.toString() === postId);
     
     return PostMapper.toPostResponse(post, isLiked, newIsSaved);
   }
@@ -91,8 +115,15 @@ export class PostInteractionService {
     
     const user = await UserRepository.findUserPostInfo(userId);
     
-    const isLiked = user.likedPosts.some(id => id.toString() === postId);
-    const isSaved = user.savedPosts.some(id => id.toString() === postId);
+    if (!user) {
+      throw new ValidationError('Użytkownik nie został znaleziony');
+    }
+
+    const likedPosts = Array.isArray(user.likedPosts) ? user.likedPosts : [];
+    const savedPosts = Array.isArray(user.savedPosts) ? user.savedPosts : [];
+    
+    const isLiked = likedPosts.some(id => id && id.toString() === postId);
+    const isSaved = savedPosts.some(id => id && id.toString() === postId);
     
     return PostMapper.toPostResponse(updatedPost, isLiked, isSaved);
   }
@@ -118,8 +149,15 @@ export class PostInteractionService {
     
     const user = await UserRepository.findUserPostInfo(userId);
     
-    const isLiked = user.likedPosts.some(id => id.toString() === postId);
-    const isSaved = user.savedPosts.some(id => id.toString() === postId);
+    if (!user) {
+      throw new ValidationError('Użytkownik nie został znaleziony');
+    }
+
+    const likedPosts = Array.isArray(user.likedPosts) ? user.likedPosts : [];
+    const savedPosts = Array.isArray(user.savedPosts) ? user.savedPosts : [];
+    
+    const isLiked = likedPosts.some(id => id && id.toString() === postId);
+    const isSaved = savedPosts.some(id => id && id.toString() === postId);
     
     return PostMapper.toPostResponse(updatedPost, isLiked, isSaved);
   }

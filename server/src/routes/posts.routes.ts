@@ -17,22 +17,14 @@ import { Post } from '../models/post.model.js';
 
 const router = express.Router();
 
-// Dodaję logi do diagnostyki
-router.use((req, res, next) => {
-  console.log(`[posts.routes] Request: ${req.method} ${req.url}`);
-  next();
-});
 
-// Dodaję prosty endpoint testowy, który zwraca wszystkie posty bez filtrowania
 router.get('/all', async (req, res) => {
   try {
-    console.log('[posts.routes] Pobieranie wszystkich postów (testowe)');
     const posts = await Post.find({})
       .populate({ path: 'author', select: 'username avatar' })
       .limit(20)
       .sort({ createdAt: -1 });
     
-    console.log('[posts.routes] Znaleziono postów (testowe):', posts.length);
     
     res.json({
       status: 'success',
@@ -60,8 +52,6 @@ router.delete('/:postId/comments/:commentId', authMiddleware, deleteCommentContr
 // Dodaję prosty endpoint do testowego tworzenia posta
 router.post('/test-create', async (req, res) => {
   try {
-    console.log('[posts.routes] Testowe tworzenie posta');
-    console.log('[posts.routes] Body:', req.body);
     
     if (!req.body.content || !req.body.authorId) {
       return res.status(400).json({ 
@@ -76,7 +66,6 @@ router.post('/test-create', async (req, res) => {
     });
     
     await post.save();
-    console.log('[posts.routes] Testowy post utworzony:', post._id);
     
     res.status(201).json({
       status: 'success',
@@ -84,7 +73,6 @@ router.post('/test-create', async (req, res) => {
       post: post
     });
   } catch (error) {
-    console.error('[posts.routes] Błąd podczas tworzenia testowego posta:', error);
     res.status(500).json({ error: error.message });
   }
 });
