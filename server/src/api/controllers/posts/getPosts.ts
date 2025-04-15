@@ -12,10 +12,8 @@ export const getPostsController = asyncHandler(async (req: Request, res: Respons
   };
   
   const userId = req.user?.userId;
-  console.log('[getPostsController] UserId:', userId);
-  
+
   if (!userId) {
-    console.error('[getPostsController] Brak userId w req.user');
     res.status(400).json({
       status: 'fail',
       message: 'Brak identyfikatora użytkownika. Zaloguj się ponownie.'
@@ -32,7 +30,6 @@ export const getPostsController = asyncHandler(async (req: Request, res: Respons
     });
     
     if (!result) {
-      console.error('[getPostsController] Usługa zwróciła undefined');
       res.status(500).json({
         status: 'error',
         message: 'Błąd serwera podczas pobierania postów'
@@ -40,15 +37,11 @@ export const getPostsController = asyncHandler(async (req: Request, res: Respons
       return;
     }
     
-    console.log('[getPostsController] Pobrano postów:', result.posts?.length || 0);
-    console.log('[getPostsController] Całkowita liczba postów:', result.totalPosts || 0);
-    
     res.json({
       status: 'success',
       ...result
     });
   } catch (error) {
-    console.error('[getPostsController] Błąd podczas pobierania postów:', error);
     res.status(500).json({
       status: 'error',
       message: error.message || 'Błąd podczas pobierania postów'

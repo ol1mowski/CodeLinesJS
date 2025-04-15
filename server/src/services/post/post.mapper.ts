@@ -29,7 +29,6 @@ export class PostMapper {
       };
     }
 
-    // Obliczanie liczby polubień
     let likesCount = 0;
     if (post.likes !== undefined) {
       if (typeof post.likes === 'number') {
@@ -41,7 +40,6 @@ export class PostMapper {
       }
     }
 
-    // Struktura zgodna z frontendem
     const result = {
       _id: post._id,
       content: post.content,
@@ -80,26 +78,36 @@ export class PostMapper {
     
     const validPosts = posts.filter(post => post && post._id);
     
+    
     return validPosts.map(post => {
       try {
         const postId = post._id.toString();
         
-        // Sprawdź, czy użytkownik polubił post na podstawie userLikedPosts lub post.likes.userIds
         let isLiked = false;
         
-        // Sprawdź na podstawie userLikedPosts
-        if (Array.isArray(userLikedPosts)) {
+        if (Array.isArray(userLikedPosts) && userLikedPosts.length > 0) {
           isLiked = userLikedPosts.some(id => id && id.toString() === postId);
+          
         }
         
-        // Jeśli nie polubiony, sprawdź też post.likes.userIds jeśli istnieje
-        if (!isLiked && post.likes && Array.isArray(post.likes.userIds) && userLikedPosts && userLikedPosts.length > 0) {
-          // Pobierz pierwszy element z userLikedPosts, aby uzyskać ID użytkownika
-          const userId = userLikedPosts[0].valueOf();
-          isLiked = post.likes.userIds.some((id: any) => id && id.toString() === userId.toString());
+        if (post.likes && Array.isArray(post.likes.userIds) && post.likes.userIds.length > 0) {
+          const userId = userLikedPosts && userLikedPosts.length > 0 
+            ? userLikedPosts[0].valueOf().toString().split('_')[0]
+            : undefined;
+            
+          if (userId) {
+            const userIdInLikes = post.likes.userIds.some((id: any) => 
+              id && id.toString().includes(userId)
+            );
+            
+            if (userIdInLikes) {
+              isLiked = true;
+            }
+          }
         }
         
         const isSaved = Array.isArray(userSavedPosts) && userSavedPosts.some(id => id && id.toString() === postId);
+        
         
         return this.toPostResponse(post, isLiked, isSaved);
       } catch (error) {

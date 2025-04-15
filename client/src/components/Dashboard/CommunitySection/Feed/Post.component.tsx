@@ -14,7 +14,7 @@ type PostProps = {
 export const Post = memo(({ post }: PostProps) => {
   const { deletePost, updatePost } = usePosts();
   const [showComments, setShowComments] = useState(false);
-  const { handleLike, isLiking } = useLikePost(post);
+  const { handleLike, isLiking, isLiked } = useLikePost(post);
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(post.content);
 
@@ -65,7 +65,7 @@ export const Post = memo(({ post }: PostProps) => {
         </>
       )}
       <PostActions
-        isLiked={post.isLiked}
+        isLiked={isLiked}
         likesCount={post.likes.count}
         commentsCount={post.commentsCount}
         onLike={handleLike}

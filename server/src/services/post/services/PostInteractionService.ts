@@ -11,6 +11,8 @@ export class PostInteractionService {
   private static contentSanitizer = new ContentSanitizer();
   
   static async likePost(postId: string, userId: string): Promise<PostResponse> {
+    console.log('[PostInteractionService.likePost] Rozpoczynam aktualizację polubienia:', { postId, userId });
+    
     const [post, user] = await Promise.all([
       PostRepository.findById(postId),
       UserRepository.findUserPostInfo(userId)
@@ -27,12 +29,25 @@ export class PostInteractionService {
     const likedPosts = Array.isArray(user.likedPosts) ? user.likedPosts : [];
     const isLiked = likedPosts.some(id => id && id.toString() === postId);
     
+    console.log('[PostInteractionService.likePost] Aktualny stan isLiked:', isLiked);
+    console.log('[PostInteractionService.likePost] Lista likedPosts:', likedPosts.map(id => id.toString()));
+    console.log('[PostInteractionService.likePost] Sprawdzam czy', postId, 'znajduje się na liście');
+    
+    console.log('[PostInteractionService.likePost] Aktualny stan:', {
+      postId,
+      isLiked,
+      likedPostsCount: likedPosts.length,
+      currentLikes: post.likes
+    });
+
     if (isLiked) {
+      console.log('[PostInteractionService.likePost] Usuwam polubienie');
       await Promise.all([
         PostRepository.decrementLikes(postId, userId),
         UserRepository.removeLikedPost(userId, postId)
       ]);
     } else {
+      console.log('[PostInteractionService.likePost] Dodaję polubienie');
       await Promise.all([
         PostRepository.incrementLikes(postId, userId),
         UserRepository.addLikedPost(userId, postId)
@@ -52,7 +67,31 @@ export class PostInteractionService {
     const newIsLiked = updatedLikedPosts.some(id => id && id.toString() === postId);
     const isSaved = updatedSavedPosts.some(id => id && id.toString() === postId);
     
-    return PostMapper.toPostResponse(updatedPost, newIsLiked, isSaved);
+    console.log('[PostInteractionService.likePost] Nowy stan isLiked:', newIsLiked);
+    console.log('[PostInteractionService.likePost] Nowa lista likedPosts:', updatedLikedPosts.map(id => id.toString()));
+    console.log('[PostInteractionService.likePost] Sprawdzam czy', postId, 'znajduje się na nowej liście');
+    
+    console.log('[PostInteractionService.likePost] Nowy stan:', {
+      postId,
+      newIsLiked,
+      updatedLikedPostsCount: updatedLikedPosts.length,
+      updatedLikes: updatedPost.likes
+    });
+    
+    // Upewnijmy się, że obiekt updatedPost ma zaktualizowane wartości userIds
+    if (updatedPost.likes && Array.isArray(updatedPost.likes.userIds)) {
+      const userInLikes = updatedPost.likes.userIds.some(id => id.toString() === userId);
+      console.log('[PostInteractionService.likePost] Czy użytkownik jest w likes.userIds:', userInLikes);
+    }
+    
+    const mappedResponse = PostMapper.toPostResponse(updatedPost, newIsLiked, isSaved);
+    console.log('[PostInteractionService.likePost] Zmapowana odpowiedź:', {
+      isLiked: mappedResponse.isLiked,
+      likesCount: mappedResponse.likes.count,
+      likes: mappedResponse.likes
+    });
+    
+    return mappedResponse;
   }
   
   static async savePost(postId: string, userId: string): Promise<PostResponse> {
