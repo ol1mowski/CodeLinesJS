@@ -15,13 +15,13 @@ const mockBadges = [
 describe('BadgesGrid', () => {
   it('renders empty state when no badges', () => {
     render(<BadgesGrid badges={[]} />);
-    expect(screen.getByText('Nie zdobyto jeszcze żadnych odznak')).toBeInTheDocument();
+    expect(screen.getByText('Nie zdobyto jeszcze żadnych odznak')).not.toBeNull();
   });
 
   it('renders badges correctly', () => {
     render(<BadgesGrid badges={mockBadges} />);
-    expect(screen.getByText('Test Badge')).toBeInTheDocument();
-    expect(screen.getByText('Test description')).toBeInTheDocument();
-    expect(screen.getByText('🏆')).toBeInTheDocument();
+    expect(screen.getByText('Test Badge')).not.toBeNull();
+    expect(screen.getByText('Test description')).not.toBeNull();
+    expect(screen.getByText('🏆')).not.toBeNull();
   });
 }); 
