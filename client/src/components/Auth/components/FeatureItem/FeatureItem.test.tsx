@@ -7,28 +7,28 @@ describe('FeatureItem', () => {
     const testText = 'Test Feature';
     render(<FeatureItem text={testText} />);
     
-    expect(screen.getByText(`✓ ${testText}`)).toBeInTheDocument();
+    expect(screen.getByText(`✓ ${testText}`)).not.toBeNull();
   });
   
   it('applies correct styling', () => {
     const { container } = render(<FeatureItem text="Styling Test" />);
     
-    const featureDiv = container.firstChild;
-    expect(featureDiv).toHaveClass('flex');
-    expect(featureDiv).toHaveClass('items-center');
-    expect(featureDiv).toHaveClass('bg-[#f7df1e]/10');
-    expect(featureDiv).toHaveClass('rounded-lg');
+    const featureDiv = container.firstChild as HTMLElement;
+    expect(featureDiv.classList.contains('flex')).toBe(true);
+    expect(featureDiv.classList.contains('items-center')).toBe(true);
+    expect(featureDiv.classList.contains('bg-[#f7df1e]/10')).toBe(true);
+    expect(featureDiv.classList.contains('rounded-lg')).toBe(true);
     
-    const textSpan = screen.getByText(/Styling Test/);
-    expect(textSpan).toHaveClass('text-[#f7df1e]');
-    expect(textSpan).toHaveClass('font-medium');
+    const textSpan = screen.getByText(/Styling Test/) as HTMLElement;
+    expect(textSpan.classList.contains('text-[#f7df1e]')).toBe(true);
+    expect(textSpan.classList.contains('font-medium')).toBe(true);
   });
   
   it('changes justification based on screen size', () => {
     const { container } = render(<FeatureItem text="Responsive Test" />);
     
-    const featureDiv = container.firstChild;
-    expect(featureDiv).toHaveClass('justify-center');
-    expect(featureDiv).toHaveClass('md:justify-start');
+    const featureDiv = container.firstChild as HTMLElement;
+    expect(featureDiv.classList.contains('justify-center')).toBe(true);
+    expect(featureDiv.classList.contains('md:justify-start')).toBe(true);
   });
 }); 

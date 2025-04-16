@@ -1,5 +1,5 @@
-import { render, screen, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { render, screen, waitFor, cleanup } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { AuthContent } from './AuthContent/AuthContent.component';
 import { BrowserRouter } from 'react-router-dom';
 
@@ -61,14 +61,18 @@ const renderWithRouter = (ui: React.ReactElement) => {
 };
 
 describe('AuthContent', () => {
+  beforeEach(() => {
+    cleanup();
+  });
+
   it('renders login form by default', async () => {
     renderWithRouter(<AuthContent />);
     
     const loginTab = screen.getByTestId('login-tab');
-    expect(loginTab).toHaveClass('bg-js/20');
+    expect(loginTab.classList.contains('bg-js/20')).toBe(true);
     
     await waitFor(() => {
-      expect(screen.getByTestId('login-form')).toBeInTheDocument();
+      expect(screen.getByTestId('login-form')).not.toBeNull();
     });
   });
 
@@ -76,7 +80,7 @@ describe('AuthContent', () => {
     renderWithRouter(<AuthContent />);
     
     await waitFor(() => {
-      expect(screen.getByTestId('login-form')).toBeInTheDocument();
+      expect(screen.getByTestId('login-form')).not.toBeNull();
     });
   });
 }); 

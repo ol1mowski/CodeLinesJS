@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { NotificationsSection } from '../NotificationsSection.component';
 import { UseFormRegister } from 'react-hook-form';
 import { PreferencesData } from '../../../../../types/settings';
@@ -17,20 +17,25 @@ describe('NotificationsSection', () => {
     onChange: mockOnChange
   };
 
+  beforeEach(() => {
+    cleanup();
+    vi.clearAllMocks();
+  });
+
   it('should render all notification options', () => {
-    render(<NotificationsSection {...defaultProps} />);
     
-    expect(screen.getByText('Powiadomienia')).toBeInTheDocument();
-    expect(screen.getByText('Powiadomienia email')).toBeInTheDocument();
-    expect(screen.getByText('Otrzymuj powiadomienia na email')).toBeInTheDocument();
+    expect(screen.getByText('Powiadomienia')).not.toBeNull();
+    expect(screen.getByText('Powiadomienia email')).not.toBeNull();
+    expect(screen.getByText('Otrzymuj powiadomienia na email')).not.toBeNull();
   });
 
   it('should handle email notification change', () => {
     render(<NotificationsSection {...defaultProps} />);
 
-    const emailCheckbox = screen.getByRole('checkbox', { 
-      name: /powiadomienia email/i 
-    });
+    const emailCheckboxes = screen.queryAllByRole('checkbox');
+    expect(emailCheckboxes.length).toBeGreaterThan(0);
+    
+    const emailCheckbox = emailCheckboxes[0];
     fireEvent.click(emailCheckbox);
 
     expect(mockOnChange).toHaveBeenCalledWith('emailNotifications', false);

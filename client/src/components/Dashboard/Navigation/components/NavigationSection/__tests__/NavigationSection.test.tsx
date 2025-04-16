@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { NavigationSection } from '../NavigationSection.component';
 import { FaHome } from 'react-icons/fa';
 
@@ -24,15 +24,20 @@ describe('NavigationSection', () => {
     isLastSection: false
   };
 
+  beforeEach(() => {
+    cleanup();
+    vi.clearAllMocks();
+  });
+
   it('render correctly with basic props', () => {
     render(<NavigationSection {...defaultProps} />);
-    expect(screen.getByText('Test Section')).toBeInTheDocument();
-    expect(screen.getByText('Home')).toBeInTheDocument();
+    expect(screen.getByText('Test Section')).not.toBeNull();
+    expect(screen.getByText('Home')).not.toBeNull();
   });
 
   it('does not display section title when isExpanded is false', () => {
     render(<NavigationSection {...defaultProps} isExpanded={false} />);
-    expect(screen.queryByText('Test Section')).not.toBeInTheDocument();
+    expect(screen.queryByText('Test Section')).toBeNull();
   });
 
   it('calls onItemClick with the correct item', () => {

@@ -1,35 +1,44 @@
-import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { render, cleanup } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { AuthWelcomeContent } from './AuthWelcomeContent.component';
 
-// Mock dla komponentu FeaturesList
 vi.mock('../FeaturesList/FeaturesList.component', () => ({
   FeaturesList: () => <div data-testid="features-list">Lista funkcji</div>
 }));
 
 describe('AuthWelcomeContent', () => {
+  beforeEach(() => {
+    cleanup();
+  });
+
   it('renders heading with JavaScript highlight', () => {
-    render(<AuthWelcomeContent />);
+    const { container } = render(<AuthWelcomeContent />);
     
-    const heading = screen.getByRole('heading', { level: 1 });
-    expect(heading).toBeInTheDocument();
-    expect(heading).toHaveTextContent('Odkryj JavaScript w nowy sposób');
+    const headings = container.querySelectorAll('h1');
+    expect(headings.length).toBeGreaterThan(0);
+    
+    const heading = headings[0];
+    expect(heading.textContent).toBe('Odkryj JavaScript w nowy sposób');
     
     const jsHighlight = heading.querySelector('span');
-    expect(jsHighlight).toHaveClass('text-[#f7df1e]');
+    expect(jsHighlight).not.toBeNull();
+    expect(jsHighlight?.classList.contains('text-[#f7df1e]')).toBe(true);
   });
   
   it('renders introduction paragraph', () => {
-    render(<AuthWelcomeContent />);
+    const { container } = render(<AuthWelcomeContent />);
     
-    const paragraph = screen.getByText(/Ucz się, programuj i baw się jednocześnie/i);
-    expect(paragraph).toBeInTheDocument();
-    expect(paragraph).toHaveClass('text-gray-300');
+    const paragraph = container.querySelector('p');
+    expect(paragraph).not.toBeNull();
+    expect(paragraph?.textContent).toContain('Ucz się, programuj i baw się jednocześnie');
+    expect(paragraph?.classList.contains('text-gray-300')).toBe(true);
   });
   
   it('renders FeaturesList component', () => {
-    render(<AuthWelcomeContent />);
+    const { container } = render(<AuthWelcomeContent />);
     
-    expect(screen.getByTestId('features-list')).toBeInTheDocument();
+    const featuresList = container.querySelector('[data-testid="features-list"]');
+    expect(featuresList).not.toBeNull();
+    expect(featuresList?.textContent).toBe('Lista funkcji');
   });
 }); 

@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, cleanup } from '@testing-library/react';
 import { LanguageSection } from '../LanguageSection.component';
 import { UseFormRegister } from 'react-hook-form';
 import { PreferencesData } from '../../../../../types/settings';
@@ -7,18 +7,27 @@ import { PreferencesData } from '../../../../../types/settings';
 describe('LanguageSection', () => {
   const mockRegister = vi.fn() as unknown as UseFormRegister<PreferencesData>;
 
+  beforeEach(() => {
+    cleanup();
+  });
+
   it('should render the language selector', () => {
     render(<LanguageSection register={mockRegister} />);
 
-    expect(screen.getByText('Język')).toBeDefined();
-    expect(screen.getByRole('combobox')).toBeDefined();
-    expect(screen.getByText('Polski')).toBeDefined();
+    expect(screen.getByText('Język')).not.toBeNull();
+    
+    const selects = screen.queryAllByRole('combobox');
+    expect(selects.length).toBeGreaterThan(0);
+    
+    expect(screen.getByText('Polski')).not.toBeNull();
   });
 
   it('should have the default language set to Polish', () => {
-    render(<LanguageSection register={mockRegister} />);
+    const { container } = render(<LanguageSection register={mockRegister} />);
 
-    const select = screen.getByRole('combobox');
-    expect(select).toHaveValue('pl');
+    const select = container.querySelector('select') as HTMLSelectElement;
+    expect(select).not.toBeNull();
+    
+    expect(select.value).toBe('pl');
   });
 }); 

@@ -1,5 +1,5 @@
-import { render } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { render, cleanup } from '@testing-library/react';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { AuthBackground } from './AuthBackground.component';
 
 vi.mock('./hooks/useAuthBackground.hook', () => ({
@@ -25,18 +25,22 @@ vi.mock('framer-motion', () => ({
 }));
 
 describe('AuthBackground', () => {
+  beforeEach(() => {
+    cleanup();
+  });
+
   it('renders canvas element', () => {
     const { container } = render(<AuthBackground />);
     const canvas = container.querySelector('canvas');
-    expect(canvas).toBeInTheDocument();
-    expect(canvas).toHaveClass('w-full');
-    expect(canvas).toHaveClass('h-full');
+    expect(canvas).not.toBeNull();
+    expect(canvas?.classList.contains('w-full')).toBe(true);
+    expect(canvas?.classList.contains('h-full')).toBe(true);
   });
 
   it('renders decorative elements', () => {
     const { container } = render(<AuthBackground />);
     
-      const bgElements = container.querySelectorAll('.absolute');
+    const bgElements = container.querySelectorAll('.absolute');
     expect(bgElements.length).toBeGreaterThan(3);
     
     const blurElements = container.querySelectorAll('.blur-3xl');

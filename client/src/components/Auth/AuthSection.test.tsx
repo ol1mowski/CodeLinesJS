@@ -1,24 +1,19 @@
-import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { render, screen, cleanup } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import { AuthSection } from './AuthSection.component';
 
-vi.mock('react-helmet-async', () => ({
-  Helmet: ({ children }: { children: React.ReactNode }) => <div data-testid="helmet">{children}</div>,
-  HelmetProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>
-}));
-
 vi.mock('./AuthBackground/AuthBackground.component', () => ({
-  AuthBackground: () => <div data-testid="auth-background" />
+  AuthBackground: () => <div data-testid="auth-background">Background</div>
 }));
 
-vi.mock('./components/AuthLeftSection/AuthLeftSection.component', () => ({
-  AuthLeftSection: () => <div data-testid="auth-left-section" />
+vi.mock('../Common/Seo/Seo.component', () => ({
+  Seo: ({ title }: { title: string }) => <div data-testid="helmet">{title}</div>
 }));
 
 vi.mock('./components/AuthFormSection/AuthFormSection.component', () => ({
-  AuthFormSection: ({ children, title, subtitle }: { children?: React.ReactNode, title?: string, subtitle?: string }) => (
-    <div data-testid="auth-form-section">
+  AuthFormSection: ({ title, subtitle, children }: { title?: string, subtitle?: string, children?: React.ReactNode }) => (
+    <div>
       {title && <div data-testid="form-title">{title}</div>}
       {subtitle && <div data-testid="form-subtitle">{subtitle}</div>}
       {children}
@@ -27,6 +22,10 @@ vi.mock('./components/AuthFormSection/AuthFormSection.component', () => ({
 }));
 
 describe('AuthSection', () => {
+  beforeEach(() => {
+    cleanup();
+  });
+
   it('renders correctly with default props', () => {
     render(
       <MemoryRouter>
@@ -34,8 +33,8 @@ describe('AuthSection', () => {
       </MemoryRouter>
     );
     
-    expect(screen.getByTestId('helmet')).toBeInTheDocument();
-    expect(screen.getByTestId('auth-background')).toBeInTheDocument();
+    expect(screen.getByTestId('helmet')).not.toBeNull();
+    expect(screen.getByTestId('auth-background')).not.toBeNull();
   });
 
   it('renders with custom title and subtitle', () => {
@@ -48,8 +47,11 @@ describe('AuthSection', () => {
       </MemoryRouter>
     );
     
-    expect(screen.getByTestId('form-title')).toHaveTextContent(title);
-    expect(screen.getByTestId('form-subtitle')).toHaveTextContent(subtitle);
+    const formTitle = screen.getByTestId('form-title');
+    expect(formTitle.textContent).toBe(title);
+    
+    const formSubtitle = screen.getByTestId('form-subtitle');
+    expect(formSubtitle.textContent).toBe(subtitle);
   });
 
   it('renders with children content', () => {
@@ -63,6 +65,6 @@ describe('AuthSection', () => {
       </MemoryRouter>
     );
     
-    expect(screen.getByText(childContent)).toBeInTheDocument();
+    expect(screen.getByText(childContent)).not.toBeNull();
   });
 }); 
