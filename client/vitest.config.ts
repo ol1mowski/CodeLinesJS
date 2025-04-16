@@ -13,5 +13,11 @@ export default defineConfig({
       'node_modules/**',
       '**/node_modules/**',
     ],
+    deps: {
+      // Rozwiązuje problemy z importami Framer Motion
+      registerNodeLoader: false,
+      // Dla ESM/Commonjs
+      interopDefault: true,
+    }
   },
 }) 
