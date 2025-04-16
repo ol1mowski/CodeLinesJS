@@ -1,10 +1,11 @@
 import { motion } from "framer-motion";
 import { HiOutlineTrophy } from "react-icons/hi2";
-import { useRanking } from "./hooks/useRanking";
+import { useRanking, RankingResponse, RankingUserResponse } from "./hooks/useRanking";
 
 export const RankingList = () => {
   const { data, isLoading } = useRanking();
-  const users = data?.ranking;
+
+  const users = (data as RankingResponse)?.ranking || (data as RankingUserResponse[]) || [];
 
   if (isLoading) {
     return (
@@ -71,7 +72,7 @@ export const RankingList = () => {
             <div className="flex-1">
               <div className="font-bold text-gray-200">{user.username}</div>
               <div className="text-sm text-gray-400">
-                Poziom {user.stats.level} • {user.stats.points} punktów
+                Poziom {user.stats?.level || user.level} • {user.stats?.points || user.points} punktów
               </div>
             </div>
           </div>

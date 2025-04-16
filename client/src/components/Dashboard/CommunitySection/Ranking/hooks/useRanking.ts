@@ -17,11 +17,30 @@ export interface RankingUserResponse {
     nextRankPoints: number;
     percentage: number;
   };
+  stats?: {
+    level: number;
+    points: number;
+  };
+}
+
+export interface RankingResponse {
+  ranking: RankingUserResponse[];
+  totalUsers: number;
+  userStats: {
+    rank: number;
+    total: number;
+    username: string;
+    stats: {
+      level: number;
+      points: number;
+    };
+    isCurrentUser: boolean;
+  };
 }
 
 const RANKING_QUERY_KEY = 'ranking';
 
-const fetchRanking = async (token: string | null): Promise<RankingUserResponse[]> => {
+const fetchRanking = async (token: string | null): Promise<RankingResponse | RankingUserResponse[]> => {
   if (!token) {
     throw new Error('Brak autoryzacji - zaloguj się, aby zobaczyć ranking');
   }
@@ -46,14 +65,13 @@ const fetchRanking = async (token: string | null): Promise<RankingUserResponse[]
     if (!response.ok) {
       const errorText = await response.text();
       let errorMessage = 'Błąd podczas pobierania rankingu';
-      
+
       try {
         const errorData = JSON.parse(errorText);
         errorMessage = errorData.message || errorData.error || errorMessage;
       } catch (e) {
-        // Zachowujemy domyślny komunikat błędu
       }
-      
+
       throw new Error(errorMessage);
     }
 
@@ -69,7 +87,7 @@ export const prefetchRanking = async (
   token: string | null
 ) => {
   if (!token) return;
-  
+
   await queryClient.prefetchQuery({
     queryKey: [RANKING_QUERY_KEY],
     queryFn: () => fetchRanking(token),
@@ -85,7 +103,6 @@ export const useRanking = () => {
     queryFn: () => fetchRanking(token),
     staleTime: 5 * 60 * 1000, // 5 minut
     retry: (failureCount, error) => {
-      // Nie ponawiamy zapytań w przypadku błędów autoryzacji
       return failureCount < 3 && !error.message.includes('autoryzacji');
     },
     enabled: !!token
