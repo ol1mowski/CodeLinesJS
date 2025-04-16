@@ -1,5 +1,5 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import RegisterForm from './RegisterForm.component';
 import { useAuth } from '../../../../hooks/useAuth';
 
@@ -29,79 +29,121 @@ vi.mock('framer-motion', () => ({
 }));
 
 describe('RegisterForm', () => {
+  beforeEach(() => {
+    cleanup();
+    vi.clearAllMocks();
+  });
+  
   it('Renders the form correctly', () => {
-    render(<RegisterForm />);
+    const { container } = render(<RegisterForm />);
 
-    expect(screen.getByPlaceholderText('jankowalski')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('twoj@email.com')).toBeInTheDocument();
-    const hasloLabels = screen.queryAllByText(/hasło/i);
-    expect(hasloLabels.length).toBeGreaterThan(0);
-    const potwierdzHasloLabel = screen.queryAllByText(/potwierdź hasło/i);
-    expect(potwierdzHasloLabel.length).toBeGreaterThan(0);
-    expect(screen.getByRole('checkbox')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /zarejestruj/i })).toBeInTheDocument();
+    const usernameInput = container.querySelector('input[name="username"]');
+    expect(usernameInput).not.toBeNull();
+    expect(usernameInput?.getAttribute('placeholder')).toBe('jankowalski');
+    
+    const emailInput = container.querySelector('input[name="email"]');
+    expect(emailInput).not.toBeNull();
+    expect(emailInput?.getAttribute('placeholder')).toBe('twoj@email.com');
+    
+    const passwordLabels = container.querySelectorAll('label');
+    const hasPasswordLabel = Array.from(passwordLabels).some(
+      label => label.textContent?.toLowerCase().includes('hasło')
+    );
+    expect(hasPasswordLabel).toBe(true);
+    
+    const confirmPasswordLabels = container.querySelectorAll('label');
+    const hasConfirmPasswordLabel = Array.from(confirmPasswordLabels).some(
+      label => label.textContent?.toLowerCase().includes('potwierdź hasło')
+    );
+    expect(hasConfirmPasswordLabel).toBe(true);
+    
+    const checkbox = container.querySelector('input[type="checkbox"]');
+    expect(checkbox).not.toBeNull();
+    
+    const submitButton = container.querySelector('button[type="submit"]');
+    expect(submitButton).not.toBeNull();
+    expect(submitButton?.textContent?.toLowerCase().includes('zarejestruj')).toBe(true);
   });
 
   it('validates required fields', async () => {
-    render(<RegisterForm />);
+    const { container } = render(<RegisterForm />);
 
-    const submitButton = screen.getByRole('button', { name: /zarejestruj/i });
-    fireEvent.click(submitButton);
+    const submitButton = container.querySelector('button[type="submit"]');
+    expect(submitButton).not.toBeNull();
+    if (submitButton) fireEvent.click(submitButton);
 
     await waitFor(() => {
-      const errorElements = screen.queryAllByText(/nazwa użytkownika|nieprawidłowy format|hasło musi mieć|musisz zaakceptować/i);
-      expect(errorElements.length).toBeGreaterThan(0);
+      const errorElements = container.querySelectorAll('p, span, div');
+      const hasErrorMessage = Array.from(errorElements).some(
+        element => element.textContent?.toLowerCase().match(/nazwa użytkownika|nieprawidłowy format|hasło musi mieć|musisz zaakceptować/i)
+      );
+      expect(hasErrorMessage).toBe(true);
     });
   });
 
   it('validates the username format', async () => {
-    render(<RegisterForm />);
+    const { container } = render(<RegisterForm />);
 
-    const usernameInput = screen.getByPlaceholderText('jankowalski');
-    fireEvent.change(usernameInput, { target: { value: 'użytkownik@' } });
+    const usernameInput = container.querySelector('input[name="username"]');
+    expect(usernameInput).not.toBeNull();
+    if (usernameInput) fireEvent.change(usernameInput, { target: { value: 'użytkownik@' } });
 
-    const submitButton = screen.getByRole('button', { name: /zarejestruj/i });
-    fireEvent.click(submitButton);
+    const submitButton = container.querySelector('button[type="submit"]');
+    expect(submitButton).not.toBeNull();
+    if (submitButton) fireEvent.click(submitButton);
 
     await waitFor(() => {
-      const errorElements = screen.queryAllByText(/nazwa użytkownika może zawierać tylko/i);
-      expect(errorElements.length).toBeGreaterThan(0);
+      const errorElements = container.querySelectorAll('p, span, div');
+      const hasErrorMessage = Array.from(errorElements).some(
+        element => element.textContent?.toLowerCase().includes('nazwa użytkownika może zawierać tylko')
+      );
+      expect(hasErrorMessage).toBe(true);
     });
   });
 
   it('validates the password format', async () => {
-    render(<RegisterForm />);
+    const { container } = render(<RegisterForm />);
 
-    const passwordInputs = screen.getAllByPlaceholderText('••••••••');
+    const passwordInputs = container.querySelectorAll('input[type="password"]');
+    expect(passwordInputs.length).toBeGreaterThan(0);
     const passwordInput = passwordInputs[0];
 
-    fireEvent.change(passwordInput, { target: { value: 'password' } });
+    if (passwordInput) fireEvent.change(passwordInput, { target: { value: 'password' } });
 
-    const submitButton = screen.getByRole('button', { name: /zarejestruj/i });
-    fireEvent.click(submitButton);
+    const submitButton = container.querySelector('button[type="submit"]');
+    expect(submitButton).not.toBeNull();
+    if (submitButton) fireEvent.click(submitButton);
 
     await waitFor(() => {
-      const errorElements = screen.queryAllByText(/hasło musi zawierać przynajmniej/i);
-      expect(errorElements.length).toBeGreaterThan(0);
+      const errorElements = container.querySelectorAll('p, span, div');
+      const hasErrorMessage = Array.from(errorElements).some(
+        element => element.textContent?.toLowerCase().includes('hasło musi zawierać przynajmniej')
+      );
+      expect(hasErrorMessage).toBe(true);
     });
   });
 
-  it('validates the password format', async () => {
-    render(<RegisterForm />);
+  it('validates passwords match', async () => {
+    const { container } = render(<RegisterForm />);
 
-    const passwordInputs = screen.getAllByPlaceholderText('••••••••');
+    const passwordInputs = container.querySelectorAll('input[type="password"]');
+    expect(passwordInputs.length).toBe(2);
     const passwordInput = passwordInputs[0];
     const confirmPasswordInput = passwordInputs[1];
 
-    fireEvent.change(passwordInput, { target: { value: 'Password123' } });
-    fireEvent.change(confirmPasswordInput, { target: { value: 'Password124' } });
+    if (passwordInput) fireEvent.change(passwordInput, { target: { value: 'Password123' } });
+    if (confirmPasswordInput) fireEvent.change(confirmPasswordInput, { target: { value: 'Password124' } });
 
-    const submitButton = screen.getByRole('button', { name: /zarejestruj/i });
-    fireEvent.click(submitButton);
+    const submitButton = container.querySelector('button[type="submit"]');
+    expect(submitButton).not.toBeNull();
+    if (submitButton) fireEvent.click(submitButton);
 
     await waitFor(() => {
-      const errorElements = screen.queryAllByText(/hasła muszą być identyczne/i);
-      expect(errorElements.length).toBeGreaterThan(0);
+      const errorElements = container.querySelectorAll('p, span, div');
+      const hasErrorMessage = Array.from(errorElements).some(
+        element => element.textContent?.toLowerCase().includes('hasła muszą być identyczne')
+      );
+      expect(hasErrorMessage).toBe(true);
     });
   });
 
@@ -114,26 +156,31 @@ describe('RegisterForm', () => {
       error: null
     } as any);
 
-    render(<RegisterForm />);
+    const { container } = render(<RegisterForm />);
 
-    const usernameInput = screen.getByPlaceholderText('jankowalski');
-    fireEvent.change(usernameInput, { target: { value: 'testuser' } });
+    const usernameInput = container.querySelector('input[name="username"]');
+    expect(usernameInput).not.toBeNull();
+    if (usernameInput) fireEvent.change(usernameInput, { target: { value: 'testuser' } });
 
-    const emailInput = screen.getByPlaceholderText('twoj@email.com');
-    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+    const emailInput = container.querySelector('input[name="email"]');
+    expect(emailInput).not.toBeNull();
+    if (emailInput) fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
 
-    const passwordInputs = screen.getAllByPlaceholderText('••••••••');
+    const passwordInputs = container.querySelectorAll('input[type="password"]');
+    expect(passwordInputs.length).toBe(2);
     const passwordInput = passwordInputs[0];
     const confirmPasswordInput = passwordInputs[1];
 
-    fireEvent.change(passwordInput, { target: { value: 'Password123' } });
-    fireEvent.change(confirmPasswordInput, { target: { value: 'Password123' } });
+    if (passwordInput) fireEvent.change(passwordInput, { target: { value: 'Password123' } });
+    if (confirmPasswordInput) fireEvent.change(confirmPasswordInput, { target: { value: 'Password123' } });
 
-    const privacyCheckbox = screen.getByRole('checkbox');
-    fireEvent.click(privacyCheckbox);
+    const privacyCheckbox = container.querySelector('input[type="checkbox"]');
+    expect(privacyCheckbox).not.toBeNull();
+    if (privacyCheckbox) fireEvent.click(privacyCheckbox);
 
-    const submitButton = screen.getByRole('button', { name: /zarejestruj/i });
-    fireEvent.click(submitButton);
+    const submitButton = container.querySelector('button[type="submit"]');
+    expect(submitButton).not.toBeNull();
+    if (submitButton) fireEvent.click(submitButton);
 
     await waitFor(() => {
       expect(mockRegister).toHaveBeenCalledWith('test@example.com', 'Password123', 'testuser');
@@ -150,29 +197,38 @@ describe('RegisterForm', () => {
       error: null
     } as any);
 
-    render(<RegisterForm />);
+    const { container } = render(<RegisterForm />);
 
-    const usernameInput = screen.getByPlaceholderText('jankowalski');
-    fireEvent.change(usernameInput, { target: { value: 'testuser' } });
+    const usernameInput = container.querySelector('input[name="username"]');
+    expect(usernameInput).not.toBeNull();
+    if (usernameInput) fireEvent.change(usernameInput, { target: { value: 'testuser' } });
 
-    const emailInput = screen.getByPlaceholderText('twoj@email.com');
-    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+    const emailInput = container.querySelector('input[name="email"]');
+    expect(emailInput).not.toBeNull();
+    if (emailInput) fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
 
-    const passwordInputs = screen.getAllByPlaceholderText('••••••••');
+    const passwordInputs = container.querySelectorAll('input[type="password"]');
+    expect(passwordInputs.length).toBe(2);
     const passwordInput = passwordInputs[0];
     const confirmPasswordInput = passwordInputs[1];
 
-    fireEvent.change(passwordInput, { target: { value: 'Password123' } });
-    fireEvent.change(confirmPasswordInput, { target: { value: 'Password123' } });
+    if (passwordInput) fireEvent.change(passwordInput, { target: { value: 'Password123' } });
+    if (confirmPasswordInput) fireEvent.change(confirmPasswordInput, { target: { value: 'Password123' } });
 
-    const privacyCheckbox = screen.getByRole('checkbox');
-    fireEvent.click(privacyCheckbox);
+    const privacyCheckbox = container.querySelector('input[type="checkbox"]');
+    expect(privacyCheckbox).not.toBeNull();
+    if (privacyCheckbox) fireEvent.click(privacyCheckbox);
 
-    const submitButton = screen.getByRole('button', { name: /zarejestruj/i });
-    fireEvent.click(submitButton);
+    const submitButton = container.querySelector('button[type="submit"]');
+    expect(submitButton).not.toBeNull();
+    if (submitButton) fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(screen.getByText(/użytkownik o podanym adresie email już istnieje/i)).toBeInTheDocument();
+      const errorElements = container.querySelectorAll('p, div');
+      const hasErrorMessage = Array.from(errorElements).some(
+        element => element.textContent?.toLowerCase().includes('użytkownik o podanym adresie email już istnieje')
+      );
+      expect(hasErrorMessage).toBe(true);
     });
   });
 }); 

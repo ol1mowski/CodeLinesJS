@@ -1,4 +1,4 @@
-import '@testing-library/jest-dom';
+import { expect, vi, describe, beforeEach, afterEach, it } from 'vitest';
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -6,7 +6,6 @@ import { ProfileForm } from '../ProfileForm.component';
 import { useAuth } from '../../../../../../hooks/useAuth';
 import { useProfile } from '../../../hooks/useProfile';
 import { toast } from 'react-hot-toast';
-import { expect, vi, describe, beforeEach, afterEach, it } from 'vitest';
 
 vi.mock('../../../../../../Hooks/useAuth');
 vi.mock('../../../hooks/useProfile');
@@ -82,9 +81,13 @@ describe('ProfileForm', () => {
     render(<ProfileForm />, { wrapper });
     
     await waitFor(() => {
-      expect(screen.getByPlaceholderText('Wprowadź nazwę użytkownika')).toBeInTheDocument();
-      expect(screen.getByPlaceholderText('Wprowadź adres email')).toBeInTheDocument();
-      expect(screen.getByPlaceholderText('Test bio')).toBeInTheDocument();
+      const usernameInput = screen.getByPlaceholderText('Wprowadź nazwę użytkownika');
+      const emailInput = screen.getByPlaceholderText('Wprowadź adres email');
+      const bioInput = screen.getByPlaceholderText('Test bio');
+      
+      expect(usernameInput).not.toBeNull();
+      expect(emailInput).not.toBeNull();
+      expect(bioInput).not.toBeNull();
     });
   });
 
@@ -101,16 +104,28 @@ describe('ProfileForm', () => {
     });
 
     render(<ProfileForm />, { wrapper });
-    expect(screen.getByRole('status')).toBeInTheDocument();
+    const loader = screen.getByRole('status');
+    expect(loader).not.toBeNull();
   });
 
   it('should handle cancellation of changes', async () => {
-    render(<ProfileForm />, { wrapper });
+    const { container } = render(<ProfileForm />, { wrapper });
     
-    const cancelButton = await screen.findByText(/anuluj/i);
-    fireEvent.click(cancelButton);
-    
-    expect(toast.success).toHaveBeenCalledWith('Zmiany zostały anulowane');
+    await waitFor(() => {
+      const cancelButtons = container.querySelectorAll('button[type="button"]');
+      
+      const cancelButton = Array.from(cancelButtons).find(button => 
+        button.textContent?.toLowerCase().includes('anuluj')
+      );
+      
+      expect(cancelButton).not.toBeNull();
+      
+      if (cancelButton) {
+        fireEvent.click(cancelButton);
+      }
+      
+      expect(toast.success).toHaveBeenCalledWith('Zmiany zostały anulowane');
+    });
   });
 
   it('should display loading state during saving', async () => {
@@ -128,7 +143,8 @@ describe('ProfileForm', () => {
     render(<ProfileForm />, { wrapper });
     
     const saveButton = screen.getByRole('button', { name: /zapisywanie/i });
-    expect(saveButton).toBeInTheDocument();
-    expect(saveButton).toBeDisabled();
+    expect(saveButton).not.toBeNull();
+    
+    expect(saveButton.hasAttribute('disabled')).toBe(true);
   });
 }); 

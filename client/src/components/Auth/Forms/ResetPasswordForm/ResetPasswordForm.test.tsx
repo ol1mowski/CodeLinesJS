@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import ResetPasswordForm from './ResetPasswordForm.component';
 import { useAuth } from '../../../../hooks/useAuth';
@@ -35,15 +35,28 @@ describe('ResetPasswordForm', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockedToken = 'valid-token-12345';
+    cleanup();
   });
 
   it('Renders the form correctly with a valid token', () => {
-    render(<ResetPasswordForm />);
+    const { container } = render(<ResetPasswordForm />);
     
-    expect(screen.getByText(/wprowadź nowe hasło dla swojego konta/i)).toBeInTheDocument();
-    expect(screen.queryAllByText(/nowe hasło/i).length).toBeGreaterThan(0);
-    expect(screen.queryAllByText(/potwierdź nowe hasło/i).length).toBeGreaterThan(0);
-    expect(screen.getByRole('button', { name: /zresetuj hasło/i })).toBeInTheDocument();
+    expect(screen.getByText(/wprowadź nowe hasło dla swojego konta/i)).not.toBeNull();
+    
+    const newPasswordLabels = container.querySelectorAll('label');
+    const hasNewPasswordLabel = Array.from(newPasswordLabels).some(
+      label => label.textContent?.toLowerCase().includes('nowe hasło')
+    );
+    expect(hasNewPasswordLabel).toBe(true);
+    
+    const confirmPasswordLabels = container.querySelectorAll('label');
+    const hasConfirmPasswordLabel = Array.from(confirmPasswordLabels).some(
+      label => label.textContent?.toLowerCase().includes('potwierdź nowe hasło')
+    );
+    expect(hasConfirmPasswordLabel).toBe(true);
+    
+    const submitButton = container.querySelector('button[type="submit"]');
+    expect(submitButton?.textContent?.toLowerCase().includes('zresetuj hasło')).toBe(true);
   });
 
   it('displays an error message when the token is missing', () => {
@@ -51,7 +64,8 @@ describe('ResetPasswordForm', () => {
     
     render(<ResetPasswordForm />);
     
-    expect(screen.getByText(/brak tokenu resetowania hasła/i)).toBeInTheDocument();
+    const errorElement = screen.queryByText(/brak tokenu resetowania hasła/i);
+    expect(errorElement).not.toBeNull();
   });
 
   it('displays an error message when the token is invalid', () => {
@@ -59,54 +73,69 @@ describe('ResetPasswordForm', () => {
     
     render(<ResetPasswordForm />);
     
-    expect(screen.getByText(/token resetowania hasła jest nieprawidłowy/i)).toBeInTheDocument();
+    const errorElement = screen.queryByText(/token resetowania hasła jest nieprawidłowy/i);
+    expect(errorElement).not.toBeNull();
   });
 
   it('waliduje wymagane pola', async () => {
-    render(<ResetPasswordForm />);
+    const { container } = render(<ResetPasswordForm />);
     
-    const submitButton = screen.getByRole('button', { name: /zresetuj hasło/i });
-    fireEvent.click(submitButton);
+    const submitButton = container.querySelector('button[type="submit"]');
+    expect(submitButton).not.toBeNull();
+    if (submitButton) fireEvent.click(submitButton);
 
     await waitFor(() => {
-      const errorElements = screen.queryAllByText(/hasło musi mieć/i);
-      expect(errorElements.length).toBeGreaterThan(0);
+      const errorElements = container.querySelectorAll('p, span, div');
+      const hasErrorMessage = Array.from(errorElements).some(
+        element => element.textContent?.toLowerCase().includes('hasło musi mieć')
+      );
+      expect(hasErrorMessage).toBe(true);
     });
   });
 
   it('validates the password format', async () => {
-    render(<ResetPasswordForm />);
+    const { container } = render(<ResetPasswordForm />);
     
-      const inputs = screen.getAllByPlaceholderText('••••••••');
-    const passwordInput = inputs[0];
+    const passwordInputs = container.querySelectorAll('input[type="password"]');
+    expect(passwordInputs.length).toBeGreaterThan(0);
+    const passwordInput = passwordInputs[0];
     
     fireEvent.change(passwordInput, { target: { value: 'password' } });
     
-    const submitButton = screen.getByRole('button', { name: /zresetuj hasło/i });
-    fireEvent.click(submitButton);
+    const submitButton = container.querySelector('button[type="submit"]');
+    expect(submitButton).not.toBeNull();
+    if (submitButton) fireEvent.click(submitButton);
 
     await waitFor(() => {
-      const errorElements = screen.queryAllByText(/hasło musi zawierać przynajmniej/i);
-      expect(errorElements.length).toBeGreaterThan(0);
+      const errorElements = container.querySelectorAll('p, span, div');
+      const hasErrorMessage = Array.from(errorElements).some(
+        element => element.textContent?.toLowerCase().includes('hasło musi zawierać przynajmniej')
+      );
+      expect(hasErrorMessage).toBe(true);
     });
   });
 
-  it('validates the password format', async () => {
-    render(<ResetPasswordForm />);
+  it('validates password confirmation match', async () => {
+    const { container } = render(<ResetPasswordForm />);
     
-    const inputs = screen.getAllByPlaceholderText('••••••••');
-    const passwordInput = inputs[0];
-    const confirmPasswordInput = inputs[1];
+    const passwordInputs = container.querySelectorAll('input[type="password"]');
+    expect(passwordInputs.length).toBe(2);
+    const passwordInput = passwordInputs[0];
+    const confirmPasswordInput = passwordInputs[1];
     
     fireEvent.change(passwordInput, { target: { value: 'Password123' } });
     fireEvent.change(confirmPasswordInput, { target: { value: 'Password124' } });
     
-    const submitButton = screen.getByRole('button', { name: /zresetuj hasło/i });
-    fireEvent.click(submitButton);
+    const submitButton = container.querySelector('button[type="submit"]');
+    expect(submitButton).not.toBeNull();
+    if (submitButton) fireEvent.click(submitButton);
 
     await waitFor(() => {
-      const errorElements = screen.queryAllByText(/hasła muszą być identyczne/i);
-      expect(errorElements.length).toBeGreaterThan(0);
+      const errorElements = container.querySelectorAll('p, span, div');
+      const hasErrorMessage = Array.from(errorElements).some(
+        element => element.textContent?.toLowerCase().includes('hasła muszą być identyczne')
+      );
+      expect(hasErrorMessage).toBe(true);
     });
   });
 
@@ -119,17 +148,19 @@ describe('ResetPasswordForm', () => {
       error: null
     } as any);
     
-    render(<ResetPasswordForm />);
+    const { container } = render(<ResetPasswordForm />);
     
-    const inputs = screen.getAllByPlaceholderText('••••••••');
-    const passwordInput = inputs[0];
-    const confirmPasswordInput = inputs[1];
+    const passwordInputs = container.querySelectorAll('input[type="password"]');
+    expect(passwordInputs.length).toBe(2);
+    const passwordInput = passwordInputs[0];
+    const confirmPasswordInput = passwordInputs[1];
     
     fireEvent.change(passwordInput, { target: { value: 'Password123' } });
     fireEvent.change(confirmPasswordInput, { target: { value: 'Password123' } });
     
-    const submitButton = screen.getByRole('button', { name: /zresetuj hasło/i });
-    fireEvent.click(submitButton);
+    const submitButton = container.querySelector('button[type="submit"]');
+    expect(submitButton).not.toBeNull();
+    if (submitButton) fireEvent.click(submitButton);
 
     await waitFor(() => {
       expect(mockResetPassword).toHaveBeenCalledWith('valid-token-12345', 'Password123', 'Password123');
@@ -145,20 +176,26 @@ describe('ResetPasswordForm', () => {
       error: null
     } as any);
     
-    render(<ResetPasswordForm />);
+    const { container } = render(<ResetPasswordForm />);
     
-    const inputs = screen.getAllByPlaceholderText('••••••••');
-    const passwordInput = inputs[0];
-    const confirmPasswordInput = inputs[1];
+    const passwordInputs = container.querySelectorAll('input[type="password"]');
+    expect(passwordInputs.length).toBe(2);
+    const passwordInput = passwordInputs[0];
+    const confirmPasswordInput = passwordInputs[1];
     
     fireEvent.change(passwordInput, { target: { value: 'Password123' } });
     fireEvent.change(confirmPasswordInput, { target: { value: 'Password123' } });
     
-    const submitButton = screen.getByRole('button', { name: /zresetuj hasło/i });
-    fireEvent.click(submitButton);
+    const submitButton = container.querySelector('button[type="submit"]');
+    expect(submitButton).not.toBeNull();
+    if (submitButton) fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(screen.getByText(/hasło zostało pomyślnie zresetowane/i)).toBeInTheDocument();
+      const successElements = container.querySelectorAll('p, div');
+      const hasSuccessMessage = Array.from(successElements).some(
+        element => element.textContent?.toLowerCase().includes('hasło zostało pomyślnie zresetowane')
+      );
+      expect(hasSuccessMessage).toBe(true);
     });
   });
 
@@ -172,20 +209,26 @@ describe('ResetPasswordForm', () => {
       error: null
     } as any);
     
-    render(<ResetPasswordForm />);
+    const { container } = render(<ResetPasswordForm />);
     
-    const inputs = screen.getAllByPlaceholderText('••••••••');
-    const passwordInput = inputs[0];
-    const confirmPasswordInput = inputs[1];
+    const passwordInputs = container.querySelectorAll('input[type="password"]');
+    expect(passwordInputs.length).toBe(2);
+    const passwordInput = passwordInputs[0];
+    const confirmPasswordInput = passwordInputs[1];
     
     fireEvent.change(passwordInput, { target: { value: 'Password123' } });
     fireEvent.change(confirmPasswordInput, { target: { value: 'Password123' } });
     
-    const submitButton = screen.getByRole('button', { name: /zresetuj hasło/i });
-    fireEvent.click(submitButton);
+    const submitButton = container.querySelector('button[type="submit"]');
+    expect(submitButton).not.toBeNull();
+    if (submitButton) fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(screen.getByText(/token resetowania hasła wygasł/i)).toBeInTheDocument();
+      const errorElements = container.querySelectorAll('p, div');
+      const hasErrorMessage = Array.from(errorElements).some(
+        element => element.textContent?.toLowerCase().includes('token resetowania hasła wygasł')
+      );
+      expect(hasErrorMessage).toBe(true);
     });
   });
 }); 

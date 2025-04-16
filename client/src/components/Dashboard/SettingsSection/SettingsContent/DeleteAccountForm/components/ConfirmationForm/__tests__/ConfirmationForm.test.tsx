@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, cleanup } from '@testing-library/react';
 import { ConfirmationForm } from '../ConfirmationForm.component';
 import { UseFormRegister } from 'react-hook-form';
 
@@ -21,13 +21,18 @@ const defaultProps = {
 };
 
 describe('ConfirmationForm', () => {
+  beforeEach(() => {
+    cleanup();
+    vi.clearAllMocks();
+  });
+
   it('should render all form fields', () => {
     render(<ConfirmationForm {...defaultProps} />);
 
-    expect(screen.getByRole('textbox', { name: /potwierdzenie/i })).toBeDefined();
-    expect(screen.getByPlaceholderText('Wprowadź hasło aby potwierdzić')).toBeDefined();
-    expect(screen.getByRole('button', { name: /definitywnie usuń konto/i })).toBeDefined();
-    expect(screen.getByRole('button', { name: /anuluj/i })).toBeDefined();
+    expect(screen.getByRole('textbox', { name: /potwierdzenie/i })).not.toBeNull();
+    expect(screen.getByPlaceholderText('Wprowadź hasło aby potwierdzić')).not.toBeNull();
+    expect(screen.getByRole('button', { name: /definitywnie usuń konto/i })).not.toBeNull();
+    expect(screen.getByRole('button', { name: /anuluj/i })).not.toBeNull();
   });
 
   it('should display validation errors', () => {
@@ -41,14 +46,18 @@ describe('ConfirmationForm', () => {
 
     render(<ConfirmationForm {...propsWithErrors} />);
 
-    expect(screen.getByText('Hasło jest wymagane')).toBeDefined();
-    expect(screen.getByText('Nieprawidłowe potwierdzenie')).toBeDefined();
+    expect(screen.getByText('Hasło jest wymagane')).not.toBeNull();
+    expect(screen.getByText('Nieprawidłowe potwierdzenie')).not.toBeNull();
   });
 
   it('should display loading state during submission', () => {
     render(<ConfirmationForm {...defaultProps} isSubmitting={true} />);
 
-    expect(screen.getByText('Usuwanie')).toBeDefined();
-    expect(screen.getByRole('button', { name: /usuwanie/i })).toBeDisabled();
+    expect(screen.getByText('Usuwanie')).not.toBeNull();
+    
+    // Sprawdzamy czy przycisk jest wyłączony przez sprawdzenie atrybutu disabled
+    const submitButton = screen.getByRole('button', { name: /usuwanie/i });
+    expect(submitButton).not.toBeNull();
+    expect(submitButton.getAttribute('disabled')).not.toBeNull();
   });
 }); 
