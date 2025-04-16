@@ -1,36 +1,40 @@
 import { memo } from "react";
-import { motion } from "framer-motion";
-import { useNavigate, useLocation } from "react-router-dom";
-import { navigationItems } from "../constance/navigationItems.const";
+import { NavLink } from "react-router-dom";
 
 
 export const CommunityNavigation = memo(() => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const currentPath = location.pathname;
 
-  return (
-    <div className="flex items-center bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10 p-6 shadow-lg">
-      <nav className="flex gap-4">
-        {navigationItems.map(item => (
-          <motion.button
-            key={item.id}
-            onClick={() => navigate(item.path)}
-            className={`px-4 rounded-lg flex items-center gap-2 transition-colors focus:outline-none ${
-              currentPath.includes(item.id) 
-                ? 'bg-js text-dark font-medium' 
-                : 'text-gray-400 hover:text-js'
-            }`}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <item.icon className="w-5 h-5" />
-            {item.label}
-          </motion.button>
-        ))}
-      </nav>
-    </div>
-  );
+    return (
+      <div className="flex gap-4 mb-8 pb-2">
+        <NavLink 
+          to="/dashboard/community" 
+          end
+          className={({ isActive }) => 
+            `flex items-center gap-2 px-6 py-3 font-semibold rounded-lg transition-all ${
+              isActive 
+                ? 'bg-js/10 text-js border-b-2 border-js shadow-md' 
+                : 'text-gray-400 hover:text-js hover:bg-js/5'
+            }`
+          }
+        >
+          <i className="fas fa-newspaper"></i>
+          Aktualności
+        </NavLink>
+        <NavLink 
+          to="/dashboard/community/ranking" 
+          className={({ isActive }) => 
+            `flex items-center gap-2 px-6 py-3 font-semibold rounded-lg transition-all ${
+              isActive 
+                ? 'bg-js/10 text-js border-b-2 border-js shadow-md' 
+                : 'text-gray-400 hover:text-js hover:bg-js/5'
+            }`
+          }
+        >
+          <i className="fas fa-trophy"></i>
+          Ranking
+        </NavLink>
+      </div>
+    );
 });
 
 CommunityNavigation.displayName = "CommunityNavigation";
