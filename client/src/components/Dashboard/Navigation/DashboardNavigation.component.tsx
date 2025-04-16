@@ -17,7 +17,7 @@ import { ErrorBoundary } from "../../Common/ErrorBoundary.component";
 const SECTION_TITLES: Record<string, string> = {
   main: "Główne",
   game: "Nauka",
-  // social: "Społeczność",
+  social: "Społeczność",
 };
 
 export const DashboardNavigation = memo(() => {
