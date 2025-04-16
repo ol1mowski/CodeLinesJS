@@ -49,9 +49,9 @@ export const RankingList = () => {
           className="bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10 p-4 hover:border-js/20 transition-colors"
         >
           <div className="flex items-center gap-4">
-            <div className="relative">
-              <div className="text-2xl font-bold text-js flex items-center justify-center w-12 h-12 rounded-full bg-js/10">
-                {user.username.slice(0, 1)}
+            <div className="relative bg-js rounded-full">
+              <div className="text-2xl font-bold text-dark flex items-center justify-center w-12 h-12 rounded-full bg-js/10">
+                {user.username.slice(0, 1).toUpperCase()}
               </div>
 
               {index < 3 && (
