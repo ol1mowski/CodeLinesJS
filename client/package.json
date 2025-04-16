@@ -10,7 +10,7 @@
     "build:analyze": "tsc -b && vite build --mode production --outDir dist-analyze",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "vitest",
+    "test": "vitest --exclude e2e --exclude \"**/*.spec.ts\"",
     "test:ui": "vitest --ui",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
