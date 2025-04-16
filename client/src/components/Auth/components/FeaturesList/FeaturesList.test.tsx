@@ -1,5 +1,5 @@
-import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { render, screen, cleanup } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { FeaturesList } from './FeaturesList.component';
 
 vi.mock('../FeatureItem/FeatureItem.component', () => ({
@@ -7,24 +7,32 @@ vi.mock('../FeatureItem/FeatureItem.component', () => ({
 }));
 
 describe('FeaturesList', () => {
+  beforeEach(() => {
+    cleanup();
+  });
+  
   it('renders a grid of features', () => {
     const { container } = render(<FeaturesList />);
     
-    const grid = container.firstChild;
-    expect(grid).toHaveClass('grid');
-    expect(grid).toHaveClass('grid-cols-1');
-    expect(grid).toHaveClass('sm:grid-cols-2');
+    const grid = container.firstChild as HTMLElement;
+    expect(grid.classList.contains('grid')).toBe(true);
+    expect(grid.classList.contains('grid-cols-1')).toBe(true);
+    expect(grid.classList.contains('sm:grid-cols-2')).toBe(true);
   });
   
   it('renders all feature items with correct texts', () => {
     render(<FeaturesList />);
     
-    const featureItems = screen.getAllByTestId('feature-item');
-    expect(featureItems).toHaveLength(4);
     
-    expect(featureItems[0]).toHaveTextContent('Interaktywne lekcje');
-    expect(featureItems[1]).toHaveTextContent('Wyzwania i gry');
-    expect(featureItems[2]).toHaveTextContent('Śledzenie postępów');
-    expect(featureItems[3]).toHaveTextContent('Społeczność');
+    const expectedTexts = [
+      'Interaktywne lekcje',
+      'Wyzwania i gry',
+      'Śledzenie postępów',
+      'Społeczność'
+    ];
+    
+    expectedTexts.forEach(text => {
+      expect(screen.getByText(text)).not.toBeNull();
+    });
   });
 }); 

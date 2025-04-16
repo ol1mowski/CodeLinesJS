@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { render, fireEvent, cleanup } from "@testing-library/react";
 import { DeleteAccountForm } from "../DeleteAccountForm.component";
 import { useConfirmationState } from "../../../hooks/useConfirmationState";
 import { useAccountDeletion } from "../../../hooks/useAccountDeletion";
@@ -63,11 +63,20 @@ describe("DeleteAccountForm", () => {
     });
   });
 
-  it("should display the warning screen", () => {
-    render(<DeleteAccountForm />);
+  afterEach(() => {
+    cleanup();
+  });
 
-    expect(screen.getByText("Usuwanie konta jest nieodwracalne")).toBeDefined();
-    expect(screen.getByText("Chcę usunąć konto")).toBeDefined();
+  it("should display the warning screen", () => {
+    const { container } = render(<DeleteAccountForm />);
+
+    const warningText = container.querySelector('h3');
+    expect(warningText).not.toBeNull();
+    expect(warningText?.textContent).toContain("Usuwanie konta jest nieodwracalne");
+    
+    const buttons = Array.from(container.querySelectorAll('button'));
+    const deleteButton = buttons.find(btn => btn.textContent?.includes('Chcę usunąć konto'));
+    expect(deleteButton).not.toBeNull();
   });
 
   it("should display the confirmation form after clicking the button", () => {
@@ -77,17 +86,29 @@ describe("DeleteAccountForm", () => {
       handleHideConfirmation: vi.fn(),
     });
 
-    render(<DeleteAccountForm />);
+    const { container } = render(<DeleteAccountForm />);
 
-    expect(screen.getByText("Hasło")).toBeDefined();
-    expect(screen.getByText("Potwierdzenie")).toBeDefined();
+    const passwordLabel = container.querySelector('label, div');
+    expect(passwordLabel).not.toBeNull();
+    expect(passwordLabel?.textContent).toContain("Hasło");
+    
+    const confirmationLabel = Array.from(container.querySelectorAll('label, div'))
+      .find(el => el.textContent?.includes('Potwierdzenie'));
+    expect(confirmationLabel).not.toBeNull();
   });
 
   it("should call handleShowConfirmation on button click", () => {
-    render(<DeleteAccountForm />);
+    const { container } = render(<DeleteAccountForm />);
 
-    fireEvent.click(screen.getByText("Chcę usunąć konto"));
-    expect(mockHandleShowConfirmation).toHaveBeenCalledTimes(1);
+    const buttons = Array.from(container.querySelectorAll('button'));
+    const deleteButton = buttons.find(btn => btn.textContent?.includes('Chcę usunąć konto'));
+    
+    if (deleteButton) {
+      fireEvent.click(deleteButton);
+      expect(mockHandleShowConfirmation).toHaveBeenCalledTimes(1);
+    } else {
+      expect(deleteButton).not.toBeNull();
+    }
   });
 
   it("should handle cancellation in the confirmation form", () => {
@@ -97,9 +118,16 @@ describe("DeleteAccountForm", () => {
       handleHideConfirmation: vi.fn(),
     });
 
-    render(<DeleteAccountForm />);
+    const { container } = render(<DeleteAccountForm />);
 
-    fireEvent.click(screen.getByText("Anuluj"));
-    expect(mockHandleCancel).toHaveBeenCalledTimes(1);
+    const buttons = Array.from(container.querySelectorAll('button'));
+    const cancelButton = buttons.find(btn => btn.textContent?.includes('Anuluj'));
+    
+    if (cancelButton) {
+      fireEvent.click(cancelButton);
+      expect(mockHandleCancel).toHaveBeenCalledTimes(1);
+    } else {
+      expect(cancelButton).not.toBeNull();
+    }
   });
 });

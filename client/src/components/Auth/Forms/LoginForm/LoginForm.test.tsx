@@ -1,5 +1,5 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { render, fireEvent, waitFor, cleanup } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import LoginForm from './LoginForm.component';
 
 vi.mock('react-router-dom', () => ({
@@ -38,24 +38,52 @@ vi.mock('framer-motion', () => ({
 }));
 
 describe('LoginForm', () => {
+  beforeEach(() => {
+    cleanup();
+  });
+
   it('renders form correctly', () => {
-    render(<LoginForm />);
+    const { container } = render(<LoginForm />);
     
-    expect(screen.getByPlaceholderText('twoj@email.com')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('••••••••')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /zaloguj/i })).toBeInTheDocument();
-    expect(screen.getByTestId('google-login-button')).toBeInTheDocument();
+    const emailInput = container.querySelector('input[type="email"]');
+    expect(emailInput).not.toBeNull();
+    expect(emailInput?.getAttribute('placeholder')).toBe('twoj@email.com');
+    
+    const passwordInput = container.querySelector('input[type="password"]');
+    expect(passwordInput).not.toBeNull();
+    expect(passwordInput?.getAttribute('placeholder')).toBe('••••••••');
+    
+    // Używamy querySelector na kontenerze zamiast getByRole, które może zwrócić wiele elementów
+    const loginButton = container.querySelector('button[type="submit"]');
+    expect(loginButton).not.toBeNull();
+    expect(loginButton?.textContent?.toLowerCase().includes('zaloguj')).toBe(true);
+    
+    const googleButton = container.querySelector('[data-testid="google-login-button"]');
+    expect(googleButton).not.toBeNull();
   });
 
   it('validates required fields', async () => {
-    render(<LoginForm />);
+    const { container } = render(<LoginForm />);
     
-    const submitButton = screen.getByRole('button', { name: /zaloguj/i });
-    fireEvent.click(submitButton);
+    // Używamy querySelector na kontenerze
+    const submitButton = container.querySelector('button[type="submit"]');
+    expect(submitButton).not.toBeNull();
+    
+    if (submitButton) {
+      fireEvent.click(submitButton);
+    }
 
     await waitFor(() => {
-      expect(screen.getByText(/email jest wymagany/i)).toBeInTheDocument();
-      expect(screen.getByText(/hasło jest wymagane/i)).toBeInTheDocument();
+      const errorElements = container.querySelectorAll('p, span, div');
+      const hasEmailErrorMessage = Array.from(errorElements).some(
+        element => element.textContent?.toLowerCase().includes('email jest wymagany')
+      );
+      const hasPasswordErrorMessage = Array.from(errorElements).some(
+        element => element.textContent?.toLowerCase().includes('hasło jest wymagane')
+      );
+      
+      expect(hasEmailErrorMessage).toBe(true);
+      expect(hasPasswordErrorMessage).toBe(true);
     });
   });
 }); 

@@ -1,5 +1,5 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import ForgotPasswordForm from './ForgotPasswordForm.component';
 import { useAuth } from '../../../../hooks/useAuth';
 
@@ -29,42 +29,63 @@ vi.mock('framer-motion', () => ({
 }));
 
 describe('ForgotPasswordForm', () => {
+  beforeEach(() => {
+    cleanup();
+    vi.clearAllMocks();
+  });
+  
   it('Renders the form correctly', () => {
-    render(<ForgotPasswordForm />);
+    const { container } = render(<ForgotPasswordForm />);
 
-    expect(screen.getByPlaceholderText('twoj@email.com')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /wyślij link resetujący/i })).toBeInTheDocument();
-    expect(screen.getByText(/podaj swój adres email/i)).toBeInTheDocument();
+    const emailInput = container.querySelector('input[type="email"]');
+    expect(emailInput).not.toBeNull();
+    expect(emailInput?.getAttribute('placeholder')).toBe('twoj@email.com');
+    
+    const submitButton = container.querySelector('button[type="submit"]');
+    expect(submitButton).not.toBeNull();
+    expect(submitButton?.textContent?.toLowerCase().includes('wyślij link resetujący')).toBe(true);
+    
+    const introText = container.querySelector('p');
+    expect(introText?.textContent?.toLowerCase().includes('podaj swój adres email')).toBe(true);
   });
 
   it('validates required fields', async () => {
-    render(<ForgotPasswordForm />);
+    const { container } = render(<ForgotPasswordForm />);
 
-    const submitButton = screen.getByRole('button', { name: /wyślij link resetujący/i });
-    fireEvent.click(submitButton);
+    const submitButton = container.querySelector('button[type="submit"]');
+    expect(submitButton).not.toBeNull();
+    if (submitButton) fireEvent.click(submitButton);
 
     await waitFor(() => {
-      const errorElements = screen.queryAllByText(/email/i);
-      expect(errorElements.length).toBeGreaterThan(0);
+      const errorElements = container.querySelectorAll('p, span, div');
+      const hasErrorMessage = Array.from(errorElements).some(
+        element => element.textContent?.toLowerCase().includes('email')
+      );
+      expect(hasErrorMessage).toBe(true);
     });
   });
 
   it('validates the email format', async () => {
-    render(<ForgotPasswordForm />);
+    const { container } = render(<ForgotPasswordForm />);
 
-    const emailInput = screen.getByPlaceholderText('twoj@email.com');
-    fireEvent.change(emailInput, { target: { value: 'niepoprawnyemail' } });
+    const emailInput = container.querySelector('input[type="email"]');
+    expect(emailInput).not.toBeNull();
+    if (emailInput) fireEvent.change(emailInput, { target: { value: 'niepoprawnyemail' } });
 
-    fireEvent.blur(emailInput);
+    if (emailInput) fireEvent.blur(emailInput);
 
     await new Promise(resolve => setTimeout(resolve, 100));
 
-    const submitButton = screen.getByRole('button', { name: /wyślij link resetujący/i });
-    fireEvent.click(submitButton);
+    const submitButton = container.querySelector('button[type="submit"]');
+    expect(submitButton).not.toBeNull();
+    if (submitButton) fireEvent.click(submitButton);
 
     await waitFor(() => {
-      const errorElements = screen.queryAllByText(/email|format|niepoprawny/i);
-      expect(errorElements.length).toBeGreaterThan(0);
+      const errorElements = container.querySelectorAll('p, span, div');
+      const hasErrorMessage = Array.from(errorElements).some(
+        element => element.textContent?.toLowerCase().match(/email|format|niepoprawny/i)
+      );
+      expect(hasErrorMessage).toBe(true);
     }, { timeout: 2000 });
   });
 
@@ -77,17 +98,24 @@ describe('ForgotPasswordForm', () => {
       error: null
     } as any);
 
-    render(<ForgotPasswordForm />);
+    const { container } = render(<ForgotPasswordForm />);
 
-    const emailInput = screen.getByPlaceholderText('twoj@email.com');
-    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+    const emailInput = container.querySelector('input[type="email"]');
+    expect(emailInput).not.toBeNull();
+    if (emailInput) fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
 
-    const submitButton = screen.getByRole('button', { name: /wyślij link resetujący/i });
-    fireEvent.click(submitButton);
+    const submitButton = container.querySelector('button[type="submit"]');
+    expect(submitButton).not.toBeNull();
+    if (submitButton) fireEvent.click(submitButton);
 
     await waitFor(() => {
       expect(mockForgotPassword).toHaveBeenCalledWith('test@example.com');
-      expect(screen.getByText(/link został wysłany/i)).toBeInTheDocument();
+      
+      const successElements = container.querySelectorAll('p, div');
+      const hasSuccessMessage = Array.from(successElements).some(
+        element => element.textContent?.toLowerCase().includes('link został wysłany')
+      );
+      expect(hasSuccessMessage).toBe(true);
     });
   });
 
@@ -101,17 +129,24 @@ describe('ForgotPasswordForm', () => {
       error: null
     } as any);
 
-    render(<ForgotPasswordForm />);
+    const { container } = render(<ForgotPasswordForm />);
 
-    const emailInput = screen.getByPlaceholderText('twoj@email.com');
-    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+    const emailInput = container.querySelector('input[type="email"]');
+    expect(emailInput).not.toBeNull();
+    if (emailInput) fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
 
-    const submitButton = screen.getByRole('button', { name: /wyślij link resetujący/i });
-    fireEvent.click(submitButton);
+    const submitButton = container.querySelector('button[type="submit"]');
+    expect(submitButton).not.toBeNull();
+    if (submitButton) fireEvent.click(submitButton);
 
     await waitFor(() => {
       expect(mockForgotPassword).toHaveBeenCalledWith('test@example.com');
-      expect(screen.getByText(/użytkownik o podanym adresie email nie istnieje/i)).toBeInTheDocument();
+      
+      const errorElements = container.querySelectorAll('p, div');
+      const hasErrorMessage = Array.from(errorElements).some(
+        element => element.textContent?.toLowerCase().includes('użytkownik o podanym adresie email nie istnieje')
+      );
+      expect(hasErrorMessage).toBe(true);
     });
   });
 }); 

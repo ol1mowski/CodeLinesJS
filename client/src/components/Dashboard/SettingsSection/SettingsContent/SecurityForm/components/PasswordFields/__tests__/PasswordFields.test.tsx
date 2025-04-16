@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, cleanup } from '@testing-library/react';
 import { PasswordFields } from '../PasswordFields.component';
 
 describe('PasswordFields', () => {
@@ -13,12 +13,17 @@ describe('PasswordFields', () => {
     confirmPassword: undefined
   };
 
+  beforeEach(() => {
+    cleanup();
+    vi.clearAllMocks();
+  });
+
   it('renders all password fields', () => {
     render(<PasswordFields form={mockForm as any} errors={mockErrors} />);
     
-    expect(screen.getByPlaceholderText('Wprowadź aktualne hasło')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Wprowadź nowe hasło')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Powtórz nowe hasło')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Wprowadź aktualne hasło')).not.toBeNull();
+    expect(screen.getByPlaceholderText('Wprowadź nowe hasło')).not.toBeNull();
+    expect(screen.getByPlaceholderText('Powtórz nowe hasło')).not.toBeNull();
   });
 
   it('displays error messages when present', () => {
@@ -30,8 +35,8 @@ describe('PasswordFields', () => {
 
     render(<PasswordFields form={mockForm as any} errors={errorsWithMessages as any} />);
     
-    expect(screen.getByText('Wymagane pole')).toBeInTheDocument();
-    expect(screen.getByText('Hasło jest za krótkie')).toBeInTheDocument();
-    expect(screen.getByText('Hasła nie są identyczne')).toBeInTheDocument();
+    expect(screen.getByText('Wymagane pole')).not.toBeNull();
+    expect(screen.getByText('Hasło jest za krótkie')).not.toBeNull();
+    expect(screen.getByText('Hasła nie są identyczne')).not.toBeNull();
   });
 });

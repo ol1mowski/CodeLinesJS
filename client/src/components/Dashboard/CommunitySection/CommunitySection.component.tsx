@@ -3,11 +3,11 @@ import { useLocation, Routes, Route } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCommunity } from './Feed/hooks/useCommunity.hook';
 import { prefetchRanking } from './Ranking/hooks/useRanking';
-import { CommunityNav } from './Feed/components/Comments/CommunityNav.component';
 import { CommunityView } from './types/community.types';
 import { Helmet } from 'react-helmet-async';
 import { LoadingSpinner } from '../../../components/UI/LoadingSpinner/LoadingSpinner.component';
 import { useAuth } from '../../../hooks/useAuth';
+import { CommunityNavigation } from './Navigation/CommunityNavigation.component';
 
 const CommunityFeed = lazy(() => import('./Feed/CommunityFeed.component'));
 const CommunityRanking = lazy(() => import('./Ranking/CommunityRanking.component'));
@@ -38,8 +38,9 @@ export const CommunitySection = memo(() => {
         <meta name="description" content="Community CodeLinesJS - dołącz do nas i rozwijaj swoje umiejętności w przyjaznym środowisku." />
       </Helmet>
       <div className="max-w-7xl mx-auto">
-        <CommunityNav activeView={activeView} />
         <div className="bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10 p-6 shadow-lg">
+          <CommunityNavigation />
+          
           <Routes>
             <Route index element={
               <Suspense fallback={<LoadingSpinner text="Ładowanie aktualności..." />}>

@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { NavigationButton } from '../NavigationButton.component';
 import { FaHome } from 'react-icons/fa';
 
@@ -11,15 +11,21 @@ describe('NavigationButton', () => {
     onClick: vi.fn(),
   };
 
+  beforeEach(() => {
+    cleanup();
+    vi.clearAllMocks();
+  });
+
   it('render correctly with basic props', () => {
     render(<NavigationButton id="test" {...defaultProps} />);
-    expect(screen.getByRole('button')).toBeInTheDocument();
-    expect(screen.getByText('Test Button')).toBeInTheDocument();
+    const button = screen.getByRole('button');
+    expect(button).not.toBeNull();
+    expect(screen.getByText('Test Button')).not.toBeNull();
   });
 
   it('does not display label when isExpanded is false', () => {
     render(<NavigationButton id="test" {...defaultProps} isExpanded={false} />);
-    expect(screen.queryByText('Test Button')).not.toBeInTheDocument();
+    expect(screen.queryByText('Test Button')).toBeNull();
   });
 
   it('onclick before click', () => {
@@ -33,6 +39,6 @@ describe('NavigationButton', () => {
   it('apply styles for danger variant', () => {
     render(<NavigationButton id="test" {...defaultProps} variant="danger" />);
     const button = screen.getByRole('button');
-    expect(button).toHaveClass('text-red-400');
+    expect(button.classList.contains('text-red-400')).toBe(true);
   });
 }); 

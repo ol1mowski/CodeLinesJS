@@ -1,9 +1,33 @@
 import '@testing-library/jest-dom';
 import { expect } from 'vitest';
-import * as matchers from '@testing-library/jest-dom/matchers';
+import matchers from '@testing-library/jest-dom/matchers';
 import { vi } from 'vitest';
+import React from 'react';
 
 expect.extend(matchers);
+
+// Pomijanie animacji Framer Motion w testach
+vi.mock('framer-motion', async (importOriginal) => {
+  const actual = await importOriginal();
+  
+  // Konfiguracja globalnego pomijania animacji
+  if (actual.MotionGlobalConfig) {
+    actual.MotionGlobalConfig.skipAnimations = true;
+  }
+  
+  return {
+    ...actual,
+    // Dodaj mockowania dla komponentów, które mogą powodować problemy
+    motion: {
+      ...actual.motion,
+      div: (props: any) => React.createElement('div', props),
+      button: (props: any) => React.createElement('button', props),
+      span: (props: any) => React.createElement('span', props),
+      a: (props: any) => React.createElement('a', props),
+    },
+    AnimatePresence: ({ children }: { children: React.ReactNode }) => React.createElement(React.Fragment, null, children),
+  };
+});
 
 class MockIntersectionObserver {
   readonly root: Element | null = null;

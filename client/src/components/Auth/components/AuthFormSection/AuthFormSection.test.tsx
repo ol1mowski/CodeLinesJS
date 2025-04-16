@@ -1,14 +1,17 @@
-import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { render, screen, cleanup } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import { AuthFormSection } from './AuthFormSection.component';
 
-
 vi.mock('../../AuthContent/AuthContent.component', () => ({
-  AuthContent: () => <div data-testid="auth-content">Zaloguj się lub zarejestruj</div>
+  AuthContent: () => <div data-testid="auth-content">Auth Content</div>
 }));
 
 describe('AuthFormSection', () => {
+  beforeEach(() => {
+    cleanup();
+  });
+
   it('renders AuthContent when no children provided', () => {
     render(
       <MemoryRouter>
@@ -16,8 +19,8 @@ describe('AuthFormSection', () => {
       </MemoryRouter>
     );
     
-    expect(screen.getByTestId('auth-content')).toBeInTheDocument();
-    expect(screen.queryByText('CodeLinesJS')).not.toBeInTheDocument();
+    expect(screen.getByTestId('auth-content')).not.toBeNull();
+    expect(screen.queryByText('CodeLinesJS')).toBeNull();
   });
 
   it('renders custom content when children are provided', () => {
@@ -31,9 +34,9 @@ describe('AuthFormSection', () => {
       </MemoryRouter>
     );
     
-    expect(screen.queryByTestId('auth-content')).not.toBeInTheDocument();
-    expect(screen.getByText('CodeLinesJS')).toBeInTheDocument();
-    expect(screen.getByText(childContent)).toBeInTheDocument();
+    expect(screen.queryByTestId('auth-content')).toBeNull();
+    expect(screen.getByText('CodeLinesJS')).not.toBeNull();
+    expect(screen.getByText(childContent)).not.toBeNull();
   });
 
   it('renders with title and subtitle', () => {
@@ -48,8 +51,8 @@ describe('AuthFormSection', () => {
       </MemoryRouter>
     );
     
-    expect(screen.getByText(title)).toBeInTheDocument();
-    expect(screen.getByText(subtitle)).toBeInTheDocument();
+    expect(screen.getByText(title)).not.toBeNull();
+    expect(screen.getByText(subtitle)).not.toBeNull();
   });
 
   it('applies correct styling to the container', () => {
@@ -61,11 +64,11 @@ describe('AuthFormSection', () => {
       </MemoryRouter>
     );
     
-    const mainDiv = container.firstChild;
-    expect(mainDiv).toHaveClass('w-full');
-    expect(mainDiv).toHaveClass('md:w-2/5');
+    const mainDiv = container.firstChild as HTMLElement;
+    expect(mainDiv.classList.contains('w-full')).toBe(true);
+    expect(mainDiv.classList.contains('md:w-2/5')).toBe(true);
     
     const bgDiv = container.querySelector('.blur-3xl');
-    expect(bgDiv).toBeInTheDocument();
+    expect(bgDiv).not.toBeNull();
   });
 }); 

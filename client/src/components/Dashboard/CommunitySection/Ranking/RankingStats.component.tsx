@@ -9,16 +9,16 @@ export const RankingStats = memo(() => {
   const currentUser = useMemo(() => {
     if (!data) return null;
     
+    if (data && typeof data === 'object' && 'userStats' in data) {
+      return data.userStats;
+    }
+    
     if (Array.isArray(data)) {
       return data.find(u => u.rank !== undefined || u.position !== undefined);
-    } 
-    else if (data && typeof data === 'object') {
+    } else if (data && typeof data === 'object') {
       const dataObj: any = data;
       
-      if (dataObj.userStats) {
-        return dataObj.userStats;
-      }
-      else if (dataObj.rank !== undefined || dataObj.position !== undefined) {
+      if (dataObj.rank !== undefined || dataObj.position !== undefined) {
         return dataObj;
       }
     }
@@ -43,21 +43,40 @@ export const RankingStats = memo(() => {
     );
   }
 
+  if (!currentUser) {
+    return (
+      <motion.div className="bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10 p-6 shadow-lg">
+        <h2 className="text-xl font-bold text-js mb-6">Twoje Statystyki</h2>
+        <p className="text-gray-400">Nie udało się załadować twoich statystyk. Zaloguj się, aby zobaczyć swoje miejsce w rankingu.</p>
+      </motion.div>
+    );
+  }
+
   const getUserRank = () => {
     if (!currentUser) return '-';
-    if ('position' in currentUser) return currentUser.position;
     if ('rank' in currentUser) return currentUser.rank;
+    if ('position' in currentUser) return currentUser.position;
     return '-';
   };
   
   const getUserLevel = () => {
     if (!currentUser) return '-';
+  
+    if ('stats' in currentUser && currentUser.stats && 'level' in currentUser.stats) {
+      return currentUser.stats.level;
+    }
     if ('level' in currentUser) return currentUser.level;
     return '-';
   };
   
   const getUserPoints = () => {
     if (!currentUser) return '-';
+    
+    if ('stats' in currentUser && currentUser.stats) {
+      if ('points' in currentUser.stats) return currentUser.stats.points;
+      if ('streak' in currentUser.stats) return currentUser.stats.streak;
+    }
+      
     if ('points' in currentUser) return currentUser.points;
     if ('streak' in currentUser) return currentUser.streak;
     return '-';
@@ -86,7 +105,9 @@ export const RankingStats = memo(() => {
 
   return (
     <motion.div className="bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10 p-6 shadow-lg">
-      <h2 className="text-xl font-bold text-js mb-6">Twoje Statystyki</h2>
+      <h2 className="text-xl font-bold text-js mb-6">
+        Twoje Statystyki {currentUser.username && `(${currentUser.username})`}
+      </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {stats.map(stat => (
           <motion.div
