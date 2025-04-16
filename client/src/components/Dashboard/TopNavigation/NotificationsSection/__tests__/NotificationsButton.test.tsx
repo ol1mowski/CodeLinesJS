@@ -25,7 +25,7 @@ describe('NotificationsButton', () => {
     });
 
     render(<NotificationsButton />);
-    expect(screen.getByText('5')).toBeInTheDocument();
+    expect(screen.getByText('5')).not.toBeNull();
   });
 
   it('displays "9+" when there are more than 9 unread notifications', () => {
@@ -35,7 +35,7 @@ describe('NotificationsButton', () => {
     });
 
     render(<NotificationsButton />);
-    expect(screen.getByText('9+')).toBeInTheDocument();
+    expect(screen.getByText('9+')).not.toBeNull();
   });
 
   it('does not display the badge when there are no unread notifications', () => {
@@ -45,7 +45,7 @@ describe('NotificationsButton', () => {
     });
 
     render(<NotificationsButton />);
-    expect(screen.queryByText('0')).not.toBeInTheDocument();
+    expect(screen.queryByText('0')).toBeNull();
   });
 
   it('opens and closes the dropdown on click', async () => {
@@ -54,14 +54,18 @@ describe('NotificationsButton', () => {
       isLoading: false
     });
 
-    render(<NotificationsButton />);
+    const { container } = render(<NotificationsButton />);
     
-    const button = screen.getByRole('button');
+    const button = container.querySelector('button');
+    expect(button).not.toBeNull();
     
-    fireEvent.click(button);
-    expect(await screen.findByTestId('notifications-dropdown')).toBeInTheDocument();
-    
-    fireEvent.click(button);
-    expect(screen.queryByTestId('notifications-dropdown')).not.toBeInTheDocument();
+    if (button) {
+      fireEvent.click(button);
+      const dropdown = await screen.findByTestId('notifications-dropdown');
+      expect(dropdown).toBeTruthy();
+      
+      fireEvent.click(button);
+      expect(screen.queryByTestId('notifications-dropdown')).toBeNull();
+    }
   });
 });
