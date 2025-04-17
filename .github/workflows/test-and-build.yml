@@ -17,7 +17,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '18'
+        node-version: '20'
         cache: 'npm'
         cache-dependency-path: client/package-lock.json
     
@@ -29,10 +29,10 @@ jobs:
           ln -s Hooks hooks
         fi
         
-    - name: Install client dependencies with legacy-peer-deps
+    - name: Install client dependencies and update package-lock.json
       run: |
         cd client
-        npm ci --legacy-peer-deps
+        npm install --legacy-peer-deps
         
     - name: Run client tests in verbose mode
       run: |
@@ -89,18 +89,6 @@ jobs:
         tags: |
           ol1mowski187/codelinesjs-server:latest
           ol1mowski187/codelinesjs-server:${{ github.sha }}
-          
-    - name: Build and push client image
-      uses: docker/build-push-action@v5
-      with:
-        context: .
-        file: ./Dockerfile.client
-        push: true
-        tags: |
-          ol1mowski187/codelinesjs-client:latest
-          ol1mowski187/codelinesjs-client:${{ github.sha }}
-        build-args: |
-          NPM_CONFIG_LEGACY_PEER_DEPS=true
           
     - name: Notify about completion
       if: always()
