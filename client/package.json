@@ -28,6 +28,7 @@
     "test:e2e:ui": "playwright test --ui",
     "clean": "rimraf dist",
     "prepare": "husky",
+    "ci:install": "npm install --legacy-peer-deps",
     "postinstall": "husky",
     "husky:install": "cd .. && husky install client/.husky"
   },
@@ -89,7 +90,7 @@
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.16",
     "eslint-plugin-security": "^3.0.0",
-    "eslint-plugin-sonarjs": "^0.24.0",
+    "eslint-plugin-sonarjs": "^0.25.0",
     "eslint-plugin-unicorn": "^51.0.1",
     "globals": "^15.14.0",
     "husky": "^9.0.11",
