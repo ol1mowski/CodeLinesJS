@@ -1,14 +1,13 @@
 import { memo } from 'react';
 import { HiOutlineTrophy } from 'react-icons/hi2';
-import { useRankingData } from './hooks/useRankingData';
+import { RankingUserResponse } from './hooks/useRanking';
 import { RankingItem } from './components/RankingItem';
-import { LoadingScreen } from '../../../UI/LoadingScreen/LoadingScreen.component';
 
-export const RankingList = memo(() => {
-  const { users, isLoading } = useRankingData();
+interface RankingListProps {
+  users: RankingUserResponse[];
+}
 
-  isLoading && <LoadingScreen />;
-
+export const RankingList = memo(({ users }: RankingListProps) => {
   if (!users?.length) {
     return (
       <div className="text-center text-gray-400 py-8">

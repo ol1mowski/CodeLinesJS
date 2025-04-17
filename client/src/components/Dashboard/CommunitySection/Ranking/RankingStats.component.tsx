@@ -1,15 +1,20 @@
 import { motion } from 'framer-motion';
 import { memo } from 'react';
 import { FaTrophy, FaStar, FaCalendarDay } from 'react-icons/fa';
-import { useRankingData } from './hooks/useRankingData';
 import { StatCard } from './components/StatCard';
-import { LoadingScreen } from '../../../UI/LoadingScreen/LoadingScreen.component';
 
-export const RankingStats = memo(() => {
-  const { currentUserStats, isLoading } = useRankingData();
+interface ProcessedUserStats {
+  username?: string;
+  rank: number | string;
+  level: number | string;
+  points: number | string;
+}
 
-  isLoading && <LoadingScreen />;
+interface RankingStatsProps {
+  currentUserStats: ProcessedUserStats | null;
+}
 
+export const RankingStats = memo(({ currentUserStats }: RankingStatsProps) => {
   if (!currentUserStats) {
     return (
       <motion.div

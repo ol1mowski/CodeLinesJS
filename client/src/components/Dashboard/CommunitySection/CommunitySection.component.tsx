@@ -1,12 +1,9 @@
 import { memo, useEffect, lazy, Suspense } from 'react';
 import { useLocation, Routes, Route } from 'react-router-dom';
-import { useQueryClient } from '@tanstack/react-query';
 import { useCommunity } from './Feed/hooks/useCommunity.hook';
-import { prefetchRanking } from './Ranking/hooks/useRanking';
 import { CommunityView } from './types/community.types';
 import { Helmet } from 'react-helmet-async';
 import { LoadingSpinner } from '../../../components/UI/LoadingSpinner/LoadingSpinner.component';
-import { useAuth } from '../../../hooks/useAuth';
 import { CommunityNavigation } from './Navigation/CommunityNavigation.component';
 
 const CommunityFeed = lazy(() => import('./Feed/CommunityFeed.component'));
@@ -18,8 +15,6 @@ export const CommunitySection = memo(() => {
     state: { activeView },
     setActiveView,
   } = useCommunity();
-  const queryClient = useQueryClient();
-  const { token } = useAuth();
 
   useEffect(() => {
     const path = location.pathname.split('community').pop() || 'community';
@@ -27,12 +22,6 @@ export const CommunitySection = memo(() => {
       setActiveView(path as CommunityView);
     }
   }, [location.pathname, activeView, setActiveView]);
-
-  useEffect(() => {
-    if (activeView === 'community' || activeView === 'ranking') {
-      prefetchRanking(queryClient, token);
-    }
-  }, [activeView, queryClient, token]);
 
   return (
     <div className="p-8 w-full min-h-screen bg-dark/50 backdrop-blur-sm">
