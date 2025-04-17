@@ -1,0 +1,31 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Uruchom testy dla client
+if git diff --name-only HEAD@{u}..HEAD | grep -q "^client/"; then
+  echo "🧪 Uruchamiam testy dla client..."
+  cd "C:/Users/oliwi/Desktop/CodeLinesJS/client"
+  npm run test
+  EXIT_CODE_CLIENT=$?
+else
+  echo "ℹ️ Brak zmian w katalogu client, pomijam testy client"
+  EXIT_CODE_CLIENT=0
+fi
+
+# Uruchom testy dla server
+if git diff --name-only HEAD@{u}..HEAD | grep -q "^server/"; then
+  echo "🧪 Uruchamiam testy dla server..."
+  cd "C:/Users/oliwi/Desktop/CodeLinesJS/server"
+  npm run test
+  EXIT_CODE_SERVER=$?
+else
+  echo "ℹ️ Brak zmian w katalogu server, pomijam testy server"
+  EXIT_CODE_SERVER=0
+fi
+
+# Zakończ z błędem, jeśli którykolwiek proces się nie powiódł
+if [ $EXIT_CODE_CLIENT -ne 0 ] || [ $EXIT_CODE_SERVER -ne 0 ]; then
+  exit 1
+fi
+
+exit 0

@@ -1,4 +1,0 @@
-#!/usr/bin/env sh
-# Husky pre-push hook
-cd "C:/Users/oliwi/Desktop/CodeLinesJS/client"
-npm run test

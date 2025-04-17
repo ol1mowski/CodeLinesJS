@@ -7,9 +7,9 @@ Projekt używa Husky do automatyzacji kontroli jakości kodu. Husky uruchamia au
 - **pre-commit**: Sprawdza i formatuje kod za pomocą ESLint i Prettier przed każdym commitem
 - **pre-push**: Uruchamia testy przed każdym pushem do repozytorium
 
-### Rozwiązanie problemu z `.git can't be found`
+### Instalacja Husky w głównym katalogu projektu
 
-Ponieważ folder `client` jest podkatalogiem głównego repozytorium Git (`.git` znajduje się w katalogu nadrzędnym), standardowa instalacja Husky może nie działać. W takim przypadku należy użyć specjalnego skryptu konfiguracyjnego:
+Ponieważ projekt składa się z katalogów `client` i `server`, a commity wykonywane są z katalogu głównego, należy zainstalować Husky w katalogu głównym:
 
 ```bash
 # Uruchom ten skrypt z katalogu client
@@ -17,22 +17,37 @@ node husky-setup.mjs
 ```
 
 Skrypt ten:
-1. Tworzy odpowiednie pliki hooków w katalogu `.husky`
-2. Konfiguruje Git do używania tych hooków
-3. Dostosowuje ścieżki tak, aby hooki działały z podkatalogiem projektu
+1. Tworzy katalog .husky w katalogu głównym projektu (../)
+2. Konfiguruje hooki Git dla całego repozytorium
+3. Tworzy inteligentne skrypty, które automatycznie wykrywają zmiany w katalogach client i server
+4. Uruchamia odpowiednie narzędzia (lint-staged, testy) tylko dla zmienionych komponentów
+
+### Jak działa inteligentne wykrywanie zmian
+
+Skonfigurowane hooki:
+- Podczas commitu uruchamiają ESLint i Prettier tylko dla tych podkatalogów projektu (client/server), które zostały zmienione
+- Podczas pusha uruchamiają testy tylko dla tych podkatalogów projektu (client/server), które zostały zmienione
+
+Dzięki temu proces kontroli jakości kodu jest szybszy, ponieważ nie weryfikuje niepotrzebnie wszystkich części projektu.
 
 ### Sprawdzenie czy Husky działa
 
 Aby sprawdzić czy Husky działa:
 
-1. Wprowadź zmianę w dowolnym pliku w katalogu `client`
-2. Spróbuj zrobić commit:
-```bash
-git add .
-git commit -m "Test commit"
-```
+1. Przejdź do katalogu głównego projektu:
+   ```bash
+   cd ..
+   ```
 
-Jeśli zobaczysz, że uruchamia się lint-staged przed commitem, Husky działa poprawnie.
+2. Wprowadź zmianę w dowolnym pliku w katalogu `client` lub `server`
+
+3. Spróbuj zrobić commit:
+   ```bash
+   git add .
+   git commit -m "Test commit"
+   ```
+
+Jeśli zobaczysz komunikaty o uruchomieniu lint-staged dla zmienionego katalogu, Husky działa poprawnie.
 
 ### Tymczasowe pominięcie hooków
 

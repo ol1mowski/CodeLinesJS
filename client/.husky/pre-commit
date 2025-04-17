@@ -1,4 +1,0 @@
-#!/usr/bin/env sh
-# Husky pre-commit hook
-cd "C:/Users/oliwi/Desktop/CodeLinesJS/client"
-npx lint-staged
