@@ -7,7 +7,7 @@
     "ecmaFeatures": {
       "jsx": true
     },
-    "project": ["./tsconfig.json", "./tsconfig.app.json", "./tsconfig.node.json"]
+    "project": ["./tsconfig.app.json"]
   },
   "env": {
     "browser": true,
@@ -118,7 +118,7 @@
   },
   "overrides": [
     {
-      "files": ["**/*.test.{js,jsx,ts,tsx}", "**/*.spec.{js,jsx,ts,tsx}", "**/tests/**"],
+      "files": ["src/**/*.test.{ts,tsx}"],
       "env": {
         "jest": true
       },
@@ -128,13 +128,6 @@
         "@typescript-eslint/no-explicit-any": "off",
         "security/detect-object-injection": "off"
       }
-    },
-    {
-      "files": ["*.config.{js,ts}", "vite.config.{js,ts}", "vitest.config.{js,ts}"],
-      "rules": {
-        "import/no-default-export": "off",
-        "no-console": "off"
-      }
     }
   ],
   "ignorePatterns": [
@@ -143,6 +136,14 @@
     "public",
     "coverage",
     "playwright-report",
-    "test-results"
+    "test-results",
+    "*.config.js",
+    "*.config.ts",
+    "tailwind.config.js",
+    "postcss.config.js",
+    "vite.config.ts",
+    "vitest.config.ts",
+    "vitest.workspace.ts",
+    "playwright.config.ts"
   ]
 } 

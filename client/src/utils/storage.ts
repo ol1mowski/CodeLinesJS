@@ -27,7 +27,9 @@ export const saveToLocalStorage = <T>(key: string, value: T): void => {
 export const getFromLocalStorage = <T>(key: string, defaultValue: T): T => {
   try {
     const serializedValue = localStorage.getItem(key);
-    if (!serializedValue) return defaultValue;
+    if (!serializedValue) {
+      return defaultValue;
+    }
     return JSON.parse(serializedValue) as T;
   } catch (error) {
     console.error(`Błąd odczytywania z localStorage (${key}):`, error);
@@ -47,7 +49,9 @@ export const saveToSessionStorage = <T>(key: string, value: T): void => {
 export const getFromSessionStorage = <T>(key: string, defaultValue: T): T => {
   try {
     const serializedValue = sessionStorage.getItem(key);
-    if (!serializedValue) return defaultValue;
+    if (!serializedValue) {
+      return defaultValue;
+    }
     return JSON.parse(serializedValue) as T;
   } catch (error) {
     console.error(`Błąd odczytywania z sessionStorage (${key}):`, error);

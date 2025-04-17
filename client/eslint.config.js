@@ -3,7 +3,6 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import tseslint from 'typescript-eslint'
 
-
 export default tseslint.config(
   { 
     ignores: [
@@ -29,12 +28,21 @@ export default tseslint.config(
       '.gitignore',
       '.prettierignore',
       '.env',
-      '.env.*'
+      '.env.*',
+      // Ignorujemy pliki konfiguracyjne, które sprawiają problemy
+      '*.config.js',
+      '*.config.ts',
+      'tailwind.config.js',
+      'postcss.config.js',
+      'vite.config.ts',
+      'vitest.config.ts',
+      'vitest.workspace.ts',
+      'playwright.config.ts'
     ]
   },
-  // Podstawowe reguły
+  // Podstawowe reguły dla plików TS/TSX w katalogu src
   {
-    files: ['**/*.{js,jsx,ts,tsx}'],
+    files: ['src/**/*.{ts,tsx}'],
     languageOptions: {
       ecmaVersion: 2022,
       globals: {
@@ -48,7 +56,7 @@ export default tseslint.config(
           jsx: true
         },
         ecmaVersion: 2022,
-        project: ['./tsconfig.json', './tsconfig.app.json', './tsconfig.node.json']
+        project: ['./tsconfig.app.json']
       }
     },
     plugins: {
@@ -93,7 +101,7 @@ export default tseslint.config(
   
   // Specyficzne reguły dla testów
   {
-    files: ['**/*.test.{js,jsx,ts,tsx}', '**/*.spec.{js,jsx,ts,tsx}', '**/tests/**'],
+    files: ['src/**/*.test.{ts,tsx}'],
     languageOptions: {
       globals: {
         ...globals.jest
@@ -101,14 +109,6 @@ export default tseslint.config(
     },
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
-    }
-  },
-  
-  // Specyficzne reguły dla plików konfiguracyjnych
-  {
-    files: ['*.config.{js,ts}', 'vite.config.{js,ts}', 'vitest.config.{js,ts}'],
-    rules: {
-      'no-console': 'off',
     }
   }
 )

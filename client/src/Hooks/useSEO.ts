@@ -6,12 +6,6 @@ type UseSEOProps = {
   gameName?: string;
 };
 
-/**
- * Hook zarządzający SEO dla gier
- * @param title - Opcjonalny tytuł strony
- * @param description - Opcjonalny opis strony
- * @param gameName - Nazwa gry, domyślnie 'JSTypoHunter'
- */
 export const useSEO = ({
   title,
   description,

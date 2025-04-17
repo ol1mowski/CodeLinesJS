@@ -1,6 +1,6 @@
 import { RankingUser } from '../types/ranking.types';
 
-const ctx: Worker = self as any;
+const ctx: Worker = self as unknown as Worker;
 
 const calculateUserStats = (user: RankingUser) => {
   const efficiency = (user.stats.completedChallenges * user.stats.accuracy) / 100;

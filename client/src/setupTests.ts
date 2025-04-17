@@ -6,18 +6,15 @@ import React from 'react';
 
 expect.extend(matchers);
 
-// Pomijanie animacji Framer Motion w testach
 vi.mock('framer-motion', async (importOriginal) => {
   const actual = await importOriginal();
   
-  // Konfiguracja globalnego pomijania animacji
   if (actual.MotionGlobalConfig) {
     actual.MotionGlobalConfig.skipAnimations = true;
   }
   
   return {
     ...actual,
-    // Dodaj mockowania dla komponentów, które mogą powodować problemy
     motion: {
       ...actual.motion,
       div: (props: any) => React.createElement('div', props),
