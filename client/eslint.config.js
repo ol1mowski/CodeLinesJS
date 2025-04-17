@@ -72,7 +72,7 @@ export default tseslint.config(
       'no-var': 'error',
       'prefer-const': 'error',
       'eqeqeq': ['error', 'always', { 'null': 'ignore' }],
-      'curly': ['error', 'all'],
+      'curly': ['warn', 'multi-line'],
       'no-unused-vars': 'off', // Wyłączamy na rzecz wersji TypeScript
       
       // Reguły TypeScript

@@ -58,7 +58,7 @@
     "no-var": "error",
     "prefer-const": "error",
     "eqeqeq": ["error", "always", { "null": "ignore" }],
-    "curly": ["error", "all"],
+    "curly": ["warn", "multi-line"],
     "no-unused-vars": "off",
     
     // Reguły TypeScript

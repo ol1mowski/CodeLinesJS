@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../config/api.config";
-import { useAuthState } from "./useAuthState.hook";  
+import { useAuthState } from "./useAuthState.hook";
 import { useAuthActions } from "../components/Auth/hooks/useAuthActions.hook";
 import { AuthStateAndActions, AuthState } from "../types/auth.types";
 import { User } from "../types/user.types";
@@ -34,7 +34,7 @@ export const useAuth = (): AuthStateAndActions => {
         mode: 'cors'
       });
 
-      if (response.status === 429) {  
+      if (response.status === 429) {
         throw new Error('Zbyt wiele prób weryfikacji. Spróbuj ponownie za chwilę.');
       }
 
@@ -44,10 +44,10 @@ export const useAuth = (): AuthStateAndActions => {
         if (!text) {
           throw new Error('Pusta odpowiedź serwera');
         }
-        
+
         data = JSON.parse(text);
       } catch (e) {
-        throw new Error('Nieprawidłowa odpowiedź serwera');
+        throw new Error('Nieprawidłowa odpowiedź serwera' + e);
       }
 
       if (!response.ok) {

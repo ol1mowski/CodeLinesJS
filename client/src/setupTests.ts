@@ -7,7 +7,10 @@ import React from 'react';
 expect.extend(matchers);
 
 vi.mock('framer-motion', async (importOriginal) => {
-  const actual = await importOriginal();
+  const actual = await importOriginal() as {
+    MotionGlobalConfig?: { skipAnimations: boolean };
+    motion: Record<string, any>;
+  };
   
   if (actual.MotionGlobalConfig) {
     actual.MotionGlobalConfig.skipAnimations = true;
