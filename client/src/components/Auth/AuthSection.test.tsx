@@ -65,7 +65,7 @@ describe('AuthSection', () => {
   });
 
   it('renders correctly with default props', () => {
-    const { container } = render(
+    render(
       <HelmetProvider>
         <MemoryRouter>
           <AuthSection />
