@@ -2,21 +2,12 @@ import { memo } from "react";
 import { HiOutlineTrophy } from "react-icons/hi2";
 import { useRankingData } from "./hooks/useRankingData";
 import { RankingItem } from "./components/RankingItem";
-import { SkeletonRankingItem } from "./components/SkeletonRankingItem";
+import { LoadingScreen } from "../../../UI/LoadingScreen/LoadingScreen.component";
 
 export const RankingList = memo(() => {
   const { users, isLoading } = useRankingData();
-  const SKELETON_COUNT = 5;
 
-  if (isLoading) {
-    return (
-      <div className="space-y-4">
-        {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
-          <SkeletonRankingItem key={`skeleton-${i}`} index={i} />
-        ))}
-      </div>
-    );
-  }
+  isLoading && <LoadingScreen />
 
   if (!users?.length) {
     return (
