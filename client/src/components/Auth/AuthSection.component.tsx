@@ -4,7 +4,7 @@ import { AuthBackground } from './AuthBackground/AuthBackground.component';
 import { AuthLeftSection } from './components/AuthLeftSection/AuthLeftSection.component';
 import { AuthFormSection } from './components/AuthFormSection/AuthFormSection.component';
 import { Helmet } from 'react-helmet-async';
-import { AuthErrorBoundary } from '../Common/ErrorBoundary/AuthErrorBoundary.component';
+import { AuthErrorBoundary } from '../Common/ErrorBoundary';
 
 type AuthSectionProps = {
   children?: ReactNode;

@@ -6,7 +6,7 @@ import { Helmet } from 'react-helmet-async';
 import { useMobileDetect } from '../../hooks/useMobileDetect';
 import { FaSignOutAlt } from 'react-icons/fa';
 import { useAuth } from '../../hooks/useAuth';
-import { ErrorBoundary } from '../Common/ErrorBoundary.component';
+import { ErrorBoundary } from '../Common/ErrorBoundary';
 import { memo, lazy, Suspense } from 'react';
 
 const DashboardErrorFallback = lazy(() => import('../Common/DashboardErrorFallback.component'));

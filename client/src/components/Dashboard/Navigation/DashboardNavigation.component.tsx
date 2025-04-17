@@ -12,7 +12,7 @@ import { useMemo, useCallback, memo } from 'react';
 import type { NavigationItem } from '.';
 import { navigationItems } from './constants/navigationItems';
 import { useMobileDetect, MOBILE_BREAKPOINT } from '../../../hooks/useMobileDetect';
-import { ErrorBoundary } from '../../Common/ErrorBoundary.component';
+import { ErrorBoundary } from '../../Common/ErrorBoundary';
 
 const SECTION_TITLES: Record<string, string> = {
   main: 'Główne',

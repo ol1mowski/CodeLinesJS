@@ -5,7 +5,7 @@ import { NotificationsButton } from './NotificationsSection/NotificationsButton.
 import { topNavigationStyles as styles } from './style/TopNavigation.styles';
 import { useTopNavAnimation } from './hooks/useTopNavAnimation';
 import { useUserProfile } from './hooks/useUserProfile';
-import { ErrorBoundary } from '../../Common/ErrorBoundary.component';
+import { ErrorBoundary } from '../../Common/ErrorBoundary';
 
 export const TopNavigation = memo(() => {
   const animations = useTopNavAnimation();
