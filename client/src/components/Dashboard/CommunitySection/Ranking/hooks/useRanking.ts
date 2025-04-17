@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient, QueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { useAuth } from '../../../../../hooks/useAuth';
 import { API_URL } from '../../../../../config/api.config';
@@ -83,17 +83,7 @@ const fetchRanking = async (
   }
 };
 
-export const prefetchRanking = async (queryClient: QueryClient, token: string | null) => {
-  if (!token) return;
-
-  await queryClient.prefetchQuery({
-    queryKey: [RANKING_QUERY_KEY],
-    queryFn: () => fetchRanking(token),
-  });
-};
-
 export const useRanking = () => {
-  const queryClient = useQueryClient();
   const { token } = useAuth();
 
   const { data, isLoading, error } = useQuery({
@@ -106,14 +96,9 @@ export const useRanking = () => {
     enabled: !!token,
   });
 
-  const prefetchNextPeriod = async () => {
-    await prefetchRanking(queryClient, token);
-  };
-
   return {
     data,
     isLoading,
-    error,
-    prefetchNextPeriod,
+    error
   };
 };
