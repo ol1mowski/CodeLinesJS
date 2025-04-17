@@ -26,7 +26,8 @@
     "test:ui": "vitest --ui --config vitest.config.ts",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "clean": "rimraf dist"
+    "clean": "rimraf dist",
+    "prepare": "cd .. && husky install client/.husky"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
@@ -89,7 +90,9 @@
     "eslint-plugin-sonarjs": "^0.24.0",
     "eslint-plugin-unicorn": "^51.0.1",
     "globals": "^15.14.0",
+    "husky": "^9.0.11",
     "jsdom": "^25.0.1",
+    "lint-staged": "^15.2.2",
     "playwright": "^1.51.1",
     "postcss": "^8.4.49",
     "prettier": "^3.4.2",
@@ -103,5 +106,14 @@
     "vite-plugin-compression": "^0.5.1",
     "vitest": "^3.0.8"
   },
-  "eslintConfig": {}
+  "eslintConfig": {},
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "src/**/*.{json,css,scss}": [
+      "prettier --write"
+    ]
+  }
 }
