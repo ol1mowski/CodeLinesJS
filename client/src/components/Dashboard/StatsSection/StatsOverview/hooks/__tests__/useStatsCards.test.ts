@@ -12,8 +12,8 @@ const mockStats = {
     pointsToNextLevel: 2000,
     badges: [],
     unlockedFeatures: [],
-    chartData: { daily: [], categories: [] }
-  }
+    chartData: { daily: [], categories: [] },
+  },
 };
 
 describe('useStatsCards', () => {
@@ -30,4 +30,4 @@ describe('useStatsCards', () => {
     expect(cards[0].value).toBe('25');
     expect(cards[1].value).toBe('7 dni');
   });
-}); 
+});

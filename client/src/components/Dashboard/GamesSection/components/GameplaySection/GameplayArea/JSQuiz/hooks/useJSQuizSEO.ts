@@ -9,7 +9,7 @@ interface UseJSQuizSEOProps {
 export const useJSQuizSEO = ({
   title,
   description,
-  gameName = 'JS Quiz'
+  gameName = 'JS Quiz',
 }: UseJSQuizSEOProps = {}) => {
   const pageTitle = useMemo(() => {
     if (title) return title;
@@ -23,6 +23,6 @@ export const useJSQuizSEO = ({
 
   return {
     pageTitle,
-    pageDescription
+    pageDescription,
   };
-}; 
+};

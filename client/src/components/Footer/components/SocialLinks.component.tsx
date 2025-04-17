@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { motion } from "framer-motion";
+import { motion } from 'framer-motion';
 import { SocialLink } from '../types/types';
 import { useMobileDetect } from '../../../hooks/useMobileDetect';
 
@@ -9,11 +9,11 @@ type SocialLinksProps = {
 
 export const SocialLinks = memo(({ links }: SocialLinksProps) => {
   const isMobile = useMobileDetect();
-  
+
   if (isMobile) {
     return (
       <div className="flex items-center gap-3">
-        {links.map((link) => (
+        {links.map(link => (
           <a
             key={link.href}
             href={link.href}
@@ -28,7 +28,7 @@ export const SocialLinks = memo(({ links }: SocialLinksProps) => {
       </div>
     );
   }
-  
+
   return (
     <div className="flex items-center gap-3">
       {links.map((link, index) => (
@@ -53,4 +53,4 @@ export const SocialLinks = memo(({ links }: SocialLinksProps) => {
   );
 });
 
-SocialLinks.displayName = 'SocialLinks'; 
+SocialLinks.displayName = 'SocialLinks';

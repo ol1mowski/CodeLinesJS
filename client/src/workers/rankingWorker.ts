@@ -16,7 +16,7 @@ const sortUsers = (users: RankingUser[]) => {
   });
 };
 
-ctx.addEventListener('message', (event) => {
+ctx.addEventListener('message', event => {
   const { users, type } = event.data;
 
   switch (type) {
@@ -28,7 +28,7 @@ ctx.addEventListener('message', (event) => {
     case 'CALCULATE_STATS':
       const stats = users.map((user: RankingUser) => ({
         id: user.id,
-        stats: calculateUserStats(user)
+        stats: calculateUserStats(user),
       }));
       ctx.postMessage({ type: 'CALCULATED_STATS', stats });
       break;
@@ -38,4 +38,4 @@ ctx.addEventListener('message', (event) => {
   }
 });
 
-export {}; 
+export {};

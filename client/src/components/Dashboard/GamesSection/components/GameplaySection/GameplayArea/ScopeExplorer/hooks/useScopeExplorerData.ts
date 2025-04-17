@@ -10,15 +10,15 @@ type Game = {
 
 export const useScopeExplorerData = () => {
   const { data, isLoading, error } = useGamesQuery();
-  
-  const gameContent = useMemo(() => 
-    data?.games.find((game: Game) => game.slug === 'scope-explorer'), 
+
+  const gameContent = useMemo(
+    () => data?.games.find((game: Game) => game.slug === 'scope-explorer'),
     [data?.games]
   );
 
   return {
     gameContent,
     isLoading,
-    error
+    error,
   };
-}; 
+};

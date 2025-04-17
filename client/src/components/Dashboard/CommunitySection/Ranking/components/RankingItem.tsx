@@ -9,15 +9,11 @@ interface RankingItemProps {
   animationDelay?: number;
 }
 
-export const RankingItem = memo(({ 
-  user, 
-  index, 
-  animationDelay = 0.1 
-}: RankingItemProps) => {
+export const RankingItem = memo(({ user, index, animationDelay = 0.1 }: RankingItemProps) => {
   const position = user.position || index + 1;
   const points = user.stats?.points || user.points;
   const level = user.stats?.level || user.level;
-  
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -28,15 +24,17 @@ export const RankingItem = memo(({
       <div className="flex items-center gap-4">
         <div className="relative">
           <UserAvatar username={user.username} avatar={user.avatar} size="lg" />
-          
+
           {index < 3 && (
-            <div className="absolute -top-2 -right-2 rounded-full p-1 shadow-lg flex items-center justify-center w-8 h-8 text-sm font-bold text-dark"
+            <div
+              className="absolute -top-2 -right-2 rounded-full p-1 shadow-lg flex items-center justify-center w-8 h-8 text-sm font-bold text-dark"
               style={{
-                background: index === 0
-                  ? 'linear-gradient(45deg, #FFD700, #FFC107)'
-                  : index === 1
-                    ? 'linear-gradient(45deg, #C0C0C0, #B0B0B0)'
-                    : 'linear-gradient(45deg, #CD7F32, #B87333)',
+                background:
+                  index === 0
+                    ? 'linear-gradient(45deg, #FFD700, #FFC107)'
+                    : index === 1
+                      ? 'linear-gradient(45deg, #C0C0C0, #B0B0B0)'
+                      : 'linear-gradient(45deg, #CD7F32, #B87333)',
               }}
             >
               {position}
@@ -55,4 +53,4 @@ export const RankingItem = memo(({
   );
 });
 
-RankingItem.displayName = 'RankingItem'; 
+RankingItem.displayName = 'RankingItem';

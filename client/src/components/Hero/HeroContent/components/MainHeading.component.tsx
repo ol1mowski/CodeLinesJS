@@ -1,4 +1,4 @@
-import { MobileWrapperH2 } from "../../../UI/MobileWrapper/MobileWrapper.component";
+import { MobileWrapperH2 } from '../../../UI/MobileWrapper/MobileWrapper.component';
 
 export const MainHeading = () => (
   <MobileWrapperH2
@@ -6,9 +6,9 @@ export const MainHeading = () => (
     motionProps={{
       initial: { opacity: 0, y: 20 },
       whileInView: { opacity: 1, y: 0 },
-      viewport: { once: true }
+      viewport: { once: true },
     }}
   >
     Wejdź do Świata JavaScript
   </MobileWrapperH2>
-); 
+);

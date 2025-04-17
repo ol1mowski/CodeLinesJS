@@ -1,6 +1,6 @@
 export const sanitizeHtml = (html: string): string => {
   if (!html) return '';
-  
+
   return html
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -14,7 +14,7 @@ export const sanitizeHtml = (html: string): string => {
 
 export const sanitizeCode = (code: string): string => {
   if (!code) return '';
-  
+
   return code
     .replace(/<!--[\s\S]*?-->/g, '')
     .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
@@ -26,7 +26,7 @@ export const sanitizeCode = (code: string): string => {
 };
 
 export const sanitizeErrorMessage = (message: string | undefined): string => {
-  if (!message) return "Wystąpił nieznany błąd";
+  if (!message) return 'Wystąpił nieznany błąd';
 
   return String(message)
     .replace(/[\r\n]+/g, ' ')
@@ -50,6 +50,6 @@ export const isStrongPassword = (password: string): boolean => {
   const hasUppercase = /[A-Z]/.test(password);
   const hasLowercase = /[a-z]/.test(password);
   const hasDigit = /\d/.test(password);
-  
+
   return minLength && hasUppercase && hasLowercase && hasDigit;
-}; 
+};

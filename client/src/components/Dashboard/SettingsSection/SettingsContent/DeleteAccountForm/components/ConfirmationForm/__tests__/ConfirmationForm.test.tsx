@@ -17,7 +17,7 @@ const defaultProps = {
   errors: {},
   isSubmitting: false,
   onCancel: mockOnCancel,
-  onSubmit: mockOnSubmit
+  onSubmit: mockOnSubmit,
 };
 
 describe('ConfirmationForm', () => {
@@ -40,8 +40,8 @@ describe('ConfirmationForm', () => {
       ...defaultProps,
       errors: {
         password: { message: 'Hasło jest wymagane' },
-        confirmation: { message: 'Nieprawidłowe potwierdzenie' }
-      }
+        confirmation: { message: 'Nieprawidłowe potwierdzenie' },
+      },
     };
 
     render(<ConfirmationForm {...propsWithErrors} />);
@@ -54,10 +54,10 @@ describe('ConfirmationForm', () => {
     render(<ConfirmationForm {...defaultProps} isSubmitting={true} />);
 
     expect(screen.getByText('Usuwanie')).not.toBeNull();
-    
+
     // Sprawdzamy czy przycisk jest wyłączony przez sprawdzenie atrybutu disabled
     const submitButton = screen.getByRole('button', { name: /usuwanie/i });
     expect(submitButton).not.toBeNull();
     expect(submitButton.getAttribute('disabled')).not.toBeNull();
   });
-}); 
+});

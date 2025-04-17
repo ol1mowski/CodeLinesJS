@@ -10,12 +10,16 @@ describe('NavigationLogo', () => {
 
   it('does not display text visibly when collapsed', () => {
     render(<NavigationLogo isExpanded={false} />);
-    
+
     const textElement = screen.queryByText('CodeLinesJS');
-    
+
     if (textElement) {
       const style = window.getComputedStyle(textElement);
-      expect(style.opacity === '0' || style.display === 'none' || textElement.getAttribute('style')?.includes('opacity: 0')).toBeTruthy();
+      expect(
+        style.opacity === '0' ||
+          style.display === 'none' ||
+          textElement.getAttribute('style')?.includes('opacity: 0')
+      ).toBeTruthy();
     }
   });
 
@@ -23,4 +27,4 @@ describe('NavigationLogo', () => {
     const { container } = render(<NavigationLogo isExpanded={false} />);
     expect(container.querySelector('.text-js')).not.toBeNull();
   });
-}); 
+});

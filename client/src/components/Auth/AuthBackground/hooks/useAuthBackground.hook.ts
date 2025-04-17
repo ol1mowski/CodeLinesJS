@@ -1,5 +1,5 @@
-import { useEffect, useRef, RefObject, useCallback, useMemo } from "react";
-import * as THREE from "three";
+import { useEffect, useRef, RefObject, useCallback, useMemo } from 'react';
+import * as THREE from 'three';
 
 export const useAuthBackground = (containerRef: RefObject<HTMLDivElement>) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -7,17 +7,20 @@ export const useAuthBackground = (containerRef: RefObject<HTMLDivElement>) => {
   const frameId = useRef<number>();
 
   const particleCount = useMemo(() => 100, []);
-  const lights = useMemo(() => [
-    new THREE.PointLight("#f7df1e", 2),
-    new THREE.PointLight("#f7df1e", 2),
-    new THREE.PointLight("#f7df1e", 2),
-  ], []);
+  const lights = useMemo(
+    () => [
+      new THREE.PointLight('#f7df1e', 2),
+      new THREE.PointLight('#f7df1e', 2),
+      new THREE.PointLight('#f7df1e', 2),
+    ],
+    []
+  );
 
   const createParticle = useCallback(() => {
     const geometry = new THREE.TetrahedronGeometry(0.5, 0);
     const material = new THREE.MeshPhongMaterial({
-      color: new THREE.Color("#f7df1e").multiplyScalar(0.5),
-      emissive: new THREE.Color("#f7df1e").multiplyScalar(0.3),
+      color: new THREE.Color('#f7df1e').multiplyScalar(0.5),
+      emissive: new THREE.Color('#f7df1e').multiplyScalar(0.3),
       emissiveIntensity: 0.5,
       transparent: true,
       opacity: 0.8,
@@ -29,36 +32,36 @@ export const useAuthBackground = (containerRef: RefObject<HTMLDivElement>) => {
   const handleMouseMove = useCallback((event: MouseEvent) => {
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
-    
+
     mousePosition.current = {
       x: ((event.clientX - rect.left) / rect.width) * 2 - 1,
       y: -((event.clientY - rect.top) / rect.height) * 2 + 1,
     };
   }, []);
 
-  const handleResize = useCallback((
-    renderer: THREE.WebGLRenderer,
-    camera: THREE.PerspectiveCamera
-  ) => {
-    if (!containerRef.current) return;
-    
-    const { width, height } = containerRef.current.getBoundingClientRect();
-    renderer.setSize(width, height);
-    camera.aspect = width / height;
-    camera.updateProjectionMatrix();
-  }, []);
+  const handleResize = useCallback(
+    (renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) => {
+      if (!containerRef.current) return;
+
+      const { width, height } = containerRef.current.getBoundingClientRect();
+      renderer.setSize(width, height);
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+    },
+    []
+  );
 
   useEffect(() => {
     if (!canvasRef.current || !containerRef.current) return;
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-    
+
     const renderer = new THREE.WebGLRenderer({
       canvas: canvasRef.current,
       alpha: true,
       antialias: true,
-      powerPreference: "high-performance",
+      powerPreference: 'high-performance',
     });
 
     renderer.setClearColor(0x000000, 0);
@@ -86,14 +89,14 @@ export const useAuthBackground = (containerRef: RefObject<HTMLDivElement>) => {
 
     lights.forEach((light, i) => {
       light.position.set(
-        Math.cos(i * Math.PI * 2 / 3) * 30,
-        Math.sin(i * Math.PI * 2 / 3) * 30,
+        Math.cos((i * Math.PI * 2) / 3) * 30,
+        Math.sin((i * Math.PI * 2) / 3) * 30,
         15
       );
       scene.add(light);
     });
 
-    scene.add(new THREE.AmbientLight("#ffffff", 0.5));
+    scene.add(new THREE.AmbientLight('#ffffff', 0.5));
 
     camera.position.z = 30;
 
@@ -117,9 +120,9 @@ export const useAuthBackground = (containerRef: RefObject<HTMLDivElement>) => {
 
     const resizeHandler = () => handleResize(renderer, camera);
 
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("resize", resizeHandler);
-    
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('resize', resizeHandler);
+
     resizeHandler();
     animate();
 
@@ -127,12 +130,12 @@ export const useAuthBackground = (containerRef: RefObject<HTMLDivElement>) => {
       if (frameId.current) {
         cancelAnimationFrame(frameId.current);
       }
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("resize", resizeHandler);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('resize', resizeHandler);
       renderer.dispose();
       scene.clear();
     };
   }, [particleCount, lights, createParticle, handleMouseMove, handleResize]);
 
   return canvasRef;
-}; 
+};

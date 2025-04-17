@@ -15,4 +15,4 @@ export type RegexChallenge = {
 };
 
 // Dodajemy typ dla danych z API
-export type RegexRaiderGameData = RegexChallenge; 
+export type RegexRaiderGameData = RegexChallenge;

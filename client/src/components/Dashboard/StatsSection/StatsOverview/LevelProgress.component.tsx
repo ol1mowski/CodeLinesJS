@@ -1,6 +1,6 @@
-import { memo } from "react";
-import { motion } from "framer-motion";
-import { statsSectionStyles as styles } from "../style/StatsSection.styles";
+import { memo } from 'react';
+import { motion } from 'framer-motion';
+import { statsSectionStyles as styles } from '../style/StatsSection.styles';
 
 type LevelProgressProps = {
   level: number;
@@ -29,7 +29,7 @@ export const LevelProgress = memo(({ level, experience, nextLevel }: LevelProgre
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${progress}%` }}
-          transition={{ duration: 1, ease: "easeOut" }}
+          transition={{ duration: 1, ease: 'easeOut' }}
           className="absolute top-0 left-0 h-full bg-js/50"
         />
       </div>
@@ -37,4 +37,4 @@ export const LevelProgress = memo(({ level, experience, nextLevel }: LevelProgre
   );
 });
 
-LevelProgress.displayName = "LevelProgress"; 
+LevelProgress.displayName = 'LevelProgress';

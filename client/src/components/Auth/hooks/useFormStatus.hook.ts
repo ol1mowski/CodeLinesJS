@@ -7,10 +7,10 @@ type FormStatusProps = {
   showToasts?: boolean;
 };
 
-export const useFormStatus = ({ 
-  initialError = null, 
-  resetOnSuccess = true, 
-  showToasts = true 
+export const useFormStatus = ({
+  initialError = null,
+  resetOnSuccess = true,
+  showToasts = true,
 }: FormStatusProps = {}) => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(initialError);
@@ -21,44 +21,53 @@ export const useFormStatus = ({
     }
   }, [initialError]);
 
-  const setSuccess = useCallback((message: string) => {
-    setSuccessMessage(message);
-    setErrorMessage(null);
-    
-    if (showToasts) {
-      toast.success(message);
-    }
-    
-    if (resetOnSuccess) {
-      setTimeout(() => {
-        setSuccessMessage(null);
-      }, 5000);
-    }
-  }, [resetOnSuccess, showToasts]);
+  const setSuccess = useCallback(
+    (message: string) => {
+      setSuccessMessage(message);
+      setErrorMessage(null);
 
-  const setError = useCallback((message: string) => {
-    setErrorMessage(message);
-    setSuccessMessage(null);
-    
-    if (showToasts) {
-      toast.error(message);
-    }
-  }, [showToasts]);
+      if (showToasts) {
+        toast.success(message);
+      }
 
-  const handleError = useCallback((error: unknown): string => {
-    let message = '';
-    
-    if (error instanceof Error) {
-      message = error.message;
-    } else if (typeof error === 'string') {
-      message = error;
-    } else {
-      message = 'Wystąpił nieznany błąd. Spróbuj ponownie później.';
-    }
-    
-    setError(message);
-    return message;
-  }, [setError]);
+      if (resetOnSuccess) {
+        setTimeout(() => {
+          setSuccessMessage(null);
+        }, 5000);
+      }
+    },
+    [resetOnSuccess, showToasts]
+  );
+
+  const setError = useCallback(
+    (message: string) => {
+      setErrorMessage(message);
+      setSuccessMessage(null);
+
+      if (showToasts) {
+        toast.error(message);
+      }
+    },
+    [showToasts]
+  );
+
+  const handleError = useCallback(
+    (error: unknown): string => {
+      let message = '';
+
+      if (error instanceof Error) {
+        message = error.message;
+      } else if (typeof error === 'string') {
+        message = error;
+      } else {
+        message = 'Wystąpił nieznany błąd. Spróbuj ponownie później.';
+      }
+
+      setError(message);
+      return message;
+    },
+    [setError]
+  );
 
   const resetStatus = useCallback(() => {
     setSuccessMessage(null);
@@ -73,6 +82,6 @@ export const useFormStatus = ({
     handleError,
     resetStatus,
     hasSuccess: !!successMessage,
-    hasError: !!errorMessage
+    hasError: !!errorMessage,
   };
-}; 
+};

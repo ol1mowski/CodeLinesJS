@@ -20,13 +20,9 @@ export const RegexRaiderHint = memo(({ pattern, explanation, example }: RegexRai
           <FaLightbulb className="w-4 h-4 text-js" />
         </div>
         <div className="space-y-2">
-          <div className="text-sm text-gray-400">
-            {explanation}
-          </div>
+          <div className="text-sm text-gray-400">{explanation}</div>
           {pattern && (
-            <div className="font-mono text-sm bg-dark-900/50 p-2 rounded text-js">
-              {pattern}
-            </div>
+            <div className="font-mono text-sm bg-dark-900/50 p-2 rounded text-js">{pattern}</div>
           )}
           {example && (
             <div className="text-xs text-gray-500">
@@ -39,4 +35,4 @@ export const RegexRaiderHint = memo(({ pattern, explanation, example }: RegexRai
   );
 });
 
-RegexRaiderHint.displayName = 'RegexRaiderHint'; 
+RegexRaiderHint.displayName = 'RegexRaiderHint';

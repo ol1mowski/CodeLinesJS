@@ -17,4 +17,4 @@ export const useLogoutAction = (state: AuthState) => {
   };
 
   return logout;
-}; 
+};

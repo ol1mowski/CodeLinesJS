@@ -12,4 +12,4 @@ export const XpBadge = memo(({ xp }: XpBadgeProps) => (
   </span>
 ));
 
-XpBadge.displayName = "XpBadge"; 
+XpBadge.displayName = 'XpBadge';

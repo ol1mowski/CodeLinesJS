@@ -1,1 +1,1 @@
-export { JSQuizProgress as default } from './JSQuizProgress.component'; 
+export { JSQuizProgress as default } from './JSQuizProgress.component';

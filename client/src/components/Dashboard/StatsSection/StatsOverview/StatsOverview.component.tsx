@@ -1,13 +1,12 @@
-import { memo } from "react";
-import { motion } from "framer-motion";
-import { LoadingScreen } from "../../../UI/LoadingScreen/LoadingScreen.component";
-import { LevelProgress } from "./LevelProgress.component";
-import { StatCard } from "./StatCard.component";
-import { BadgesGrid } from "./BadgesGrid/BadgesGrid.component";
-import { ErrorState } from "./components/ErrorState.component";
-import { useStatsCards } from "./hooks/useStatsCards.hook";
-import { UserStats } from "../../../../types/stats.types";
-
+import { memo } from 'react';
+import { motion } from 'framer-motion';
+import { LoadingScreen } from '../../../UI/LoadingScreen/LoadingScreen.component';
+import { LevelProgress } from './LevelProgress.component';
+import { StatCard } from './StatCard.component';
+import { BadgesGrid } from './BadgesGrid/BadgesGrid.component';
+import { ErrorState } from './components/ErrorState.component';
+import { useStatsCards } from './hooks/useStatsCards.hook';
+import { UserStats } from '../../../../types/stats.types';
 
 type StatsOverviewProps = {
   stats: UserStats;
@@ -15,19 +14,17 @@ type StatsOverviewProps = {
   error: Error | null;
 };
 
-
 const container = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1
-    }
-  }
+      staggerChildren: 0.1,
+    },
+  },
 };
 
 export const StatsOverview = memo(({ stats, isLoading, error }: StatsOverviewProps) => {
-
   const statsCards = useStatsCards(stats);
 
   if (isLoading) {
@@ -44,15 +41,10 @@ export const StatsOverview = memo(({ stats, isLoading, error }: StatsOverviewPro
         <p className="text-gray-400">Brak dostępnych statystyk</p>
       </div>
     );
-  }    
+  }
 
   return (
-    <motion.div
-      variants={container}
-      initial="hidden"
-      animate="show"
-      className="space-y-6"
-    >
+    <motion.div variants={container} initial="hidden" animate="show" className="space-y-6">
       <LevelProgress
         level={stats.data.level}
         experience={stats.data.points}
@@ -60,7 +52,7 @@ export const StatsOverview = memo(({ stats, isLoading, error }: StatsOverviewPro
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {statsCards.map((card) => (
+        {statsCards.map(card => (
           <StatCard key={card.id} {...card} />
         ))}
       </div>
@@ -70,4 +62,4 @@ export const StatsOverview = memo(({ stats, isLoading, error }: StatsOverviewPro
   );
 });
 
-StatsOverview.displayName = "StatsOverview";  
+StatsOverview.displayName = 'StatsOverview';

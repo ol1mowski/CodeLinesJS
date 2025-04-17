@@ -1,9 +1,8 @@
-import { memo } from "react";
-import { RankingList } from "./RankingList.component";
-import { RankingStats } from "./RankingStats.component";
+import { memo } from 'react';
+import { RankingList } from './RankingList.component';
+import { RankingStats } from './RankingStats.component';
 
 const CommunityRanking = memo(() => {
-
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <div className="lg:col-span-2 space-y-6">
@@ -23,4 +22,4 @@ const CommunityRanking = memo(() => {
 
 export default CommunityRanking;
 
-CommunityRanking.displayName = "CommunityRanking"; 
+CommunityRanking.displayName = 'CommunityRanking';

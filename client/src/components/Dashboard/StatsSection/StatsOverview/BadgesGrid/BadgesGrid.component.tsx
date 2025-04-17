@@ -1,11 +1,11 @@
-import { memo } from "react";
-import { motion } from "framer-motion";
+import { memo } from 'react';
+import { motion } from 'framer-motion';
 
-import { statsSectionStyles as styles } from "../../style/StatsSection.styles";
-import { BadgeCard } from "./components/BadgeCard.component";
-import { EmptyBadges } from "./components/EmptyBadges.component";
-import { container } from "./animations";
-import { Badge } from "../../../../../types/stats.types";
+import { statsSectionStyles as styles } from '../../style/StatsSection.styles';
+import { BadgeCard } from './components/BadgeCard.component';
+import { EmptyBadges } from './components/EmptyBadges.component';
+import { container } from './animations';
+import { Badge } from '../../../../../types/stats.types';
 
 type BadgesGridProps = {
   badges: Badge[];
@@ -25,7 +25,7 @@ export const BadgesGrid = memo(({ badges }: BadgesGridProps) => {
         animate="show"
         className="grid grid-cols-2 sm:grid-cols-3 gap-4"
       >
-        {badges.map((badge) => (
+        {badges.map(badge => (
           <BadgeCard key={badge.name} badge={badge} />
         ))}
       </motion.div>
@@ -33,4 +33,4 @@ export const BadgesGrid = memo(({ badges }: BadgesGridProps) => {
   );
 });
 
-BadgesGrid.displayName = "BadgesGrid"; 
+BadgesGrid.displayName = 'BadgesGrid';

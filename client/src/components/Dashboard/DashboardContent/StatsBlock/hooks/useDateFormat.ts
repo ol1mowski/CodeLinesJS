@@ -8,11 +8,11 @@ export const useDateFormat = () => {
       if (!dateString) return 'Brak danych';
       const date = new Date(dateString);
       if (isNaN(date.getTime())) return 'Nieprawidłowa data';
-      
-      return format(date, "dd MMM, HH:mm", { locale: pl });
+
+      return format(date, 'dd MMM, HH:mm', { locale: pl });
     } catch (error) {
       console.error('Error formatting date:', error);
       return 'Nieprawidłowa data';
     }
   }, []);
-}; 
+};

@@ -1,7 +1,7 @@
-import { memo } from "react";
-import { usePreferencesFormLogic } from "../../hooks/usePreferencesFormLogic";
-import { PreferencesFormContent } from "./components/PreferencesFormContent/PreferencesFormContent.component";
-import { LoadingScreen } from "../../../../UI/LoadingScreen/LoadingScreen.component";
+import { memo } from 'react';
+import { usePreferencesFormLogic } from '../../hooks/usePreferencesFormLogic';
+import { PreferencesFormContent } from './components/PreferencesFormContent/PreferencesFormContent.component';
+import { LoadingScreen } from '../../../../UI/LoadingScreen/LoadingScreen.component';
 
 export const PreferencesForm = memo(() => {
   const {
@@ -12,7 +12,7 @@ export const PreferencesForm = memo(() => {
     updatePreferences,
     handleCancel,
     onSubmit,
-    setValue
+    setValue,
   } = usePreferencesFormLogic();
 
   if (isLoading) {
@@ -32,4 +32,4 @@ export const PreferencesForm = memo(() => {
   );
 });
 
-PreferencesForm.displayName = "PreferencesForm"; 
+PreferencesForm.displayName = 'PreferencesForm';

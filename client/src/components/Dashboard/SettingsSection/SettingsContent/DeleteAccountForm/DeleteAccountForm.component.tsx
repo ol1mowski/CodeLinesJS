@@ -1,22 +1,14 @@
-import { memo } from "react";
-import { useConfirmationState } from "../../hooks/useConfirmationState";
-import { useAccountDeletion } from "../../hooks/useAccountDeletion";
-import { InitialWarning } from "./components/InitialWarning/InitialWarning.component";
-import { ConfirmationForm } from "./components/ConfirmationForm/ConfirmationForm.component";
+import { memo } from 'react';
+import { useConfirmationState } from '../../hooks/useConfirmationState';
+import { useAccountDeletion } from '../../hooks/useAccountDeletion';
+import { InitialWarning } from './components/InitialWarning/InitialWarning.component';
+import { ConfirmationForm } from './components/ConfirmationForm/ConfirmationForm.component';
 
 export const DeleteAccountForm = memo(() => {
-  const { 
-    showConfirmation, 
-    handleShowConfirmation, 
-    handleHideConfirmation 
-  } = useConfirmationState();
+  const { showConfirmation, handleShowConfirmation, handleHideConfirmation } =
+    useConfirmationState();
 
-  const { 
-    form, 
-    onSubmit, 
-    isDeleting, 
-    handleCancel 
-  } = useAccountDeletion(handleHideConfirmation);
+  const { form, onSubmit, isDeleting, handleCancel } = useAccountDeletion(handleHideConfirmation);
 
   if (!showConfirmation) {
     return <InitialWarning onConfirm={handleShowConfirmation} />;
@@ -33,4 +25,4 @@ export const DeleteAccountForm = memo(() => {
   );
 });
 
-DeleteAccountForm.displayName = "DeleteAccountForm"; 
+DeleteAccountForm.displayName = 'DeleteAccountForm';

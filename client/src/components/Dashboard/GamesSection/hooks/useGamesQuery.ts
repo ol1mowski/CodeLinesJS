@@ -7,7 +7,7 @@ export const useGamesQuery = () => {
   return useQuery({
     queryKey: ['games'],
     queryFn: () => fetchGames(token || ''),
-    select: (data) => ({
+    select: data => ({
       games: data.data.games,
       pagination: data.data.pagination,
     }),

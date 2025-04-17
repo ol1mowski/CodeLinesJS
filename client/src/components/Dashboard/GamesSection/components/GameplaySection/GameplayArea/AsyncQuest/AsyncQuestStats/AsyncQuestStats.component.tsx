@@ -21,7 +21,7 @@ export const AsyncQuestStats = memo(({ stats, isGameOver, finalTime }: AsyncQues
 
   return (
     <div className="space-y-4">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         className="grid grid-cols-3 gap-4"
@@ -52,13 +52,15 @@ export const AsyncQuestStats = memo(({ stats, isGameOver, finalTime }: AsyncQues
           <div className="w-full">
             <div className="text-sm text-gray-400">Czas</div>
             <div className="text-lg font-bold text-js flex flex-wrap w-full">
-              <span className="block w-full break-words">{formatTime(displayTime)}/{formatTime(stats.maxTime)}</span>
+              <span className="block w-full break-words">
+                {formatTime(displayTime)}/{formatTime(stats.maxTime)}
+              </span>
             </div>
           </div>
         </div>
       </motion.div>
 
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="space-y-2"
@@ -71,4 +73,4 @@ export const AsyncQuestStats = memo(({ stats, isGameOver, finalTime }: AsyncQues
   );
 });
 
-AsyncQuestStats.displayName = 'AsyncQuestStats'; 
+AsyncQuestStats.displayName = 'AsyncQuestStats';

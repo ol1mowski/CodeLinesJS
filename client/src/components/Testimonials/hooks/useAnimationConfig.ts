@@ -18,26 +18,25 @@ type AnimationConfig = {
   };
 };
 
-
 export const useAnimationConfig = (): AnimationConfig => {
   return useMemo(
     () => ({
       header: {
         initial: { opacity: 0, y: -20 },
         animate: { opacity: 1, y: 0 },
-        transition: { duration: 0.5 }
+        transition: { duration: 0.5 },
       },
       testimonial: {
         initial: { opacity: 0, y: 30 },
         animate: { opacity: 1, y: 0 },
-        transition: (index: number) => ({ duration: 0.5, delay: index * 0.2 })
+        transition: (index: number) => ({ duration: 0.5, delay: index * 0.2 }),
       },
       cta: {
         initial: { opacity: 0, y: 30 },
         animate: { opacity: 1, y: 0 },
-        transition: { duration: 0.5, delay: 0.4 }
-      }
+        transition: { duration: 0.5, delay: 0.4 },
+      },
     }),
     []
   );
-}; 
+};

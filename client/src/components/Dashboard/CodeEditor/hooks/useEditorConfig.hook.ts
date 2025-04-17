@@ -2,11 +2,10 @@ import { useCallback } from 'react';
 import { editor } from 'monaco-editor';
 
 export const useEditorConfig = () => {
-
   const editorOptions: editor.IStandaloneEditorConstructionOptions = {
     minimap: { enabled: false },
     fontSize: 14,
-    lineNumbers: "on",
+    lineNumbers: 'on',
     roundedSelection: false,
     scrollBeyondLastLine: false,
     automaticLayout: true,
@@ -40,4 +39,4 @@ export const useEditorConfig = () => {
     editorOptions,
     setupEditor,
   };
-}; 
+};

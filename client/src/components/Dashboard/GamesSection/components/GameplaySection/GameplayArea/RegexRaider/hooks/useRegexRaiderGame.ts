@@ -19,7 +19,7 @@ export const useRegexRaiderGame = ({ gameContent, isPaused }: UseRegexRaiderGame
     score: 0,
     timeElapsed: 0,
     maxTime: 300,
-    correctAnswers: 0
+    correctAnswers: 0,
   });
 
   const { timeElapsed, resetTimer, startTimer, stopTimer } = useGameTimer({
@@ -36,7 +36,7 @@ export const useRegexRaiderGame = ({ gameContent, isPaused }: UseRegexRaiderGame
     if (gameContent?.gameData) {
       setGameStats(prev => ({
         ...prev,
-        totalLevels: gameContent.gameData.length
+        totalLevels: gameContent.gameData.length,
       }));
     }
   }, [gameContent]);
@@ -51,7 +51,7 @@ export const useRegexRaiderGame = ({ gameContent, isPaused }: UseRegexRaiderGame
     setGameStats(prev => ({
       ...prev,
       score: prev.score + points,
-      correctAnswers: prev.correctAnswers + 1
+      correctAnswers: prev.correctAnswers + 1,
     }));
   }, []);
 
@@ -74,7 +74,7 @@ export const useRegexRaiderGame = ({ gameContent, isPaused }: UseRegexRaiderGame
       score: 0,
       timeElapsed: 0,
       maxTime: 300,
-      correctAnswers: 0
+      correctAnswers: 0,
     }));
     setIsGameOver(false);
     resetTimer();
@@ -97,11 +97,13 @@ export const useRegexRaiderGame = ({ gameContent, isPaused }: UseRegexRaiderGame
     isGameOver,
     finalTime,
     gameStats,
-    currentChallenge: gameContent?.gameData ? gameContent.gameData[gameStats.currentLevel - 1] : undefined,
+    currentChallenge: gameContent?.gameData
+      ? gameContent.gameData[gameStats.currentLevel - 1]
+      : undefined,
     handleScoreUpdate,
     handleLevelComplete,
     handleRestart,
     handleStartGame,
-    handleGameOver
+    handleGameOver,
   };
-}; 
+};

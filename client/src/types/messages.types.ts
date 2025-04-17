@@ -26,4 +26,4 @@ export interface MessagesResponse {
       hasNextPage: boolean;
     };
   };
-} 
+}

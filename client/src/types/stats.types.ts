@@ -10,33 +10,33 @@ export type UnlockedFeature = 'custom_themes' | 'create_challenges';
 
 export type UserStats = {
   data: {
-  level: number;
-  points: number;
-  pointsToNextLevel: number;
-  completedChallenges: number;
-  streak: number;
-  bestStreak: number;
-  badges: Badge[];
-  unlockedFeatures: UnlockedFeature[];
-  levelUp?: boolean;
-  rewards?: {
+    level: number;
+    points: number;
+    pointsToNextLevel: number;
+    completedChallenges: number;
+    streak: number;
+    bestStreak: number;
     badges: Badge[];
-    bonusPoints: number;
     unlockedFeatures: UnlockedFeature[];
+    levelUp?: boolean;
+    rewards?: {
+      badges: Badge[];
+      bonusPoints: number;
+      unlockedFeatures: UnlockedFeature[];
+    };
+    chartData: {
+      daily: Array<{
+        date: string;
+        points: number;
+        challenges: number;
+      }>;
+      categories: Array<{
+        name: string;
+        completed: number;
+        total: number;
+      }>;
+    };
   };
-  chartData: {
-    daily: Array<{
-      date: string;
-      points: number;
-      challenges: number;
-    }>;
-    categories: Array<{
-      name: string;
-      completed: number;
-      total: number;
-    }>;
-  };
-}
 };
 
 export type StatsContextType = {
@@ -44,4 +44,4 @@ export type StatsContextType = {
   isLoading: boolean;
   error: string | null;
   refetch: () => void;
-}; 
+};

@@ -1,5 +1,5 @@
-import { forwardRef } from "react";
-import { motion } from "framer-motion";
+import { forwardRef } from 'react';
+import { motion } from 'framer-motion';
 
 type FormInputProps = {
   label: string;
@@ -10,11 +10,9 @@ type FormInputProps = {
 } & React.InputHTMLAttributes<HTMLInputElement>;
 
 export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
-  ({ label, error, icon, rightIcon, className = "", ...props }, ref) => (
+  ({ label, error, icon, rightIcon, className = '', ...props }, ref) => (
     <div className="space-y-1">
-      <label className="block text-sm font-medium text-gray-300">
-        {label}
-      </label>
+      <label className="block text-sm font-medium text-gray-300">{label}</label>
       <div className="relative">
         {icon && (
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
@@ -32,20 +30,19 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
             focus:outline-none focus:ring-2
             shadow-sm
             transition-all duration-200
-            ${error 
-              ? 'border-red-500/50 focus:border-red-500/50 focus:ring-red-500/20' 
-              : 'border-js/20 focus:border-js/50 focus:ring-js/20 hover:border-js/30'
+            ${
+              error
+                ? 'border-red-500/50 focus:border-red-500/50 focus:ring-red-500/20'
+                : 'border-js/20 focus:border-js/50 focus:ring-js/20 hover:border-js/30'
             }
             ${className}
           `}
           {...props}
         />
         {rightIcon && (
-          <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-            {rightIcon}
-          </div>
+          <div className="absolute inset-y-0 right-0 pr-3 flex items-center">{rightIcon}</div>
         )}
-        
+
         {/* Efekt podświetlenia przy focusie */}
         <div className="absolute inset-0 rounded-lg pointer-events-none bg-js/5 opacity-0 transition-opacity duration-300 peer-focus:opacity-100"></div>
       </div>
@@ -63,4 +60,4 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
   )
 );
 
-FormInput.displayName = "FormInput";
+FormInput.displayName = 'FormInput';

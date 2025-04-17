@@ -1,6 +1,6 @@
-import { memo, useState } from "react";
+import { memo, useState } from 'react';
 import { GoogleLogin } from '@react-oauth/google';
-import { useAuth } from "../../../../hooks/useAuth";
+import { useAuth } from '../../../../hooks/useAuth';
 
 type GoogleLoginButtonProps = {
   rememberMe: boolean;
@@ -15,7 +15,7 @@ export const GoogleLoginButton = memo(({ rememberMe }: GoogleLoginButtonProps) =
   };
 
   const handleError = () => {
-    setErrorMessage("Logowanie przez Google nie powiodło się. Spróbuj ponownie później.");
+    setErrorMessage('Logowanie przez Google nie powiodło się. Spróbuj ponownie później.');
   };
 
   return (
@@ -45,4 +45,4 @@ export const GoogleLoginButton = memo(({ rememberMe }: GoogleLoginButtonProps) =
   );
 });
 
-GoogleLoginButton.displayName = "GoogleLoginButton"; 
+GoogleLoginButton.displayName = 'GoogleLoginButton';

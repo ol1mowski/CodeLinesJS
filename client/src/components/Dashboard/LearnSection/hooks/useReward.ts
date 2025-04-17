@@ -17,6 +17,6 @@ export const useReward = () => {
     isRewardVisible,
     rewardXP,
     showReward,
-    hideReward
+    hideReward,
   };
-}; 
+};

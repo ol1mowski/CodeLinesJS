@@ -1,10 +1,10 @@
-import { memo } from "react";
-import { motion } from "framer-motion";
+import { memo } from 'react';
+import { motion } from 'framer-motion';
 
 export const GamesListSkeleton = memo(() => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {[1, 2, 3, 4, 5, 6].map((index) => (
+      {[1, 2, 3, 4, 5, 6].map(index => (
         <motion.div
           key={index}
           initial={{ opacity: 0 }}
@@ -33,4 +33,4 @@ export const GamesListSkeleton = memo(() => {
   );
 });
 
-GamesListSkeleton.displayName = "GamesListSkeleton"; 
+GamesListSkeleton.displayName = 'GamesListSkeleton';

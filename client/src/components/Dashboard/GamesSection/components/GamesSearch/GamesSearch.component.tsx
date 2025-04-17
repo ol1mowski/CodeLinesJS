@@ -1,6 +1,6 @@
-import { motion } from "framer-motion";
-import { memo, useCallback } from "react";
-import { FaSearch } from "react-icons/fa";
+import { motion } from 'framer-motion';
+import { memo, useCallback } from 'react';
+import { FaSearch } from 'react-icons/fa';
 
 type GamesSearchProps = {
   value: string;
@@ -8,16 +8,15 @@ type GamesSearchProps = {
 };
 
 export const GamesSearch = memo(({ value, onChange }: GamesSearchProps) => {
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(e.target.value);
-  }, [onChange]);
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      onChange(e.target.value);
+    },
+    [onChange]
+  );
 
   return (
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="relative"
-    >
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="relative">
       <div className="relative">
         <input
           type="text"
@@ -37,9 +36,9 @@ export const GamesSearch = memo(({ value, onChange }: GamesSearchProps) => {
 
       <motion.div
         initial={false}
-        animate={{ 
+        animate={{
           width: value ? '100%' : '0%',
-          opacity: value ? 1 : 0 
+          opacity: value ? 1 : 0,
         }}
         className="absolute bottom-0 left-0 h-0.5 bg-js/20 rounded-full"
       />
@@ -47,4 +46,4 @@ export const GamesSearch = memo(({ value, onChange }: GamesSearchProps) => {
   );
 });
 
-GamesSearch.displayName = "GamesSearch"; 
+GamesSearch.displayName = 'GamesSearch';

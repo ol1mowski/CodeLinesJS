@@ -27,4 +27,4 @@ export type GameStats = {
     advanced: CategoryStat;
     frameworks: CategoryStat;
   };
-}; 
+};

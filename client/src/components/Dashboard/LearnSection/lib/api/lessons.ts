@@ -1,20 +1,19 @@
-import type { Lesson } from "../../types/lesson.types";
-import { API_URL } from "../../../../../config/api.config";
+import type { Lesson } from '../../types/lesson.types';
+import { API_URL } from '../../../../../config/api.config';
 
 export const fetchLesson = async (lessonId: string, token: string): Promise<Lesson> => {
   const response = await fetch(`${API_URL}lessons/${lessonId}`, {
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
     },
   });
-  
 
   if (!response.ok) {
     if (response.status === 404) {
-      throw new Error("lesson_not_found");
+      throw new Error('lesson_not_found');
     }
-    throw new Error("Błąd podczas pobierania lekcji");
+    throw new Error('Błąd podczas pobierania lekcji');
   }
 
   return response.json();
@@ -23,13 +22,12 @@ export const fetchLesson = async (lessonId: string, token: string): Promise<Less
 export const completeLesson = async ({
   lessonId,
   pathId,
-  token
+  token,
 }: {
   lessonId: string;
   pathId?: string;
   token: string;
 }) => {
-
   if (!token) {
     throw new Error('Brak tokenu autoryzacji');
   }
@@ -37,10 +35,10 @@ export const completeLesson = async ({
   const response = await fetch(`${API_URL}lessons/${lessonId}/complete`, {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ pathId })
+    body: JSON.stringify({ pathId }),
   });
 
   if (!response.ok) {
@@ -52,8 +50,7 @@ export const completeLesson = async ({
   return response.json();
 };
 
-export const fetchLessons = async (token: string) => {   
-  
+export const fetchLessons = async (token: string) => {
   if (!token) {
     throw new Error('Brak tokenu autoryzacji');
   }
@@ -61,17 +58,17 @@ export const fetchLessons = async (token: string) => {
   const response = await fetch(`${API_URL}lessons`, {
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
     },
   });
-  
+
   if (!response.ok) {
     if (response.status === 401) {
       throw new Error('Nieautoryzowany - proszę się zalogować ponownie');
     }
     throw new Error('Błąd podczas pobierania lekcji');
   }
-  
+
   const data = await response.json();
   return data;
-}; 
+};

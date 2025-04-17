@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { SectionTitle } from "../../UI/SectionTitle/SectionTitle.component";
+import { SectionTitle } from '../../UI/SectionTitle/SectionTitle.component';
 
 export const Header = memo(() => (
   <SectionTitle
@@ -11,4 +11,4 @@ export const Header = memo(() => (
   />
 ));
 
-Header.displayName = 'Header'; 
+Header.displayName = 'Header';

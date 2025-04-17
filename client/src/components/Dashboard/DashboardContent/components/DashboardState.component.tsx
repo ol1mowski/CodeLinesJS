@@ -1,5 +1,5 @@
-import { memo } from "react";
-import { motion } from "framer-motion";
+import { memo } from 'react';
+import { motion } from 'framer-motion';
 
 type DashboardStateProps = {
   type: 'loading' | 'error' | 'empty';
@@ -23,12 +23,15 @@ export const DashboardState = memo(({ type, message }: DashboardStateProps) => {
         animate={{ opacity: 1 }}
         className={`text-xl ${getStateStyles()}`}
       >
-        {message || (type === 'loading' ? 'Ładowanie danych...' : 
-                    type === 'error' ? 'Wystąpił błąd podczas ładowania danych' : 
-                    'Brak danych do wyświetlenia')}
+        {message ||
+          (type === 'loading'
+            ? 'Ładowanie danych...'
+            : type === 'error'
+              ? 'Wystąpił błąd podczas ładowania danych'
+              : 'Brak danych do wyświetlenia')}
       </motion.div>
     </div>
   );
 });
 
-DashboardState.displayName = "DashboardState"; 
+DashboardState.displayName = 'DashboardState';

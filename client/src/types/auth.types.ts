@@ -29,4 +29,4 @@ export type AuthStateContext = {
   error: string | null;
   isAuthenticated: boolean;
   user: User | null;
-}; 
+};

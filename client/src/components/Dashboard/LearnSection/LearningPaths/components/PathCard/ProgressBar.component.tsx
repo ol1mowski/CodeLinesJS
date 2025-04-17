@@ -7,8 +7,7 @@ type ProgressBarProps = {
     total: number;
     percentage: number;
   };
-}
-
+};
 
 export const ProgressBar = memo(({ progress }: ProgressBarProps) => (
   <div>
@@ -20,10 +19,12 @@ export const ProgressBar = memo(({ progress }: ProgressBarProps) => (
       />
     </div>
     <div className="flex justify-between text-sm text-gray-400 mt-1">
-      <span>{progress.completed}/{progress.total} ukończone</span>
+      <span>
+        {progress.completed}/{progress.total} ukończone
+      </span>
       <span>{progress.percentage}%</span>
     </div>
   </div>
 ));
 
-ProgressBar.displayName = "ProgressBar"; 
+ProgressBar.displayName = 'ProgressBar';

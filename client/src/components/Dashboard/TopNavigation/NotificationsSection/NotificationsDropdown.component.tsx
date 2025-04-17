@@ -1,10 +1,10 @@
-import { memo, useEffect } from "react";
-import { motion } from "framer-motion";
-import { useDashboardData } from "../../DashboardContent/hooks/useDashboardData";
-import { notificationsStyles as styles } from "./style/Notifications.styles";
-import { useNotifications } from "./hooks/useNotifications";
-import { NotificationItem } from "./components/NotificationItem.component";
-import { NotificationsHeader } from "./components/NotificationsHeader.component";
+import { memo, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { useDashboardData } from '../../DashboardContent/hooks/useDashboardData';
+import { notificationsStyles as styles } from './style/Notifications.styles';
+import { useNotifications } from './hooks/useNotifications';
+import { NotificationItem } from './components/NotificationItem.component';
+import { NotificationsHeader } from './components/NotificationsHeader.component';
 
 export const NotificationsDropdown = memo(({ onClose }: { onClose: () => void }) => {
   const { data, isLoading } = useDashboardData();
@@ -25,25 +25,21 @@ export const NotificationsDropdown = memo(({ onClose }: { onClose: () => void })
       exit={{ opacity: 0, y: -10 }}
       transition={{ duration: 0.2 }}
       className={styles.dropdown.container}
-      onClick={(e) => e.stopPropagation()}
+      onClick={e => e.stopPropagation()}
     >
       <NotificationsHeader unreadCount={data?.unreadCount ?? 0} />
 
       {isLoading ? (
-        <div className={styles.dropdown.content.loading}>
-          Ładowanie powiadomień...
-        </div>
+        <div className={styles.dropdown.content.loading}>Ładowanie powiadomień...</div>
       ) : !data?.notifications?.length ? (
-        <div className={styles.dropdown.content.empty}>
-          Brak nowych powiadomień
-        </div>
+        <div className={styles.dropdown.content.empty}>Brak nowych powiadomień</div>
       ) : (
         <div className={styles.dropdown.content.wrapper}>
-          {data.notifications.map((notification) => (
+          {data.notifications.map(notification => (
             <NotificationItem
               key={notification._id}
               notification={notification}
-              onRead={(id) => markAsRead.mutate(id)}
+              onRead={id => markAsRead.mutate(id)}
             />
           ))}
         </div>
@@ -52,4 +48,4 @@ export const NotificationsDropdown = memo(({ onClose }: { onClose: () => void })
   );
 });
 
-NotificationsDropdown.displayName = "NotificationsDropdown"; 
+NotificationsDropdown.displayName = 'NotificationsDropdown';

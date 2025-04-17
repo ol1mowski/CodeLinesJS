@@ -3,13 +3,13 @@ export type DashboardStats = {
   points: number;
   streak: number;
   lastActive: string;
-}
+};
 
 export type DashboardProfile = {
   username: string;
   avatar?: string;
   theme: 'light' | 'dark';
-}
+};
 
 export type DashboardNotification = {
   _id: string;
@@ -20,11 +20,11 @@ export type DashboardNotification = {
   username: string;
   avatar: string;
   time: string;
-}
+};
 
 export type DashboardData = {
   data: DashboardStats;
   profile: DashboardProfile;
   notifications: DashboardNotification[];
   unreadCount: number;
-} 
+};

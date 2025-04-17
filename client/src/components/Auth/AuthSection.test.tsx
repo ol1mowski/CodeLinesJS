@@ -5,28 +5,36 @@ import { AuthSection } from './AuthSection.component';
 import { HelmetProvider } from 'react-helmet-async';
 
 vi.mock('./AuthBackground/AuthBackground.component', () => ({
-  AuthBackground: () => <div data-testid="auth-background">Background</div>
+  AuthBackground: () => <div data-testid="auth-background">Background</div>,
 }));
 
 vi.mock('../Common/Seo/Seo.component', () => ({
-  Seo: ({ title }: { title: string }) => <div data-testid="helmet">{title}</div>
+  Seo: ({ title }: { title: string }) => <div data-testid="helmet">{title}</div>,
 }));
 
 vi.mock('react-helmet-async', () => ({
   Helmet: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="helmet-mock">{children}</div>
   ),
-  HelmetProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>
+  HelmetProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
 vi.mock('./components/AuthFormSection/AuthFormSection.component', () => ({
-  AuthFormSection: ({ title, subtitle, children }: { title?: string, subtitle?: string, children?: React.ReactNode }) => (
+  AuthFormSection: ({
+    title,
+    subtitle,
+    children,
+  }: {
+    title?: string;
+    subtitle?: string;
+    children?: React.ReactNode;
+  }) => (
     <div data-testid="auth-form-section">
       {title && <div data-testid="form-title">{title}</div>}
       {subtitle && <div data-testid="form-subtitle">{subtitle}</div>}
       {children}
     </div>
-  )
+  ),
 }));
 
 vi.mock('framer-motion', () => {
@@ -72,10 +80,10 @@ describe('AuthSection', () => {
         </MemoryRouter>
       </HelmetProvider>
     );
-    
+
     const helmet = screen.getByTestId('helmet-mock');
     expect(helmet).not.toBeNull();
-    
+
     const background = screen.getByTestId('auth-background');
     expect(background).not.toBeNull();
   });
@@ -83,7 +91,7 @@ describe('AuthSection', () => {
   it('renders with custom title and subtitle', () => {
     const title = 'Test Title';
     const subtitle = 'Test Subtitle';
-    
+
     render(
       <HelmetProvider>
         <MemoryRouter>
@@ -91,17 +99,17 @@ describe('AuthSection', () => {
         </MemoryRouter>
       </HelmetProvider>
     );
-    
+
     const formTitle = screen.getByTestId('form-title');
     expect(formTitle.textContent).toBe(title);
-    
+
     const formSubtitle = screen.getByTestId('form-subtitle');
     expect(formSubtitle.textContent).toBe(subtitle);
   });
 
   it('renders with children content', () => {
     const childContent = 'Test Child Content';
-    
+
     render(
       <HelmetProvider>
         <MemoryRouter>
@@ -111,8 +119,8 @@ describe('AuthSection', () => {
         </MemoryRouter>
       </HelmetProvider>
     );
-    
+
     const child = screen.getByTestId('test-child');
     expect(child.textContent).toBe(childContent);
   });
-}); 
+});

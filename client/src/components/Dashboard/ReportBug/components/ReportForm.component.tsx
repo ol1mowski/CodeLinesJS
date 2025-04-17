@@ -1,16 +1,16 @@
-import { memo } from "react";
-import { useReportForm } from "../hooks/useReportForm.hook";
-import { FormField } from "./FormField.component";
-import { SubmitButton } from "./SubmitButton.component";
-import { SuccessMessage } from "./SuccessMessage.component";
-import { ErrorMessage } from "./ErrorMessage.component";
-import { FormHeader } from "./FormHeader.component";
+import { memo } from 'react';
+import { useReportForm } from '../hooks/useReportForm.hook';
+import { FormField } from './FormField.component';
+import { SubmitButton } from './SubmitButton.component';
+import { SuccessMessage } from './SuccessMessage.component';
+import { ErrorMessage } from './ErrorMessage.component';
+import { FormHeader } from './FormHeader.component';
 
 const categoryOptions = [
-  { value: "bug", label: "Błąd w aplikacji" },
-  { value: "feature", label: "Propozycja funkcji" },
-  { value: "content", label: "Problem z treścią" },
-  { value: "other", label: "Inne" }
+  { value: 'bug', label: 'Błąd w aplikacji' },
+  { value: 'feature', label: 'Propozycja funkcji' },
+  { value: 'content', label: 'Problem z treścią' },
+  { value: 'other', label: 'Inne' },
 ];
 
 export const ReportForm = memo(() => {
@@ -22,13 +22,13 @@ export const ReportForm = memo(() => {
     submitError,
     handleChange,
     handleSubmit,
-    resetSuccess
+    resetSuccess,
   } = useReportForm();
 
   return (
     <div className="w-full max-w-3xl mx-auto bg-dark-800/50 border border-js/10 rounded-xl p-6 md:p-8">
       <FormHeader />
-      
+
       {submitSuccess ? (
         <SuccessMessage onReset={resetSuccess} />
       ) : (
@@ -42,7 +42,7 @@ export const ReportForm = memo(() => {
             error={errors.title}
             placeholder="Krótki opis problemu"
           />
-          
+
           <FormField
             id="category"
             name="category"
@@ -53,7 +53,7 @@ export const ReportForm = memo(() => {
             error={errors.category}
             options={categoryOptions}
           />
-          
+
           <FormField
             id="description"
             name="description"
@@ -64,7 +64,7 @@ export const ReportForm = memo(() => {
             error={errors.description}
             placeholder="Opisz dokładnie napotkany problem, podaj kroki do jego odtworzenia"
           />
-          
+
           <FormField
             id="email"
             name="email"
@@ -75,9 +75,9 @@ export const ReportForm = memo(() => {
             error={errors.email}
             placeholder="Twój adres email"
           />
-          
+
           {submitError && <ErrorMessage message={submitError} />}
-          
+
           <SubmitButton isSubmitting={isSubmitting} />
         </form>
       )}
@@ -85,4 +85,4 @@ export const ReportForm = memo(() => {
   );
 });
 
-ReportForm.displayName = "ReportForm"; 
+ReportForm.displayName = 'ReportForm';

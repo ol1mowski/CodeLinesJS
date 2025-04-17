@@ -2,10 +2,10 @@ import { memo } from 'react';
 import { motion } from 'framer-motion';
 import { useAnimationConfig } from '../hooks/useAnimationConfig';
 
-type SectionHeaderProps =  {
+type SectionHeaderProps = {
   title: string;
   subtitle?: string;
-}
+};
 
 export const SectionHeader = memo(({ title, subtitle }: SectionHeaderProps) => {
   const animations = useAnimationConfig();
@@ -19,17 +19,11 @@ export const SectionHeader = memo(({ title, subtitle }: SectionHeaderProps) => {
         viewport={{ once: true }}
       >
         <span className="text-js font-semibold uppercase tracking-wider">Opinie uczestników</span>
-        <h2 className="text-3xl md:text-4xl font-bold text-white mt-2 mb-4">
-          {title}
-        </h2>
-        {subtitle && (
-          <p className="text-gray-400 max-w-2xl mx-auto">
-            {subtitle}
-          </p>
-        )}
+        <h2 className="text-3xl md:text-4xl font-bold text-white mt-2 mb-4">{title}</h2>
+        {subtitle && <p className="text-gray-400 max-w-2xl mx-auto">{subtitle}</p>}
       </motion.div>
     </div>
   );
 });
 
-SectionHeader.displayName = 'SectionHeader'; 
+SectionHeader.displayName = 'SectionHeader';

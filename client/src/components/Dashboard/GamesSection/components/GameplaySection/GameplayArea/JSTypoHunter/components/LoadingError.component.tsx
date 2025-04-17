@@ -8,14 +8,10 @@ interface LoadingErrorProps {
   children: ReactNode;
 }
 
-export const LoadingError = memo(({
-  isLoading,
-  error,
-  children
-}: LoadingErrorProps) => {
+export const LoadingError = memo(({ isLoading, error, children }: LoadingErrorProps) => {
   if (isLoading) {
     return (
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         className="w-full h-64 flex items-center justify-center"
@@ -27,10 +23,10 @@ export const LoadingError = memo(({
       </motion.div>
     );
   }
-  
+
   if (error) {
     return (
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         className="w-full h-64 flex items-center justify-center"
@@ -43,10 +39,10 @@ export const LoadingError = memo(({
       </motion.div>
     );
   }
-  
+
   if (!children) {
     return (
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         className="w-full h-64 flex items-center justify-center"
@@ -58,8 +54,8 @@ export const LoadingError = memo(({
       </motion.div>
     );
   }
-  
+
   return <>{children}</>;
 });
 
-LoadingError.displayName = 'LoadingError'; 
+LoadingError.displayName = 'LoadingError';

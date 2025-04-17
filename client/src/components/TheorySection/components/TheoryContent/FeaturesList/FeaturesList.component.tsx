@@ -5,24 +5,26 @@ import { useMobileDetect } from '../../../../../hooks/useMobileDetect';
 
 export const FeaturesList = () => {
   const isMobile = useMobileDetect();
-  
+
   const features = [
     {
       icon: <FaBook />,
-      title: "Interaktywne Lekcje",
-      description: "Ucz się w swoim tempie dzięki przystępnie napisanym lekcjom z przykładami kodu.",
+      title: 'Interaktywne Lekcje',
+      description:
+        'Ucz się w swoim tempie dzięki przystępnie napisanym lekcjom z przykładami kodu.',
       delay: 0.2,
     },
     {
       icon: <FaCode />,
-      title: "Praktyczne Przykłady",
-      description: "Każda koncepcja jest zilustrowana praktycznymi przykładami, które możesz uruchomić i zmodyfikować.",
+      title: 'Praktyczne Przykłady',
+      description:
+        'Każda koncepcja jest zilustrowana praktycznymi przykładami, które możesz uruchomić i zmodyfikować.',
       delay: 0.3,
     },
     {
       icon: <FaLaptopCode />,
-      title: "Śledzenie Postępów",
-      description: "Monitoruj swoje postępy i wracaj do lekcji, które wymagają powtórzenia.",
+      title: 'Śledzenie Postępów',
+      description: 'Monitoruj swoje postępy i wracaj do lekcji, które wymagają powtórzenia.',
       delay: 0.4,
     },
   ];
@@ -32,12 +34,12 @@ export const FeaturesList = () => {
       <div className="space-y-5">
         <div className="space-y-4">
           {features.map((feature, index) => (
-            <FeatureItem 
-              key={index} 
-              icon={feature.icon} 
-              title={feature.title} 
-              description={feature.description} 
-              delay={feature.delay} 
+            <FeatureItem
+              key={index}
+              icon={feature.icon}
+              title={feature.title}
+              description={feature.description}
+              delay={feature.delay}
             />
           ))}
         </div>
@@ -55,15 +57,15 @@ export const FeaturesList = () => {
     >
       <div className="space-y-4">
         {features.map((feature, index) => (
-          <FeatureItem 
-            key={index} 
-            icon={feature.icon} 
-            title={feature.title} 
-            description={feature.description} 
-            delay={feature.delay} 
+          <FeatureItem
+            key={index}
+            icon={feature.icon}
+            title={feature.title}
+            description={feature.description}
+            delay={feature.delay}
           />
         ))}
       </div>
     </motion.div>
   );
-}; 
+};

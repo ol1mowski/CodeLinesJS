@@ -1,5 +1,5 @@
-import { motion } from "framer-motion";
-import { FaGithub } from "react-icons/fa";
+import { motion } from 'framer-motion';
+import { FaGithub } from 'react-icons/fa';
 
 export const GitHubLink = () => (
   <motion.a
@@ -12,4 +12,4 @@ export const GitHubLink = () => (
   >
     <FaGithub className="w-6 h-6" />
   </motion.a>
-); 
+);

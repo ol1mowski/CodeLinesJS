@@ -31,7 +31,7 @@ export const useGameState = ({ gameContent, isPaused }: UseGameStateProps) => {
     score: 0,
     timeElapsed: 0,
     maxTime: 300,
-    correctAnswers: 0
+    correctAnswers: 0,
   });
   const [isGameOver, setIsGameOver] = useState(false);
   const [finalTime, setFinalTime] = useState(0);
@@ -46,17 +46,20 @@ export const useGameState = ({ gameContent, isPaused }: UseGameStateProps) => {
     isPaused,
   });
 
-  const handleScoreUpdate = useCallback((points: number) => {
-    const currentChallenge = gameContent?.gameData?.[gameStats.currentLevel - 1];
-    const difficultyPoints = getDifficultyPoints(currentChallenge?.difficulty || 'easy');
-    const totalPoints = points + difficultyPoints;
+  const handleScoreUpdate = useCallback(
+    (points: number) => {
+      const currentChallenge = gameContent?.gameData?.[gameStats.currentLevel - 1];
+      const difficultyPoints = getDifficultyPoints(currentChallenge?.difficulty || 'easy');
+      const totalPoints = points + difficultyPoints;
 
-    setGameStats(prev => ({
-      ...prev,
-      score: prev.score + totalPoints,
-      correctAnswers: prev.correctAnswers + 1
-    }));
-  }, [gameStats.currentLevel, gameContent]);
+      setGameStats(prev => ({
+        ...prev,
+        score: prev.score + totalPoints,
+        correctAnswers: prev.correctAnswers + 1,
+      }));
+    },
+    [gameStats.currentLevel, gameContent]
+  );
 
   const handleIncorrectAnswer = useCallback(() => {
     setIsGameOver(true);
@@ -74,7 +77,7 @@ export const useGameState = ({ gameContent, isPaused }: UseGameStateProps) => {
       } else {
         setGameStats(prev => ({
           ...prev,
-          currentLevel: nextLevel
+          currentLevel: nextLevel,
         }));
       }
     }, 1000);
@@ -82,14 +85,14 @@ export const useGameState = ({ gameContent, isPaused }: UseGameStateProps) => {
 
   const handleRestart = useCallback(() => {
     if (!gameContent) return;
-    
+
     setGameStats({
       currentLevel: 1,
       totalLevels: gameContent?.gameData?.length || 0,
       score: 0,
       timeElapsed: 0,
       maxTime: gameContent?.estimatedTime ? gameContent.estimatedTime * 60 : 300,
-      correctAnswers: 0
+      correctAnswers: 0,
     });
     setIsGameOver(false);
     setFinalTime(0);
@@ -105,7 +108,7 @@ export const useGameState = ({ gameContent, isPaused }: UseGameStateProps) => {
   useEffect(() => {
     setGameStats(prev => ({
       ...prev,
-      timeElapsed
+      timeElapsed,
     }));
   }, [timeElapsed]);
 
@@ -114,7 +117,7 @@ export const useGameState = ({ gameContent, isPaused }: UseGameStateProps) => {
       setGameStats(prev => ({
         ...prev,
         totalLevels: gameContent.gameData?.length || 0,
-        maxTime: gameContent?.estimatedTime ? gameContent.estimatedTime * 60 : 300
+        maxTime: gameContent?.estimatedTime ? gameContent.estimatedTime * 60 : 300,
       }));
     }
   }, [gameContent]);
@@ -132,6 +135,6 @@ export const useGameState = ({ gameContent, isPaused }: UseGameStateProps) => {
     handleIncorrectAnswer,
     handleLevelComplete,
     handleRestart,
-    handleStartGame
+    handleStartGame,
   };
-}; 
+};

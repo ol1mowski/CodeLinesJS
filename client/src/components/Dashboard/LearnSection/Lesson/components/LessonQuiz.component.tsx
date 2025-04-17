@@ -1,7 +1,7 @@
-import { memo, useState } from "react";
-import { motion } from "framer-motion";
-import { FaCheck, FaTimes, FaTrophy, FaStar, FaMedal } from "react-icons/fa";
-import type { QuizQuestion } from "../../types/lesson.types";
+import { memo, useState } from 'react';
+import { motion } from 'framer-motion';
+import { FaCheck, FaTimes, FaTrophy, FaStar, FaMedal } from 'react-icons/fa';
+import type { QuizQuestion } from '../../types/lesson.types';
 
 type QuizBadge = {
   icon: typeof FaMedal;
@@ -12,19 +12,19 @@ type QuizBadge = {
 const quizBadges: Record<string, QuizBadge> = {
   perfect: {
     icon: FaTrophy,
-    label: "Perfekcyjnie!",
-    color: "text-yellow-500"
+    label: 'Perfekcyjnie!',
+    color: 'text-yellow-500',
   },
   excellent: {
     icon: FaMedal,
-    label: "Świetnie!",
-    color: "text-js"
+    label: 'Świetnie!',
+    color: 'text-js',
   },
   good: {
     icon: FaStar,
-    label: "Mogło być lepiej!",
-    color: "text-blue-500"
-  }
+    label: 'Mogło być lepiej!',
+    color: 'text-blue-500',
+  },
 };
 
 const getQuizBadge = (percentage: number): QuizBadge => {
@@ -36,13 +36,13 @@ const getQuizBadge = (percentage: number): QuizBadge => {
 type LessonQuizProps = {
   questions: QuizQuestion[];
   onComplete: (correct: number, total: number) => void;
-}
+};
 
 type QuizSummaryProps = {
   correctAnswers: number;
   totalQuestions: number;
   earnedXP: number;
-}
+};
 
 const QuizSummary = memo(({ correctAnswers, totalQuestions }: QuizSummaryProps) => {
   const percentage = (correctAnswers / totalQuestions) * 100;
@@ -58,7 +58,7 @@ const QuizSummary = memo(({ correctAnswers, totalQuestions }: QuizSummaryProps) 
       <div className="flex justify-center mb-4">
         <div className="relative">
           <BadgeIcon className={`w-12 h-12 ${badge.color}`} />
-          <motion.div 
+          <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.3 }}
@@ -68,20 +68,17 @@ const QuizSummary = memo(({ correctAnswers, totalQuestions }: QuizSummaryProps) 
           </motion.div>
         </div>
       </div>
-      
-      <h3 className={`text-xl font-bold ${badge.color} mb-2`}>
-        {badge.label}
-      </h3>
-      
+
+      <h3 className={`text-xl font-bold ${badge.color} mb-2`}>{badge.label}</h3>
+
       <p className="text-gray-400 mb-4">
         Poprawne odpowiedzi: {correctAnswers} z {totalQuestions}
       </p>
-      
-      <div className="space-y-4">
 
-        <motion.div 
+      <div className="space-y-4">
+        <motion.div
           initial={{ width: 0 }}
-          animate={{ width: "100%" }}
+          animate={{ width: '100%' }}
           className="h-2 bg-dark rounded-full overflow-hidden mx-auto"
         >
           <motion.div
@@ -91,10 +88,8 @@ const QuizSummary = memo(({ correctAnswers, totalQuestions }: QuizSummaryProps) 
             transition={{ delay: 0.5, duration: 0.8 }}
           />
         </motion.div>
-        
-        <p className="text-sm text-gray-400">
-          {Math.round(percentage)}% poprawnych odpowiedzi
-        </p>
+
+        <p className="text-sm text-gray-400">{Math.round(percentage)}% poprawnych odpowiedzi</p>
       </div>
     </motion.div>
   );
@@ -107,13 +102,13 @@ export const LessonQuiz = memo(({ questions, onComplete }: LessonQuizProps) => {
   const [isCompleted, setIsCompleted] = useState(false);
   const [showExplanation, setShowExplanation] = useState(false);
 
-  const totalXP = 100; 
-  const progressPercent = ((currentQuestion) / questions.length) * 100;
+  const totalXP = 100;
+  const progressPercent = (currentQuestion / questions.length) * 100;
 
   const handleAnswer = (answerIndex: number) => {
     setSelectedAnswer(answerIndex);
     setShowExplanation(true);
-    
+
     if (answerIndex === questions[currentQuestion].correctAnswer) {
       setCorrectAnswers(prev => prev + 1);
     }
@@ -132,7 +127,7 @@ export const LessonQuiz = memo(({ questions, onComplete }: LessonQuizProps) => {
 
   if (isCompleted) {
     return (
-      <QuizSummary 
+      <QuizSummary
         correctAnswers={correctAnswers}
         totalQuestions={questions.length}
         earnedXP={Math.round((correctAnswers / questions.length) * totalXP)}
@@ -142,7 +137,6 @@ export const LessonQuiz = memo(({ questions, onComplete }: LessonQuizProps) => {
 
   return (
     <div className="space-y-6">
-      
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-4">
           <span className="text-sm text-gray-400">
@@ -150,9 +144,7 @@ export const LessonQuiz = memo(({ questions, onComplete }: LessonQuizProps) => {
           </span>
           <span className="text-js">•</span>
         </div>
-        <div className="text-sm text-gray-400">
-          {Math.round(progressPercent)}% ukończone
-        </div>
+        <div className="text-sm text-gray-400">{Math.round(progressPercent)}% ukończone</div>
       </div>
 
       {showExplanation && (
@@ -178,10 +170,7 @@ export const LessonQuiz = memo(({ questions, onComplete }: LessonQuizProps) => {
         </motion.button>
       )}
 
-
-      <div className="text-lg font-medium text-gray-200">
-        {questions[currentQuestion].question}
-      </div>
+      <div className="text-lg font-medium text-gray-200">{questions[currentQuestion].question}</div>
 
       <div className="space-y-3">
         {questions[currentQuestion].options.map((option, index) => (
@@ -192,33 +181,31 @@ export const LessonQuiz = memo(({ questions, onComplete }: LessonQuizProps) => {
             disabled={selectedAnswer !== null}
             onClick={() => handleAnswer(index)}
             className={`w-full p-4 rounded-lg border text-left transition-colors
-              ${selectedAnswer === null 
-                ? 'border-js/10 hover:border-js/20' 
-                : index === questions[currentQuestion].correctAnswer
-                  ? 'border-green-500 bg-green-500/10 text-green-400'
-                  : selectedAnswer === index
-                    ? 'border-red-500 bg-red-500/10 text-red-400'
-                    : 'border-js/10 opacity-50'
+              ${
+                selectedAnswer === null
+                  ? 'border-js/10 hover:border-js/20'
+                  : index === questions[currentQuestion].correctAnswer
+                    ? 'border-green-500 bg-green-500/10 text-green-400'
+                    : selectedAnswer === index
+                      ? 'border-red-500 bg-red-500/10 text-red-400'
+                      : 'border-js/10 opacity-50'
               }`}
           >
             <div className="flex items-center justify-between">
               <span>{option}</span>
-              {selectedAnswer !== null && (
-                index === questions[currentQuestion].correctAnswer 
-                  ? <FaCheck className="w-4 h-4 text-green-400" />
-                  : selectedAnswer === index 
-                    ? <FaTimes className="w-4 h-4 text-red-400" />
-                    : null
-              )}
+              {selectedAnswer !== null &&
+                (index === questions[currentQuestion].correctAnswer ? (
+                  <FaCheck className="w-4 h-4 text-green-400" />
+                ) : selectedAnswer === index ? (
+                  <FaTimes className="w-4 h-4 text-red-400" />
+                ) : null)}
             </div>
           </motion.button>
         ))}
       </div>
-
-      
     </div>
   );
 });
 
-LessonQuiz.displayName = "LessonQuiz";
-QuizSummary.displayName = "QuizSummary"; 
+LessonQuiz.displayName = 'LessonQuiz';
+QuizSummary.displayName = 'QuizSummary';

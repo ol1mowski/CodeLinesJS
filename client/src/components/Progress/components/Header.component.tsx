@@ -1,4 +1,4 @@
-import { SectionTitle } from "../../UI/SectionTitle/SectionTitle.component";
+import { SectionTitle } from '../../UI/SectionTitle/SectionTitle.component';
 
 export const Header = () => (
   <SectionTitle
@@ -8,4 +8,4 @@ export const Header = () => (
     titleClassName="text-js drop-shadow-lg"
     subtitleClassName="text-gray-400"
   />
-); 
+);

@@ -1,7 +1,6 @@
-import { Suspense } from "react";
-import { LoadingScreen } from "../components/UI/LoadingScreen/LoadingScreen.component";
-import { AuthSection } from "../components/Auth/AuthSection.component";
-
+import { Suspense } from 'react';
+import { LoadingScreen } from '../components/UI/LoadingScreen/LoadingScreen.component';
+import { AuthSection } from '../components/Auth/AuthSection.component';
 
 const Auth = () => {
   return (
@@ -11,4 +10,4 @@ const Auth = () => {
   );
 };
 
-export default Auth; 
+export default Auth;

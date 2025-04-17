@@ -13,7 +13,7 @@ type AuthErrorBoundaryState = {
 
 export class AuthErrorBoundary extends Component<AuthErrorBoundaryProps, AuthErrorBoundaryState> {
   public state: AuthErrorBoundaryState = {
-    hasError: false
+    hasError: false,
   };
 
   public static getDerivedStateFromError(error: Error): AuthErrorBoundaryState {
@@ -32,4 +32,4 @@ export class AuthErrorBoundary extends Component<AuthErrorBoundaryProps, AuthErr
 
     return this.props.children;
   }
-} 
+}

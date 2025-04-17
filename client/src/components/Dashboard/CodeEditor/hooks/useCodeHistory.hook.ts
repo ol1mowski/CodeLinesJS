@@ -18,9 +18,9 @@ export const useCodeHistory = () => {
     setHistory(prev => {
       const newHistory = [
         { code, timestamp: Date.now() },
-        ...prev.filter(entry => entry.code !== code)
+        ...prev.filter(entry => entry.code !== code),
       ].slice(0, MAX_HISTORY_LENGTH);
-      
+
       localStorage.setItem(STORAGE_KEY, JSON.stringify(newHistory));
       return newHistory;
     });
@@ -34,6 +34,6 @@ export const useCodeHistory = () => {
   return {
     history,
     addToHistory,
-    clearHistory
+    clearHistory,
   };
-}; 
+};

@@ -13,44 +13,53 @@ export const useLessonState = (lessonId: string, userId: string) => {
     totalPoints,
     markSectionComplete: updateSectionProgress,
     handleQuizComplete: updateQuizProgress,
-    saveProgress
+    saveProgress,
   } = useProgress(lessonId, userId);
 
   const handleSectionChange = useCallback((index: number) => {
     setActiveSection(index);
   }, []);
 
-  const handleComplete = useCallback(async (lesson: Lesson) => {
-    try {
-      if (lesson.isCompleted) {
-        toast.custom('Ta lekcja została już wcześniej ukończona', {
-          duration: 3000,
+  const handleComplete = useCallback(
+    async (lesson: Lesson) => {
+      try {
+        if (lesson.isCompleted) {
+          toast.custom('Ta lekcja została już wcześniej ukończona', {
+            duration: 3000,
+            position: 'bottom-right',
+          });
+          navigate('/dashboard/learn?tab=lessons');
+          return;
+        }
+
+        await saveProgress();
+        navigate('/dashboard/learn?tab=lessons');
+      } catch (error) {
+        console.error('Błąd podczas zapisywania postępu:', error);
+        toast.error('Nie udało się zapisać postępu. Spróbuj ponownie.', {
+          duration: 4000,
           position: 'bottom-right',
         });
-        navigate('/dashboard/learn?tab=lessons');
-        return;
       }
+    },
+    [saveProgress, navigate]
+  );
 
-      await saveProgress();
-      navigate('/dashboard/learn?tab=lessons');
-    } catch (error) {
-      console.error('Błąd podczas zapisywania postępu:', error);
-      toast.error('Nie udało się zapisać postępu. Spróbuj ponownie.', {
-        duration: 4000,
-        position: 'bottom-right',
-      });
-    }
-  }, [saveProgress, navigate]);
+  const markSectionComplete = useCallback(
+    (sectionIndex: number, totalSections: number) => {
+      if (!completedSections.includes(sectionIndex)) {
+        updateSectionProgress(sectionIndex, totalSections);
+      }
+    },
+    [completedSections, updateSectionProgress]
+  );
 
-  const markSectionComplete = useCallback((sectionIndex: number, totalSections: number) => {
-    if (!completedSections.includes(sectionIndex)) {
-      updateSectionProgress(sectionIndex, totalSections);
-    }
-  }, [completedSections, updateSectionProgress]);
-
-  const saveQuizResult = useCallback((quizId: number, correctAnswers: number) => {
-    updateQuizProgress(quizId, correctAnswers);
-  }, [updateQuizProgress]);
+  const saveQuizResult = useCallback(
+    (quizId: number, correctAnswers: number) => {
+      updateQuizProgress(quizId, correctAnswers);
+    },
+    [updateQuizProgress]
+  );
 
   const progress = {
     xpEarned: totalPoints,
@@ -58,7 +67,7 @@ export const useLessonState = (lessonId: string, userId: string) => {
     total: 0,
     percentage: 0,
     isCompleted: false,
-    lastCompletedSection: Math.max(...completedSections, -1)
+    lastCompletedSection: Math.max(...completedSections, -1),
   };
 
   return {
@@ -67,8 +76,6 @@ export const useLessonState = (lessonId: string, userId: string) => {
     handleSectionChange,
     handleComplete,
     markSectionComplete,
-    saveQuizResult
+    saveQuizResult,
   };
-}; 
-
-
+};

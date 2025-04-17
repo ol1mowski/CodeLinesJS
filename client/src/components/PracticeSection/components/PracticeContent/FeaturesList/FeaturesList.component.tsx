@@ -5,24 +5,25 @@ import { useMobileDetect } from '../../../../../hooks/useMobileDetect';
 
 export const FeaturesList = () => {
   const isMobile = useMobileDetect();
-  
+
   const features = [
     {
       icon: <FaGamepad />,
-      title: "Interaktywne Gry",
-      description: "Ucz się JavaScript poprzez wciągające gry, które sprawdzą Twoją wiedzę w praktyce.",
+      title: 'Interaktywne Gry',
+      description:
+        'Ucz się JavaScript poprzez wciągające gry, które sprawdzą Twoją wiedzę w praktyce.',
       delay: 0.2,
     },
     {
       icon: <FaTrophy />,
-      title: "Wyzwania Kodowania",
-      description: "Rozwiązuj praktyczne problemy programistyczne o różnym poziomie trudności.",
+      title: 'Wyzwania Kodowania',
+      description: 'Rozwiązuj praktyczne problemy programistyczne o różnym poziomie trudności.',
       delay: 0.3,
     },
     {
       icon: <FaUsers />,
-      title: "Rywalizacja z Innymi",
-      description: "Porównuj swoje wyniki z innymi uczestnikami i wspólnie się rozwijajcie.",
+      title: 'Rywalizacja z Innymi',
+      description: 'Porównuj swoje wyniki z innymi uczestnikami i wspólnie się rozwijajcie.',
       delay: 0.4,
     },
   ];
@@ -32,12 +33,12 @@ export const FeaturesList = () => {
       <div className="space-y-5">
         <div className="space-y-4">
           {features.map((feature, index) => (
-            <FeatureItem 
-              key={index} 
-              icon={feature.icon} 
-              title={feature.title} 
-              description={feature.description} 
-              delay={feature.delay} 
+            <FeatureItem
+              key={index}
+              icon={feature.icon}
+              title={feature.title}
+              description={feature.description}
+              delay={feature.delay}
             />
           ))}
         </div>
@@ -55,15 +56,15 @@ export const FeaturesList = () => {
     >
       <div className="space-y-4">
         {features.map((feature, index) => (
-          <FeatureItem 
-            key={index} 
-            icon={feature.icon} 
-            title={feature.title} 
-            description={feature.description} 
-            delay={feature.delay} 
+          <FeatureItem
+            key={index}
+            icon={feature.icon}
+            title={feature.title}
+            description={feature.description}
+            delay={feature.delay}
           />
         ))}
       </div>
     </motion.div>
   );
-}; 
+};

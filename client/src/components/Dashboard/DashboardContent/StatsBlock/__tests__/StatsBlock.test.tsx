@@ -2,17 +2,16 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen, cleanup } from '@testing-library/react';
 import { StatsBlock } from '../StatsBlock.component';
 
-
 describe('StatsBlock', () => {
   const mockStats = {
     level: 2,
     points: 500,
     streak: 5,
-    lastActive: '2024-01-01T12:00:00Z'
+    lastActive: '2024-01-01T12:00:00Z',
   };
 
   beforeEach(() => {
-    cleanup(); 
+    cleanup();
   });
 
   it('render all stats correctly', () => {
@@ -31,4 +30,4 @@ describe('StatsBlock', () => {
     const icons = container.querySelectorAll('.text-js.text-2xl');
     expect(icons.length).toBeGreaterThanOrEqual(3);
   });
-}); 
+});

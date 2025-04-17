@@ -12,13 +12,10 @@ type FormInputProps = {
 export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
   ({ label, error, icon, rightIcon, name, ...props }, ref) => {
     const inputId = `${name}-input`;
-    
+
     return (
       <div className="space-y-1">
-        <label 
-          htmlFor={inputId} 
-          className="block text-sm font-medium text-gray-400"
-        >
+        <label htmlFor={inputId} className="block text-sm font-medium text-gray-400">
           {label}
         </label>
         <div className="relative">
@@ -37,17 +34,16 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
               text-gray-200 placeholder-gray-500
               focus:outline-none focus:ring-1
               transition-colors
-              ${error 
-                ? 'border-red-500/50 focus:border-red-500/50 focus:ring-red-500/20' 
-                : 'border-yellow-500/20 focus:border-yellow-500/50 focus:ring-yellow-500/20 hover:border-yellow-500/30'
+              ${
+                error
+                  ? 'border-red-500/50 focus:border-red-500/50 focus:ring-red-500/20'
+                  : 'border-yellow-500/20 focus:border-yellow-500/50 focus:ring-yellow-500/20 hover:border-yellow-500/30'
               }
             `}
             {...props}
           />
           {rightIcon && (
-            <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-              {rightIcon}
-            </div>
+            <div className="absolute inset-y-0 right-0 pr-3 flex items-center">{rightIcon}</div>
           )}
         </div>
         {error && (
@@ -64,4 +60,4 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
   }
 );
 
-FormInput.displayName = "FormInput"; 
+FormInput.displayName = 'FormInput';

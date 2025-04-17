@@ -6,8 +6,7 @@ import { useAnimationConfig } from '../hooks/useAnimationConfig';
 type CallToActionProps = {
   text: string;
   url: string;
-}
-
+};
 
 export const CallToAction = memo(({ text, url }: CallToActionProps) => {
   const animations = useAnimationConfig();
@@ -30,4 +29,4 @@ export const CallToAction = memo(({ text, url }: CallToActionProps) => {
   );
 });
 
-CallToAction.displayName = 'CallToAction'; 
+CallToAction.displayName = 'CallToAction';

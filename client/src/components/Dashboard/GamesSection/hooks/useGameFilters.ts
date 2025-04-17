@@ -10,12 +10,12 @@ export const useGameFilters = () => {
     filters: {
       sortBy,
       searchQuery,
-      selectedDifficulty
+      selectedDifficulty,
     },
     setters: {
       setSortBy,
       setSearchQuery,
-      setSelectedDifficulty
-    }
+      setSelectedDifficulty,
+    },
   };
 };

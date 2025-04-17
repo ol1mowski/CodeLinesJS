@@ -10,4 +10,4 @@ export type Achievement = {
   };
   reward: number;
   unlocked?: boolean;
-}; 
+};

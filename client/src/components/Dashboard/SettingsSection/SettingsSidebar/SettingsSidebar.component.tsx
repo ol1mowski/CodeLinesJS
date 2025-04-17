@@ -1,8 +1,8 @@
-import { memo, useCallback } from "react";
-import { motion } from "framer-motion";
-import { SettingsView } from "../types/settings";
-import { menuItems } from "../data/SettingsSidebar.data";
-import { styles } from "./style/SettingsSidebar.styles";
+import { memo, useCallback } from 'react';
+import { motion } from 'framer-motion';
+import { SettingsView } from '../types/settings';
+import { menuItems } from '../data/SettingsSidebar.data';
+import { styles } from './style/SettingsSidebar.styles';
 
 type SettingsSidebarProps = {
   activeView: SettingsView;
@@ -10,14 +10,17 @@ type SettingsSidebarProps = {
 };
 
 export const SettingsSidebar = memo(({ activeView, onViewChange }: SettingsSidebarProps) => {
-  const handleViewChange = useCallback((view: SettingsView) => {
-    onViewChange(view);
-  }, [onViewChange]);
+  const handleViewChange = useCallback(
+    (view: SettingsView) => {
+      onViewChange(view);
+    },
+    [onViewChange]
+  );
 
   return (
     <div className={styles.container}>
       <nav className={styles.nav}>
-        {menuItems.map((item) => (
+        {menuItems.map(item => (
           <motion.button
             key={item.id}
             whileHover={{ x: 4 }}
@@ -34,4 +37,4 @@ export const SettingsSidebar = memo(({ activeView, onViewChange }: SettingsSideb
   );
 });
 
-SettingsSidebar.displayName = "SettingsSidebar"; 
+SettingsSidebar.displayName = 'SettingsSidebar';

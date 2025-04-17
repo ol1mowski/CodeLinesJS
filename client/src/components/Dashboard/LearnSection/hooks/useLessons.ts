@@ -1,9 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
-import { fetchLessons } from "../lib/api/lessons";
-import type { Lesson } from "../types/lesson.types";
-import { useState, useMemo } from "react";
-import type { FilterType } from "../types/filter.types";
-import { useAuth } from "../../../../hooks/useAuth";
+import { useQuery } from '@tanstack/react-query';
+import { fetchLessons } from '../lib/api/lessons';
+import type { Lesson } from '../types/lesson.types';
+import { useState, useMemo } from 'react';
+import type { FilterType } from '../types/filter.types';
+import { useAuth } from '../../../../hooks/useAuth';
 
 type Category = 'javascript' | 'react';
 
@@ -19,39 +19,39 @@ export type LessonsResponse = {
 
 const getDifficultyLabel = (filter: FilterType) => {
   switch (filter) {
-    case 'beginner': return 'podstawowym';
-    case 'intermediate': return 'średnim';
-    case 'advanced': return 'zaawansowanym';
-    default: return '';
+    case 'beginner':
+      return 'podstawowym';
+    case 'intermediate':
+      return 'średnim';
+    case 'advanced':
+      return 'zaawansowanym';
+    default:
+      return '';
   }
 };
 
 export const useLessons = () => {
-  const [filter, setFilter] = useState<FilterType>("all");
-  const [category] = useState<Category>("javascript");
+  const [filter, setFilter] = useState<FilterType>('all');
+  const [category] = useState<Category>('javascript');
   const { token } = useAuth();
 
-  const {
-    data,
-    isLoading,
-    error,
-    refetch
-  } = useQuery<LessonsResponse, Error>({
+  const { data, isLoading, error, refetch } = useQuery<LessonsResponse, Error>({
     queryKey: ['lessons'],
     queryFn: () => fetchLessons(token || ''),
     retry: 2,
     staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: true,
-    enabled: !!token
+    enabled: !!token,
   });
 
   const allLessons = data?.lessons?.[category] ?? [];
   const lessonStats = data?.stats ?? { total: 0, completed: 0, progress: 0 };
 
-  const filteredLessons = useMemo(() =>
-    filter === "all" 
-      ? allLessons 
-      : allLessons.filter((lesson: Lesson) => lesson.difficulty === filter),
+  const filteredLessons = useMemo(
+    () =>
+      filter === 'all'
+        ? allLessons
+        : allLessons.filter((lesson: Lesson) => lesson.difficulty === filter),
     [allLessons, filter]
   );
 
@@ -69,8 +69,8 @@ export const useLessons = () => {
         : 'Brak dostępnych lekcji',
       description: hasNoLessonsForFilter
         ? 'W tej kategorii nie znaleziono żadnych lekcji. Wybierz inny poziom trudności lub wyświetl wszystkie lekcje.'
-        : 'Aktualnie nie ma żadnych dostępnych lekcji. Sprawdź ponownie później.'
-    }
+        : 'Aktualnie nie ma żadnych dostępnych lekcji. Sprawdź ponownie później.',
+    },
   };
 
   return {
@@ -85,6 +85,6 @@ export const useLessons = () => {
     hasNoLessonsForFilter,
     filterState,
     requiredLevel: data?.requiredLevel,
-    stats: lessonStats
+    stats: lessonStats,
   };
-}; 
+};

@@ -1,9 +1,9 @@
-import { memo } from "react";
-import { BackToLessons } from "./BackToLessons.component";
-import { LessonLayout } from "./LessonLayout.component";
-import { LessonMainContent } from "./LessonMainContent.component";
-import { LessonProgress } from "./LessonProgress.component";
-import type { Lesson } from "../../types/lesson.types";
+import { memo } from 'react';
+import { BackToLessons } from './BackToLessons.component';
+import { LessonLayout } from './LessonLayout.component';
+import { LessonMainContent } from './LessonMainContent.component';
+import { LessonProgress } from './LessonProgress.component';
+import type { Lesson } from '../../types/lesson.types';
 
 type LessonContentProps = {
   lesson: Lesson;
@@ -56,4 +56,4 @@ export const LessonContent = memo(
   }
 );
 
-LessonContent.displayName = "LessonContent";
+LessonContent.displayName = 'LessonContent';

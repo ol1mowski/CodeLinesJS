@@ -27,5 +27,5 @@ export const styles = {
     resize-y
     transition-colors duration-200`,
 
-  error: "text-red-500 text-sm mt-1"
-} as const; 
+  error: 'text-red-500 text-sm mt-1',
+} as const;

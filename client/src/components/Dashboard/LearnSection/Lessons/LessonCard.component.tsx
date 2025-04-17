@@ -1,8 +1,8 @@
-import { memo } from "react";
-import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
-import { FaClock, FaChevronRight, FaCheck, FaLock } from "react-icons/fa";
-import type { Lesson } from "../types/lesson.types";
+import { memo } from 'react';
+import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { FaClock, FaChevronRight, FaCheck, FaLock } from 'react-icons/fa';
+import type { Lesson } from '../types/lesson.types';
 
 type LessonCardProps = {
   lesson: Lesson & { isLocked?: boolean };
@@ -14,21 +14,13 @@ const cardVariants = {
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.3
-    }
-  }
+      duration: 0.3,
+    },
+  },
 };
 
 export const LessonCard = memo(({ lesson }: LessonCardProps) => {
-  const { 
-    title, 
-    description, 
-    duration,
-    slug,
-    isCompleted,
-    isLocked,
-    requiredLevel = 1
-  } = lesson;
+  const { title, description, duration, slug, isCompleted, isLocked, requiredLevel = 1 } = lesson;
 
   const cardContent = (
     <div className="space-y-4">
@@ -52,7 +44,9 @@ export const LessonCard = memo(({ lesson }: LessonCardProps) => {
       </div>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3 text-sm">
-          <span className={`flex items-center gap-1 ${isLocked ? 'text-gray-600' : 'text-gray-400'}`}>
+          <span
+            className={`flex items-center gap-1 ${isLocked ? 'text-gray-600' : 'text-gray-400'}`}
+          >
             <FaClock className="w-3.5 h-3.5" />
             {duration} min
           </span>
@@ -83,7 +77,7 @@ export const LessonCard = memo(({ lesson }: LessonCardProps) => {
           {cardContent}
         </div>
       ) : (
-        <Link 
+        <Link
           to={`/dashboard/learn/lesson/${slug}`}
           className="block p-6 rounded-xl bg-dark-800 border border-js/10 hover:border-js/20 transition-colors"
         >
@@ -94,4 +88,4 @@ export const LessonCard = memo(({ lesson }: LessonCardProps) => {
   );
 });
 
-LessonCard.displayName = "LessonCard";
+LessonCard.displayName = 'LessonCard';

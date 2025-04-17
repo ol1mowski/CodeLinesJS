@@ -23,6 +23,6 @@ export const useSanitize = (): UseSanitizeReturn => {
   return {
     sanitizeHtml: sanitizeHtmlCallback,
     sanitizeCode: sanitizeCodeCallback,
-    sanitizeErrorMessage: sanitizeErrorMessageCallback
+    sanitizeErrorMessage: sanitizeErrorMessageCallback,
   };
-}; 
+};

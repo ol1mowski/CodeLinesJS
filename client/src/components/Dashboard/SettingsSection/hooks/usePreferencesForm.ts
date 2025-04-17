@@ -1,12 +1,12 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import type { PreferencesData } from "../types/settings";
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import type { PreferencesData } from '../types/settings';
 
 const preferencesSchema = z.object({
   emailNotifications: z.boolean(),
   pushNotifications: z.boolean(),
-  language: z.literal("pl"),
+  language: z.literal('pl'),
 });
 
 interface UsePreferencesFormProps {
@@ -20,11 +20,11 @@ export const usePreferencesForm = ({ onSubmit, defaultValues }: UsePreferencesFo
     defaultValues: defaultValues || {
       emailNotifications: false,
       pushNotifications: false,
-      language: "pl"
+      language: 'pl',
     },
   });
 
-  const handleSubmit = form.handleSubmit(async (data) => {
+  const handleSubmit = form.handleSubmit(async data => {
     try {
       await onSubmit(data);
     } catch (error) {
@@ -36,4 +36,4 @@ export const usePreferencesForm = ({ onSubmit, defaultValues }: UsePreferencesFo
     form,
     onSubmit: handleSubmit,
   };
-}; 
+};

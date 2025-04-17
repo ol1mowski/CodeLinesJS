@@ -1,11 +1,8 @@
-import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 export const Logo = () => (
-  <motion.div 
-    whileHover={{ scale: 1.02 }} 
-    className="flex items-center z-50 relative"
-  >
+  <motion.div whileHover={{ scale: 1.02 }} className="flex items-center z-50 relative">
     <Link
       to="/"
       className="text-3xl font-bold font-space text-[#f7df1e] hover:text-[#f7df1e]/90 

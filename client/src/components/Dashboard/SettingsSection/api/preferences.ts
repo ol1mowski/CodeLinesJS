@@ -1,8 +1,11 @@
-import { PreferencesData } from "../types/settings";
-import { API_URL } from "../../../../config/api.config";
+import { PreferencesData } from '../types/settings';
+import { API_URL } from '../../../../config/api.config';
 
 export class PreferencesError extends Error {
-  constructor(public code: 'VALIDATION_ERROR' | 'SAVE_ERROR' | 'UNKNOWN_ERROR', message: string) {
+  constructor(
+    public code: 'VALIDATION_ERROR' | 'SAVE_ERROR' | 'UNKNOWN_ERROR',
+    message: string
+  ) {
     super(message);
     this.name = 'PreferencesError';
   }
@@ -11,31 +14,31 @@ export class PreferencesError extends Error {
 export const fetchPreferences = async (token: string): Promise<PreferencesData> => {
   const response = await fetch(`${API_URL}settings/preferences`, {
     headers: {
-      'Authorization': `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
   });
-  
+
   if (!response.ok) {
     throw new Error('Błąd podczas pobierania preferencji');
   }
-  
+
   const data = await response.json();
   return {
     emailNotifications: data.emailNotifications ?? false,
     pushNotifications: data.pushNotifications ?? false,
-    language: "pl"
+    language: 'pl',
   };
 };
 
 export const updatePreferences = async (
-  preferences: PreferencesData, 
+  preferences: PreferencesData,
   token: string
 ): Promise<PreferencesData> => {
   const response = await fetch(`${API_URL}settings/preferences`, {
     method: 'PUT',
     headers: {
-      'Authorization': `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(preferences),
@@ -56,6 +59,6 @@ export const updatePreferences = async (
   return {
     emailNotifications: data.emailNotifications,
     pushNotifications: data.pushNotifications,
-    language: "pl"
+    language: 'pl',
   };
-}; 
+};

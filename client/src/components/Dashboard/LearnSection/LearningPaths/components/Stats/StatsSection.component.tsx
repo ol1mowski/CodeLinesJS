@@ -28,4 +28,4 @@ export const StatsSection = memo(({ stats }: StatsSectionProps) => (
       value={stats.pathsInProgress}
     />
   </div>
-)); 
+));

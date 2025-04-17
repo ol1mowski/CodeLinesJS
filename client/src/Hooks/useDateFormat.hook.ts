@@ -1,5 +1,11 @@
 import { useCallback } from 'react';
-import { formatDate, formatMessageDate, formatShortDate, getDaysDifference, isSameDay } from '../utils/format';
+import {
+  formatDate,
+  formatMessageDate,
+  formatShortDate,
+  getDaysDifference,
+  isSameDay,
+} from '../utils/format';
 
 type UseDateFormatReturn = {
   formatDate: (date: string | Date) => string;
@@ -49,6 +55,6 @@ export const useDateFormat = (): UseDateFormatReturn => {
     getDaysDifference: getDaysDifferenceCallback,
     isSameDay: isSameDayCallback,
     isToday: isTodayCallback,
-    isYesterday: isYesterdayCallback
+    isYesterday: isYesterdayCallback,
   };
-}; 
+};

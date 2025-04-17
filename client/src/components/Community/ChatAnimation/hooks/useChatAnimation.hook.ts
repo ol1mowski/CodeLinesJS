@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react';
 import { messages, typingText } from '../constants/messages.data';
 
 export const useChatAnimation = () => {
-  const [displayedMessages, setDisplayedMessages] = useState(messages.map(() => ""));
+  const [displayedMessages, setDisplayedMessages] = useState(messages.map(() => ''));
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
   const [isTypingMessage, setIsTypingMessage] = useState(false);
-  const [displayedText, setDisplayedText] = useState("");
+  const [displayedText, setDisplayedText] = useState('');
   const [isTypingResponse, setIsTypingResponse] = useState(false);
   const [cursorVisible, setCursorVisible] = useState(true);
 
@@ -21,7 +21,7 @@ export const useChatAnimation = () => {
     if (isTypingMessage && currentMessageIndex < messages.length) {
       const currentMessage = messages[currentMessageIndex].message;
       const currentDisplayed = displayedMessages[currentMessageIndex];
-      
+
       if (currentDisplayed.length < currentMessage.length) {
         const timeout = setTimeout(() => {
           const newMessages = [...displayedMessages];
@@ -57,6 +57,6 @@ export const useChatAnimation = () => {
     displayedText,
     isTypingResponse,
     cursorVisible,
-    setIsTypingMessage
+    setIsTypingMessage,
   };
-}; 
+};

@@ -21,4 +21,4 @@ export const AsyncQuestProgress = memo(({ currentLevel, totalLevels }: AsyncQues
   );
 });
 
-AsyncQuestProgress.displayName = 'AsyncQuestProgress'; 
+AsyncQuestProgress.displayName = 'AsyncQuestProgress';

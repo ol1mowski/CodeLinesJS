@@ -21,13 +21,14 @@ export const useCodeExecution = () => {
         },
         error: (...args: any[]) => {
           setOutput(prev => [...prev, `Error: ${args.map(arg => String(arg)).join(' ')}`]);
-        }
+        },
       };
 
-      const mockFetch = () => Promise.resolve({ json: () => Promise.resolve({ data: 'mock data' }) });
+      const mockFetch = () =>
+        Promise.resolve({ json: () => Promise.resolve({ data: 'mock data' }) });
       const mockTimeout = (cb: Function, ms: number) => setTimeout(cb, Math.min(ms, 1000));
 
-      const context = { 
+      const context = {
         console: mockConsole,
         fetch: mockFetch,
         setTimeout: mockTimeout,
@@ -51,7 +52,7 @@ export const useCodeExecution = () => {
       return {
         success: false,
         output: output,
-        error: (error as Error).message
+        error: (error as Error).message,
       };
     } finally {
       setIsRunning(false);
@@ -62,6 +63,6 @@ export const useCodeExecution = () => {
     executeCode,
     isRunning,
     output,
-    clearOutput: () => setOutput([])
+    clearOutput: () => setOutput([]),
   };
-}; 
+};

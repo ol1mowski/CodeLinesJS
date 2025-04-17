@@ -4,13 +4,12 @@ type PathContentProps = {
   description: string;
   outcomes: string[];
   requirements: string[];
-}
-
+};
 
 export const PathContent = memo(({ description, outcomes, requirements }: PathContentProps) => (
   <div className="space-y-4">
     <p className="text-gray-400 text-sm">{description}</p>
-    
+
     <div className="space-y-2">
       <h4 className="text-sm font-medium text-js">Czego się nauczysz:</h4>
       <ul className="text-sm text-gray-400 list-disc list-inside space-y-1">
@@ -33,4 +32,4 @@ export const PathContent = memo(({ description, outcomes, requirements }: PathCo
   </div>
 ));
 
-PathContent.displayName = "PathContent"; 
+PathContent.displayName = 'PathContent';

@@ -9,20 +9,20 @@ export type RankingStats = {
   challengesChange: number;
   accuracy: number;
   winStreak: number;
-}
+};
 
 export type RankingUserStats = {
   rank: number;
   points: number;
   level: number;
   streak: number;
-}
+};
 
 export type RankingBadge = {
   id: string;
   name: string;
   icon: string;
-}
+};
 
 export type RankingUser = {
   id: string;
@@ -34,4 +34,4 @@ export type RankingUser = {
   badges: RankingBadge[];
   streak: number;
   stats: RankingStats;
-} 
+};

@@ -14,6 +14,6 @@ export const useConfirmationState = () => {
   return {
     showConfirmation,
     handleShowConfirmation,
-    handleHideConfirmation
+    handleHideConfirmation,
   };
-}; 
+};

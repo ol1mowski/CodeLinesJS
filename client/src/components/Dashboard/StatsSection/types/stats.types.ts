@@ -4,7 +4,7 @@ export type Badge = {
   icon: string;
   earnedAt: string;
   description?: string;
-}
+};
 
 export type UserStats = {
   level: number;
@@ -29,4 +29,4 @@ export type UserStats = {
       total: number;
     }>;
   };
-} 
+};

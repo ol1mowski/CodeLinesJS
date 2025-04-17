@@ -4,7 +4,7 @@ export type NavigationItem = {
   id: string;
   label: string;
   icon: ReactNode;
-  section: "main" | "game" | "social";
+  section: 'main' | 'game' | 'social';
   path?: string;
 };
 
@@ -24,5 +24,5 @@ export type NavigationButtonProps = {
   isActive?: boolean;
   isExpanded: boolean;
   onClick: () => void;
-  variant?: "default" | "danger";
-}; 
+  variant?: 'default' | 'danger';
+};

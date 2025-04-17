@@ -23,4 +23,4 @@ export type GameStats = {
     'async-await': { total: number; correct: number; points: number };
     callbacks: { total: number; correct: number; points: number };
   };
-}; 
+};

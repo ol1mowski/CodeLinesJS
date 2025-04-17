@@ -28,7 +28,8 @@
     "test:e2e:ui": "playwright test --ui",
     "clean": "rimraf dist",
     "prepare": "husky",
-    "postinstall": "husky"
+    "postinstall": "husky",
+    "husky:install": "cd .. && husky install client/.husky"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
@@ -116,5 +117,11 @@
     "src/**/*.{json,css,scss}": [
       "prettier --write"
     ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "pre-push": "npm run test"
+    }
   }
 }

@@ -1,5 +1,5 @@
-import { motion } from "framer-motion";
-import { memo } from "react";
+import { motion } from 'framer-motion';
+import { memo } from 'react';
 
 type ErrorMessageProps = {
   message: string;
@@ -15,4 +15,4 @@ export const ErrorMessage = memo(({ message }: ErrorMessageProps) => (
   </motion.div>
 ));
 
-ErrorMessage.displayName = "ErrorMessage"; 
+ErrorMessage.displayName = 'ErrorMessage';

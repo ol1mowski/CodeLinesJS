@@ -9,19 +9,19 @@ import { GameHeader } from './components/GameHeader.component';
 
 const AsyncQuest = memo(() => {
   const { gameContent, isLoading, error } = useAsyncQuestData();
-  const { 
-    isGameStarted, 
-    isGameOver, 
-    gameStats, 
+  const {
+    isGameStarted,
+    isGameOver,
+    gameStats,
     finalTime,
     currentChallenge,
     handleScoreUpdate,
     handleLevelComplete,
     handleGameOver,
     handleRestart,
-    handleStartGame
+    handleStartGame,
   } = useAsyncQuestState({ gameContent, isPaused: false });
-  
+
   const { pageTitle, pageDescription } = useAsyncQuestSEO();
 
   return (
@@ -33,15 +33,15 @@ const AsyncQuest = memo(() => {
 
       <LoadingError isLoading={isLoading} error={error}>
         <div className="flex flex-col h-full">
-          <GameHeader 
+          <GameHeader
             isGameStarted={isGameStarted}
             isGameOver={isGameOver}
             gameStats={gameStats}
             onGameStart={handleStartGame}
           />
-          
+
           {isGameStarted && (
-            <GameContent 
+            <GameContent
               isGameOver={isGameOver}
               gameStats={gameStats}
               finalTime={finalTime}

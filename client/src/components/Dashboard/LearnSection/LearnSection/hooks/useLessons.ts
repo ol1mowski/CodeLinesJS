@@ -14,24 +14,19 @@ export type LessonsResponse = {
     completed: number;
     progress: number;
   };
-}
+};
 
 export const useLessons = (initialFilter: FilterType = 'all') => {
   const [filter, setFilter] = useState<FilterType>(initialFilter);
   const [category] = useState<Category>('javascript');
   const { token } = useAuth();
 
-  const { 
-    data, 
-    isLoading, 
-    error,
-    refetch 
-  } = useQuery<LessonsResponse, Error>({
+  const { data, isLoading, error, refetch } = useQuery<LessonsResponse, Error>({
     queryKey: ['lessons', filter],
     queryFn: () => fetchLessons(token || ''),
     retry: 2,
     refetchOnWindowFocus: false,
-    enabled: !!token
+    enabled: !!token,
   });
 
   const allLessons = data?.lessons?.[category] ?? [];
@@ -39,18 +34,22 @@ export const useLessons = (initialFilter: FilterType = 'all') => {
 
   const filteredLessons = useMemo(() => {
     if (!allLessons || allLessons.length === 0) return [];
-    
-    return filter === 'all' 
-      ? allLessons 
+
+    return filter === 'all'
+      ? allLessons
       : allLessons.filter(lesson => lesson.difficulty === filter);
   }, [allLessons, filter]);
 
   const getDifficultyLabel = (filter: FilterType) => {
     switch (filter) {
-      case 'beginner': return 'podstawowym';
-      case 'intermediate': return 'średnim';
-      case 'advanced': return 'zaawansowanym';
-      default: return '';
+      case 'beginner':
+        return 'podstawowym';
+      case 'intermediate':
+        return 'średnim';
+      case 'advanced':
+        return 'zaawansowanym';
+      default:
+        return '';
     }
   };
 
@@ -65,11 +64,11 @@ export const useLessons = (initialFilter: FilterType = 'all') => {
     hasNoLessonsForFilter: filteredLessons.length === 0,
     filterState: {
       currentFilter: filter,
-      label: getDifficultyLabel(filter)
+      label: getDifficultyLabel(filter),
     },
     userProgress: {
       completedLessons: stats.completed,
-      userLevel: 1
-    }
+      userLevel: 1,
+    },
   };
-}; 
+};

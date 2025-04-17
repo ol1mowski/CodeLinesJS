@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback } from 'react';
 
 export const useUserStats = () => {
   const [userStats, setUserStats] = useState({
@@ -8,10 +8,10 @@ export const useUserStats = () => {
 
   const fetchUserStats = useCallback(async () => {
     // Logika fetchowania statystyk użytkownika
-    const response = await fetch("/api/user/stats");
+    const response = await fetch('/api/user/stats');
     const data = await response.json();
     setUserStats(data);
   }, []);
 
   return { userStats, fetchUserStats };
-}; 
+};

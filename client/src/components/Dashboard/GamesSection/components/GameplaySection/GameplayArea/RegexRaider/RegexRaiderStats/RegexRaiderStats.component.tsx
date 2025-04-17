@@ -9,11 +9,7 @@ type RegexRaiderStatsProps = {
   finalTime: number;
 };
 
-export const RegexRaiderStats = memo(({ 
-  stats, 
-  isGameOver, 
-  finalTime 
-}: RegexRaiderStatsProps) => {
+export const RegexRaiderStats = memo(({ stats, isGameOver, finalTime }: RegexRaiderStatsProps) => {
   const formatTime = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
@@ -23,7 +19,7 @@ export const RegexRaiderStats = memo(({
   const displayTime = isGameOver ? finalTime : stats.timeElapsed;
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       className="grid grid-cols-3 gap-4"
@@ -54,7 +50,9 @@ export const RegexRaiderStats = memo(({
         <div>
           <div className="text-sm text-gray-400">Czas</div>
           <div className="text-lg font-bold text-js flex flex-wrap w-full">
-            <span className="block w-full break-words">{formatTime(displayTime)}/{formatTime(stats.maxTime)}</span>
+            <span className="block w-full break-words">
+              {formatTime(displayTime)}/{formatTime(stats.maxTime)}
+            </span>
           </div>
         </div>
       </div>
@@ -62,4 +60,4 @@ export const RegexRaiderStats = memo(({
   );
 });
 
-RegexRaiderStats.displayName = 'RegexRaiderStats'; 
+RegexRaiderStats.displayName = 'RegexRaiderStats';

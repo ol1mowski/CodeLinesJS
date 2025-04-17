@@ -1,9 +1,9 @@
-import { memo } from "react";
-import { motion } from "framer-motion";
-import { FaGamepad } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
-import { blockStyles as styles } from "../style/block.styles";
-import { useBlockAnimation } from "../hooks/useBlockAnimation";
+import { memo } from 'react';
+import { motion } from 'framer-motion';
+import { FaGamepad } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import { blockStyles as styles } from '../style/block.styles';
+import { useBlockAnimation } from '../hooks/useBlockAnimation';
 
 export const GameBlock = memo(() => {
   const navigate = useNavigate();
@@ -29,8 +29,8 @@ export const GameBlock = memo(() => {
 
       <div className={styles.content.wrapper}>
         <p className={styles.content.description}>
-          Rozpocznij nową sesję gry, rozwiązuj wyzwania i zdobywaj punkty.
-          Sprawdź swoje umiejętności w praktyce!
+          Rozpocznij nową sesję gry, rozwiązuj wyzwania i zdobywaj punkty. Sprawdź swoje
+          umiejętności w praktyce!
         </p>
 
         <div className={styles.content.button.wrapper}>
@@ -53,4 +53,4 @@ export const GameBlock = memo(() => {
   );
 });
 
-GameBlock.displayName = "GameBlock"; 
+GameBlock.displayName = 'GameBlock';

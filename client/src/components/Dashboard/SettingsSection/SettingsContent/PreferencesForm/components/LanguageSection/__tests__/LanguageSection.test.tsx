@@ -15,10 +15,10 @@ describe('LanguageSection', () => {
     render(<LanguageSection register={mockRegister} />);
 
     expect(screen.getByText('Język')).not.toBeNull();
-    
+
     const selects = screen.queryAllByRole('combobox');
     expect(selects.length).toBeGreaterThan(0);
-    
+
     expect(screen.getByText('Polski')).not.toBeNull();
   });
 
@@ -27,7 +27,7 @@ describe('LanguageSection', () => {
 
     const select = container.querySelector('select') as HTMLSelectElement;
     expect(select).not.toBeNull();
-    
+
     expect(select.value).toBe('pl');
   });
-}); 
+});

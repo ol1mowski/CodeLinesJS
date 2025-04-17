@@ -5,7 +5,7 @@ export type LearningPath = {
   progress: number;
   totalModules: number;
   completedModules: number;
-  difficulty: "beginner" | "intermediate" | "advanced";
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
   estimatedTime: string;
   tags: string[];
 };
@@ -15,7 +15,7 @@ export type Lesson = {
   slug: string;
   description: string;
   duration: string;
-  difficulty: "beginner" | "intermediate" | "advanced";
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
   category: string;
   isCompleted: boolean;
   progress: number;
@@ -27,8 +27,8 @@ export type Resource = {
   title: string;
   description: string;
   url: string;
-  type: "documentation" | "tutorial" | "article";
+  type: 'documentation' | 'tutorial' | 'article';
   category: string;
-  difficulty: "beginner" | "intermediate" | "advanced";
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
   isRecommended: boolean;
-}; 
+};

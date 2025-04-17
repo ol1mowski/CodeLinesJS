@@ -13,4 +13,4 @@ export const TimelineIcon = memo(({ Icon }: Props) => (
   </div>
 ));
 
-TimelineIcon.displayName = 'TimelineIcon'; 
+TimelineIcon.displayName = 'TimelineIcon';

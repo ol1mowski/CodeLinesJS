@@ -7,37 +7,25 @@ Projekt używa Husky do automatyzacji kontroli jakości kodu. Husky uruchamia au
 - **pre-commit**: Sprawdza i formatuje kod za pomocą ESLint i Prettier przed każdym commitem
 - **pre-push**: Uruchamia testy przed każdym pushem do repozytorium
 
-### Inicjalizacja Husky po sklonowaniu repozytorium
+### Rozwiązanie problemu z `.git can't be found`
 
-Po sklonowaniu repozytorium, należy wykonać:
-
-```bash
-npm install
-```
-
-Jeśli hooki nie działają po instalacji, można je zainstalować ręcznie:
+Ponieważ folder `client` jest podkatalogiem głównego repozytorium Git (`.git` znajduje się w katalogu nadrzędnym), standardowa instalacja Husky może nie działać. W takim przypadku należy użyć specjalnego skryptu konfiguracyjnego:
 
 ```bash
-# Wersja 1: Użyj skryptu instalacyjnego
-node .husky/install-husky.js
-
-# Wersja 2: Wykonaj ręcznie komendy
-npx husky install
-npx husky add .husky/pre-commit "npx lint-staged"
-npx husky add .husky/pre-push "npm run test"
+# Uruchom ten skrypt z katalogu client
+node husky-setup.mjs
 ```
 
-Na systemach Unix/Linux/Mac należy dodatkowo nadać uprawnienia do wykonania:
-
-```bash
-chmod +x .husky/pre-commit .husky/pre-push
-```
+Skrypt ten:
+1. Tworzy odpowiednie pliki hooków w katalogu `.husky`
+2. Konfiguruje Git do używania tych hooków
+3. Dostosowuje ścieżki tak, aby hooki działały z podkatalogiem projektu
 
 ### Sprawdzenie czy Husky działa
 
 Aby sprawdzić czy Husky działa:
 
-1. Wprowadź zmianę w dowolnym pliku
+1. Wprowadź zmianę w dowolnym pliku w katalogu `client`
 2. Spróbuj zrobić commit:
 ```bash
 git add .

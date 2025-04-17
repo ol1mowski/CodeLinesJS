@@ -24,4 +24,4 @@ describe('useDateFormat', () => {
 
     expect(formatDate('invalid-date')).toBe('Nieprawidłowa data');
   });
-}); 
+});

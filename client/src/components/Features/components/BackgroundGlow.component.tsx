@@ -6,4 +6,4 @@ export const BackgroundGlow = () => (
     <div className="absolute top-1/4 right-1/4 w-32 h-32 bg-[#f7df1e] rounded-full blur-[100px] opacity-10" />
     <div className="absolute bottom-1/4 left-1/4 w-32 h-32 bg-[#f7df1e] rounded-full blur-[100px] opacity-10" />
   </div>
-); 
+);

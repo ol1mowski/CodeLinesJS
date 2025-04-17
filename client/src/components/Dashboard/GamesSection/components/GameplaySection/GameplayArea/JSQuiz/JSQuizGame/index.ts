@@ -1,1 +1,1 @@
-export { JSQuizGame as default } from './JSQuizGame.component'; 
+export { JSQuizGame as default } from './JSQuizGame.component';

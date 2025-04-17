@@ -1,5 +1,5 @@
-import { motion } from "framer-motion";
-import { IconType } from "react-icons";
+import { motion } from 'framer-motion';
+import { IconType } from 'react-icons';
 
 type FeatureCardProps = {
   title: string;
@@ -26,4 +26,4 @@ export const FeatureCard = ({ title, description, Icon, index }: FeatureCardProp
       </div>
     </div>
   </motion.div>
-); 
+);

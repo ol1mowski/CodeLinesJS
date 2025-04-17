@@ -6,11 +6,7 @@ type UseSEOProps = {
   gameName?: string;
 };
 
-export const useSEO = ({
-  title,
-  description,
-  gameName = 'JSTypoHunter'
-}: UseSEOProps = {}) => {
+export const useSEO = ({ title, description, gameName = 'JSTypoHunter' }: UseSEOProps = {}) => {
   const pageTitle = useMemo(() => {
     if (title) return `${title} | CodeLinesJS`;
     return `${gameName} - Gra programistyczna | CodeLinesJS`;
@@ -22,4 +18,4 @@ export const useSEO = ({
   }, [description, gameName]);
 
   return { pageTitle, pageDescription };
-}; 
+};

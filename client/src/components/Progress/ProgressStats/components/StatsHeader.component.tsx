@@ -1,10 +1,10 @@
-import { motion } from "framer-motion";
-import { FaStar } from "react-icons/fa";
-import { useMobileDetect } from "../../../../hooks/useMobileDetect";
+import { motion } from 'framer-motion';
+import { FaStar } from 'react-icons/fa';
+import { useMobileDetect } from '../../../../hooks/useMobileDetect';
 
 export const StatsHeader = () => {
   const isMobile = useMobileDetect();
-  
+
   return (
     <div className="flex items-center justify-between border-b border-js/20 pb-4">
       <div className="flex items-center gap-3">
@@ -23,13 +23,9 @@ export const StatsHeader = () => {
             </motion.div>
           )}
         </div>
-        <h2 className="text-2xl font-bold text-js">
-          Twoje Statystyki
-        </h2>
+        <h2 className="text-2xl font-bold text-js">Twoje Statystyki</h2>
       </div>
-      <span className="text-sm text-gray-400">
-        Aktualny postęp
-      </span>
+      <span className="text-sm text-gray-400">Aktualny postęp</span>
     </div>
   );
-}; 
+};

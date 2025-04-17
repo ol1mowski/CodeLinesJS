@@ -9,4 +9,4 @@ export type FooterLink = {
 export type FooterLinks = {
   resources: FooterLink[];
   social: FooterLink[];
-}; 
+};

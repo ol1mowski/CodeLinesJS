@@ -9,12 +9,7 @@ interface StatCardProps {
   className?: string;
 }
 
-export const StatCard = memo(({ 
-  icon: Icon, 
-  label, 
-  value, 
-  className = '' 
-}: StatCardProps) => {
+export const StatCard = memo(({ icon: Icon, label, value, className = '' }: StatCardProps) => {
   return (
     <motion.div
       className={`bg-dark/20 rounded-lg p-4 border border-js/5 ${className}`}
@@ -28,4 +23,4 @@ export const StatCard = memo(({
   );
 });
 
-StatCard.displayName = 'StatCard'; 
+StatCard.displayName = 'StatCard';

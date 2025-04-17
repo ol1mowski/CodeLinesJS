@@ -10,7 +10,7 @@ type Game = {
 
 export const useJSQuizData = () => {
   const { data, isLoading, error } = useGamesQuery();
-  
+
   const gameContent = useMemo(() => {
     if (!data || !data.games || !Array.isArray(data.games)) {
       return undefined;
@@ -21,6 +21,6 @@ export const useJSQuizData = () => {
   return {
     gameContent,
     isLoading,
-    error
+    error,
   };
-}; 
+};

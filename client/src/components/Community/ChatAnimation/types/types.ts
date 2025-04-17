@@ -3,4 +3,4 @@ export type Message = {
   avatar: string;
   message: string;
   time: string;
-}; 
+};

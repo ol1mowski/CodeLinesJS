@@ -1,7 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
-import { fetchLesson } from "../lib/api/lessons";
-import { useAuth } from "../../../../hooks/useAuth";
-import { Lesson } from "../types/lesson.types";
+import { useQuery } from '@tanstack/react-query';
+import { fetchLesson } from '../lib/api/lessons';
+import { useAuth } from '../../../../hooks/useAuth';
+import { Lesson } from '../types/lesson.types';
 
 interface ApiError extends Error {
   response?: {
@@ -16,7 +16,7 @@ export const useLesson = (lessonId: string) => {
     data: lesson,
     isLoading,
     error,
-    refetch
+    refetch,
   } = useQuery<Lesson, ApiError>({
     queryKey: ['lesson', lessonId],
     queryFn: () => {
@@ -35,6 +35,6 @@ export const useLesson = (lessonId: string) => {
     isLoading,
     error,
     refetch,
-    isNotFound: error?.response?.status === 404
+    isNotFound: error?.response?.status === 404,
   };
-}; 
+};

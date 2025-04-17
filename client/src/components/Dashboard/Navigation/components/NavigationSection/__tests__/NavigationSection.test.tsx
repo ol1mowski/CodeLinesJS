@@ -10,8 +10,8 @@ describe('NavigationSection', () => {
       label: 'Home',
       icon: <FaHome />,
       section: 'main' as const,
-      path: '/home'
-    }
+      path: '/home',
+    },
   ];
 
   const defaultProps = {
@@ -21,7 +21,7 @@ describe('NavigationSection', () => {
     activeItem: '',
     onItemClick: vi.fn(),
     index: 0,
-    isLastSection: false
+    isLastSection: false,
   };
 
   beforeEach(() => {
@@ -43,8 +43,8 @@ describe('NavigationSection', () => {
   it('calls onItemClick with the correct item', () => {
     const onItemClick = vi.fn();
     render(<NavigationSection {...defaultProps} onItemClick={onItemClick} />);
-    
+
     fireEvent.click(screen.getByText('Home'));
     expect(onItemClick).toHaveBeenCalledWith(mockItems[0]);
   });
-}); 
+});

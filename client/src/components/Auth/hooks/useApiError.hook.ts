@@ -17,43 +17,43 @@ export const useApiError = () => {
 
     if (error && typeof error === 'object') {
       const apiError = error as ApiErrorResponse;
-      
+
       if (apiError.error && typeof apiError.error === 'string') {
         return apiError.error;
       }
-      
+
       if (apiError.message && typeof apiError.message === 'string') {
         return apiError.message;
       }
-      
+
       if (apiError.errors) {
-        const errorMessages = Object.values(apiError.errors)
-          .flat()
-          .filter(Boolean);
-          
+        const errorMessages = Object.values(apiError.errors).flat().filter(Boolean);
+
         if (errorMessages.length > 0) {
           return errorMessages.join('. ');
         }
       }
     }
-  
+
     if (error instanceof Error) {
       return error.message;
     }
-    
+
     if (typeof error === 'string') {
       return error;
     }
-  
+
     return 'Wystąpił nieznany błąd. Spróbuj ponownie później.';
   }, []);
 
-  const handleApiError = useCallback((error: unknown) => {
-    const message = parseApiError(error);
-    setErrorMessage(message);
-    return message;
-  }, [parseApiError]);
-
+  const handleApiError = useCallback(
+    (error: unknown) => {
+      const message = parseApiError(error);
+      setErrorMessage(message);
+      return message;
+    },
+    [parseApiError]
+  );
 
   const resetError = useCallback(() => {
     setErrorMessage(null);
@@ -64,6 +64,6 @@ export const useApiError = () => {
     handleApiError,
     parseApiError,
     resetError,
-    setErrorMessage
+    setErrorMessage,
   };
-}; 
+};

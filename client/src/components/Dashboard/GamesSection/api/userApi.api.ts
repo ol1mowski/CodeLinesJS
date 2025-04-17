@@ -1,4 +1,4 @@
-import { API_URL } from "../../../../config/api.config";
+import { API_URL } from '../../../../config/api.config';
 
 export const updateUserPoints = async (token: string, points: number) => {
   try {
@@ -6,9 +6,9 @@ export const updateUserPoints = async (token: string, points: number) => {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ points })
+      body: JSON.stringify({ points }),
     });
 
     if (!response.ok) {
@@ -20,4 +20,4 @@ export const updateUserPoints = async (token: string, points: number) => {
     console.error('Błąd podczas aktualizacji punktów:', error);
     throw error;
   }
-}; 
+};

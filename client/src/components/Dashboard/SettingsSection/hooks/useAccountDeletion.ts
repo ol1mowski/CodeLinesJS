@@ -33,13 +33,13 @@ export const useAccountDeletion = (onCancel: () => void) => {
 
   const { form, onSubmit, isDeleting } = useDeleteAccountForm({
     onSuccess: handleSuccess,
-    onError: handleError
+    onError: handleError,
   });
 
   return {
     form,
     onSubmit,
     isDeleting,
-    handleCancel
+    handleCancel,
   };
-}; 
+};

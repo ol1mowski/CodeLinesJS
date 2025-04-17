@@ -7,7 +7,7 @@ export type CodeChallenge = {
   explanation?: string;
   category: 'syntax' | 'naming' | 'logic';
   difficulty: 'easy' | 'medium' | 'hard';
-}
+};
 
 export type GameState = {
   currentLevel: number;
@@ -15,7 +15,7 @@ export type GameState = {
   timeElapsed: number;
   maxTime: number;
   isGameOver: boolean;
-}
+};
 
 export type GameStats = {
   currentLevel: number;
@@ -24,4 +24,4 @@ export type GameStats = {
   timeElapsed: number;
   maxTime: number;
   correctAnswers: number;
-} 
+};

@@ -7,16 +7,11 @@ type FeatureItemProps = {
   title: string;
   description: string;
   delay: number;
-}
+};
 
-export const FeatureItem = ({ 
-  icon, 
-  title, 
-  description, 
-  delay 
-}: FeatureItemProps) => {
+export const FeatureItem = ({ icon, title, description, delay }: FeatureItemProps) => {
   const isMobile = useMobileDetect();
-  
+
   if (isMobile) {
     return (
       <div className="flex items-start gap-3">
@@ -30,7 +25,7 @@ export const FeatureItem = ({
       </div>
     );
   }
-  
+
   return (
     <motion.div
       initial={{ opacity: 0, x: 20 }}
@@ -48,4 +43,4 @@ export const FeatureItem = ({
       </div>
     </motion.div>
   );
-}; 
+};

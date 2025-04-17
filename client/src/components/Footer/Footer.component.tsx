@@ -1,9 +1,9 @@
-import { Container } from "../UI/Container/Container.component";
-import { FooterContent } from "./FooterContent/FooterContent.component";
-import { Background } from "./components/Background.component";
-import { Copyright } from "./components/Copyright.component";
-import { SocialLinks } from "./components/SocialLinks.component";
-import { socialLinks } from "./constants/socialLinks.data";
+import { Container } from '../UI/Container/Container.component';
+import { FooterContent } from './FooterContent/FooterContent.component';
+import { Background } from './components/Background.component';
+import { Copyright } from './components/Copyright.component';
+import { SocialLinks } from './components/SocialLinks.component';
+import { socialLinks } from './constants/socialLinks.data';
 
 export const Footer = () => (
   <footer className="w-full relative py-16 md:py-24 bg-gradient-to-b from-[#242424] via-[#242424] to-[#242424] overflow-hidden">

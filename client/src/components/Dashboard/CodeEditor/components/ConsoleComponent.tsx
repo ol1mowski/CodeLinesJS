@@ -1,10 +1,20 @@
-import { ConsoleOutput } from "./ConsoleOutput.component";
+import { ConsoleOutput } from './ConsoleOutput.component';
 
-const ConsoleComponent = ({ output, isExecuting, onClear, onRun }: { output: string[]; isExecuting: boolean; onClear: () => void; onRun: () => void }) => (
+const ConsoleComponent = ({
+  output,
+  isExecuting,
+  onClear,
+  onRun,
+}: {
+  output: string[];
+  isExecuting: boolean;
+  onClear: () => void;
+  onRun: () => void;
+}) => (
   <div className="bg-dark/50 rounded-lg p-4 border border-js/10">
     <div className="flex items-center justify-between mb-4">
       <h2 className="text-xl font-bold text-js">Konsola</h2>
-      <button 
+      <button
         data-testid="run-code-btn"
         onClick={onRun}
         disabled={isExecuting}
@@ -17,4 +27,4 @@ const ConsoleComponent = ({ output, isExecuting, onClear, onRun }: { output: str
   </div>
 );
 
-export default ConsoleComponent; 
+export default ConsoleComponent;

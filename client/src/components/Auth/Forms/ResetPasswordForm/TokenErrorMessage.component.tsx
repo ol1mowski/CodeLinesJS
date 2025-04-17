@@ -1,6 +1,6 @@
-import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
-import { FaExclamationTriangle } from "react-icons/fa";
+import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { FaExclamationTriangle } from 'react-icons/fa';
 
 type TokenErrorMessageProps = {
   errorMessage: string | null;
@@ -10,14 +10,11 @@ type TokenErrorMessageProps = {
  * Komponent wyświetlający błąd tokenu resetowania hasła
  */
 export const TokenErrorMessage = ({ errorMessage }: TokenErrorMessageProps) => {
-  const defaultMessage = "Nieprawidłowy lub wygasły token resetowania hasła. Sprawdź, czy link jest poprawny lub spróbuj ponownie zresetować hasło.";
-  
+  const defaultMessage =
+    'Nieprawidłowy lub wygasły token resetowania hasła. Sprawdź, czy link jest poprawny lub spróbuj ponownie zresetować hasło.';
+
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="space-y-6"
-    >
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
       <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm flex items-start">
         <FaExclamationTriangle className="mr-2 mt-0.5 flex-shrink-0" />
         <div>
@@ -33,4 +30,4 @@ export const TokenErrorMessage = ({ errorMessage }: TokenErrorMessageProps) => {
       </div>
     </motion.div>
   );
-}; 
+};

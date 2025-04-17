@@ -4,7 +4,7 @@ import { useMobileDetect } from '../../../../hooks/useMobileDetect';
 
 export const ChartHeader = () => {
   const isMobile = useMobileDetect();
-  
+
   return (
     <div className="flex items-center justify-between border-b border-js/20 pb-4">
       <div className="flex items-center gap-3">
@@ -23,15 +23,11 @@ export const ChartHeader = () => {
             </motion.div>
           )}
         </div>
-        <h2 className="text-2xl font-bold text-js">
-          Wykres Postępów
-        </h2>
+        <h2 className="text-2xl font-bold text-js">Wykres Postępów</h2>
       </div>
-      <span className="text-sm text-gray-400">
-        Ostatnie 5 tygodni
-      </span>
+      <span className="text-sm text-gray-400">Ostatnie 5 tygodni</span>
     </div>
   );
 };
 
-ChartHeader.displayName = 'ChartHeader'; 
+ChartHeader.displayName = 'ChartHeader';

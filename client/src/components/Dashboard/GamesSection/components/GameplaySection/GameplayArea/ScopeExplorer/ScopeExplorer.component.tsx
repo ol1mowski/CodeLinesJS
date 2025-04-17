@@ -14,7 +14,7 @@ const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean }) => {
   const { gameContent, isLoading, error } = useScopeExplorerData();
   const { containerAnimation } = useAnimations();
   const { pageTitle, pageDescription } = useSEO();
-  
+
   const {
     isGameStarted,
     isGameOver,
@@ -25,10 +25,10 @@ const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean }) => {
     handleLevelComplete,
     handleRestart,
     handleStartGame,
-    handleGameOver
+    handleGameOver,
   } = useScopeExplorerGame({
     gameContent,
-    isPaused
+    isPaused,
   });
 
   return (
@@ -38,22 +38,15 @@ const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean }) => {
           {!isGameStarted ? (
             <GameIntro gameContent={gameContent} onStart={handleStartGame} />
           ) : (
-            <motion.div
-              {...containerAnimation}
-              className="w-full h-full flex flex-col"
-            >
+            <motion.div {...containerAnimation} className="w-full h-full flex flex-col">
               <Helmet>
                 <title>{pageTitle}</title>
                 <meta name="description" content={pageDescription} />
               </Helmet>
-              
-              <ScopeExplorerStats 
-                stats={gameStats} 
-                isGameOver={isGameOver}
-                finalTime={finalTime}
-              />
-              
-              <GameContent 
+
+              <ScopeExplorerStats stats={gameStats} isGameOver={isGameOver} finalTime={finalTime} />
+
+              <GameContent
                 isGameOver={isGameOver}
                 gameStats={gameStats}
                 currentChallenge={currentChallenge}
@@ -74,4 +67,4 @@ const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean }) => {
 
 export default ScopeExplorer;
 
-ScopeExplorer.displayName = 'ScopeExplorer'; 
+ScopeExplorer.displayName = 'ScopeExplorer';

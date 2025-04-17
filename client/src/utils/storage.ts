@@ -57,4 +57,4 @@ export const getFromSessionStorage = <T>(key: string, defaultValue: T): T => {
     console.error(`Błąd odczytywania z sessionStorage (${key}):`, error);
     return defaultValue;
   }
-}; 
+};

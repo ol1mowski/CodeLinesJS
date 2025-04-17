@@ -7,9 +7,9 @@ type DashboardErrorFallbackProps = {
   resetErrorBoundary?: () => void;
 };
 
-const DashboardErrorFallback: React.FC<DashboardErrorFallbackProps> = ({ 
-  error, 
-  resetErrorBoundary 
+const DashboardErrorFallback: React.FC<DashboardErrorFallbackProps> = ({
+  error,
+  resetErrorBoundary,
 }) => {
   const handleReset = () => {
     if (resetErrorBoundary) {
@@ -24,15 +24,13 @@ const DashboardErrorFallback: React.FC<DashboardErrorFallbackProps> = ({
       <div className="bg-dark-medium border border-red-500/20 rounded-lg p-8 max-w-md w-full shadow-lg">
         <div className="flex flex-col items-center text-center">
           <FaExclamationTriangle className="text-5xl text-red-500 mb-4" aria-hidden="true" />
-          
-          <h1 className="text-2xl font-bold text-white mb-2">
-            Wystąpił nieoczekiwany błąd
-          </h1>
-          
+
+          <h1 className="text-2xl font-bold text-white mb-2">Wystąpił nieoczekiwany błąd</h1>
+
           <p className="text-gray-400 mb-6">
             Przepraszamy za niedogodności. Nasz zespół został powiadomiony o problemie.
           </p>
-          
+
           {error && (
             <div className="w-full mb-6 p-3 bg-red-900/20 border border-red-500/10 rounded overflow-auto text-left">
               <p className="text-sm text-red-400 font-mono">
@@ -40,7 +38,7 @@ const DashboardErrorFallback: React.FC<DashboardErrorFallbackProps> = ({
               </p>
             </div>
           )}
-          
+
           <div className="flex flex-col sm:flex-row gap-4 w-full">
             <button
               onClick={handleReset}
@@ -49,7 +47,7 @@ const DashboardErrorFallback: React.FC<DashboardErrorFallbackProps> = ({
               <FaRedoAlt className="text-sm" aria-hidden="true" />
               <span>Spróbuj ponownie</span>
             </button>
-            
+
             <Link to="/dashboard" className="flex-1">
               <button className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-gray-800 hover:bg-gray-700 text-white font-medium rounded-lg transition-colors">
                 <FaHome className="text-sm" aria-hidden="true" />
@@ -63,4 +61,4 @@ const DashboardErrorFallback: React.FC<DashboardErrorFallbackProps> = ({
   );
 };
 
-export default DashboardErrorFallback; 
+export default DashboardErrorFallback;

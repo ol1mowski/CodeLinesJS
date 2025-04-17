@@ -15,4 +15,4 @@ export const useAuthActions = (state: AuthStateContext): AuthActions => {
   const resetPassword = useResetPasswordAction(state);
 
   return { login, register, forgotPassword, logout, loginWithGoogle, resetPassword };
-}; 
+};

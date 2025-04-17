@@ -1,5 +1,5 @@
-import { memo, useCallback, useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
 
 type VirtualListProps<T> = {
   items: T[];
@@ -14,7 +14,7 @@ export function VirtualList<T>({
   renderItem,
   itemHeight,
   overscan = 3,
-  className
+  className,
 }: VirtualListProps<T>) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [visibleRange, setVisibleRange] = useState({ start: 0, end: 10 });
@@ -27,14 +27,11 @@ export function VirtualList<T>({
     const viewportHeight = container.clientHeight;
 
     const start = Math.floor(scrollTop / itemHeight);
-    const end = Math.min(
-      items.length,
-      Math.ceil((scrollTop + viewportHeight) / itemHeight)
-    );
+    const end = Math.min(items.length, Math.ceil((scrollTop + viewportHeight) / itemHeight));
 
     return {
       start: Math.max(0, start - overscan),
-      end: Math.min(items.length, end + overscan)
+      end: Math.min(items.length, end + overscan),
     };
   }, [itemHeight, items.length, overscan]);
 
@@ -48,9 +45,9 @@ export function VirtualList<T>({
   useEffect(() => {
     const container = containerRef.current;
     if (container) {
-      container.addEventListener("scroll", handleScroll);
+      container.addEventListener('scroll', handleScroll);
       handleScroll();
-      return () => container.removeEventListener("scroll", handleScroll);
+      return () => container.removeEventListener('scroll', handleScroll);
     }
   }, [handleScroll]);
 
@@ -61,19 +58,19 @@ export function VirtualList<T>({
     <div
       ref={containerRef}
       className={`overflow-auto relative ${className}`}
-      style={{ height: "100%" }}
+      style={{ height: '100%' }}
     >
-      <div style={{ height: totalHeight, position: "relative" }}>
+      <div style={{ height: totalHeight, position: 'relative' }}>
         {visibleItems.map((item, index) => (
           <motion.div
             key={index}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             style={{
-              position: "absolute",
+              position: 'absolute',
               top: (visibleRange.start + index) * itemHeight,
-              width: "100%",
-              height: itemHeight
+              width: '100%',
+              height: itemHeight,
             }}
           >
             {renderItem(item, visibleRange.start + index)}
@@ -84,4 +81,4 @@ export function VirtualList<T>({
   );
 }
 
-export const MemoizedVirtualList = memo(VirtualList) as typeof VirtualList; 
+export const MemoizedVirtualList = memo(VirtualList) as typeof VirtualList;

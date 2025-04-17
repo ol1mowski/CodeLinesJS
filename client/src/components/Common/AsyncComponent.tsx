@@ -16,4 +16,4 @@ export function AsyncComponent<T>({ importFn, props }: AsyncComponentProps<T>) {
       </Suspense>
     </ErrorBoundary>
   );
-} 
+}

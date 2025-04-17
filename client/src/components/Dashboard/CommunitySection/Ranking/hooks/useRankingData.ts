@@ -13,26 +13,26 @@ export const useRankingData = () => {
 
   const users = useMemo(() => {
     if (!data) return [];
-    
+
     if (data && typeof data === 'object' && 'ranking' in data) {
       return (data as RankingResponse).ranking;
     }
-    
+
     return Array.isArray(data) ? data : [];
   }, [data]);
 
   const currentUserStats = useMemo<ProcessedUserStats | null>(() => {
     if (!data) return null;
-    
+
     let userStats = null;
-    
+
     if (data && typeof data === 'object' && 'userStats' in data) {
       const stats = (data as RankingResponse).userStats;
       userStats = {
         username: stats.username,
         rank: stats.rank,
         level: stats.stats?.level || '-',
-        points: stats.stats?.points || '-'
+        points: stats.stats?.points || '-',
       };
     } else if (Array.isArray(data)) {
       const currentUser = data.find(u => u.rank !== undefined || u.position !== undefined);
@@ -41,11 +41,11 @@ export const useRankingData = () => {
           username: currentUser.username,
           rank: currentUser.rank || currentUser.position || '-',
           level: currentUser.stats?.level || currentUser.level || '-',
-          points: currentUser.stats?.points || currentUser.points || '-'
+          points: currentUser.stats?.points || currentUser.points || '-',
         };
       }
     }
-    
+
     return userStats;
   }, [data]);
 
@@ -53,6 +53,6 @@ export const useRankingData = () => {
     users,
     currentUserStats,
     isLoading,
-    error
+    error,
   };
-}; 
+};

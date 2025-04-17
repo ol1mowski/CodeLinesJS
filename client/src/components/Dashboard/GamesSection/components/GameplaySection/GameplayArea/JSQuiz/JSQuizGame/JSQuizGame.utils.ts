@@ -44,4 +44,4 @@ export const getDifficultyLabel = (difficulty: 'easy' | 'medium' | 'hard') => {
     case 'hard':
       return 'Trudny';
   }
-}; 
+};

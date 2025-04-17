@@ -1,5 +1,5 @@
-import { motion } from "framer-motion";
-import { FaGithub, FaCodeBranch, FaCode, FaBug, FaLightbulb } from "react-icons/fa";
+import { motion } from 'framer-motion';
+import { FaGithub, FaCodeBranch, FaCode, FaBug, FaLightbulb } from 'react-icons/fa';
 
 type CollaborateItemProps = {
   icon: React.ReactNode;
@@ -28,26 +28,29 @@ export const CollaborateContent = () => {
   const items = [
     {
       icon: <FaCodeBranch />,
-      title: "Fork i Pull Request",
-      description: "Stwórz własną kopię repozytorium, wprowadź zmiany i zaproponuj je poprzez Pull Request.",
+      title: 'Fork i Pull Request',
+      description:
+        'Stwórz własną kopię repozytorium, wprowadź zmiany i zaproponuj je poprzez Pull Request.',
       delay: 0.1,
     },
     {
       icon: <FaCode />,
-      title: "Rozwój Funkcjonalności",
-      description: "Pomóż nam rozwijać nowe funkcje i ulepszać istniejące komponenty aplikacji.",
+      title: 'Rozwój Funkcjonalności',
+      description: 'Pomóż nam rozwijać nowe funkcje i ulepszać istniejące komponenty aplikacji.',
       delay: 0.2,
     },
     {
       icon: <FaBug />,
-      title: "Zgłaszanie Błędów",
-      description: "Znalazłeś błąd? Zgłoś go przez system Issues na GitHubie i pomóż nam go naprawić.",
+      title: 'Zgłaszanie Błędów',
+      description:
+        'Znalazłeś błąd? Zgłoś go przez system Issues na GitHubie i pomóż nam go naprawić.',
       delay: 0.3,
     },
     {
       icon: <FaLightbulb />,
-      title: "Propozycje Ulepszeń",
-      description: "Masz pomysł jak ulepszyć platformę? Podziel się nim z nami poprzez GitHub Discussions.",
+      title: 'Propozycje Ulepszeń',
+      description:
+        'Masz pomysł jak ulepszyć platformę? Podziel się nim z nami poprzez GitHub Discussions.',
       delay: 0.4,
     },
   ];
@@ -77,10 +80,10 @@ export const CollaborateContent = () => {
           <span>Zobacz Projekt na GitHub</span>
         </a>
         <p className="mt-4 text-gray-400 text-sm max-w-2xl text-center">
-          Nasz kod jest otwarty dla społeczności. Zachęcamy do współpracy, zgłaszania błędów i proponowania ulepszeń.
-          Razem możemy stworzyć lepszą platformę do nauki JavaScript!
+          Nasz kod jest otwarty dla społeczności. Zachęcamy do współpracy, zgłaszania błędów i
+          proponowania ulepszeń. Razem możemy stworzyć lepszą platformę do nauki JavaScript!
         </p>
       </motion.div>
     </div>
   );
-}; 
+};

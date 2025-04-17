@@ -3,4 +3,4 @@ export type AuthState = {
   setError: (error: string | null) => void;
   setIsAuthenticated: (isAuthenticated: boolean) => void;
   setUser: (user: any | null) => void;
-}; 
+};

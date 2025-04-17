@@ -1,4 +1,4 @@
 #!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
-npm run test 
+# Husky pre-push hook
+cd "C:/Users/oliwi/Desktop/CodeLinesJS/client"
+npm run test

@@ -6,16 +6,18 @@ import { useAuth } from '../../../../hooks/useAuth';
 vi.mock('react-router-dom', () => ({
   useNavigate: () => vi.fn(),
   Link: ({ children, to, ...props }: any) => (
-    <a href={to} {...props}>{children}</a>
-  )
+    <a href={to} {...props}>
+      {children}
+    </a>
+  ),
 }));
 
 vi.mock('../../../../Hooks/useAuth', () => ({
   useAuth: vi.fn(() => ({
     register: vi.fn().mockResolvedValue(undefined),
     loading: false,
-    error: null
-  }))
+    error: null,
+  })),
 }));
 
 vi.mock('framer-motion', () => ({
@@ -23,7 +25,11 @@ vi.mock('framer-motion', () => ({
     div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
     button: ({ children, ...props }: any) => <button {...props}>{children}</button>,
     form: ({ children, ...props }: any) => <form {...props}>{children}</form>,
-    p: ({ children, ...props }: any) => <p data-testid={props['data-testid']} {...props}>{children}</p>,
+    p: ({ children, ...props }: any) => (
+      <p data-testid={props['data-testid']} {...props}>
+        {children}
+      </p>
+    ),
   },
   AnimatePresence: ({ children }: any) => <>{children}</>,
 }));
@@ -33,33 +39,33 @@ describe('RegisterForm', () => {
     cleanup();
     vi.clearAllMocks();
   });
-  
+
   it('Renders the form correctly', () => {
     const { container } = render(<RegisterForm />);
 
     const usernameInput = container.querySelector('input[name="username"]');
     expect(usernameInput).not.toBeNull();
     expect(usernameInput?.getAttribute('placeholder')).toBe('jankowalski');
-    
+
     const emailInput = container.querySelector('input[name="email"]');
     expect(emailInput).not.toBeNull();
     expect(emailInput?.getAttribute('placeholder')).toBe('twoj@email.com');
-    
+
     const passwordLabels = container.querySelectorAll('label');
-    const hasPasswordLabel = Array.from(passwordLabels).some(
-      label => label.textContent?.toLowerCase().includes('hasło')
+    const hasPasswordLabel = Array.from(passwordLabels).some(label =>
+      label.textContent?.toLowerCase().includes('hasło')
     );
     expect(hasPasswordLabel).toBe(true);
-    
+
     const confirmPasswordLabels = container.querySelectorAll('label');
-    const hasConfirmPasswordLabel = Array.from(confirmPasswordLabels).some(
-      label => label.textContent?.toLowerCase().includes('potwierdź hasło')
+    const hasConfirmPasswordLabel = Array.from(confirmPasswordLabels).some(label =>
+      label.textContent?.toLowerCase().includes('potwierdź hasło')
     );
     expect(hasConfirmPasswordLabel).toBe(true);
-    
+
     const checkbox = container.querySelector('input[type="checkbox"]');
     expect(checkbox).not.toBeNull();
-    
+
     const submitButton = container.querySelector('button[type="submit"]');
     expect(submitButton).not.toBeNull();
     expect(submitButton?.textContent?.toLowerCase().includes('zarejestruj')).toBe(true);
@@ -74,8 +80,10 @@ describe('RegisterForm', () => {
 
     await waitFor(() => {
       const errorElements = container.querySelectorAll('p, span, div');
-      const hasErrorMessage = Array.from(errorElements).some(
-        element => element.textContent?.toLowerCase().match(/nazwa użytkownika|nieprawidłowy format|hasło musi mieć|musisz zaakceptować/i)
+      const hasErrorMessage = Array.from(errorElements).some(element =>
+        element.textContent
+          ?.toLowerCase()
+          .match(/nazwa użytkownika|nieprawidłowy format|hasło musi mieć|musisz zaakceptować/i)
       );
       expect(hasErrorMessage).toBe(true);
     });
@@ -94,8 +102,8 @@ describe('RegisterForm', () => {
 
     await waitFor(() => {
       const errorElements = container.querySelectorAll('p, span, div');
-      const hasErrorMessage = Array.from(errorElements).some(
-        element => element.textContent?.toLowerCase().includes('nazwa użytkownika może zawierać tylko')
+      const hasErrorMessage = Array.from(errorElements).some(element =>
+        element.textContent?.toLowerCase().includes('nazwa użytkownika może zawierać tylko')
       );
       expect(hasErrorMessage).toBe(true);
     });
@@ -116,8 +124,8 @@ describe('RegisterForm', () => {
 
     await waitFor(() => {
       const errorElements = container.querySelectorAll('p, span, div');
-      const hasErrorMessage = Array.from(errorElements).some(
-        element => element.textContent?.toLowerCase().includes('hasło musi zawierać przynajmniej')
+      const hasErrorMessage = Array.from(errorElements).some(element =>
+        element.textContent?.toLowerCase().includes('hasło musi zawierać przynajmniej')
       );
       expect(hasErrorMessage).toBe(true);
     });
@@ -132,7 +140,8 @@ describe('RegisterForm', () => {
     const confirmPasswordInput = passwordInputs[1];
 
     if (passwordInput) fireEvent.change(passwordInput, { target: { value: 'Password123' } });
-    if (confirmPasswordInput) fireEvent.change(confirmPasswordInput, { target: { value: 'Password124' } });
+    if (confirmPasswordInput)
+      fireEvent.change(confirmPasswordInput, { target: { value: 'Password124' } });
 
     const submitButton = container.querySelector('button[type="submit"]');
     expect(submitButton).not.toBeNull();
@@ -140,8 +149,8 @@ describe('RegisterForm', () => {
 
     await waitFor(() => {
       const errorElements = container.querySelectorAll('p, span, div');
-      const hasErrorMessage = Array.from(errorElements).some(
-        element => element.textContent?.toLowerCase().includes('hasła muszą być identyczne')
+      const hasErrorMessage = Array.from(errorElements).some(element =>
+        element.textContent?.toLowerCase().includes('hasła muszą być identyczne')
       );
       expect(hasErrorMessage).toBe(true);
     });
@@ -153,7 +162,7 @@ describe('RegisterForm', () => {
     vi.mocked(useAuth).mockReturnValue({
       register: mockRegister,
       loading: false,
-      error: null
+      error: null,
     } as any);
 
     const { container } = render(<RegisterForm />);
@@ -172,7 +181,8 @@ describe('RegisterForm', () => {
     const confirmPasswordInput = passwordInputs[1];
 
     if (passwordInput) fireEvent.change(passwordInput, { target: { value: 'Password123' } });
-    if (confirmPasswordInput) fireEvent.change(confirmPasswordInput, { target: { value: 'Password123' } });
+    if (confirmPasswordInput)
+      fireEvent.change(confirmPasswordInput, { target: { value: 'Password123' } });
 
     const privacyCheckbox = container.querySelector('input[type="checkbox"]');
     expect(privacyCheckbox).not.toBeNull();
@@ -194,7 +204,7 @@ describe('RegisterForm', () => {
     vi.mocked(useAuth).mockReturnValue({
       register: mockRegister,
       loading: false,
-      error: null
+      error: null,
     } as any);
 
     const { container } = render(<RegisterForm />);
@@ -213,7 +223,8 @@ describe('RegisterForm', () => {
     const confirmPasswordInput = passwordInputs[1];
 
     if (passwordInput) fireEvent.change(passwordInput, { target: { value: 'Password123' } });
-    if (confirmPasswordInput) fireEvent.change(confirmPasswordInput, { target: { value: 'Password123' } });
+    if (confirmPasswordInput)
+      fireEvent.change(confirmPasswordInput, { target: { value: 'Password123' } });
 
     const privacyCheckbox = container.querySelector('input[type="checkbox"]');
     expect(privacyCheckbox).not.toBeNull();
@@ -225,10 +236,12 @@ describe('RegisterForm', () => {
 
     await waitFor(() => {
       const errorElements = container.querySelectorAll('p, div');
-      const hasErrorMessage = Array.from(errorElements).some(
-        element => element.textContent?.toLowerCase().includes('użytkownik o podanym adresie email już istnieje')
+      const hasErrorMessage = Array.from(errorElements).some(element =>
+        element.textContent
+          ?.toLowerCase()
+          .includes('użytkownik o podanym adresie email już istnieje')
       );
       expect(hasErrorMessage).toBe(true);
     });
   });
-}); 
+});

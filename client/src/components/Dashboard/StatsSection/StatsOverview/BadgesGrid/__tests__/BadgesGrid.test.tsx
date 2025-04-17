@@ -8,8 +8,8 @@ const mockBadges = [
     name: 'Test Badge',
     icon: '🏆',
     earnedAt: '2024-03-20T12:00:00Z',
-    description: 'Test description'
-  }
+    description: 'Test description',
+  },
 ];
 
 describe('BadgesGrid', () => {
@@ -24,4 +24,4 @@ describe('BadgesGrid', () => {
     expect(screen.getByText('Test description')).not.toBeNull();
     expect(screen.getByText('🏆')).not.toBeNull();
   });
-}); 
+});

@@ -1,5 +1,5 @@
-import { memo } from "react";
-import { motion } from "framer-motion";
+import { memo } from 'react';
+import { motion } from 'framer-motion';
 
 type WelcomeSectionProps = {
   username: string;
@@ -12,14 +12,10 @@ export const WelcomeSection = memo(({ username }: WelcomeSectionProps) => (
     className="flex items-center gap-4"
   >
     <div>
-      <h2 className="text-js font-bold text-xl">
-        Witaj, {username}! 👋
-      </h2>
-      <p className="text-gray-400 text-sm">
-        Miło Cię znów widzieć
-      </p>
+      <h2 className="text-js font-bold text-xl">Witaj, {username}! 👋</h2>
+      <p className="text-gray-400 text-sm">Miło Cię znów widzieć</p>
     </div>
   </motion.div>
 ));
 
-WelcomeSection.displayName = "WelcomeSection";
+WelcomeSection.displayName = 'WelcomeSection';

@@ -1,9 +1,9 @@
-import type { UserProfile } from "../types/settings";
-import { API_URL } from "../../../../config/api.config";
+import type { UserProfile } from '../types/settings';
+import { API_URL } from '../../../../config/api.config';
 
 const getAuthHeaders = (token: string) => ({
   Authorization: `Bearer ${token}`,
-  "Content-Type": "application/json",
+  'Content-Type': 'application/json',
 });
 
 export const fetchUserProfile = async (token: string): Promise<UserProfile> => {
@@ -12,7 +12,7 @@ export const fetchUserProfile = async (token: string): Promise<UserProfile> => {
   });
 
   if (!response.ok) {
-    throw new Error("Błąd podczas pobierania profilu");
+    throw new Error('Błąd podczas pobierania profilu');
   }
 
   const data = await response.json();
@@ -20,20 +20,20 @@ export const fetchUserProfile = async (token: string): Promise<UserProfile> => {
     username: data.username,
     email: data.email,
     profile: {
-      bio: data.profile?.bio || "",
+      bio: data.profile?.bio || '',
     },
   };
 };
 
 export const updateUserProfile = async (data: UserProfile, token: string) => {
   const response = await fetch(`${API_URL}settings/profile`, {
-    method: "PUT",
+    method: 'PUT',
     headers: getAuthHeaders(token),
     body: JSON.stringify(data),
   });
 
   if (!response.ok) {
-    throw new Error("Błąd podczas aktualizacji profilu");
+    throw new Error('Błąd podczas aktualizacji profilu');
   }
 
   return response.json();

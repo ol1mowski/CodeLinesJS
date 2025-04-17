@@ -1,12 +1,12 @@
-import { motion } from "framer-motion";
-import { FaExclamationTriangle } from "react-icons/fa";
+import { motion } from 'framer-motion';
+import { FaExclamationTriangle } from 'react-icons/fa';
 
 type ErrorAlertProps = {
   message: string;
   title?: string;
 };
 
-export const ErrorAlert = ({ message, title = "Błąd" }: ErrorAlertProps) => {
+export const ErrorAlert = ({ message, title = 'Błąd' }: ErrorAlertProps) => {
   if (!message) return null;
 
   return (
@@ -22,4 +22,4 @@ export const ErrorAlert = ({ message, title = "Błąd" }: ErrorAlertProps) => {
       </div>
     </motion.div>
   );
-}; 
+};

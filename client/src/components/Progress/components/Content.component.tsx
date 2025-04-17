@@ -1,5 +1,5 @@
-import { ProgressStats } from "../ProgressStats/ProgressStats.component";
-import { LearningChart } from "../LearningChart/LearningChart.component";
+import { ProgressStats } from '../ProgressStats/ProgressStats.component';
+import { LearningChart } from '../LearningChart/LearningChart.component';
 
 export const Content = () => (
   <div className="flex flex-col xl:flex-row items-center justify-between gap-12 md:gap-16 w-full">
@@ -10,4 +10,4 @@ export const Content = () => (
       </div>
     </div>
   </div>
-); 
+);

@@ -1,29 +1,30 @@
-import { motion } from "framer-motion";
-import { memo } from "react";
-import { GamesListSkeleton } from "./GamesListSkeleton.component";
-import { NoGamesFound } from "./NoGamesFound.component";
-import { GameCard } from "./GameCard.component";
-import { SortOption } from "../../GamesSection.component";
-import { Game as DashboardGame, GameDifficulty } from "../../types/games.types";
-import { useGamesQuery } from "../../hooks/useGamesQuery";
-import { Game } from "../../../../../types/games.types";
-
+import { motion } from 'framer-motion';
+import { memo } from 'react';
+import { GamesListSkeleton } from './GamesListSkeleton.component';
+import { NoGamesFound } from './NoGamesFound.component';
+import { GameCard } from './GameCard.component';
+import { SortOption } from '../../GamesSection.component';
+import { Game as DashboardGame, GameDifficulty } from '../../types/games.types';
+import { useGamesQuery } from '../../hooks/useGamesQuery';
+import { Game } from '../../../../../types/games.types';
 
 type GamesListProps = {
   sortBy: SortOption;
   searchQuery: string;
-  selectedDifficulty: GameDifficulty | "all";
+  selectedDifficulty: GameDifficulty | 'all';
 };
 
 export const GamesList = memo(({ sortBy, searchQuery, selectedDifficulty }: GamesListProps) => {
   const { data, isLoading, isError } = useGamesQuery();
-  
+
   if (isLoading) return <GamesListSkeleton />;
-  
+
   if (isError) {
     return (
       <div className="text-center py-8">
-        <p className="text-red-400">Wystąpił błąd podczas ładowania gier. Spróbuj ponownie później.</p>
+        <p className="text-red-400">
+          Wystąpił błąd podczas ładowania gier. Spróbuj ponownie później.
+        </p>
       </div>
     );
   }
@@ -31,20 +32,21 @@ export const GamesList = memo(({ sortBy, searchQuery, selectedDifficulty }: Game
   if (!data?.games) return null;
 
   const filteredGames = data.games
-    .filter((game: DashboardGame) => 
-      (selectedDifficulty === "all" || game.difficulty === selectedDifficulty) &&
-      (game.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-       game.description.toLowerCase().includes(searchQuery.toLowerCase()))
+    .filter(
+      (game: DashboardGame) =>
+        (selectedDifficulty === 'all' || game.difficulty === selectedDifficulty) &&
+        (game.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          game.description.toLowerCase().includes(searchQuery.toLowerCase()))
     )
     .sort((a: DashboardGame, b: DashboardGame) => {
       switch (sortBy) {
-        case "newest":
+        case 'newest':
           return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-        case "popular":
+        case 'popular':
           return b.completions.count - a.completions.count;
-        case "difficulty":
+        case 'difficulty':
           return b.difficulty.localeCompare(a.difficulty);
-        case "xp":
+        case 'xp':
           return b.rewardPoints - a.rewardPoints;
         default:
           return 0;
@@ -71,26 +73,24 @@ export const GamesList = memo(({ sortBy, searchQuery, selectedDifficulty }: Game
           title: dashboardGame.title,
           description: dashboardGame.description,
           difficulty: dashboardGame.difficulty,
-          category: "game",
+          category: 'game',
           isCompleted: false,
           rating: {
             average: 0,
-            count: 0
+            count: 0,
           },
           completions: dashboardGame.completions,
           completedCount: dashboardGame.completions.count,
-          thumbnailUrl: "",
+          thumbnailUrl: '',
           rewardPoints: dashboardGame.rewardPoints,
           xpPoints: dashboardGame.rewardPoints,
-          requiredLevel: dashboardGame.requiredLevel
+          requiredLevel: dashboardGame.requiredLevel,
         };
-        
-        return (
-          <GameCard key={game._id} game={game} />
-        );
+
+        return <GameCard key={game._id} game={game} />;
       })}
     </motion.div>
   );
 });
 
-GamesList.displayName = "GamesList"; 
+GamesList.displayName = 'GamesList';

@@ -1,4 +1,4 @@
-import { SectionTitle } from "../../UI/SectionTitle/SectionTitle.component";
+import { SectionTitle } from '../../UI/SectionTitle/SectionTitle.component';
 
 export const CollaborateHeader = () => (
   <SectionTitle
@@ -8,4 +8,4 @@ export const CollaborateHeader = () => (
     titleClassName="text-[#f7df1e] drop-shadow-lg"
     subtitleClassName="text-gray-400"
   />
-); 
+);

@@ -17,11 +17,11 @@ export const JSQuizStats = memo(({ stats, isGameOver, finalTime }: JSQuizStatsPr
   };
 
   const displayTime = isGameOver ? finalTime : stats.timeElapsed;
-  
+
   return (
     <div className="w-full p-4 bg-dark-800/50 rounded-lg mb-4">
       <div className="grid grid-cols-3 gap-4">
-        <motion.div 
+        <motion.div
           className="flex items-center gap-2 text-js"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -33,8 +33,8 @@ export const JSQuizStats = memo(({ stats, isGameOver, finalTime }: JSQuizStatsPr
             <div className="font-semibold">{stats.score}</div>
           </div>
         </motion.div>
-        
-        <motion.div 
+
+        <motion.div
           className="flex items-center gap-2 text-green-400"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -43,11 +43,13 @@ export const JSQuizStats = memo(({ stats, isGameOver, finalTime }: JSQuizStatsPr
           <FaCheck className="text-lg" />
           <div>
             <div className="text-xs text-gray-400">Poprawne</div>
-            <div className="font-semibold">{stats.correctAnswers} / {stats.totalLevels}</div>
+            <div className="font-semibold">
+              {stats.correctAnswers} / {stats.totalLevels}
+            </div>
           </div>
         </motion.div>
-        
-        <motion.div 
+
+        <motion.div
           className="flex items-center gap-2 text-js"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -64,4 +66,4 @@ export const JSQuizStats = memo(({ stats, isGameOver, finalTime }: JSQuizStatsPr
   );
 });
 
-JSQuizStats.displayName = 'JSQuizStats'; 
+JSQuizStats.displayName = 'JSQuizStats';

@@ -1,9 +1,9 @@
-import { memo, useState, useCallback } from "react";
-import { motion } from "framer-motion";
-import { JSGame } from "./JSGame/JSGame.component";
-import { Background } from "./components/Background.component";
-import { ErrorHeader } from "./components/ErrorHeader.component";
-import { GameIntro } from "./components/GameIntro.component";
+import { memo, useState, useCallback } from 'react';
+import { motion } from 'framer-motion';
+import { JSGame } from './JSGame/JSGame.component';
+import { Background } from './components/Background.component';
+import { ErrorHeader } from './components/ErrorHeader.component';
+import { GameIntro } from './components/GameIntro.component';
 
 export const ErrorPage = memo(() => {
   const [showGame, setShowGame] = useState(false);
@@ -33,4 +33,4 @@ export const ErrorPage = memo(() => {
   );
 });
 
-ErrorPage.displayName = "ErrorPage"; 
+ErrorPage.displayName = 'ErrorPage';

@@ -22,4 +22,4 @@ export const ChallengeCardHeader = memo(({ title, difficulty, Icon, difficultyCo
   </div>
 ));
 
-ChallengeCardHeader.displayName = 'ChallengeCardHeader'; 
+ChallengeCardHeader.displayName = 'ChallengeCardHeader';

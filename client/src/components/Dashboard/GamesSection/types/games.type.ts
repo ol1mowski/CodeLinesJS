@@ -25,4 +25,3 @@ export type GameContent = {
   estimatedTime: number;
   isCompleted: boolean;
 };
-                                                                                                            

@@ -1,9 +1,9 @@
-import { memo } from "react";
-import { motion } from "framer-motion";
-import { FaBook } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
-import { blockStyles as styles } from "../style/block.styles";
-import { useBlockAnimation } from "../hooks/useBlockAnimation";
+import { memo } from 'react';
+import { motion } from 'framer-motion';
+import { FaBook } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import { blockStyles as styles } from '../style/block.styles';
+import { useBlockAnimation } from '../hooks/useBlockAnimation';
 
 export const CommunityBlock = memo(() => {
   const navigate = useNavigate();
@@ -52,4 +52,4 @@ export const CommunityBlock = memo(() => {
   );
 });
 
-CommunityBlock.displayName = "CommunityBlock"; 
+CommunityBlock.displayName = 'CommunityBlock';

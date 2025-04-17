@@ -1,6 +1,6 @@
-import { motion } from "framer-motion";
-import { memo } from "react";
-import { FaGamepad } from "react-icons/fa";
+import { motion } from 'framer-motion';
+import { memo } from 'react';
+import { FaGamepad } from 'react-icons/fa';
 
 export const GamesHeader = memo(() => {
   return (
@@ -20,13 +20,11 @@ export const GamesHeader = memo(() => {
           <h1 className="text-3xl font-bold font-space text-transparent bg-clip-text bg-gradient-to-r from-js to-js">
             Gry JavaScript
           </h1>
-          <p className="text-gray-400 mt-1">
-            Ucz się JavaScriptu poprzez zabawę i wyzwania
-          </p>
+          <p className="text-gray-400 mt-1">Ucz się JavaScriptu poprzez zabawę i wyzwania</p>
         </div>
       </div>
     </motion.div>
   );
 });
 
-GamesHeader.displayName = "GamesHeader"; 
+GamesHeader.displayName = 'GamesHeader';

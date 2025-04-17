@@ -8,4 +8,4 @@ export { StatCard } from './components/StatCard';
 export { RankingItem } from './components/RankingItem';
 
 export { useRanking } from './hooks/useRanking';
-export { useRankingData } from './hooks/useRankingData'; 
+export { useRankingData } from './hooks/useRankingData';

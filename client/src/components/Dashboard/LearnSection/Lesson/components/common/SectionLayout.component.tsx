@@ -16,4 +16,4 @@ export const SectionLayout = memo(({ children, id, index }: SectionLayoutProps) 
   >
     {children}
   </motion.div>
-)); 
+));

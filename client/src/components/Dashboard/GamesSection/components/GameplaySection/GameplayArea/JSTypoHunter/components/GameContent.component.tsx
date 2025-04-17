@@ -16,46 +16,48 @@ interface GameContentProps {
   onRestart: () => void;
 }
 
-export const GameContent = memo(({
-  isGameOver,
-  gameStats,
-  finalTime,
-  currentChallenge,
-  totalLevels,
-  onScoreUpdate,
-  onLevelComplete,
-  onIncorrectAnswer,
-  onRestart
-}: GameContentProps) => {
-  return (
-    <AnimatePresence mode="wait">
-      {isGameOver ? (
-        <JSTypoHunterSummary
-          key="game-over"
-          score={gameStats.score}
-          timeElapsed={finalTime}
-          correctAnswers={gameStats.correctAnswers}
-          totalLevels={totalLevels}
-          onRestart={onRestart}
-        />
-      ) : (
-        <motion.div
-          key={`level-${gameStats.currentLevel}`}
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -50 }}
-          transition={{ duration: 0.3 }}
-        >
-          <JSTypoHunterGame 
-            currentChallenge={currentChallenge}
-            onScoreUpdate={onScoreUpdate}
-            onLevelComplete={onLevelComplete}
-            onIncorrectAnswer={onIncorrectAnswer}
+export const GameContent = memo(
+  ({
+    isGameOver,
+    gameStats,
+    finalTime,
+    currentChallenge,
+    totalLevels,
+    onScoreUpdate,
+    onLevelComplete,
+    onIncorrectAnswer,
+    onRestart,
+  }: GameContentProps) => {
+    return (
+      <AnimatePresence mode="wait">
+        {isGameOver ? (
+          <JSTypoHunterSummary
+            key="game-over"
+            score={gameStats.score}
+            timeElapsed={finalTime}
+            correctAnswers={gameStats.correctAnswers}
+            totalLevels={totalLevels}
+            onRestart={onRestart}
           />
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-});
+        ) : (
+          <motion.div
+            key={`level-${gameStats.currentLevel}`}
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -50 }}
+            transition={{ duration: 0.3 }}
+          >
+            <JSTypoHunterGame
+              currentChallenge={currentChallenge}
+              onScoreUpdate={onScoreUpdate}
+              onLevelComplete={onLevelComplete}
+              onIncorrectAnswer={onIncorrectAnswer}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    );
+  }
+);
 
-GameContent.displayName = 'GameContent'; 
+GameContent.displayName = 'GameContent';

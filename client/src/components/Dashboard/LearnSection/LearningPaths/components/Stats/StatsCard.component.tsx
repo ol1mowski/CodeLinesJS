@@ -19,4 +19,4 @@ export const StatsCard = memo(({ icon: Icon, title, label, value }: StatsCardPro
       <span className="text-js">{value}</span>
     </div>
   </div>
-)); 
+));

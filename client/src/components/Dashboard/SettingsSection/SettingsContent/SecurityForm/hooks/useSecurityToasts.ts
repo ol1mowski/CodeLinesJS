@@ -30,6 +30,6 @@ export const useSecurityToasts = () => {
     handleSuccess,
     handleError,
     handleCancel,
-    handleCancelError
+    handleCancelError,
   };
-}; 
+};

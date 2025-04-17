@@ -9,4 +9,4 @@ export type Resource = {
   isRecommended: boolean;
   author?: string;
   duration?: string;
-}; 
+};

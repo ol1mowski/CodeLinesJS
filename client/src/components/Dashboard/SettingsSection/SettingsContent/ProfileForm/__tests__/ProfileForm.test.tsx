@@ -12,8 +12,8 @@ vi.mock('../../../hooks/useProfile');
 vi.mock('react-hot-toast', () => ({
   toast: {
     success: vi.fn(),
-    error: vi.fn()
-  }
+    error: vi.fn(),
+  },
 }));
 
 describe('ProfileForm', () => {
@@ -26,17 +26,15 @@ describe('ProfileForm', () => {
   });
 
   const wrapper = ({ children }: { children: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>
-      {children}
-    </QueryClientProvider>
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
 
   const mockProfile = {
     username: 'testuser',
     email: 'test@example.com',
     profile: {
-      bio: 'Test bio'
-    }
+      bio: 'Test bio',
+    },
   };
 
   beforeEach(() => {
@@ -50,7 +48,7 @@ describe('ProfileForm', () => {
         id: '1',
         _id: '1',
         username: 'testuser',
-        email: 'test@example.com'
+        email: 'test@example.com',
       },
       loading: false,
       error: null,
@@ -58,7 +56,7 @@ describe('ProfileForm', () => {
       login: vi.fn(),
       forgotPassword: vi.fn(),
       register: vi.fn(),
-      loginWithGoogle: vi.fn()
+      loginWithGoogle: vi.fn(),
     });
     vi.mocked(useProfile).mockReturnValue({
       profile: mockProfile,
@@ -67,8 +65,8 @@ describe('ProfileForm', () => {
       error: null,
       updateProfile: {
         mutateAsync: vi.fn(),
-        isPending: false
-      } as any
+        isPending: false,
+      } as any,
     });
   });
 
@@ -79,12 +77,12 @@ describe('ProfileForm', () => {
 
   it('should render the form with user data', async () => {
     render(<ProfileForm />, { wrapper });
-    
+
     await waitFor(() => {
       const usernameInput = screen.getByPlaceholderText('Wprowadź nazwę użytkownika');
       const emailInput = screen.getByPlaceholderText('Wprowadź adres email');
       const bioInput = screen.getByPlaceholderText('Test bio');
-      
+
       expect(usernameInput).not.toBeNull();
       expect(emailInput).not.toBeNull();
       expect(bioInput).not.toBeNull();
@@ -99,8 +97,8 @@ describe('ProfileForm', () => {
       error: null,
       updateProfile: {
         mutateAsync: vi.fn(),
-        isPending: false
-      } as any
+        isPending: false,
+      } as any,
     });
 
     render(<ProfileForm />, { wrapper });
@@ -110,20 +108,20 @@ describe('ProfileForm', () => {
 
   it('should handle cancellation of changes', async () => {
     const { container } = render(<ProfileForm />, { wrapper });
-    
+
     await waitFor(() => {
       const cancelButtons = container.querySelectorAll('button[type="button"]');
-      
-      const cancelButton = Array.from(cancelButtons).find(button => 
+
+      const cancelButton = Array.from(cancelButtons).find(button =>
         button.textContent?.toLowerCase().includes('anuluj')
       );
-      
+
       expect(cancelButton).not.toBeNull();
-      
+
       if (cancelButton) {
         fireEvent.click(cancelButton);
       }
-      
+
       expect(toast.success).toHaveBeenCalledWith('Zmiany zostały anulowane');
     });
   });
@@ -135,16 +133,18 @@ describe('ProfileForm', () => {
       bio: 'Test bio',
       error: null,
       updateProfile: {
-        mutateAsync: vi.fn().mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100))),
-        isPending: true
-      } as any
+        mutateAsync: vi
+          .fn()
+          .mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100))),
+        isPending: true,
+      } as any,
     });
 
     render(<ProfileForm />, { wrapper });
-    
+
     const saveButton = screen.getByRole('button', { name: /zapisywanie/i });
     expect(saveButton).not.toBeNull();
-    
+
     expect(saveButton.hasAttribute('disabled')).toBe(true);
   });
-}); 
+});

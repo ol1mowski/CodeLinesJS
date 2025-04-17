@@ -3,4 +3,4 @@ export const navigationLinks = [
   { href: '#gra', label: 'O grze' },
   { href: '#wyzwania', label: 'Wyzwania' },
   { href: '#opinie', label: 'Opinie' },
-]; 
+];

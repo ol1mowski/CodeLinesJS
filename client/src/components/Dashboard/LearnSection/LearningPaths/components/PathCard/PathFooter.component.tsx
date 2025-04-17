@@ -13,7 +13,7 @@ type PathFooterProps = {
     total: number;
     percentage: number;
   };
-}
+};
 
 export const PathFooter = memo(({ id, isLocked, estimatedTime, progress }: PathFooterProps) => (
   <div className="space-y-4">
@@ -22,9 +22,9 @@ export const PathFooter = memo(({ id, isLocked, estimatedTime, progress }: PathF
         <FaClock className="w-4 h-4" />
         {estimatedTime} min
       </span>
-      
+
       {!isLocked && (
-        <Link 
+        <Link
           to={`/dashboard/learn?tab=lessons&pathId=${id}`}
           className="text-js hover:text-js/80 transition-colors"
         >
@@ -37,4 +37,4 @@ export const PathFooter = memo(({ id, isLocked, estimatedTime, progress }: PathF
   </div>
 ));
 
-PathFooter.displayName = "PathFooter"; 
+PathFooter.displayName = 'PathFooter';

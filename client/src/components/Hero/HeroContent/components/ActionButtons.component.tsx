@@ -1,12 +1,12 @@
-import { FaRocket, FaCode } from "react-icons/fa";
-import { Link } from "react-router-dom";
-import { MobileWrapper } from "../../../UI/MobileWrapper/MobileWrapper.component";
-import { useMobileDetect } from "../../../../hooks/useMobileDetect";
-import { motion } from "framer-motion";
+import { FaRocket, FaCode } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
+import { MobileWrapper } from '../../../UI/MobileWrapper/MobileWrapper.component';
+import { useMobileDetect } from '../../../../hooks/useMobileDetect';
+import { motion } from 'framer-motion';
 
 export const ActionButtons = () => {
   const isMobile = useMobileDetect();
-  
+
   return (
     <MobileWrapper
       className="flex gap-4 flex-wrap justify-center xl:justify-start mb-12"
@@ -14,7 +14,7 @@ export const ActionButtons = () => {
         initial: { opacity: 0, y: 20 },
         whileInView: { opacity: 1, y: 0 },
         viewport: { once: true },
-        transition: { delay: 0.2 }
+        transition: { delay: 0.2 },
       }}
     >
       <StartGameButton isMobile={isMobile} />
@@ -75,4 +75,4 @@ const TryDemoButton = ({ isMobile }: { isMobile: boolean }) => {
       )}
     </a>
   );
-}; 
+};

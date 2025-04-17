@@ -4,10 +4,13 @@ import { CommunityView, CommunityContextState } from '../../types/community.type
 type CommunityAction = { type: 'SET_ACTIVE_VIEW'; payload: CommunityView };
 
 const initialState: CommunityContextState = {
-  activeView: 'community'
+  activeView: 'community',
 };
 
-const communityReducer = (state: CommunityContextState, action: CommunityAction): CommunityContextState => {
+const communityReducer = (
+  state: CommunityContextState,
+  action: CommunityAction
+): CommunityContextState => {
   switch (action.type) {
     case 'SET_ACTIVE_VIEW':
       return { ...state, activeView: action.payload };
@@ -24,4 +27,4 @@ export const useCommunity = () => {
   }, []);
 
   return { state, setActiveView };
-}; 
+};

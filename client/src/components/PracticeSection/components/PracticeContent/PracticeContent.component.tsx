@@ -6,7 +6,7 @@ export const PracticeContent = () => {
   return (
     <div className="w-full max-w-5xl mx-auto px-4">
       <div className="relative pt-16 md:pt-24 lg:pt-20">
-        <PhonePreview 
+        <PhonePreview
           position="left"
           image="https://res.cloudinary.com/dbbuav0rj/image/upload/v1742282966/CodeLinesJs/game_cljs_snynmf.png"
           title="Praktyka JavaScript"
@@ -14,7 +14,7 @@ export const PracticeContent = () => {
         />
 
         <div className="md:ml-auto md:max-w-[60%] lg:max-w-[55%] space-y-6 py-6">
-          <PhonePreview 
+          <PhonePreview
             title="Praktyka JavaScript"
             className="flex justify-center mb-8 md:hidden"
             showFrame={true}
@@ -23,7 +23,7 @@ export const PracticeContent = () => {
 
           <FeaturesList />
 
-          <CallToAction 
+          <CallToAction
             href="#challenges"
             text="Rozpocznij Wyzwania"
             description="Gotowy do działania? Sprawdź swoje umiejętności w praktycznych wyzwaniach!"
@@ -32,4 +32,4 @@ export const PracticeContent = () => {
       </div>
     </div>
   );
-}; 
+};

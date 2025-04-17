@@ -1,7 +1,7 @@
 import { memo } from 'react';
-import { motion } from "framer-motion";
-import { FaGamepad, FaHome } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { motion } from 'framer-motion';
+import { FaGamepad, FaHome } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 type GameIntroProps = {
   score: number;
@@ -27,9 +27,7 @@ export const GameIntro = memo(({ score, onStartGame }: GameIntroProps) => {
           Rozwiąż zadania JavaScript i zdobądź punkty. Może nawet pobijesz swój rekord?
         </p>
         {score > 0 && (
-          <p className="text-lg text-js font-bold mb-4">
-            Twój ostatni wynik: {score} pkt
-          </p>
+          <p className="text-lg text-js font-bold mb-4">Twój ostatni wynik: {score} pkt</p>
         )}
         <div className="flex gap-4">
           <motion.button
@@ -58,4 +56,4 @@ export const GameIntro = memo(({ score, onStartGame }: GameIntroProps) => {
   );
 });
 
-GameIntro.displayName = 'GameIntro'; 
+GameIntro.displayName = 'GameIntro';
