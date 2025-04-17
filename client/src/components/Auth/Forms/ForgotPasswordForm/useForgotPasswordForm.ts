@@ -4,9 +4,6 @@ import { ForgotPasswordFormData, forgotPasswordSchema } from "../../../../schema
 import { useAuth } from "../../../../hooks/useAuth";
 import { useFormStatus } from "../../../Auth/hooks/useFormStatus.hook";
 
-/**
- * Hook do obsługi logiki formularza resetowania hasła
- */
 export const useForgotPasswordForm = () => {
   const { forgotPassword, loading, error } = useAuth();
   const formStatus = useFormStatus({ initialError: error });
