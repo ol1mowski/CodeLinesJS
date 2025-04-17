@@ -8,10 +8,10 @@ export const useFormatDate = () => {
       return date.toLocaleDateString('pl-PL', {
         year: 'numeric',
         month: 'short',
-        day: 'numeric'
+        day: 'numeric',
       });
     } catch {
       return 'Data nieznana';
     }
   };
-}; 
+};

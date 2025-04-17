@@ -1,128 +1,76 @@
-import { motion } from "framer-motion";
-import { memo, useMemo } from "react";
-import { FaTrophy, FaStar, FaCalendarDay } from "react-icons/fa";
-import { useRanking } from "./hooks/useRanking";
+import { motion } from 'framer-motion';
+import { memo } from 'react';
+import { FaTrophy, FaStar, FaCalendarDay } from 'react-icons/fa';
+import { StatCard } from './components/StatCard';
 
-export const RankingStats = memo(() => {
-  const { data, isLoading } = useRanking();
-  
-  const currentUser = useMemo(() => {
-    if (!data) return null;
-    
-    if (data && typeof data === 'object' && 'userStats' in data) {
-      return data.userStats;
-    }
-    
-    if (Array.isArray(data)) {
-      return data.find(u => u.rank !== undefined || u.position !== undefined);
-    } else if (data && typeof data === 'object') {
-      const dataObj: any = data;
-      
-      if (dataObj.rank !== undefined || dataObj.position !== undefined) {
-        return dataObj;
-      }
-    }
-    
-    return null;
-  }, [data]);
-  
-  if (isLoading) {
-    return (
-      <motion.div className="bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10 p-6 shadow-lg animate-pulse">
-        <div className="h-6 w-32 bg-js/10 rounded mb-6" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {[1, 2, 3].map(i => (
-            <div key={i} className="bg-dark/20 rounded-lg p-4 border border-js/5">
-              <div className="w-6 h-6 bg-js/10 rounded mb-2" />
-              <div className="h-4 w-20 bg-js/10 rounded mb-2" />
-              <div className="h-6 w-16 bg-js/10 rounded" />
-            </div>
-          ))}
-        </div>
-      </motion.div>
-    );
-  }
+interface ProcessedUserStats {
+  username?: string;
+  rank: number | string;
+  level: number | string;
+  points: number | string;
+}
 
-  if (!currentUser) {
+interface RankingStatsProps {
+  currentUserStats: ProcessedUserStats | null;
+}
+
+export const RankingStats = memo(({ currentUserStats }: RankingStatsProps) => {
+  if (!currentUserStats) {
     return (
-      <motion.div className="bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10 p-6 shadow-lg">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10 p-6 shadow-lg"
+      >
         <h2 className="text-xl font-bold text-js mb-6">Twoje Statystyki</h2>
-        <p className="text-gray-400">Nie udało się załadować twoich statystyk. Zaloguj się, aby zobaczyć swoje miejsce w rankingu.</p>
+        <p className="text-gray-400">
+          Nie udało się załadować twoich statystyk. Zaloguj się, aby zobaczyć swoje miejsce w
+          rankingu.
+        </p>
       </motion.div>
     );
   }
 
-  const getUserRank = () => {
-    if (!currentUser) return '-';
-    if ('rank' in currentUser) return currentUser.rank;
-    if ('position' in currentUser) return currentUser.position;
-    return '-';
-  };
-  
-  const getUserLevel = () => {
-    if (!currentUser) return '-';
-  
-    if ('stats' in currentUser && currentUser.stats && 'level' in currentUser.stats) {
-      return currentUser.stats.level;
-    }
-    if ('level' in currentUser) return currentUser.level;
-    return '-';
-  };
-  
-  const getUserPoints = () => {
-    if (!currentUser) return '-';
-    
-    if ('stats' in currentUser && currentUser.stats) {
-      if ('points' in currentUser.stats) return currentUser.stats.points;
-      if ('streak' in currentUser.stats) return currentUser.stats.streak;
-    }
-      
-    if ('points' in currentUser) return currentUser.points;
-    if ('streak' in currentUser) return currentUser.streak;
-    return '-';
-  };
-  
   const stats = [
     {
       icon: FaTrophy,
-      label: "Twoja pozycja",
-      value: `#${getUserRank()}`,
-      gradient: "from-js/20 to-js/30",
+      label: 'Twoja pozycja',
+      value: `#${currentUserStats.rank}`,
     },
     {
       icon: FaStar,
-      label: "Poziom",
-      value: typeof getUserLevel() === 'number' ? getUserLevel().toLocaleString() : '-',
-      gradient: "from-js/20 to-js/30",
+      label: 'Poziom',
+      value:
+        typeof currentUserStats.level === 'number'
+          ? currentUserStats.level.toLocaleString()
+          : currentUserStats.level,
     },
     {
       icon: FaCalendarDay,
-      label: "Punkty",
-      value: typeof getUserPoints() === 'number' ? getUserPoints().toLocaleString() : '-',
-      gradient: "from-js/20 to-js/30",
+      label: 'Punkty',
+      value:
+        typeof currentUserStats.points === 'number'
+          ? currentUserStats.points.toLocaleString()
+          : currentUserStats.points,
     },
   ];
 
   return (
-    <motion.div className="bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10 p-6 shadow-lg">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10 p-6 shadow-lg"
+    >
       <h2 className="text-xl font-bold text-js mb-6">
-        Twoje Statystyki {currentUser.username && `(${currentUser.username})`}
+        Twoje Statystyki {currentUserStats.username && `(${currentUserStats.username})`}
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {stats.map(stat => (
-          <motion.div
-            key={stat.label}
-            className="bg-dark/20 rounded-lg p-4 border border-js/5"
-            whileHover={{ scale: 1.02 }}
-          >
-            <stat.icon className="w-6 h-6 text-js mb-2" />
-            <p className="text-gray-400 text-sm">{stat.label}</p>
-            <p className="text-2xl font-bold text-js">{stat.value}</p>
-          </motion.div>
+          <StatCard key={stat.label} icon={stat.icon} label={stat.label} value={stat.value} />
         ))}
       </div>
     </motion.div>
   );
 });
 
-RankingStats.displayName = "RankingStats"; 
+RankingStats.displayName = 'RankingStats';

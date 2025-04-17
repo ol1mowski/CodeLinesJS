@@ -1,16 +1,16 @@
-import { motion } from "framer-motion";
-import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { motion } from 'framer-motion';
+import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useState } from 'react';
 
-import { FormInput } from "../../../UI/Form/FormInput/FormInput.component";
-import { LoginFormData, loginSchema } from "../../../../schemas/auth.schema";
-import { useAuth } from "../../../../hooks/useAuth";
-import { GoogleLoginButton } from "./GoogleLoginButton.component";
-import { RememberMeCheckbox } from "./RememberMeCheckbox.component";
-import { FormError } from "../../../UI/FormError/FormError.component";
-import { FormLoadingButton } from "../../../UI/Loading/FormLoadingButton.component";
+import { FormInput } from '../../../UI/Form/FormInput/FormInput.component';
+import { LoginFormData, loginSchema } from '../../../../schemas/auth.schema';
+import { useAuth } from '../../../../hooks/useAuth';
+import { GoogleLoginButton } from './GoogleLoginButton.component';
+import { RememberMeCheckbox } from './RememberMeCheckbox.component';
+import { FormError } from '../../../UI/FormError/FormError.component';
+import { FormLoadingButton } from '../../../UI/Loading/FormLoadingButton.component';
 
 const LoginForm = () => {
   const { login, loading, error } = useAuth();
@@ -21,10 +21,10 @@ const LoginForm = () => {
     watch,
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
-    mode: "onSubmit",
+    mode: 'onSubmit',
   });
 
-  const rememberMe: boolean = watch("rememberMe", false) || false;
+  const rememberMe: boolean = watch('rememberMe', false) || false;
   const [showPassword, setShowPassword] = useState(false);
 
   const onSubmit = async (data: LoginFormData) => {
@@ -46,16 +46,16 @@ const LoginForm = () => {
         placeholder="twoj@email.com"
         icon={<FaEnvelope />}
         error={errors.email?.message}
-        {...register("email")}
+        {...register('email')}
       />
 
       <FormInput
-        type={showPassword ? "text" : "password"}
+        type={showPassword ? 'text' : 'password'}
         label="Hasło"
         placeholder="••••••••"
         icon={<FaLock />}
         error={errors.password?.message}
-        {...register("password")}
+        {...register('password')}
         rightIcon={
           <button
             type="button"
@@ -70,12 +70,9 @@ const LoginForm = () => {
       <div className="flex items-center justify-between">
         <RememberMeCheckbox register={register} />
       </div>
-      
+
       <div className="pt-2">
-        <FormLoadingButton 
-          isLoading={loading}
-          loadingText="Logowanie..."
-        >
+        <FormLoadingButton isLoading={loading} loadingText="Logowanie...">
           Zaloguj się
         </FormLoadingButton>
       </div>

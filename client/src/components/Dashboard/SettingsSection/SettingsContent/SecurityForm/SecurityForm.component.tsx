@@ -1,17 +1,17 @@
-import { memo, useCallback } from "react";
-import { motion } from "framer-motion";
-import { PasswordFields } from "./components/PasswordFields/PasswordFields.component";
-import { useSecurityForm } from "./hooks/useSecurityForm";
-import { FormButtons } from "../ProfileForm/components/FormButtons/FormButtons.component";
-import { useSecurityToasts } from "./hooks/useSecurityToasts";
-import { FORM_ANIMATION } from "./constans/constants";
+import { memo, useCallback } from 'react';
+import { motion } from 'framer-motion';
+import { PasswordFields } from './components/PasswordFields/PasswordFields.component';
+import { useSecurityForm } from './hooks/useSecurityForm';
+import { FormButtons } from '../ProfileForm/components/FormButtons/FormButtons.component';
+import { useSecurityToasts } from './hooks/useSecurityToasts';
+import { FORM_ANIMATION } from './constans/constants';
 
 export const SecurityForm = memo(() => {
   const {
     handleSuccess,
     handleError,
     handleCancel: handleCancelToast,
-    handleCancelError
+    handleCancelError,
   } = useSecurityToasts();
 
   const { form, onSubmit, isUpdating } = useSecurityForm({
@@ -19,10 +19,13 @@ export const SecurityForm = memo(() => {
       handleSuccess();
       form.reset();
     },
-    onError: handleError
+    onError: handleError,
   });
 
-  const { formState: { errors, isSubmitting }, reset } = form;
+  const {
+    formState: { errors, isSubmitting },
+    reset,
+  } = form;
 
   const handleCancel = useCallback(() => {
     try {
@@ -39,12 +42,9 @@ export const SecurityForm = memo(() => {
       className="w-full max-w-md sm:ml-0 sm:mr-auto space-y-8 px-4 sm:px-0"
       {...FORM_ANIMATION}
     >
-      <PasswordFields 
-        form={form}
-        errors={errors}
-      />
-      
-      <FormButtons 
+      <PasswordFields form={form} errors={errors} />
+
+      <FormButtons
         onCancel={handleCancel}
         isSubmitting={isSubmitting || isUpdating}
         submitText="Zmień hasło"
@@ -54,4 +54,4 @@ export const SecurityForm = memo(() => {
   );
 });
 
-SecurityForm.displayName = "SecurityForm"; 
+SecurityForm.displayName = 'SecurityForm';

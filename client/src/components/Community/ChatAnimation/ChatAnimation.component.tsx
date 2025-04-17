@@ -15,7 +15,7 @@ export const ChatAnimation = () => {
     displayedText,
     isTypingResponse,
     cursorVisible,
-    setIsTypingMessage
+    setIsTypingMessage,
   } = useChatAnimation();
 
   useEffect(() => {
@@ -45,4 +45,4 @@ export const ChatAnimation = () => {
       />
     </div>
   );
-}; 
+};

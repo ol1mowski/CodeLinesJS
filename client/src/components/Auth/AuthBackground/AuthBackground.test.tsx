@@ -6,7 +6,7 @@ vi.mock('./hooks/useAuthBackground.hook', () => ({
   useAuthBackground: () => {
     const mockCanvasRef = { current: document.createElement('canvas') };
     return mockCanvasRef;
-  }
+  },
 }));
 
 vi.mock('framer-motion', () => ({
@@ -20,8 +20,8 @@ vi.mock('framer-motion', () => ({
       >
         {children}
       </div>
-    )
-  }
+    ),
+  },
 }));
 
 describe('AuthBackground', () => {
@@ -39,11 +39,11 @@ describe('AuthBackground', () => {
 
   it('renders decorative elements', () => {
     const { container } = render(<AuthBackground />);
-    
+
     const bgElements = container.querySelectorAll('.absolute');
     expect(bgElements.length).toBeGreaterThan(3);
-    
+
     const blurElements = container.querySelectorAll('.blur-3xl');
     expect(blurElements.length).toBeGreaterThan(2);
   });
-}); 
+});

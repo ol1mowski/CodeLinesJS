@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion } from 'framer-motion';
 import { CodeLine } from '../types';
 import { getSyntaxColor } from '../utils/getSyntaxColor';
 
@@ -16,4 +16,4 @@ export const CodeContent = ({ code }: CodeContentProps) => (
   >
     {code.line}
   </motion.span>
-); 
+);

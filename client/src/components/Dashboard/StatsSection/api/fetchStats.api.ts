@@ -4,11 +4,11 @@ import { API_URL } from '../../../../config/api.config';
 export const fetchStats = async (token: string): Promise<UserStats> => {
   const response = await fetch(`${API_URL}users/stats`, {
     headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    }
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
   });
-  
+
   if (!response.ok) {
     if (response.status === 401) {
       throw new Error('Brak autoryzacji');
@@ -17,12 +17,12 @@ export const fetchStats = async (token: string): Promise<UserStats> => {
   }
 
   const data = await response.json();
-  
+
   return {
     ...data,
     chartData: {
       daily: data.chartData?.daily || [],
-      categories: data.chartData?.categories || []
-    }
+      categories: data.chartData?.categories || [],
+    },
   };
-}; 
+};

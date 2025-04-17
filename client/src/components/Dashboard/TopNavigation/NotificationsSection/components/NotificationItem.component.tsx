@@ -1,16 +1,20 @@
-import { memo } from "react";
-import { motion } from "framer-motion";
-import { FaCheckCircle, FaTrophy, FaUsers, FaBell } from "react-icons/fa";
-import { DashboardNotification } from "../../../DashboardContent/types/dashboard.types";
-import { notificationsStyles as styles } from "../style/Notifications.styles";
-import { formatDate } from "../../../../../utils/format";
+import { memo } from 'react';
+import { motion } from 'framer-motion';
+import { FaCheckCircle, FaTrophy, FaUsers, FaBell } from 'react-icons/fa';
+import { DashboardNotification } from '../../../DashboardContent/types/dashboard.types';
+import { notificationsStyles as styles } from '../style/Notifications.styles';
+import { formatDate } from '../../../../../utils/format';
 
 const getNotificationIcon = (type: string) => {
   switch (type) {
-    case 'challenge': return <FaTrophy className="text-yellow-500" />;
-    case 'achievement': return <FaCheckCircle className="text-green-500" />;
-    case 'social': return <FaUsers className="text-blue-500" />;
-    default: return <FaBell className="text-gray-400" />;
+    case 'challenge':
+      return <FaTrophy className="text-yellow-500" />;
+    case 'achievement':
+      return <FaCheckCircle className="text-green-500" />;
+    case 'social':
+      return <FaUsers className="text-blue-500" />;
+    default:
+      return <FaBell className="text-gray-400" />;
   }
 };
 
@@ -33,9 +37,7 @@ export const NotificationItem = memo(({ notification, onRead }: NotificationItem
         {getNotificationIcon(notification.type)}
       </div>
       <div className={styles.dropdown.content.item.text.wrapper}>
-        <p className={styles.dropdown.content.item.text.message}>
-          {notification.message}
-        </p>
+        <p className={styles.dropdown.content.item.text.message}>{notification.message}</p>
         <span className={styles.dropdown.content.item.text.time}>
           {formatDate(notification.createdAt)}
         </span>
@@ -44,4 +46,4 @@ export const NotificationItem = memo(({ notification, onRead }: NotificationItem
   </motion.div>
 ));
 
-NotificationItem.displayName = "NotificationItem"; 
+NotificationItem.displayName = 'NotificationItem';

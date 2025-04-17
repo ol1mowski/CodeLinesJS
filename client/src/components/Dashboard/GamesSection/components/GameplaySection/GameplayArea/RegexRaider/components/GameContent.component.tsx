@@ -15,54 +15,56 @@ type GameContentProps = {
   onRestart: () => void;
 };
 
-export const GameContent = memo(({
-  isGameOver,
-  gameStats,
-  finalTime,
-  onScoreUpdate,
-  onLevelComplete,
-  onGameOver,
-  onRestart
-}: GameContentProps) => {
-  const { gameAnimation, summaryAnimation } = useAnimations();
+export const GameContent = memo(
+  ({
+    isGameOver,
+    gameStats,
+    finalTime,
+    onScoreUpdate,
+    onLevelComplete,
+    onGameOver,
+    onRestart,
+  }: GameContentProps) => {
+    const { gameAnimation, summaryAnimation } = useAnimations();
 
-  return (
-    <AnimatePresence mode="wait">
-      {!isGameOver ? (
-        <motion.div
-          key={`level-${gameStats.currentLevel}`}
-          initial={gameAnimation.initial}
-          animate={gameAnimation.animate}
-          exit={gameAnimation.exit}
-          transition={gameAnimation.transition}
-          className="w-full"
-        >
-          <RegexRaiderGame
-            onScoreUpdate={onScoreUpdate}
-            onLevelComplete={onLevelComplete}
-            currentLevel={gameStats.currentLevel}
-            onGameOver={onGameOver}
-          />
-        </motion.div>
-      ) : (
-        <motion.div
-          key="game-over"
-          initial={summaryAnimation.initial}
-          animate={summaryAnimation.animate}
-          exit={summaryAnimation.exit}
-          transition={summaryAnimation.transition}
-        >
-          <RegexRaiderSummary
-            score={gameStats.score}
-            timeElapsed={finalTime}
-            correctAnswers={gameStats.correctAnswers}
-            totalLevels={gameStats.totalLevels}
-            onRestart={onRestart}
-          />
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-});
+    return (
+      <AnimatePresence mode="wait">
+        {!isGameOver ? (
+          <motion.div
+            key={`level-${gameStats.currentLevel}`}
+            initial={gameAnimation.initial}
+            animate={gameAnimation.animate}
+            exit={gameAnimation.exit}
+            transition={gameAnimation.transition}
+            className="w-full"
+          >
+            <RegexRaiderGame
+              onScoreUpdate={onScoreUpdate}
+              onLevelComplete={onLevelComplete}
+              currentLevel={gameStats.currentLevel}
+              onGameOver={onGameOver}
+            />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="game-over"
+            initial={summaryAnimation.initial}
+            animate={summaryAnimation.animate}
+            exit={summaryAnimation.exit}
+            transition={summaryAnimation.transition}
+          >
+            <RegexRaiderSummary
+              score={gameStats.score}
+              timeElapsed={finalTime}
+              correctAnswers={gameStats.correctAnswers}
+              totalLevels={gameStats.totalLevels}
+              onRestart={onRestart}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    );
+  }
+);
 
-GameContent.displayName = 'GameContent'; 
+GameContent.displayName = 'GameContent';

@@ -1,1 +1,1 @@
-export { JSQuizSummary as default } from './JSQuizSummary.component'; 
+export { JSQuizSummary as default } from './JSQuizSummary.component';

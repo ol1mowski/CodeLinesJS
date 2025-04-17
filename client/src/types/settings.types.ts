@@ -15,5 +15,5 @@ export type UserPreferences = {
   emailNotifications: boolean;
   pushNotifications: boolean;
   darkMode: boolean;
-  language: "pl" | "en";
-}; 
+  language: 'pl' | 'en';
+};

@@ -12,9 +12,9 @@ describe('NotificationsSection', () => {
     register: mockRegister,
     values: {
       emailNotifications: true,
-      pushNotifications: false
+      pushNotifications: false,
     },
-    onChange: mockOnChange
+    onChange: mockOnChange,
   };
 
   beforeEach(() => {
@@ -24,7 +24,7 @@ describe('NotificationsSection', () => {
 
   it('should render all notification options', () => {
     render(<NotificationsSection {...defaultProps} />);
-    
+
     const checkboxes = screen.queryAllByRole('checkbox');
     expect(checkboxes.length).toBeGreaterThan(0);
   });
@@ -34,10 +34,10 @@ describe('NotificationsSection', () => {
 
     const emailCheckboxes = screen.queryAllByRole('checkbox');
     expect(emailCheckboxes.length).toBeGreaterThan(0);
-    
+
     const emailCheckbox = emailCheckboxes[0];
     fireEvent.click(emailCheckbox);
 
     expect(mockOnChange).toHaveBeenCalledWith('emailNotifications', false);
   });
-}); 
+});

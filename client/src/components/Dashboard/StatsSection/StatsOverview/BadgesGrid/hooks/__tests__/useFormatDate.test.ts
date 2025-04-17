@@ -18,4 +18,4 @@ describe('useFormatDate', () => {
     expect(formatDate('invalid-date')).toBe('Data nieznana');
     expect(formatDate('')).toBe('Data nieznana');
   });
-}); 
+});

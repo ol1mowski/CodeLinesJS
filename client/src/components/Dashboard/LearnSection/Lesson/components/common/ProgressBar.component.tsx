@@ -15,4 +15,4 @@ export const ProgressBar = memo(({ progress, className = '' }: ProgressBarProps)
       transition={{ duration: 0.3 }}
     />
   </div>
-)); 
+));

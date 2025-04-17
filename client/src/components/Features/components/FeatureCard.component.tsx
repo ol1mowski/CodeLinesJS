@@ -1,6 +1,6 @@
-import { motion } from "framer-motion";
-import { IconType } from "react-icons";
-import { useMobileDetect } from "../../../hooks/useMobileDetect";
+import { motion } from 'framer-motion';
+import { IconType } from 'react-icons';
+import { useMobileDetect } from '../../../hooks/useMobileDetect';
 
 type FeatureCardProps = {
   Icon: IconType;
@@ -11,17 +11,20 @@ type FeatureCardProps = {
 
 export const FeatureCard = ({ Icon, title, description, index }: FeatureCardProps) => {
   const isMobile = useMobileDetect();
-  
-  const cardClassName = "group p-6 rounded-xl border border-js/10 bg-dark/30 backdrop-blur-sm " +
-                        "hover:border-js/20 hover:bg-dark/50 transition-all duration-300 " +
-                        "hover:shadow-lg hover:shadow-js/5";
-  
+
+  const cardClassName =
+    'group p-6 rounded-xl border border-js/10 bg-dark/30 backdrop-blur-sm ' +
+    'hover:border-js/20 hover:bg-dark/50 transition-all duration-300 ' +
+    'hover:shadow-lg hover:shadow-js/5';
+
   if (isMobile) {
     return (
       <div className={cardClassName}>
         <div className="flex items-start gap-4">
-          <div className="p-3 rounded-lg bg-js/10 text-js 
-                         group-hover:bg-js/20 group-hover:scale-110 transition-all duration-300">
+          <div
+            className="p-3 rounded-lg bg-js/10 text-js 
+                         group-hover:bg-js/20 group-hover:scale-110 transition-all duration-300"
+          >
             <Icon className="w-6 h-6" />
           </div>
           <div>
@@ -36,26 +39,28 @@ export const FeatureCard = ({ Icon, title, description, index }: FeatureCardProp
       </div>
     );
   }
-  
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ 
+      transition={{
         duration: 0.6,
         delay: index * 0.15,
-        ease: "easeOut"
+        ease: 'easeOut',
       }}
-      whileHover={{ 
+      whileHover={{
         scale: 1.02,
-        transition: { duration: 0.2 }
+        transition: { duration: 0.2 },
       }}
       className={cardClassName}
     >
       <div className="flex items-start gap-4">
-        <div className="p-3 rounded-lg bg-js/10 text-js 
-                       group-hover:bg-js/20 group-hover:scale-110 transition-all duration-300">
+        <div
+          className="p-3 rounded-lg bg-js/10 text-js 
+                       group-hover:bg-js/20 group-hover:scale-110 transition-all duration-300"
+        >
           <Icon className="w-6 h-6" />
         </div>
         <div>
@@ -69,4 +74,4 @@ export const FeatureCard = ({ Icon, title, description, index }: FeatureCardProp
       </div>
     </motion.div>
   );
-}; 
+};

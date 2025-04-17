@@ -14,7 +14,7 @@ export const GamesSection = memo(() => {
       {games.map(game => {
         const gameCardProps: GameCardGame = {
           _id: game._id,
-          id: game._id, 
+          id: game._id,
           slug: game.slug,
           title: game.title,
           description: game.description,
@@ -23,28 +23,23 @@ export const GamesSection = memo(() => {
           isCompleted: game.isCompleted,
           rating: {
             average: game.rating.average,
-            count: game.rating.count
+            count: game.rating.count,
           },
           completions: {
-            count: game.completions.count
+            count: game.completions.count,
           },
           rewardPoints: game.rewardPoints,
           completedCount: game.completions.count,
-          thumbnailUrl: '', 
+          thumbnailUrl: '',
           xpPoints: game.rewardPoints,
           isLevelAvailable: game.isLevelAvailable,
-          requiredLevel: game.requiredLevel
+          requiredLevel: game.requiredLevel,
         };
 
-        return (
-          <GameCard
-            key={game._id}
-            game={gameCardProps}
-          />
-        );
+        return <GameCard key={game._id} game={gameCardProps} />;
       })}
     </div>
   );
 });
 
-GamesSection.displayName = 'GamesSection'; 
+GamesSection.displayName = 'GamesSection';

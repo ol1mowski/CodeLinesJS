@@ -10,75 +10,78 @@ export const useProgress = (lessonId: string, userId: string) => {
   const { updateProgress: updateUserProgress } = useUserProgress(userId);
   const queryClient = useQueryClient();
 
-  const markSectionComplete = useCallback(async (sectionIndex: number, totalSections: number) => {
-    const lessonData = queryClient.getQueryData<any>(['lesson', lessonId]);
-    
-    if (lessonData?.isCompleted) {
-      return;
-    }
+  const markSectionComplete = useCallback(
+    async (sectionIndex: number, totalSections: number) => {
+      const lessonData = queryClient.getQueryData<any>(['lesson', lessonId]);
 
-    if (!completedSections.includes(sectionIndex)) {
-      setCompletedSections(prev => [...prev, sectionIndex]);
-      
-      const pointsPerSection = 50;
-      setTotalPoints(prev => prev + pointsPerSection);
+      if (lessonData?.isCompleted) {
+        return;
+      }
+
+      if (!completedSections.includes(sectionIndex)) {
+        setCompletedSections(prev => [...prev, sectionIndex]);
+
+        const pointsPerSection = 50;
+        setTotalPoints(prev => prev + pointsPerSection);
+
+        const result = await updateUserProgress({
+          lessonId,
+          points: pointsPerSection,
+          isCompleted: false,
+        });
+
+        if (result === null) {
+          return;
+        }
+
+        if (completedSections.length + 1 === totalSections) {
+          const bonusPoints = 100;
+          setTotalPoints(prev => prev + bonusPoints);
+
+          await updateUserProgress({
+            lessonId,
+            points: bonusPoints,
+            isCompleted: true,
+          });
+
+          toast.success('Gratulacje! Ukończyłeś całą lekcję!', {
+            duration: 4000,
+            position: 'bottom-right',
+          });
+        }
+      }
+    },
+    [completedSections, lessonId, updateUserProgress, queryClient]
+  );
+
+  const handleQuizComplete = useCallback(
+    async (correctAnswers: number, totalQuestions: number) => {
+      const lessonData = queryClient.getQueryData<any>(['lesson', lessonId]);
+
+      if (lessonData?.isCompleted) {
+        return;
+      }
+
+      const quizPoints = Math.round((correctAnswers / totalQuestions) * 100);
+      setTotalPoints(prev => prev + quizPoints);
 
       const result = await updateUserProgress({
         lessonId,
-        points: pointsPerSection,
-        isCompleted: false
+        points: quizPoints,
+        isCompleted: false,
       });
 
       if (result === null) {
         return;
       }
 
-      if (completedSections.length + 1 === totalSections) {
-        const bonusPoints = 100;
-        setTotalPoints(prev => prev + bonusPoints);
-        
-        await updateUserProgress({
-          lessonId,
-          points: bonusPoints,
-          isCompleted: true
-        });
-
-        toast.success('Gratulacje! Ukończyłeś całą lekcję!', {
-          duration: 4000,
-          position: 'bottom-right',
-        });
-      }
-    }
-  }, [completedSections, lessonId, updateUserProgress, queryClient]);
-
-  const handleQuizComplete = useCallback(async (
-    correctAnswers: number, 
-    totalQuestions: number
-  ) => {
-    const lessonData = queryClient.getQueryData<any>(['lesson', lessonId]);
-    
-    if (lessonData?.isCompleted) {
-      return;
-    }
-
-    const quizPoints = Math.round((correctAnswers / totalQuestions) * 100);
-    setTotalPoints(prev => prev + quizPoints);
-
-    const result = await updateUserProgress({
-      lessonId,
-      points: quizPoints,
-      isCompleted: false
-    });
-
-    if (result === null) {
-      return;
-    }
-
-    toast.success(`Zdobyłeś ${quizPoints} punktów za quiz!`, {
-      duration: 3000,
-      position: 'bottom-right',
-    });
-  }, [lessonId, updateUserProgress, queryClient]);
+      toast.success(`Zdobyłeś ${quizPoints} punktów za quiz!`, {
+        duration: 3000,
+        position: 'bottom-right',
+      });
+    },
+    [lessonId, updateUserProgress, queryClient]
+  );
 
   const saveProgress = useCallback(async () => {
     try {
@@ -86,7 +89,7 @@ export const useProgress = (lessonId: string, userId: string) => {
         lessonId,
         userId,
         completedSections,
-        totalPoints
+        totalPoints,
       });
 
       const completedSectionsAsStrings = completedSections.map(section => section.toString());
@@ -95,7 +98,7 @@ export const useProgress = (lessonId: string, userId: string) => {
         lessonId,
         points: totalPoints,
         isCompleted: true,
-        completedSections: completedSectionsAsStrings
+        completedSections: completedSectionsAsStrings,
       });
 
       console.log('Wynik zapisywania postępu:', result);
@@ -120,6 +123,6 @@ export const useProgress = (lessonId: string, userId: string) => {
     totalPoints,
     markSectionComplete,
     handleQuizComplete,
-    saveProgress
+    saveProgress,
   };
-}; 
+};

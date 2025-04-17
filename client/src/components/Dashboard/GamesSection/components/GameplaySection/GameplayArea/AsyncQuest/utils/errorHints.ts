@@ -4,20 +4,23 @@ type ErrorHint = {
   example?: string;
 };
 
-export const getErrorHint = (code: string, category: 'promises' | 'async-await' | 'callbacks'): ErrorHint => {
+export const getErrorHint = (
+  code: string,
+  category: 'promises' | 'async-await' | 'callbacks'
+): ErrorHint => {
   if (category === 'async-await') {
     if (!code.includes('async')) {
       return {
         message: 'Funkcja powinna być oznaczona jako asynchroniczna.',
         explanation: 'Użyj słowa kluczowego async przed deklaracją funkcji.',
-        example: 'async function getData() { ... }'
+        example: 'async function getData() { ... }',
       };
     }
     if (!code.includes('await')) {
       return {
         message: 'Brak słowa kluczowego await przy wywołaniu asynchronicznym.',
         explanation: 'Użyj await aby poczekać na wynik operacji asynchronicznej.',
-        example: 'const data = await fetchData();'
+        example: 'const data = await fetchData();',
       };
     }
   }
@@ -27,14 +30,14 @@ export const getErrorHint = (code: string, category: 'promises' | 'async-await' 
       return {
         message: 'Brak obsługi błędów w łańcuchu Promise.',
         explanation: 'Dodaj .catch() aby obsłużyć potencjalne błędy.',
-        example: 'fetch(url).then(...).catch(error => { ... })'
+        example: 'fetch(url).then(...).catch(error => { ... })',
       };
     }
     if (!code.includes('.then')) {
       return {
         message: 'Brak obsługi wyniku Promise.',
         explanation: 'Użyj .then() aby obsłużyć wynik pomyślnego wykonania.',
-        example: 'promise.then(result => { ... })'
+        example: 'promise.then(result => { ... })',
       };
     }
   }
@@ -44,13 +47,13 @@ export const getErrorHint = (code: string, category: 'promises' | 'async-await' 
       return {
         message: 'Przekształć callback w Promise.',
         explanation: 'Użyj konstruktora Promise aby opakować callback.',
-        example: 'new Promise((resolve, reject) => { ... })'
+        example: 'new Promise((resolve, reject) => { ... })',
       };
     }
   }
 
   return {
     message: 'Sprawdź poprawność składni kodu.',
-    explanation: 'Upewnij się, że kod jest zgodny z wymaganiami zadania.'
+    explanation: 'Upewnij się, że kod jest zgodny z wymaganiami zadania.',
   };
-}; 
+};

@@ -59,4 +59,4 @@ export const CategoryProgress = memo(({ category, stats }: CategoryProgressProps
   );
 });
 
-CategoryProgress.displayName = 'CategoryProgress'; 
+CategoryProgress.displayName = 'CategoryProgress';

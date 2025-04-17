@@ -17,4 +17,4 @@ export type LearningPath = {
     percentage: number;
   };
   isLocked: boolean;
-}; 
+};

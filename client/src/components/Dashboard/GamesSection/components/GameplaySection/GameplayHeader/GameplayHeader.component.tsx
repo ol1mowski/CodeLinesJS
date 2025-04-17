@@ -10,4 +10,4 @@ export const GameplayHeader = memo(({ title }: GameplayHeaderProps) => {
       <h1 className="text-2xl font-bold text-js">{title}</h1>
     </div>
   );
-}); 
+});

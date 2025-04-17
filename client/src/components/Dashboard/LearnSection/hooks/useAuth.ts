@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 
 export const useAuth = () => {
-  const [token, setToken] = useState<string | null>(() => 
-    localStorage.getItem('token') || sessionStorage.getItem('token')
+  const [token, setToken] = useState<string | null>(
+    () => localStorage.getItem('token') || sessionStorage.getItem('token')
   );
 
   const user = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}');
 
-  const userId = user["id"];
+  const userId = user['id'];
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -19,4 +19,4 @@ export const useAuth = () => {
   }, []);
 
   return { token, isAuthenticated: !!token, userId };
-}; 
+};

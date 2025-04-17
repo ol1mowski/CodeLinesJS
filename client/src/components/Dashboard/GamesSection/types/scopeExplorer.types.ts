@@ -23,4 +23,4 @@ export type GameStats = {
   maxTime: number;
   correctAnswers: number;
   categoryStats: Record<'scope' | 'closure' | 'hoisting', CategoryStats>;
-}; 
+};

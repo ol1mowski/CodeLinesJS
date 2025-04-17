@@ -1,5 +1,5 @@
 export const navigationSections = {
-  main: "Główne",
-  game: "Gra",
-  social: "Społeczność",
-} as const; 
+  main: 'Główne',
+  game: 'Gra',
+  social: 'Społeczność',
+} as const;

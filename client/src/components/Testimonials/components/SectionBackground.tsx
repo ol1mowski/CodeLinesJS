@@ -1,6 +1,5 @@
 import { BackgroundPattern } from '../../Features/components/BackgroundPattern.component';
 
-
 export const SectionBackground = () => {
   return (
     <>
@@ -19,4 +18,4 @@ export const SectionBackground = () => {
       <div className="absolute -bottom-40 right-1/2 transform -translate-x-1/2 w-full h-40 bg-gradient-to-t from-dark to-transparent"></div>
     </>
   );
-}; 
+};

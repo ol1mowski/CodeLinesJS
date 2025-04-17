@@ -6,7 +6,7 @@ export const useFileOperations = () => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `code_${new Date().toISOString().slice(0,10)}.js`;
+    a.download = `code_${new Date().toISOString().slice(0, 10)}.js`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -14,4 +14,4 @@ export const useFileOperations = () => {
   }, []);
 
   return { saveToFile };
-}; 
+};

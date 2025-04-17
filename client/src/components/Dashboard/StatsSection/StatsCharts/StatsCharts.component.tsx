@@ -1,6 +1,6 @@
-import { memo } from "react";
-import { DailyChart } from "./DailyChart.component";
-import { LoadingScreen } from "../../../UI/LoadingScreen/LoadingScreen.component";
+import { memo } from 'react';
+import { DailyChart } from './DailyChart.component';
+import { LoadingScreen } from '../../../UI/LoadingScreen/LoadingScreen.component';
 
 type StatsChartsProps = {
   data?: {
@@ -34,4 +34,4 @@ export const StatsCharts = memo(({ data, isLoading }: StatsChartsProps) => {
   );
 });
 
-StatsCharts.displayName = "StatsCharts"; 
+StatsCharts.displayName = 'StatsCharts';

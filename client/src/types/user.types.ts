@@ -26,4 +26,4 @@ export type User = {
     pushNotifications?: boolean;
     language?: 'pl' | 'en';
   };
-}; 
+};

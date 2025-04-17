@@ -4,12 +4,12 @@ import { httpClient } from '../../../../../api/httpClient.api';
 
 vi.mock('../../../../../api/httpClient.api', () => ({
   httpClient: {
-    post: vi.fn()
-  }
+    post: vi.fn(),
+  },
 }));
 
 vi.mock('react-router-dom', () => ({
-  useNavigate: () => vi.fn()
+  useNavigate: () => vi.fn(),
 }));
 
 describe('useRegisterAction', () => {
@@ -17,28 +17,28 @@ describe('useRegisterAction', () => {
     setLoading: vi.fn(),
     setError: vi.fn(),
     setIsAuthenticated: vi.fn(),
-    setUser: vi.fn()
+    setUser: vi.fn(),
   };
 
   const mockResponse = {
     data: {
       token: 'test-token',
-      user: { id: '1', email: 'test@example.com', username: 'testuser' }
+      user: { id: '1', email: 'test@example.com', username: 'testuser' },
     },
     error: null,
-    status: 200
+    status: 200,
   };
 
   const mockErrorResponse = {
     data: null,
     error: 'Użytkownik o podanym adresie email już istnieje',
-    status: 409
+    status: 409,
   };
 
   beforeEach(() => {
     localStorage.clear();
     sessionStorage.clear();
-    
+
     vi.clearAllMocks();
   });
 
@@ -50,15 +50,16 @@ describe('useRegisterAction', () => {
     vi.mocked(httpClient.post).mockResolvedValueOnce(mockResponse);
 
     const register = useRegisterAction(mockState);
-    
+
     await register('test@example.com', 'password123', 'testuser');
 
     expect(mockState.setLoading).toHaveBeenCalledWith(true);
     expect(mockState.setError).toHaveBeenCalledWith(null);
-    expect(httpClient.post).toHaveBeenCalledWith(
-      'auth/register',
-      { email: 'test@example.com', password: 'password123', username: 'testuser' }
-    );
+    expect(httpClient.post).toHaveBeenCalledWith('auth/register', {
+      email: 'test@example.com',
+      password: 'password123',
+      username: 'testuser',
+    });
     expect(sessionStorage.getItem('token')).toBe('test-token');
     expect(mockState.setUser).toHaveBeenCalledWith(mockResponse.data.user);
     expect(mockState.setIsAuthenticated).toHaveBeenCalledWith(true);
@@ -69,7 +70,7 @@ describe('useRegisterAction', () => {
     vi.mocked(httpClient.post).mockResolvedValueOnce(mockErrorResponse);
 
     const register = useRegisterAction(mockState);
-    
+
     await register('existing@example.com', 'password123', 'existinguser');
 
     expect(mockState.setLoading).toHaveBeenCalledWith(true);
@@ -83,7 +84,7 @@ describe('useRegisterAction', () => {
     vi.mocked(httpClient.post).mockRejectedValueOnce(new Error('Network error'));
 
     const register = useRegisterAction(mockState);
-    
+
     await register('test@example.com', 'password123', 'testuser');
 
     expect(mockState.setLoading).toHaveBeenCalledWith(true);
@@ -96,14 +97,16 @@ describe('useRegisterAction', () => {
     vi.mocked(httpClient.post).mockResolvedValueOnce({
       data: null,
       error: null,
-      status: 200
+      status: 200,
     });
 
     const register = useRegisterAction(mockState);
-    
+
     await register('test@example.com', 'password123', 'testuser');
 
-    expect(mockState.setError).toHaveBeenCalledWith('Nieznany błąd rejestracji. Spróbuj ponownie później.');
+    expect(mockState.setError).toHaveBeenCalledWith(
+      'Nieznany błąd rejestracji. Spróbuj ponownie później.'
+    );
     expect(mockState.setIsAuthenticated).toHaveBeenCalledWith(false);
   });
-}); 
+});

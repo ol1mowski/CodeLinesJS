@@ -28,4 +28,4 @@ export interface GameFilters {
   sortBy: SortOption;
   searchQuery: string;
   selectedDifficulty: GameDifficulty | 'all';
-} 
+}

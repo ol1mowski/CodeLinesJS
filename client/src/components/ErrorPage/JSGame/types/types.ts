@@ -8,4 +8,4 @@ export type JSQuestion = {
 
 export type JSGameProps = {
   onComplete: (score: number) => void;
-}; 
+};

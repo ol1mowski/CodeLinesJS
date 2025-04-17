@@ -10,4 +10,4 @@ export const ErrorState = memo(({ message }: ErrorStateProps) => (
   </div>
 ));
 
-ErrorState.displayName = 'ErrorState'; 
+ErrorState.displayName = 'ErrorState';

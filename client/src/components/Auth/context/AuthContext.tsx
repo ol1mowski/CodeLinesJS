@@ -24,20 +24,15 @@ type AuthProviderProps = {
 };
 
 export const AuthProvider = ({ children, value }: AuthProviderProps) => {
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
-
 
 export const useAuthContext = () => {
   const context = useContext(AuthContext);
-  
+
   if (!context) {
     throw new Error('useAuthContext musi być używany wewnątrz AuthProvider');
   }
-  
+
   return context;
-}; 
+};

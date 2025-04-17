@@ -6,18 +6,18 @@ import React from 'react';
 
 expect.extend(matchers);
 
-// Pomijanie animacji Framer Motion w testach
-vi.mock('framer-motion', async (importOriginal) => {
-  const actual = await importOriginal();
-  
-  // Konfiguracja globalnego pomijania animacji
+vi.mock('framer-motion', async importOriginal => {
+  const actual = (await importOriginal()) as {
+    MotionGlobalConfig?: { skipAnimations: boolean };
+    motion: Record<string, any>;
+  };
+
   if (actual.MotionGlobalConfig) {
     actual.MotionGlobalConfig.skipAnimations = true;
   }
-  
+
   return {
     ...actual,
-    // Dodaj mockowania dla komponentów, które mogą powodować problemy
     motion: {
       ...actual.motion,
       div: (props: any) => React.createElement('div', props),
@@ -25,7 +25,8 @@ vi.mock('framer-motion', async (importOriginal) => {
       span: (props: any) => React.createElement('span', props),
       a: (props: any) => React.createElement('a', props),
     },
-    AnimatePresence: ({ children }: { children: React.ReactNode }) => React.createElement(React.Fragment, null, children),
+    AnimatePresence: ({ children }: { children: React.ReactNode }) =>
+      React.createElement(React.Fragment, null, children),
   };
 });
 
@@ -33,7 +34,7 @@ class MockIntersectionObserver {
   readonly root: Element | null = null;
   readonly rootMargin: string = '';
   readonly thresholds: ReadonlyArray<number> = [];
-  
+
   observe = vi.fn();
   unobserve = vi.fn();
   disconnect = vi.fn();
@@ -42,7 +43,7 @@ class MockIntersectionObserver {
 
 class MockResizeObserver {
   constructor() {}
-  
+
   observe = vi.fn();
   unobserve = vi.fn();
   disconnect = vi.fn();
@@ -54,12 +55,10 @@ window.ResizeObserver = MockResizeObserver as any;
 const consoleError = console.error;
 console.error = (...args: any[]) => {
   if (
-    typeof args[0] === 'string' && 
-    (
-      args[0].includes('Not implemented: navigation') || 
+    typeof args[0] === 'string' &&
+    (args[0].includes('Not implemented: navigation') ||
       args[0].includes('Error: ResizeObserver loop') ||
-      args[0].includes('framer-motion')
-    )
+      args[0].includes('framer-motion'))
   ) {
     return;
   }
@@ -78,17 +77,17 @@ Object.defineProperty(window, 'matchMedia', {
     removeEventListener: vi.fn(),
     dispatchEvent: vi.fn(),
   })),
-})
+});
 
 global.ResizeObserver = vi.fn().mockImplementation(() => ({
   observe: vi.fn(),
   unobserve: vi.fn(),
   disconnect: vi.fn(),
-}))
+}));
 
 global.IntersectionObserver = vi.fn().mockImplementation(() => ({
   observe: vi.fn(),
   unobserve: vi.fn(),
   disconnect: vi.fn(),
   takeRecords: vi.fn(),
-})) 
+}));

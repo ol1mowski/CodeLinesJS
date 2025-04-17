@@ -1,0 +1,29 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Sprawdź zmiany w katalogu client
+if git diff --cached --name-only | grep -q "^client/"; then
+  echo "🔍 Znaleziono zmiany w katalogu client, uruchamiam lint-staged..."
+  cd "C:/Users/oliwi/Desktop/CodeLinesJS/client"
+  npx lint-staged
+  EXIT_CODE_CLIENT=$?
+else
+  EXIT_CODE_CLIENT=0
+fi
+
+# Sprawdź zmiany w katalogu server
+if git diff --cached --name-only | grep -q "^server/"; then
+  echo "🔍 Znaleziono zmiany w katalogu server, uruchamiam lint-staged..."
+  cd "C:/Users/oliwi/Desktop/CodeLinesJS/server"
+  npx lint-staged
+  EXIT_CODE_SERVER=$?
+else
+  EXIT_CODE_SERVER=0
+fi
+
+# Zakończ z błędem, jeśli którykolwiek proces się nie powiódł
+if [ $EXIT_CODE_CLIENT -ne 0 ] || [ $EXIT_CODE_SERVER -ne 0 ]; then
+  exit 1
+fi
+
+exit 0

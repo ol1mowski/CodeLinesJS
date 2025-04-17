@@ -1,8 +1,8 @@
-import { memo } from "react";
-import { FaUser, FaEnvelope } from "react-icons/fa";
-import { FormInput } from "../../../../../../UI/Form/FormInput/FormInput.component";
-import type { UseFormRegister, FieldErrors } from "react-hook-form";
-import type { UserProfile } from "../../../../types/settings";
+import { memo } from 'react';
+import { FaUser, FaEnvelope } from 'react-icons/fa';
+import { FormInput } from '../../../../../../UI/Form/FormInput/FormInput.component';
+import type { UseFormRegister, FieldErrors } from 'react-hook-form';
+import type { UserProfile } from '../../../../types/settings';
 import { styles } from '../../style/ProfileForm.styles';
 
 type UserInfoFieldsProps = {
@@ -19,7 +19,7 @@ export const UserInfoFields = memo(({ register, errors }: UserInfoFieldsProps) =
         placeholder="Wprowadź nazwę użytkownika"
         icon={<FaUser />}
         error={errors.username?.message}
-        {...register("username")}
+        {...register('username')}
       />
     </div>
 
@@ -29,9 +29,9 @@ export const UserInfoFields = memo(({ register, errors }: UserInfoFieldsProps) =
       placeholder="Wprowadź adres email"
       icon={<FaEnvelope />}
       error={errors.email?.message}
-      {...register("email")}
+      {...register('email')}
     />
   </>
 ));
 
-UserInfoFields.displayName = "UserInfoFields"; 
+UserInfoFields.displayName = 'UserInfoFields';

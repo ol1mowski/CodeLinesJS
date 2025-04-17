@@ -1,5 +1,5 @@
-import { IconType } from "react-icons";
-import { FaGithub, FaTwitter, FaDiscord, FaYoutube } from "react-icons/fa";
+import { IconType } from 'react-icons';
+import { FaGithub, FaTwitter, FaDiscord, FaYoutube } from 'react-icons/fa';
 
 type SocialLink = {
   name: string;
@@ -19,53 +19,53 @@ type FooterSection = {
 
 export const socialLinks: SocialLink[] = [
   {
-    name: "GitHub",
-    url: "https://github.com",
+    name: 'GitHub',
+    url: 'https://github.com',
     Icon: FaGithub,
   },
   {
-    name: "Twitter",
-    url: "https://twitter.com",
+    name: 'Twitter',
+    url: 'https://twitter.com',
     Icon: FaTwitter,
   },
   {
-    name: "Discord",
-    url: "https://discord.com",
+    name: 'Discord',
+    url: 'https://discord.com',
     Icon: FaDiscord,
   },
   {
-    name: "YouTube",
-    url: "https://youtube.com",
+    name: 'YouTube',
+    url: 'https://youtube.com',
     Icon: FaYoutube,
   },
 ];
 
 export const footerLinks: FooterSection[] = [
   {
-    title: "Gra",
+    title: 'Gra',
     links: [
-      { text: "Rozpocznij", url: "/start" },
-      { text: "Ranking", url: "/ranking" },
-      { text: "Osiągnięcia", url: "/achievements" },
-      { text: "Wyzwania", url: "/challenges" },
+      { text: 'Rozpocznij', url: '/start' },
+      { text: 'Ranking', url: '/ranking' },
+      { text: 'Osiągnięcia', url: '/achievements' },
+      { text: 'Wyzwania', url: '/challenges' },
     ],
   },
   {
-    title: "Społeczność",
+    title: 'Społeczność',
     links: [
-      { text: "Discord", url: "/discord" },
-      { text: "Forum", url: "/forum" },
-      { text: "Blog", url: "/blog" },
-      { text: "Wydarzenia", url: "/events" },
+      { text: 'Discord', url: '/discord' },
+      { text: 'Forum', url: '/forum' },
+      { text: 'Blog', url: '/blog' },
+      { text: 'Wydarzenia', url: '/events' },
     ],
   },
   {
-    title: "Informacje",
+    title: 'Informacje',
     links: [
-      { text: "O nas", url: "/about" },
-      { text: "Kontakt", url: "/contact" },
-      { text: "FAQ", url: "/faq" },
-      { text: "Regulamin", url: "/terms" },
+      { text: 'O nas', url: '/about' },
+      { text: 'Kontakt', url: '/contact' },
+      { text: 'FAQ', url: '/faq' },
+      { text: 'Regulamin', url: '/terms' },
     ],
   },
-]; 
+];

@@ -1,4 +1,4 @@
-import { LessonProgress } from "./lesson.types";
+import { LessonProgress } from './lesson.types';
 
 export type ApiResponse<T> = {
   data: T;
@@ -11,4 +11,4 @@ export type UserProgressResponse = {
     [lessonId: string]: LessonProgress;
   };
   lastUpdated: string;
-}; 
+};

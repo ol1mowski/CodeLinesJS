@@ -7,28 +7,33 @@ export const usePreferencesFormLogic = () => {
   const { preferences, isLoading, updatePreferences } = usePreferences();
 
   const { form, onSubmit } = usePreferencesForm({
-    onSubmit: async (data) => {
+    onSubmit: async data => {
       try {
         await updatePreferences.mutateAsync({
           emailNotifications: data.emailNotifications,
           pushNotifications: data.pushNotifications,
-          language: "pl"
+          language: 'pl',
         });
         toast.success('Preferencje zostały zaktualizowane');
       } catch (error) {
         toast.error('Nie udało się zaktualizować preferencji');
       }
-    }
+    },
   });
 
-  const { register, formState: { isSubmitting }, setValue, watch } = form;
+  const {
+    register,
+    formState: { isSubmitting },
+    setValue,
+    watch,
+  } = form;
   const formValues = watch();
 
   useEffect(() => {
     if (preferences) {
       setValue('emailNotifications', preferences.emailNotifications);
       setValue('pushNotifications', preferences.pushNotifications);
-      setValue('language', "pl");
+      setValue('language', 'pl');
     }
   }, [preferences, setValue]);
 
@@ -37,7 +42,7 @@ export const usePreferencesFormLogic = () => {
       if (preferences) {
         setValue('emailNotifications', preferences.emailNotifications);
         setValue('pushNotifications', preferences.pushNotifications);
-        setValue('language', "pl");
+        setValue('language', 'pl');
         toast.success('Zmiany zostały anulowane');
       }
     } catch (error) {
@@ -53,6 +58,6 @@ export const usePreferencesFormLogic = () => {
     updatePreferences,
     handleCancel,
     onSubmit,
-    setValue
+    setValue,
   };
-}; 
+};

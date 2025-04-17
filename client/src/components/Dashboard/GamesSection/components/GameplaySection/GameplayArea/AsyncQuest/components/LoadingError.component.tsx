@@ -8,17 +8,13 @@ interface LoadingErrorProps {
   children: ReactNode;
 }
 
-export const LoadingError = memo(({
-  isLoading,
-  error,
-  children
-}: LoadingErrorProps) => {
+export const LoadingError = memo(({ isLoading, error, children }: LoadingErrorProps) => {
   if (isLoading) {
     return (
       <div className="h-full flex flex-col items-center justify-center">
         <motion.div
           animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
           className="text-4xl text-purple-300 mb-4"
         >
           <FaSpinner />
@@ -27,7 +23,7 @@ export const LoadingError = memo(({
       </div>
     );
   }
-  
+
   if (error) {
     return (
       <div className="h-full flex flex-col items-center justify-center text-center p-6">
@@ -43,7 +39,7 @@ export const LoadingError = memo(({
       </div>
     );
   }
-  
+
   if (!children) {
     return (
       <div className="h-full flex items-center justify-center">
@@ -51,8 +47,8 @@ export const LoadingError = memo(({
       </div>
     );
   }
-  
+
   return <>{children}</>;
 });
 
-LoadingError.displayName = 'LoadingError'; 
+LoadingError.displayName = 'LoadingError';

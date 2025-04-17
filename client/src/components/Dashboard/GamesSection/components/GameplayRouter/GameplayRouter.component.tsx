@@ -15,11 +15,7 @@ export const GameplayRouter = memo(() => {
     return <Navigate to="/dashboard/play" replace />;
   }
 
-  return (
-    <GameplaySection 
-      game={game}
-    />
-  );
+  return <GameplaySection game={game} />;
 });
 
-GameplayRouter.displayName = 'GameplayRouter'; 
+GameplayRouter.displayName = 'GameplayRouter';

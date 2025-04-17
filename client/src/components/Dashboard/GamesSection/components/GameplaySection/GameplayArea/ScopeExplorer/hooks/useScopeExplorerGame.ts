@@ -28,8 +28,8 @@ export const useScopeExplorerGame = ({ gameContent, isPaused }: UseScopeExplorer
     categoryStats: {
       scope: { total: 0, correct: 0, points: 0 },
       closure: { total: 0, correct: 0, points: 0 },
-      hoisting: { total: 0, correct: 0, points: 0 }
-    }
+      hoisting: { total: 0, correct: 0, points: 0 },
+    },
   });
 
   const { timeElapsed, resetTimer, startTimer, stopTimer } = useGameTimer({
@@ -45,17 +45,17 @@ export const useScopeExplorerGame = ({ gameContent, isPaused }: UseScopeExplorer
   useEffect(() => {
     setGameStats(prev => ({
       ...prev,
-      timeElapsed
+      timeElapsed,
     }));
   }, [timeElapsed]);
 
   useEffect(() => {
     if (!gameContent?.gameData) return;
-    
+
     const initialCategoryStats = {
       scope: { total: 0, correct: 0, points: 0 },
       closure: { total: 0, correct: 0, points: 0 },
-      hoisting: { total: 0, correct: 0, points: 0 }
+      hoisting: { total: 0, correct: 0, points: 0 },
     };
 
     gameContent.gameData.forEach((challenge: ScopeChallenge) => {
@@ -68,24 +68,27 @@ export const useScopeExplorerGame = ({ gameContent, isPaused }: UseScopeExplorer
       ...prev,
       totalLevels: gameContent.gameData.length,
       maxTime: gameContent.estimatedTime ? gameContent.estimatedTime * 60 : 300,
-      categoryStats: initialCategoryStats
+      categoryStats: initialCategoryStats,
     }));
   }, [gameContent]);
 
-  const handleScoreUpdate = useCallback((points: number, category: 'scope' | 'closure' | 'hoisting') => {
-    setGameStats(prev => ({
-      ...prev,
-      score: prev.score + points,
-      correctAnswers: prev.correctAnswers + 1,
-      categoryStats: {
-        ...prev.categoryStats,
-        [category]: {
-          ...prev.categoryStats[category],
-          correct: prev.categoryStats[category].correct + 1
-        }
-      }
-    }));
-  }, []);
+  const handleScoreUpdate = useCallback(
+    (points: number, category: 'scope' | 'closure' | 'hoisting') => {
+      setGameStats(prev => ({
+        ...prev,
+        score: prev.score + points,
+        correctAnswers: prev.correctAnswers + 1,
+        categoryStats: {
+          ...prev.categoryStats,
+          [category]: {
+            ...prev.categoryStats[category],
+            correct: prev.categoryStats[category].correct + 1,
+          },
+        },
+      }));
+    },
+    []
+  );
 
   const handleLevelComplete = useCallback(() => {
     const nextLevel = gameStats.currentLevel + 1;
@@ -98,17 +101,17 @@ export const useScopeExplorerGame = ({ gameContent, isPaused }: UseScopeExplorer
 
     setGameStats(prev => ({
       ...prev,
-      currentLevel: nextLevel
+      currentLevel: nextLevel,
     }));
   }, [gameStats.currentLevel, timeElapsed, gameContent?.gameData?.length, stopTimer]);
 
   const handleRestart = useCallback(() => {
     if (!gameContent?.gameData) return;
-    
+
     const initialCategoryStats = {
       scope: { total: 0, correct: 0, points: 0 },
       closure: { total: 0, correct: 0, points: 0 },
-      hoisting: { total: 0, correct: 0, points: 0 }
+      hoisting: { total: 0, correct: 0, points: 0 },
     };
 
     gameContent.gameData.forEach((challenge: ScopeChallenge) => {
@@ -124,7 +127,7 @@ export const useScopeExplorerGame = ({ gameContent, isPaused }: UseScopeExplorer
       timeElapsed: 0,
       maxTime: gameContent.estimatedTime ? gameContent.estimatedTime * 60 : 300,
       correctAnswers: 0,
-      categoryStats: initialCategoryStats
+      categoryStats: initialCategoryStats,
     });
     setIsGameOver(false);
     setFinalTime(0);
@@ -148,11 +151,13 @@ export const useScopeExplorerGame = ({ gameContent, isPaused }: UseScopeExplorer
     isGameOver,
     finalTime,
     gameStats,
-    currentChallenge: gameContent?.gameData ? gameContent.gameData[gameStats.currentLevel - 1] : undefined,
+    currentChallenge: gameContent?.gameData
+      ? gameContent.gameData[gameStats.currentLevel - 1]
+      : undefined,
     handleScoreUpdate,
     handleLevelComplete,
     handleRestart,
     handleStartGame,
-    handleGameOver
+    handleGameOver,
   };
-}; 
+};

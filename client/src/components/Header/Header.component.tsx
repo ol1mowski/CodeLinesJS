@@ -1,11 +1,11 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useState } from 'react';
+import { motion } from 'framer-motion';
 
-import { Container } from "../UI/Container/Container.component";
-import { Logo } from "./Logo/Logo.component";
-import { DesktopNavigation } from "./Navigation/DesktopNavigation.component";
-import { MobileMenu } from "./Navigation/MobileMenu/MobileMenu.component";
-import { HeaderActions } from "./Navigation/HeaderActions/HeaderActions.component";
+import { Container } from '../UI/Container/Container.component';
+import { Logo } from './Logo/Logo.component';
+import { DesktopNavigation } from './Navigation/DesktopNavigation.component';
+import { MobileMenu } from './Navigation/MobileMenu/MobileMenu.component';
+import { HeaderActions } from './Navigation/HeaderActions/HeaderActions.component';
 
 export const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -24,15 +24,12 @@ export const Header = () => {
         <nav className="flex items-center justify-between relative">
           <Logo />
           <DesktopNavigation />
-          <HeaderActions 
+          <HeaderActions
             isMobileMenuOpen={isMobileMenuOpen}
             onMobileMenuToggle={handleMobileMenuToggle}
           />
         </nav>
-        <MobileMenu
-          isOpen={isMobileMenuOpen}
-          onClose={handleMobileMenuClose}
-        />
+        <MobileMenu isOpen={isMobileMenuOpen} onClose={handleMobileMenuClose} />
       </Container>
     </motion.header>
   );

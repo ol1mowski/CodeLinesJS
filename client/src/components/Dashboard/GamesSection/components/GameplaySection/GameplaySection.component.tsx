@@ -1,10 +1,10 @@
-import { memo } from "react";
-import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
-import { FaArrowLeft } from "react-icons/fa";
-import { Game } from "../../../../../types/games.types";
-import { GameplayHeader } from "./GameplayHeader/GameplayHeader.component";
-import { GameplayArea } from "./GameplayArea/GameplayArea.component";
+import { memo } from 'react';
+import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { FaArrowLeft } from 'react-icons/fa';
+import { Game } from '../../../../../types/games.types';
+import { GameplayHeader } from './GameplayHeader/GameplayHeader.component';
+import { GameplayArea } from './GameplayArea/GameplayArea.component';
 
 type GameplaySectionProps = {
   game: Game;
@@ -14,7 +14,7 @@ export const GameplaySection = memo(({ game }: GameplaySectionProps) => {
   const navigate = useNavigate();
 
   const handleBackToMenu = () => {
-    navigate("/dashboard/play");
+    navigate('/dashboard/play');
   };
 
   return (
@@ -37,9 +37,7 @@ export const GameplaySection = memo(({ game }: GameplaySectionProps) => {
           </motion.button>
         </div>
 
-        <GameplayHeader
-          title={game.title}
-        />
+        <GameplayHeader title={game.title} />
 
         <div className="mt-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
           <div className="lg:col-span-12">
@@ -51,4 +49,4 @@ export const GameplaySection = memo(({ game }: GameplaySectionProps) => {
   );
 });
 
-GameplaySection.displayName = "GameplaySection";
+GameplaySection.displayName = 'GameplaySection';

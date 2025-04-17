@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 
-const EXECUTION_TIMEOUT = 3000; 
+const EXECUTION_TIMEOUT = 3000;
 
 export const useCodeExecution = () => {
   const [output, setOutput] = useState<string[]>([]);
@@ -22,18 +22,23 @@ export const useCodeExecution = () => {
 
       try {
         console.log = (...args) => {
-          logs.push(args.map(arg => 
-            typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
-          ).join(' '));
+          logs.push(
+            args
+              .map(arg => (typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)))
+              .join(' ')
+          );
         };
 
         (async () => {
           try {
-            const safeExecute = new Function('console', `
+            const safeExecute = new Function(
+              'console',
+              `
               "use strict";
               ${code}
-            `);
-            
+            `
+            );
+
             safeExecute(console);
             setOutput(logs);
             clearTimeout(timeoutId);
@@ -54,6 +59,6 @@ export const useCodeExecution = () => {
     output,
     isExecuting,
     executeCode,
-    clearConsole
+    clearConsole,
   };
-}; 
+};

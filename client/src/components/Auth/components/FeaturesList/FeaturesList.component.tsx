@@ -7,4 +7,4 @@ export const FeaturesList = () => (
     <FeatureItem text="Śledzenie postępów" />
     <FeatureItem text="Społeczność" />
   </div>
-); 
+);

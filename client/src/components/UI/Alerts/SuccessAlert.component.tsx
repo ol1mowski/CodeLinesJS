@@ -1,12 +1,12 @@
-import { motion } from "framer-motion";
-import { FaCheckCircle } from "react-icons/fa";
+import { motion } from 'framer-motion';
+import { FaCheckCircle } from 'react-icons/fa';
 
 type SuccessAlertProps = {
   message: string;
   title?: string;
 };
 
-export const SuccessAlert = ({ message, title = "Sukces!" }: SuccessAlertProps) => {
+export const SuccessAlert = ({ message, title = 'Sukces!' }: SuccessAlertProps) => {
   if (!message) return null;
 
   return (
@@ -22,4 +22,4 @@ export const SuccessAlert = ({ message, title = "Sukces!" }: SuccessAlertProps) 
       </div>
     </motion.div>
   );
-}; 
+};

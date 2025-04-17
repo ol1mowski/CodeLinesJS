@@ -14,4 +14,4 @@ export const ProgressStats = memo(() => (
   </div>
 ));
 
-ProgressStats.displayName = 'ProgressStats'; 
+ProgressStats.displayName = 'ProgressStats';

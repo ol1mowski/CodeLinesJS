@@ -24,15 +24,11 @@ export const JSTypoHunterFeedback = memo(({ type, message }: JSTypoHunterFeedbac
           ${type === 'success' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}
         `}
       >
-        {type === 'success' ? (
-          <FaCheck className="w-4 h-4" />
-        ) : (
-          <FaTimes className="w-4 h-4" />
-        )}
+        {type === 'success' ? <FaCheck className="w-4 h-4" /> : <FaTimes className="w-4 h-4" />}
         <span className="font-medium">{message}</span>
       </motion.div>
     </AnimatePresence>
   );
 });
 
-JSTypoHunterFeedback.displayName = 'JSTypoHunterFeedback'; 
+JSTypoHunterFeedback.displayName = 'JSTypoHunterFeedback';

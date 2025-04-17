@@ -1,5 +1,5 @@
-import { useNavigate } from "react-router-dom";
-import { httpClient } from "../../../../api/httpClient.api";
+import { useNavigate } from 'react-router-dom';
+import { httpClient } from '../../../../api/httpClient.api';
 
 type AuthState = {
   setLoading: (loading: boolean) => void;
@@ -12,10 +12,7 @@ export const useGoogleLoginAction = (state: AuthState) => {
   const navigate = useNavigate();
   const { setLoading, setError, setIsAuthenticated, setUser } = state;
 
-  const loginWithGoogle = async (
-    credentialResponse: any,
-    rememberMe: boolean = false
-  ) => {
+  const loginWithGoogle = async (credentialResponse: any, rememberMe: boolean = false) => {
     try {
       setLoading(true);
       setError(null);
@@ -26,7 +23,7 @@ export const useGoogleLoginAction = (state: AuthState) => {
         return;
       }
 
-      const response = await httpClient.post("auth/google-login", {
+      const response = await httpClient.post('auth/google-login', {
         credential: credentialResponse.credential,
         rememberMe,
       });
@@ -36,17 +33,15 @@ export const useGoogleLoginAction = (state: AuthState) => {
       }
 
       if (!response.data) {
-        throw new Error(
-          "Nieznany błąd logowania przez Google. Spróbuj ponownie później."
-        );
+        throw new Error('Nieznany błąd logowania przez Google. Spróbuj ponownie później.');
       }
 
       const { token, user } = response.data;
 
       if (rememberMe) {
-        localStorage.setItem("token", token);
+        localStorage.setItem('token', token);
       } else {
-        sessionStorage.setItem("token", token);
+        sessionStorage.setItem('token', token);
       }
 
       if (setUser && user) {
@@ -54,13 +49,9 @@ export const useGoogleLoginAction = (state: AuthState) => {
       }
 
       setIsAuthenticated(true);
-      navigate("/dashboard");
+      navigate('/dashboard');
     } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Wystąpił błąd podczas logowania przez Google"
-      );
+      setError(err instanceof Error ? err.message : 'Wystąpił błąd podczas logowania przez Google');
       setIsAuthenticated(false);
     } finally {
       setLoading(false);

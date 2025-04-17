@@ -1,11 +1,11 @@
 import { memo } from 'react';
-import { MobileWrapper } from "../../../UI/MobileWrapper/MobileWrapper.component";
-import { useMobileDetect } from "../../../../hooks/useMobileDetect";
+import { MobileWrapper } from '../../../UI/MobileWrapper/MobileWrapper.component';
+import { useMobileDetect } from '../../../../hooks/useMobileDetect';
 
 const stats = [
-  { value: "16", label: "Dostępnych lekcji" },
-  { value: "4", label: "Gry" },
-  { value: "7", label: "Użytkowników" },
+  { value: '16', label: 'Dostępnych lekcji' },
+  { value: '4', label: 'Gry' },
+  { value: '7', label: 'Użytkowników' },
 ] as const;
 
 export const StatsGrid = memo(() => (
@@ -24,7 +24,7 @@ type StatItemProps = {
 
 const StatItem = memo(({ value, label, index }: StatItemProps) => {
   const isMobile = useMobileDetect();
-  
+
   return (
     <MobileWrapper
       className="text-center p-4 rounded-lg bg-black/20 border border-[#f7df1e]/10"
@@ -32,18 +32,14 @@ const StatItem = memo(({ value, label, index }: StatItemProps) => {
         initial: { opacity: 0, y: 20 },
         whileInView: { opacity: 1, y: 0 },
         viewport: { once: true },
-        transition: { duration: 0.5, delay: isMobile ? 0 : index * 0.1 }
+        transition: { duration: 0.5, delay: isMobile ? 0 : index * 0.1 },
       }}
     >
-      <p className="text-3xl md:text-4xl font-bold font-space text-[#f7df1e]">
-        {value}
-      </p>
-      <p className="text-sm md:text-base text-gray-400 font-inter">
-        {label}
-      </p>
+      <p className="text-3xl md:text-4xl font-bold font-space text-[#f7df1e]">{value}</p>
+      <p className="text-sm md:text-base text-gray-400 font-inter">{label}</p>
     </MobileWrapper>
   );
 });
 
 StatsGrid.displayName = 'StatsGrid';
-StatItem.displayName = 'StatItem'; 
+StatItem.displayName = 'StatItem';

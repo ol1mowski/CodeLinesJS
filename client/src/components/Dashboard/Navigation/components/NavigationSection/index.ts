@@ -1,1 +1,1 @@
-export { NavigationSection } from './NavigationSection.component'; 
+export { NavigationSection } from './NavigationSection.component';

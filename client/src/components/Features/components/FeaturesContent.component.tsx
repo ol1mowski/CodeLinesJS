@@ -1,5 +1,5 @@
-import { CodeQuiz } from "../CodeQuiz/CodeQuiz.component";
-import { FeaturesList } from "../FeaturesList/FeaturesList.component";
+import { CodeQuiz } from '../CodeQuiz/CodeQuiz.component';
+import { FeaturesList } from '../FeaturesList/FeaturesList.component';
 
 export const FeaturesContent = () => (
   <div className="flex flex-col xl:flex-row items-center justify-between gap-12 md:gap-16 w-full">
@@ -10,4 +10,4 @@ export const FeaturesContent = () => (
       </div>
     </div>
   </div>
-); 
+);

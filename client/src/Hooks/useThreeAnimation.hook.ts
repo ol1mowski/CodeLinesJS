@@ -1,14 +1,9 @@
-import { useEffect, useRef } from "react";
-import * as THREE from "three";
-import { useMobileDetect } from "./useMobileDetect";
+import { useEffect, useRef } from 'react';
+import * as THREE from 'three';
+import { useMobileDetect } from './useMobileDetect';
 
 const setupCamera = () => {
-  const camera = new THREE.PerspectiveCamera(
-    75,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    1000
-  );
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
   camera.position.z = 15;
   return camera;
 };
@@ -27,16 +22,16 @@ const createCodeStructure = (isMobile: boolean) => {
 
   const jsGeometry = new THREE.BoxGeometry(7, 7, 7);
   const jsMaterial = new THREE.MeshPhongMaterial({
-    color: "#f7df1e",
+    color: '#f7df1e',
     wireframe: false,
-    emissive: "#f7df1e",
+    emissive: '#f7df1e',
     emissiveIntensity: 0.3,
     transparent: true,
     opacity: 0.9,
   });
   const jsCube = new THREE.Mesh(jsGeometry, jsMaterial);
-  
-  const codeSymbols = isMobile ? ["{", "}", "=>"] : ["{", "}", "()", "=>", "[]", ";;"];
+
+  const codeSymbols = isMobile ? ['{', '}', '=>'] : ['{', '}', '()', '=>', '[]', ';;'];
   const orbitRadius = 8;
 
   codeSymbols.forEach((_, index) => {
@@ -44,8 +39,8 @@ const createCodeStructure = (isMobile: boolean) => {
     const symbol = new THREE.Mesh(
       new THREE.TorusGeometry(1, isMobile ? 0.3 : 0.5, isMobile ? 12 : 20, isMobile ? 24 : 36),
       new THREE.MeshPhongMaterial({
-        color: "#6366f1",
-        emissive: "#4338ca",
+        color: '#6366f1',
+        emissive: '#4338ca',
         emissiveIntensity: 0.5,
       })
     );
@@ -62,18 +57,15 @@ const createCodeStructure = (isMobile: boolean) => {
 };
 
 const setupLights = (scene: THREE.Scene, isMobile: boolean) => {
-  const lights = isMobile 
-    ? [
-        new THREE.DirectionalLight("#ffffff", 1.5),
-        new THREE.AmbientLight("#818cf8", 0.7),
-      ]
+  const lights = isMobile
+    ? [new THREE.DirectionalLight('#ffffff', 1.5), new THREE.AmbientLight('#818cf8', 0.7)]
     : [
-        new THREE.DirectionalLight("#ffffff", 1.5),
-        new THREE.AmbientLight("#818cf8", 0.7),
-        new THREE.PointLight("#4c1d95", 1),
-        new THREE.PointLight("#6366f1", 0.8),
+        new THREE.DirectionalLight('#ffffff', 1.5),
+        new THREE.AmbientLight('#818cf8', 0.7),
+        new THREE.PointLight('#4c1d95', 1),
+        new THREE.PointLight('#6366f1', 0.8),
       ];
-  lights.forEach((light) => scene.add(light));
+  lights.forEach(light => scene.add(light));
 };
 
 const createResizeHandler =
@@ -93,7 +85,7 @@ const createResizeHandler =
     if (width < 640) {
       camera.position.z = 25;
       codeStructure.scale.set(0.7, 0.7, 0.7);
-      
+
       if (isMobile) {
         codeStructure.children.forEach((child, index) => {
           if (index % 2 !== 0 && index < codeStructure.children.length - 1) {
@@ -116,43 +108,41 @@ const createResizeHandler =
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   };
 
-const createAnimationLoop =
-  (
-    scene: THREE.Scene,
-    camera: THREE.PerspectiveCamera,
-    renderer: THREE.WebGLRenderer,
-    codeStructure: THREE.Group,
-    isMobile: boolean
-  ) => {
-    function animate() {
-      requestAnimationFrame(animate);
-      
-      codeStructure.rotation.y += isMobile ? 0.001 : 0.003;
+const createAnimationLoop = (
+  scene: THREE.Scene,
+  camera: THREE.PerspectiveCamera,
+  renderer: THREE.WebGLRenderer,
+  codeStructure: THREE.Group,
+  isMobile: boolean
+) => {
+  function animate() {
+    requestAnimationFrame(animate);
 
-      codeStructure.children.forEach((symbol, index) => {
-        if (symbol !== codeStructure.children[codeStructure.children.length - 1]) {
-          const time = Date.now() * 0.001;
-          const offset = index * (Math.PI * 2 / (codeStructure.children.length - 1));
+    codeStructure.rotation.y += isMobile ? 0.001 : 0.003;
 
-          if (!isMobile || index % 2 === 0) {
-            symbol.position.y = Math.sin(time + offset) * (isMobile ? 0.8 : 1.5);
-            symbol.rotation.x += isMobile ? 0.01 : 0.02;
-            symbol.rotation.z += isMobile ? 0.02 : 0.05;
-          }
+    codeStructure.children.forEach((symbol, index) => {
+      if (symbol !== codeStructure.children[codeStructure.children.length - 1]) {
+        const time = Date.now() * 0.001;
+        const offset = index * ((Math.PI * 2) / (codeStructure.children.length - 1));
+
+        if (!isMobile || index % 2 === 0) {
+          symbol.position.y = Math.sin(time + offset) * (isMobile ? 0.8 : 1.5);
+          symbol.rotation.x += isMobile ? 0.01 : 0.02;
+          symbol.rotation.z += isMobile ? 0.02 : 0.05;
         }
-      });
+      }
+    });
 
-      renderer.render(scene, camera);
-    }
-    return animate;
-  };
+    renderer.render(scene, camera);
+  }
+  return animate;
+};
 
 const cleanup =
-  (scene: THREE.Scene, codeStructure: THREE.Group, handleResize: () => void) =>
-  () => {
-    window.removeEventListener("resize", handleResize);
+  (scene: THREE.Scene, codeStructure: THREE.Group, handleResize: () => void) => () => {
+    window.removeEventListener('resize', handleResize);
     scene.remove(codeStructure);
-    codeStructure.traverse((object) => {
+    codeStructure.traverse(object => {
       if (object instanceof THREE.Mesh) {
         object.geometry.dispose();
         object.material.dispose();
@@ -178,7 +168,7 @@ export const useThreeAnimation = () => {
     const handleResize = createResizeHandler(camera, renderer, codeStructure, isMobile);
     const animate = createAnimationLoop(scene, camera, renderer, codeStructure, isMobile);
 
-    window.addEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
     handleResize();
     animate();
 

@@ -30,6 +30,6 @@ export const useNotificationsDropdown = ({ onClose }: UseNotificationsDropdownPr
   }, [onClose]);
 
   return {
-    dropdownRef
+    dropdownRef,
   };
-}; 
+};

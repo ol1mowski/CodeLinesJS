@@ -1,7 +1,10 @@
-import { API_URL } from "../../../../config/api.config";
+import { API_URL } from '../../../../config/api.config';
 
 export class AccountError extends Error {
-  constructor(public code: 'INVALID_PASSWORD' | 'INVALID_CONFIRMATION' | 'UNKNOWN_ERROR', message: string) {
+  constructor(
+    public code: 'INVALID_PASSWORD' | 'INVALID_CONFIRMATION' | 'UNKNOWN_ERROR',
+    message: string
+  ) {
     super(message);
     this.name = 'AccountError';
   }
@@ -17,7 +20,7 @@ export const deleteAccount = async (
   const response = await fetch(`${API_URL}settings/account`, {
     method: 'DELETE',
     headers: {
-      'Authorization': `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(data),
@@ -33,4 +36,4 @@ export const deleteAccount = async (
     }
     throw new AccountError('UNKNOWN_ERROR', 'Wystąpił błąd podczas usuwania konta');
   }
-}; 
+};

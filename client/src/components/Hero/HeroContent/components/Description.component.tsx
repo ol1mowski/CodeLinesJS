@@ -1,4 +1,4 @@
-import { MobileWrapperP } from "../../../UI/MobileWrapper/MobileWrapper.component";
+import { MobileWrapperP } from '../../../UI/MobileWrapper/MobileWrapper.component';
 
 export const Description = () => (
   <MobileWrapperP
@@ -7,10 +7,10 @@ export const Description = () => (
       initial: { opacity: 0, y: 20 },
       whileInView: { opacity: 1, y: 0 },
       viewport: { once: true },
-      transition: { delay: 0.1 }
+      transition: { delay: 0.1 },
     }}
   >
-    Podejmij wyzwanie i zostań mistrzem JavaScript poprzez wciągającą grę.
-    Rozwiązuj zagadki, zdobywaj osiągnięcia i rywalizuj z innymi graczami.
+    Podejmij wyzwanie i zostań mistrzem JavaScript poprzez wciągającą grę. Rozwiązuj zagadki,
+    zdobywaj osiągnięcia i rywalizuj z innymi graczami.
   </MobileWrapperP>
-); 
+);

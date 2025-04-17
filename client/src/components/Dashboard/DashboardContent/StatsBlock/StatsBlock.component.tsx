@@ -1,8 +1,8 @@
-import { memo } from "react";
-import { FaStar, FaChartLine, FaMedal } from "react-icons/fa";
-import { DashboardStats } from "../types/dashboard.types";
-import { statsBlockStyles as styles } from "./style/StatsBlock.styles";
-import { useDateFormat } from "./hooks/useDateFormat";
+import { memo } from 'react';
+import { FaStar, FaChartLine, FaMedal } from 'react-icons/fa';
+import { DashboardStats } from '../types/dashboard.types';
+import { statsBlockStyles as styles } from './style/StatsBlock.styles';
+import { useDateFormat } from './hooks/useDateFormat';
 
 type StatItemProps = {
   icon: React.ReactNode;
@@ -20,11 +20,11 @@ const StatItem = memo(({ icon, label, value }: StatItemProps) => (
   </div>
 ));
 
-StatItem.displayName = "StatItem";
+StatItem.displayName = 'StatItem';
 
 type StatsBlockProps = {
   stats: DashboardStats;
-}
+};
 
 export const StatsBlock = memo(({ stats }: StatsBlockProps) => {
   const formatDate = useDateFormat();
@@ -32,31 +32,16 @@ export const StatsBlock = memo(({ stats }: StatsBlockProps) => {
   return (
     <div className={styles.container}>
       <div className={styles.stats.grid}>
+        <StatItem icon={<FaMedal />} label="Poziom" value={stats.level} />
 
-        <StatItem
-          icon={<FaMedal />}
-          label="Poziom"
-          value={stats.level}
-        />
+        <StatItem icon={<FaStar />} label="Punkty" value={stats.points} />
 
-        <StatItem
-          icon={<FaStar />}
-          label="Punkty"
-          value={stats.points}
-        />
-
-        <StatItem
-          icon={<FaChartLine />}
-          label="Seria"
-          value={`${stats.streak} dni`}
-        />
+        <StatItem icon={<FaChartLine />} label="Seria" value={`${stats.streak} dni`} />
       </div>
 
-      <p className={styles.lastActive}>
-        Ostatnia aktywność: {formatDate(stats.lastActive)}
-      </p>
+      <p className={styles.lastActive}>Ostatnia aktywność: {formatDate(stats.lastActive)}</p>
     </div>
   );
 });
 
-StatsBlock.displayName = "StatsBlock"; 
+StatsBlock.displayName = 'StatsBlock';

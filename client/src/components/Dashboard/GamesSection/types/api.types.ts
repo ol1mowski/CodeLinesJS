@@ -29,7 +29,7 @@ export type Game = {
     users: string[];
   };
   rewardPoints: number;
-  gameData: any[]; 
+  gameData: any[];
   isLevelAvailable: boolean;
   requiredLevel: number;
   isActive: boolean;
@@ -38,4 +38,4 @@ export type Game = {
   isCompleted: boolean;
   createdAt: string;
   updatedAt: string;
-}; 
+};

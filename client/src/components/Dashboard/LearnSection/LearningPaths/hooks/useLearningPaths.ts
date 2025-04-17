@@ -5,20 +5,15 @@ import { useAuth } from '../../../../../hooks/useAuth';
 
 export const useLearningPaths = () => {
   const { token } = useAuth();
-  
-  const {
-    data,
-    isLoading,
-    error,
-    refetch
-  } = useQuery<PathsResponse, Error>({
+
+  const { data, isLoading, error, refetch } = useQuery<PathsResponse, Error>({
     queryKey: ['learningPaths', 'userProgress'],
     queryFn: () => fetchLearningPaths(token || ''),
     staleTime: 1000 * 60 * 5,
     retry: 2,
     refetchOnWindowFocus: true,
     refetchOnReconnect: true,
-    enabled: !!token
+    enabled: !!token,
   });
 
   return {
@@ -27,6 +22,6 @@ export const useLearningPaths = () => {
     isLoading,
     error,
     refetch,
-    isEmpty: !data?.paths || data.paths.length === 0
+    isEmpty: !data?.paths || data.paths.length === 0,
   };
-}; 
+};

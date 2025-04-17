@@ -2,7 +2,7 @@ import { memo } from 'react';
 import { motion } from 'framer-motion';
 import { type Lesson } from '../../types/lesson.types';
 
-import { LessonHeader } from './LessonHeader.component';;
+import { LessonHeader } from './LessonHeader.component';
 import { LessonSection } from './LessonSection.component';
 import { LessonQuiz } from './LessonQuiz.component';
 
@@ -12,16 +12,12 @@ type LessonMainContentProps = {
   onQuizComplete: (points: number) => void;
 };
 
-export const LessonMainContent = memo(({
-  lesson,
-  onQuizComplete
-}: LessonMainContentProps) => {
+export const LessonMainContent = memo(({ lesson, onQuizComplete }: LessonMainContentProps) => {
   if (!lesson) {
     return null;
   }
 
-  const { sections = [] } = lesson.content;  
-
+  const { sections = [] } = lesson.content;
 
   return (
     <div className="w-[85vw] mb-32 md:w-auto md:mb-auto col-span-9 lesson-content overflow-y-auto max-h-[calc(100vh-200px)]">
@@ -41,20 +37,12 @@ export const LessonMainContent = memo(({
 
           <div className="space-y-8">
             {sections.map((section, index) => (
-              <LessonSection
-                key={index}
-                section={section}
-                index={index}
-              />
+              <LessonSection key={index} section={section} index={index} />
             ))}
 
             {lesson.content.quiz && (
-              <LessonQuiz
-                questions={lesson.content.quiz}
-                onComplete={onQuizComplete}
-              />
+              <LessonQuiz questions={lesson.content.quiz} onComplete={onQuizComplete} />
             )}
-
           </div>
         </div>
       </motion.div>
@@ -62,4 +50,4 @@ export const LessonMainContent = memo(({
   );
 });
 
-LessonMainContent.displayName = "LessonMainContent"; 
+LessonMainContent.displayName = 'LessonMainContent';

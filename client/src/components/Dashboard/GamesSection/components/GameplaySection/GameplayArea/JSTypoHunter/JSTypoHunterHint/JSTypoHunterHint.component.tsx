@@ -26,4 +26,4 @@ export const JSTypoHunterHint = memo(({ hint, isVisible }: JSTypoHunterHintProps
   );
 });
 
-JSTypoHunterHint.displayName = 'JSTypoHunterHint'; 
+JSTypoHunterHint.displayName = 'JSTypoHunterHint';

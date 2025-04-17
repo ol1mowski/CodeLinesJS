@@ -13,18 +13,12 @@ export const LessonSection = memo(({ section, index }: LessonSectionProps) => {
       <h2 className="text-xl font-bold text-js">
         {index + 1}. {section.title}
       </h2>
-      <div className="prose prose-invert max-w-none">
-        {section.content}
-      </div>
+      <div className="prose prose-invert max-w-none">{section.content}</div>
       <div className="space-y-8 mt-8">
         {section.examples && section.examples.length > 0 && (
           <div className="space-y-8 mt-8">
             {section.examples.map((example, index) => (
-              <CodeExample
-                key={index}
-                example={example}
-                index={index}
-              />
+              <CodeExample key={index} example={example} index={index} />
             ))}
           </div>
         )}
@@ -33,5 +27,4 @@ export const LessonSection = memo(({ section, index }: LessonSectionProps) => {
   );
 });
 
-
-LessonSection.displayName = "LessonSection"; 
+LessonSection.displayName = 'LessonSection';

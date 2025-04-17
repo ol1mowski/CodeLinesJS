@@ -5,4 +5,4 @@ function przywitajSie(imie) {
   return \`Cześć, \${imie}!\`;
 }
 
-console.log(przywitajSie("Programisto"));`; 
+console.log(przywitajSie("Programisto"));`;

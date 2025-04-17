@@ -1,7 +1,10 @@
-import { API_URL } from "../../../../config/api.config";
+import { API_URL } from '../../../../config/api.config';
 
 export class SecurityError extends Error {
-  constructor(public code: 'INVALID_CURRENT_PASSWORD' | 'UNKNOWN_ERROR', message: string) {
+  constructor(
+    public code: 'INVALID_CURRENT_PASSWORD' | 'UNKNOWN_ERROR',
+    message: string
+  ) {
     super(message);
     this.name = 'SecurityError';
   }
@@ -17,7 +20,7 @@ export const updatePassword = async (
   const response = await fetch(`${API_URL}settings/security/password`, {
     method: 'PUT',
     headers: {
-      'Authorization': `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(data),
@@ -30,4 +33,4 @@ export const updatePassword = async (
     }
     throw new SecurityError('UNKNOWN_ERROR', 'Wystąpił błąd podczas zmiany hasła');
   }
-}; 
+};

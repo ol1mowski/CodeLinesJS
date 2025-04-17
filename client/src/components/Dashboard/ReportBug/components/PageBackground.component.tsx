@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo } from 'react';
 
 export const PageBackground = memo(() => (
   <div className="absolute inset-0">
@@ -12,4 +12,4 @@ export const PageBackground = memo(() => (
   </div>
 ));
 
-PageBackground.displayName = "PageBackground"; 
+PageBackground.displayName = 'PageBackground';

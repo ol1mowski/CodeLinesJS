@@ -1,5 +1,5 @@
-import { navigationLinks } from "./navigationData";
-import { NavLink } from "./NavLink.component";
+import { navigationLinks } from './navigationData';
+import { NavLink } from './NavLink.component';
 
 export const NavLinks = () => (
   <nav className="flex items-center gap-10">

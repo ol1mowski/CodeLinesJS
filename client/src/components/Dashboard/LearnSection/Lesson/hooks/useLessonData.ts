@@ -1,10 +1,10 @@
-import { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchLesson, completeLesson } from "../../lib/api/lessons";
-import { updateLessonProgress } from "../../lib/api/progress";
-import { useAuth } from "../../hooks/useAuth";
-import type { LessonProgress } from "../../types/lesson.types";
-import { toast } from "react-hot-toast";
+import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { fetchLesson, completeLesson } from '../../lib/api/lessons';
+import { updateLessonProgress } from '../../lib/api/progress';
+import { useAuth } from '../../hooks/useAuth';
+import type { LessonProgress } from '../../types/lesson.types';
+import { toast } from 'react-hot-toast';
 import { useLearningPaths } from '../../LearningPaths/hooks/useLearningPaths';
 
 export const useLessonData = (lessonSlug: string) => {
@@ -17,33 +17,32 @@ export const useLessonData = (lessonSlug: string) => {
     data: lesson,
     isLoading,
     error,
-    refetch
+    refetch,
   } = useQuery({
-    queryKey: ["lesson", lessonSlug],
+    queryKey: ['lesson', lessonSlug],
     queryFn: () => fetchLesson(lessonSlug, token!),
     enabled: !!lessonSlug,
-    retry: false
+    retry: false,
   });
 
-  const isNotFound = error?.message === "lesson_not_found";
+  const isNotFound = error?.message === 'lesson_not_found';
 
   const completeLessonMutation = useMutation({
     mutationFn: completeLesson,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["userProgress"] });
-      queryClient.invalidateQueries({ queryKey: ["lessons"] });
-      queryClient.invalidateQueries({ queryKey: ["lesson", lessonSlug] });
+      queryClient.invalidateQueries({ queryKey: ['userProgress'] });
+      queryClient.invalidateQueries({ queryKey: ['lessons'] });
+      queryClient.invalidateQueries({ queryKey: ['lesson', lessonSlug] });
       refetchLearningPaths();
-    }
+    },
   });
 
   const updateProgressMutation = useMutation({
     mutationFn: (progress: LessonProgress) =>
-        updateLessonProgress(userId!, lessonSlug, progress, token!  ),
+      updateLessonProgress(userId!, lessonSlug, progress, token!),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["userProgress"] });
-    }
-
+      queryClient.invalidateQueries({ queryKey: ['userProgress'] });
+    },
   });
 
   const handleSectionChange = (index: number) => {
@@ -53,11 +52,10 @@ export const useLessonData = (lessonSlug: string) => {
   const handleSectionComplete = async (sectionId: string) => {
     if (!userId || !lessonSlug) return;
 
-
     await updateProgressMutation.mutateAsync({
       completedSections: [...(lesson?.completedSections || []), sectionId],
       isCompleted: false,
-      points: 0
+      points: 0,
     });
   };
 
@@ -67,11 +65,10 @@ export const useLessonData = (lessonSlug: string) => {
     await updateProgressMutation.mutateAsync({
       completedSections: lesson?.completedSections || [],
       isCompleted: false,
-      points
+      points,
     });
-
   };
-  
+
   const handleLessonComplete = async () => {
     if (!lessonSlug || !lesson) {
       console.error('Brak wymaganych danych:', { lessonSlug, lesson });
@@ -79,27 +76,26 @@ export const useLessonData = (lessonSlug: string) => {
     }
 
     try {
-      
       const result = await completeLessonMutation.mutateAsync({
         lessonId: lesson.id,
         pathId: lesson.pathId,
-        token: token!
+        token: token!,
       });
-      
+
       await refetch();
       await refetchLearningPaths();
-      
+
       toast.success('Lekcja ukończona!', {
         duration: 3000,
-        position: 'bottom-right'
+        position: 'bottom-right',
       });
-      
+
       return result;
     } catch (error) {
       console.error('Błąd podczas kończenia lekcji:', error);
       toast.error('Nie udało się ukończyć lekcji. Spróbuj ponownie.', {
         duration: 4000,
-        position: 'bottom-right'
+        position: 'bottom-right',
       });
       throw error;
     }
@@ -117,6 +113,6 @@ export const useLessonData = (lessonSlug: string) => {
     handleSectionComplete,
     handleQuizComplete,
     handleLessonComplete,
-    completeLessonMutation
+    completeLessonMutation,
   };
-}; 
+};

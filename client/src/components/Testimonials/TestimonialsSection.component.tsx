@@ -7,18 +7,18 @@ import { SectionBackground } from './components/SectionBackground';
 import { CallToAction } from './components/CallToAction';
 import { useTestimonials } from './hooks/useTestimonials';
 
-
 export const TestimonialsSection = memo(() => {
   const testimonials = useTestimonials();
 
   return (
-    <section id="opinie" className="py-20 overflow-hidden bg-gradient-to-b from-dark via-dark-medium to-dark relative">
+    <section
+      id="opinie"
+      className="py-20 overflow-hidden bg-gradient-to-b from-dark via-dark-medium to-dark relative"
+    >
       <SectionBackground />
-      
+
       <Container>
-        <SectionHeader 
-          title="Co mówią nasi użytkownicy" 
-        />
+        <SectionHeader title="Co mówią nasi użytkownicy" />
 
         <div className="grid grid-cols-1 md:grid-cols-auto gap-8">
           {testimonials.map((testimonial, index) => (
@@ -34,13 +34,10 @@ export const TestimonialsSection = memo(() => {
           ))}
         </div>
 
-        <CallToAction 
-          text="Dołącz do nas" 
-          url="/logowanie" 
-        />
+        <CallToAction text="Dołącz do nas" url="/logowanie" />
       </Container>
     </section>
   );
 });
 
-TestimonialsSection.displayName = 'TestimonialsSection'; 
+TestimonialsSection.displayName = 'TestimonialsSection';

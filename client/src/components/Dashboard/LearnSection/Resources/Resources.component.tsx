@@ -1,19 +1,13 @@
-import { memo } from "react";
-import { motion } from "framer-motion";
-import { ErrorMessage } from "../components/ErrorMessage.component";
-import { LoadingScreen } from "../../../UI/LoadingScreen/LoadingScreen.component";
-import { ResourceSection } from "./ResourceSection.component";
-import { useResources } from "../hooks/useResources";
-import { FaBookOpen, FaSadTear } from "react-icons/fa";
+import { memo } from 'react';
+import { motion } from 'framer-motion';
+import { ErrorMessage } from '../components/ErrorMessage.component';
+import { LoadingScreen } from '../../../UI/LoadingScreen/LoadingScreen.component';
+import { ResourceSection } from './ResourceSection.component';
+import { useResources } from '../hooks/useResources';
+import { FaBookOpen, FaSadTear } from 'react-icons/fa';
 
 export const Resources = memo(() => {
-  const {
-    recommendedResources,
-    otherResources,
-    isLoading,
-    error,
-    refetch
-  } = useResources();
+  const { recommendedResources, otherResources, isLoading, error, refetch } = useResources();
 
   if (error) {
     return (
@@ -23,7 +17,7 @@ export const Resources = memo(() => {
           animate={{ opacity: 1, y: 0 }}
           className="w-full max-w-2xl"
         >
-          <ErrorMessage 
+          <ErrorMessage
             message="Nie udało się pobrać materiałów. Spróbuj ponownie później."
             onRetry={() => refetch()}
           />
@@ -53,12 +47,10 @@ export const Resources = memo(() => {
             <FaSadTear className="w-8 h-8 text-gray-500" />
           </div>
         </div>
-        <h3 className="text-xl font-bold text-js mb-3">
-          Brak dostępnych materiałów
-        </h3>
+        <h3 className="text-xl font-bold text-js mb-3">Brak dostępnych materiałów</h3>
         <p className="text-gray-400 text-sm max-w-md">
-          Aktualnie nie ma żadnych dostępnych materiałów. 
-          Sprawdź ponownie później lub skontaktuj się z administratorem.
+          Aktualnie nie ma żadnych dostępnych materiałów. Sprawdź ponownie później lub skontaktuj
+          się z administratorem.
         </p>
         <motion.button
           whileHover={{ scale: 1.02 }}
@@ -94,4 +86,4 @@ export const Resources = memo(() => {
   );
 });
 
-Resources.displayName = "Resources"; 
+Resources.displayName = 'Resources';

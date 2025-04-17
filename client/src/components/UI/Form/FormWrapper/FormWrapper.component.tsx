@@ -1,5 +1,5 @@
-import { motion } from "framer-motion";
-import { ReactNode } from "react";
+import { motion } from 'framer-motion';
+import { ReactNode } from 'react';
 
 type FormWrapperProps = {
   children: ReactNode;
@@ -7,7 +7,7 @@ type FormWrapperProps = {
   className?: string;
 };
 
-export const FormWrapper = ({ children, onSubmit, className = "" }: FormWrapperProps) => {
+export const FormWrapper = ({ children, onSubmit, className = '' }: FormWrapperProps) => {
   return (
     <motion.form
       onSubmit={onSubmit}
@@ -20,4 +20,4 @@ export const FormWrapper = ({ children, onSubmit, className = "" }: FormWrapperP
       {children}
     </motion.form>
   );
-}; 
+};

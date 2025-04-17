@@ -5,8 +5,8 @@ export type AsyncChallenge = {
   code: string;
   correct: string;
   error: string;
-  category: "promises" | "async-await" | "callbacks";
-  difficulty: "easy" | "medium" | "hard";
+  category: 'promises' | 'async-await' | 'callbacks';
+  difficulty: 'easy' | 'medium' | 'hard';
   points: number;
   task: string;
-}; 
+};

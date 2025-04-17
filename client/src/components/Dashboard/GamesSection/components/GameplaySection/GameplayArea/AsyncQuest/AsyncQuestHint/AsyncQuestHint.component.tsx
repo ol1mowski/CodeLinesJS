@@ -15,9 +15,7 @@ export const AsyncQuestHint = memo(({ type, message, code, explanation }: AsyncQ
       initial={{ opacity: 0, y: type === 'hint' ? -10 : 10 }}
       animate={{ opacity: 1, y: 0 }}
       className={`p-4 rounded-lg ${
-        type === 'hint' 
-          ? 'bg-js/10 border border-js/20' 
-          : 'bg-red-500/20 border border-red-500/30'
+        type === 'hint' ? 'bg-js/10 border border-js/20' : 'bg-red-500/20 border border-red-500/30'
       }`}
     >
       <div className="flex items-start gap-3">
@@ -27,9 +25,7 @@ export const AsyncQuestHint = memo(({ type, message, code, explanation }: AsyncQ
           <FaExclamationTriangle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
         )}
         <div className="space-y-2">
-          <div className={`text-sm font-medium ${
-            type === 'hint' ? 'text-js' : 'text-red-400'
-          }`}>
+          <div className={`text-sm font-medium ${type === 'hint' ? 'text-js' : 'text-red-400'}`}>
             {type === 'hint' ? 'Podpowiedź:' : 'Błąd:'}
           </div>
           <div className="text-sm text-gray-400">{message}</div>
@@ -50,4 +46,4 @@ export const AsyncQuestHint = memo(({ type, message, code, explanation }: AsyncQ
   );
 });
 
-AsyncQuestHint.displayName = 'AsyncQuestHint'; 
+AsyncQuestHint.displayName = 'AsyncQuestHint';

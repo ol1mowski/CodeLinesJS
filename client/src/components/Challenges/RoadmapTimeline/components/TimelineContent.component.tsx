@@ -6,22 +6,15 @@ type Props = Pick<RoadmapStep, 'title' | 'description' | 'duration' | 'skills'>;
 export const TimelineContent = memo(({ title, description, duration, skills }: Props) => (
   <div className="flex-1 space-y-2">
     <div className="flex items-center justify-between">
-      <h3 className="text-lg font-bold text-js">
-        {title}
-      </h3>
+      <h3 className="text-lg font-bold text-js">{title}</h3>
       <span className="text-sm text-gray-400 px-2 py-1 rounded-full bg-js/5 border border-js/10">
         {duration}
       </span>
     </div>
-    <p className="text-gray-400 text-sm leading-relaxed">
-      {description}
-    </p>
+    <p className="text-gray-400 text-sm leading-relaxed">{description}</p>
     <div className="flex gap-2 flex-wrap">
-      {skills.map((skill) => (
-        <span
-          key={skill}
-          className="text-xs px-2 py-1 rounded-full bg-js/10 text-js"
-        >
+      {skills.map(skill => (
+        <span key={skill} className="text-xs px-2 py-1 rounded-full bg-js/10 text-js">
           {skill}
         </span>
       ))}
@@ -29,4 +22,4 @@ export const TimelineContent = memo(({ title, description, duration, skills }: P
   </div>
 ));
 
-TimelineContent.displayName = 'TimelineContent'; 
+TimelineContent.displayName = 'TimelineContent';

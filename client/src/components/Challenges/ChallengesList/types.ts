@@ -8,4 +8,4 @@ export type Challenge = {
   tags: string[];
 };
 
-export type ChallengeCardProps = Challenge; 
+export type ChallengeCardProps = Challenge;

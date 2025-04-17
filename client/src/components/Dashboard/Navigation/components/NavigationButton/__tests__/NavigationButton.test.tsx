@@ -31,7 +31,7 @@ describe('NavigationButton', () => {
   it('onclick before click', () => {
     const onClick = vi.fn();
     render(<NavigationButton id="test" {...defaultProps} onClick={onClick} />);
-    
+
     fireEvent.click(screen.getByRole('button'));
     expect(onClick).toHaveBeenCalled();
   });
@@ -41,4 +41,4 @@ describe('NavigationButton', () => {
     const button = screen.getByRole('button');
     expect(button.classList.contains('text-red-400')).toBe(true);
   });
-}); 
+});

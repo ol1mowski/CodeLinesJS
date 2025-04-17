@@ -8,11 +8,13 @@ type JSQuizProgressProps = {
 
 export const JSQuizProgress = memo(({ currentLevel, totalLevels }: JSQuizProgressProps) => {
   const progress = (currentLevel / totalLevels) * 100;
-  
+
   return (
     <div className="w-full">
       <div className="flex justify-between mb-1 text-sm text-gray-400">
-        <span>Pytanie {currentLevel} z {totalLevels}</span>
+        <span>
+          Pytanie {currentLevel} z {totalLevels}
+        </span>
         <span>{Math.round(progress)}%</span>
       </div>
       <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
@@ -27,4 +29,4 @@ export const JSQuizProgress = memo(({ currentLevel, totalLevels }: JSQuizProgres
   );
 });
 
-JSQuizProgress.displayName = 'JSQuizProgress'; 
+JSQuizProgress.displayName = 'JSQuizProgress';

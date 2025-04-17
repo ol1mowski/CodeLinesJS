@@ -8,4 +8,4 @@ export const FooterContent = () => (
     <FooterLinks title="Prywatność" links={links.resources} delay={0.2} />
     <FooterLinks title="Social Media" links={links.social} delay={0.3} />
   </div>
-); 
+);

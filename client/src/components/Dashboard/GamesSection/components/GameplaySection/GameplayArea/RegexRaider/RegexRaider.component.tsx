@@ -14,7 +14,7 @@ const RegexRaider = memo(({ isPaused = false }: { isPaused?: boolean }) => {
   const { gameContent, isLoading, error } = useRegexRaiderData();
   const { containerAnimation } = useAnimations();
   const { pageTitle, pageDescription } = useSEO();
-  
+
   const {
     isGameStarted,
     isGameOver,
@@ -24,10 +24,10 @@ const RegexRaider = memo(({ isPaused = false }: { isPaused?: boolean }) => {
     handleLevelComplete,
     handleRestart,
     handleStartGame,
-    handleGameOver
+    handleGameOver,
   } = useRegexRaiderGame({
     gameContent,
-    isPaused
+    isPaused,
   });
 
   return (
@@ -37,21 +37,14 @@ const RegexRaider = memo(({ isPaused = false }: { isPaused?: boolean }) => {
           {!isGameStarted ? (
             <GameIntro gameContent={gameContent} onStart={handleStartGame} />
           ) : (
-            <motion.div
-              {...containerAnimation}
-              className="w-full space-y-6"
-            >
+            <motion.div {...containerAnimation} className="w-full space-y-6">
               <Helmet>
                 <title>{pageTitle}</title>
                 <meta name="description" content={pageDescription} />
               </Helmet>
-              
-              <RegexRaiderStats 
-                stats={gameStats}
-                isGameOver={isGameOver}
-                finalTime={finalTime}
-              />
-              
+
+              <RegexRaiderStats stats={gameStats} isGameOver={isGameOver} finalTime={finalTime} />
+
               <GameContent
                 isGameOver={isGameOver}
                 gameStats={gameStats}
@@ -69,6 +62,6 @@ const RegexRaider = memo(({ isPaused = false }: { isPaused?: boolean }) => {
   );
 });
 
-RegexRaider.displayName = 'RegexRaider'; 
+RegexRaider.displayName = 'RegexRaider';
 
 export default RegexRaider;

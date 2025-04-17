@@ -7,4 +7,4 @@ export type SocialLink = {
   textColor: string;
   hoverBg: string;
   iconColor: string;
-}; 
+};

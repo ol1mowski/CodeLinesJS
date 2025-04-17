@@ -1,26 +1,26 @@
-import { RegisterFormData, registerSchema } from "../../../../schemas/auth.schema";
-import { useAuth } from "../../../../hooks/useAuth";
-import { useFormValidator } from "../../hooks/useFormValidator.hook";
-import { useState } from "react";
+import { RegisterFormData, registerSchema } from '../../../../schemas/auth.schema';
+import { useAuth } from '../../../../hooks/useAuth';
+import { useFormValidator } from '../../hooks/useFormValidator.hook';
+import { useState } from 'react';
 
 export const useRegisterForm = () => {
   const { register: registerUser, loading } = useAuth();
   const [submitting, setSubmitting] = useState(false);
-  
+
   const form = useFormValidator<RegisterFormData>({
     schema: registerSchema,
-    mode: "onChange",
+    mode: 'onChange',
     defaultValues: {
-      acceptPrivacy: false
+      acceptPrivacy: false,
     },
     async onSuccess(data) {
-    try {
+      try {
         setSubmitting(true);
-      await registerUser(data.email, data.password, data.username);
+        await registerUser(data.email, data.password, data.username);
       } finally {
         setSubmitting(false);
-    }
-    }
+      }
+    },
   });
 
   return {
@@ -29,6 +29,6 @@ export const useRegisterForm = () => {
     loading: loading || submitting || form.isSubmitting,
     handleSubmit: form.onFormSubmit,
     errorMessage: form.errorMessage,
-    successMessage: form.successMessage
+    successMessage: form.successMessage,
   };
-}; 
+};

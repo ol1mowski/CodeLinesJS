@@ -14,7 +14,7 @@ export const GameplayStats = memo(({ stats }: GameplayStatsProps) => {
           <FaClock className="w-4 h-4" />
           <span className="font-mono">{stats.timeElapsed}s</span>
         </div>
-        
+
         <div className="flex items-center gap-2 text-js mb-2">
           <FaStar className="w-4 h-4" />
           <span className="font-mono">{stats.score} pkt</span>
@@ -27,4 +27,4 @@ export const GameplayStats = memo(({ stats }: GameplayStatsProps) => {
       </div>
     </div>
   );
-}); 
+});

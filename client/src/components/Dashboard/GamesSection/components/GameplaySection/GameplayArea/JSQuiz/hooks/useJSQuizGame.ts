@@ -28,8 +28,8 @@ export const useJSQuizGame = ({ gameContent, isPaused }: UseJSQuizGameProps) => 
     categoryStats: {
       basics: { total: 0, correct: 0, points: 0 },
       advanced: { total: 0, correct: 0, points: 0 },
-      frameworks: { total: 0, correct: 0, points: 0 }
-    }
+      frameworks: { total: 0, correct: 0, points: 0 },
+    },
   });
 
   const { timeElapsed, resetTimer, startTimer, stopTimer } = useGameTimer({
@@ -45,17 +45,17 @@ export const useJSQuizGame = ({ gameContent, isPaused }: UseJSQuizGameProps) => 
   useEffect(() => {
     setGameStats(prev => ({
       ...prev,
-      timeElapsed
+      timeElapsed,
     }));
   }, [timeElapsed]);
 
   useEffect(() => {
     if (!gameContent?.gameData) return;
-    
+
     const initialCategoryStats = {
       basics: { total: 0, correct: 0, points: 0 },
       advanced: { total: 0, correct: 0, points: 0 },
-      frameworks: { total: 0, correct: 0, points: 0 }
+      frameworks: { total: 0, correct: 0, points: 0 },
     };
 
     gameContent.gameData.forEach((challenge: QuizChallenge) => {
@@ -70,24 +70,29 @@ export const useJSQuizGame = ({ gameContent, isPaused }: UseJSQuizGameProps) => 
       ...prev,
       totalLevels: gameContent.gameData.length,
       maxTime: gameContent.estimatedTime ? gameContent.estimatedTime * 60 : 300,
-      categoryStats: initialCategoryStats
+      categoryStats: initialCategoryStats,
     }));
   }, [gameContent]);
 
-  const handleScoreUpdate = useCallback((points: number, category: 'basics' | 'advanced' | 'frameworks') => {
-    setGameStats(prev => ({
-      ...prev,
-      score: prev.score + points,
-      correctAnswers: prev.correctAnswers + 1,
-      categoryStats: {
-        ...prev.categoryStats,
-        [category]: prev.categoryStats[category] ? {
-          ...prev.categoryStats[category],
-          correct: prev.categoryStats[category].correct + 1
-        } : { total: 0, correct: 1, points: points }
-      }
-    }));
-  }, []);
+  const handleScoreUpdate = useCallback(
+    (points: number, category: 'basics' | 'advanced' | 'frameworks') => {
+      setGameStats(prev => ({
+        ...prev,
+        score: prev.score + points,
+        correctAnswers: prev.correctAnswers + 1,
+        categoryStats: {
+          ...prev.categoryStats,
+          [category]: prev.categoryStats[category]
+            ? {
+                ...prev.categoryStats[category],
+                correct: prev.categoryStats[category].correct + 1,
+              }
+            : { total: 0, correct: 1, points: points },
+        },
+      }));
+    },
+    []
+  );
 
   const handleLevelComplete = useCallback(() => {
     const nextLevel = gameStats.currentLevel + 1;
@@ -100,17 +105,17 @@ export const useJSQuizGame = ({ gameContent, isPaused }: UseJSQuizGameProps) => 
 
     setGameStats(prev => ({
       ...prev,
-      currentLevel: nextLevel
+      currentLevel: nextLevel,
     }));
   }, [gameStats.currentLevel, timeElapsed, gameContent?.gameData?.length, stopTimer]);
 
   const handleRestart = useCallback(() => {
     if (!gameContent?.gameData) return;
-    
+
     const initialCategoryStats = {
       basics: { total: 0, correct: 0, points: 0 },
       advanced: { total: 0, correct: 0, points: 0 },
-      frameworks: { total: 0, correct: 0, points: 0 }
+      frameworks: { total: 0, correct: 0, points: 0 },
     };
 
     gameContent.gameData.forEach((challenge: QuizChallenge) => {
@@ -128,7 +133,7 @@ export const useJSQuizGame = ({ gameContent, isPaused }: UseJSQuizGameProps) => 
       timeElapsed: 0,
       maxTime: gameContent.estimatedTime ? gameContent.estimatedTime * 60 : 300,
       correctAnswers: 0,
-      categoryStats: initialCategoryStats
+      categoryStats: initialCategoryStats,
     });
     setIsGameOver(false);
     setFinalTime(0);
@@ -152,11 +157,13 @@ export const useJSQuizGame = ({ gameContent, isPaused }: UseJSQuizGameProps) => 
     isGameOver,
     finalTime,
     gameStats,
-    currentChallenge: gameContent?.gameData ? gameContent.gameData[gameStats.currentLevel - 1] : undefined,
+    currentChallenge: gameContent?.gameData
+      ? gameContent.gameData[gameStats.currentLevel - 1]
+      : undefined,
     handleScoreUpdate,
     handleLevelComplete,
     handleRestart,
     handleStartGame,
-    handleGameOver
+    handleGameOver,
   };
-}; 
+};

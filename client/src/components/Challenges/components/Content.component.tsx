@@ -1,6 +1,6 @@
 import { memo } from 'react';
-import { ChallengesList } from "../ChallengesList/ChallengesList.component";
-import { RoadmapTimeline } from "../RoadmapTimeline/RoadmapTimeline.component";
+import { ChallengesList } from '../ChallengesList/ChallengesList.component';
+import { RoadmapTimeline } from '../RoadmapTimeline/RoadmapTimeline.component';
 
 export const Content = memo(() => (
   <div className="flex flex-col xl:flex-row items-center justify-between gap-12 md:gap-16 w-full">
@@ -13,4 +13,4 @@ export const Content = memo(() => (
   </div>
 ));
 
-Content.displayName = 'Content'; 
+Content.displayName = 'Content';

@@ -13,7 +13,7 @@ const JSQuiz = memo(({ isPaused = false }: { isPaused?: boolean }) => {
   const { gameContent, isLoading, error } = useJSQuizData();
   const { containerAnimation } = useAnimations();
   const { pageTitle, pageDescription } = useJSQuizSEO();
-  
+
   const {
     isGameStarted,
     isGameOver,
@@ -24,10 +24,10 @@ const JSQuiz = memo(({ isPaused = false }: { isPaused?: boolean }) => {
     handleLevelComplete,
     handleRestart,
     handleStartGame,
-    handleGameOver
+    handleGameOver,
   } = useJSQuizGame({
     gameContent,
-    isPaused
+    isPaused,
   });
 
   return (
@@ -35,30 +35,27 @@ const JSQuiz = memo(({ isPaused = false }: { isPaused?: boolean }) => {
       {gameContent && (
         <>
           {!isGameStarted ? (
-            <GameHeader 
-              isGameStarted={isGameStarted} 
+            <GameHeader
+              isGameStarted={isGameStarted}
               isGameOver={isGameOver}
               gameStats={gameStats}
               onGameStart={handleStartGame}
             />
           ) : (
-            <motion.div
-              {...containerAnimation}
-              className="w-full h-full flex flex-col"
-            >
+            <motion.div {...containerAnimation} className="w-full h-full flex flex-col">
               <Helmet>
                 <title>{pageTitle}</title>
                 <meta name="description" content={pageDescription} />
               </Helmet>
-              
-              <GameHeader 
-                isGameStarted={isGameStarted} 
+
+              <GameHeader
+                isGameStarted={isGameStarted}
                 isGameOver={isGameOver}
                 gameStats={gameStats}
                 onGameStart={handleStartGame}
               />
-              
-              <GameContent 
+
+              <GameContent
                 isGameOver={isGameOver}
                 gameStats={gameStats}
                 currentChallenge={currentChallenge}
@@ -79,4 +76,4 @@ const JSQuiz = memo(({ isPaused = false }: { isPaused?: boolean }) => {
 
 JSQuiz.displayName = 'JSQuiz';
 
-export default JSQuiz; 
+export default JSQuiz;

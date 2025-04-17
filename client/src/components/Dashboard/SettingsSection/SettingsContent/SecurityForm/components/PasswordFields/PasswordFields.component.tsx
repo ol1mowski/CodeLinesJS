@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { FaLock } from "react-icons/fa";
+import { FaLock } from 'react-icons/fa';
 import type { UseFormReturn, FieldErrors } from 'react-hook-form';
 import type { SecurityFormData } from '../../schema/security.schema';
 import { FormInput } from '../../../../../../UI/Form/FormInput/FormInput.component';
@@ -20,7 +20,7 @@ export const PasswordFields = memo(({ form, errors }: PasswordFieldsProps) => {
         placeholder="Wprowadź aktualne hasło"
         icon={<FaLock />}
         error={errors.currentPassword?.message}
-        {...register("currentPassword")}
+        {...register('currentPassword')}
       />
 
       <FormInput
@@ -29,7 +29,7 @@ export const PasswordFields = memo(({ form, errors }: PasswordFieldsProps) => {
         placeholder="Wprowadź nowe hasło"
         icon={<FaLock />}
         error={errors.newPassword?.message}
-        {...register("newPassword")}
+        {...register('newPassword')}
       />
 
       <FormInput
@@ -38,10 +38,10 @@ export const PasswordFields = memo(({ form, errors }: PasswordFieldsProps) => {
         placeholder="Powtórz nowe hasło"
         icon={<FaLock />}
         error={errors.confirmPassword?.message}
-        {...register("confirmPassword")}
+        {...register('confirmPassword')}
       />
     </div>
   );
 });
 
-PasswordFields.displayName = 'PasswordFields'; 
+PasswordFields.displayName = 'PasswordFields';

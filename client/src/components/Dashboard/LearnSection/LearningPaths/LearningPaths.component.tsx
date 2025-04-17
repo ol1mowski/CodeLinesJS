@@ -1,23 +1,22 @@
-import { motion } from "framer-motion";
-import { memo } from "react";
+import { motion } from 'framer-motion';
+import { memo } from 'react';
 
-import { StatsSection } from "./components/Stats/StatsSection.component";
-import { ErrorMessage } from "../components/ErrorMessage.component";
-import { LoadingScreen } from "../../../UI/LoadingScreen/LoadingScreen.component";
-import { useLearningPaths } from "./hooks/useLearningPaths";
-import { EmptyState } from "./components/EmptyState.component";
-import { PathCard } from "./components/PathCard/PathCard.component";
-
+import { StatsSection } from './components/Stats/StatsSection.component';
+import { ErrorMessage } from '../components/ErrorMessage.component';
+import { LoadingScreen } from '../../../UI/LoadingScreen/LoadingScreen.component';
+import { useLearningPaths } from './hooks/useLearningPaths';
+import { EmptyState } from './components/EmptyState.component';
+import { PathCard } from './components/PathCard/PathCard.component';
 
 export const LearningPaths = memo(() => {
-  const { paths, userStats, isLoading, error, refetch, isEmpty } = useLearningPaths();  
+  const { paths, userStats, isLoading, error, refetch, isEmpty } = useLearningPaths();
 
   if (isLoading) return <LoadingScreen />;
-  
+
   if (error) {
     console.error('Learning paths error:', error);
     return (
-      <ErrorMessage 
+      <ErrorMessage
         message="Nie udało się pobrać ścieżek nauki. Spróbuj ponownie później."
         onRetry={refetch}
       />
@@ -28,14 +27,18 @@ export const LearningPaths = memo(() => {
 
   return (
     <div className="space-y-8">
-      <StatsSection stats={userStats || {
-        completedPaths: 0,
-        totalPaths: 0,
-        totalPoints: 0,
-        pathsInProgress: 0,
-        recentActivity: []
-      }} />
-      
+      <StatsSection
+        stats={
+          userStats || {
+            completedPaths: 0,
+            totalPaths: 0,
+            totalPoints: 0,
+            pathsInProgress: 0,
+            recentActivity: [],
+          }
+        }
+      />
+
       <section>
         <header className="flex items-center justify-between mb-6">
           <div>
@@ -52,7 +55,7 @@ export const LearningPaths = memo(() => {
           transition={{ staggerChildren: 0.1 }}
           className="grid grid-cols-1 lg:grid-cols-2 gap-6"
         >
-          {paths.map((path) => (
+          {paths.map(path => (
             <PathCard key={path.id} path={path} />
           ))}
         </motion.div>
@@ -61,5 +64,4 @@ export const LearningPaths = memo(() => {
   );
 });
 
-LearningPaths.displayName = "LearningPaths";
-
+LearningPaths.displayName = 'LearningPaths';

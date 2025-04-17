@@ -7,31 +7,34 @@ export const useGameLogic = (onComplete: (score: number) => void) => {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
 
-  const handleAnswer = useCallback((answerIndex: number) => {
-    setSelectedAnswer(answerIndex);
-    const correct = answerIndex === questions[currentQuestion].correctAnswer;
-    setIsCorrect(correct);
-    
-    if (correct) {
-      setScore(prev => prev + 100);
-    }
+  const handleAnswer = useCallback(
+    (answerIndex: number) => {
+      setSelectedAnswer(answerIndex);
+      const correct = answerIndex === questions[currentQuestion].correctAnswer;
+      setIsCorrect(correct);
 
-    setTimeout(() => {
-      if (currentQuestion < questions.length - 1) {
-        setCurrentQuestion(prev => prev + 1);
-        setSelectedAnswer(null);
-        setIsCorrect(null);
-      } else {
-        onComplete(score + (correct ? 100 : 0));
+      if (correct) {
+        setScore(prev => prev + 100);
       }
-    }, 1500);
-  }, [currentQuestion, onComplete, score]);
+
+      setTimeout(() => {
+        if (currentQuestion < questions.length - 1) {
+          setCurrentQuestion(prev => prev + 1);
+          setSelectedAnswer(null);
+          setIsCorrect(null);
+        } else {
+          onComplete(score + (correct ? 100 : 0));
+        }
+      }, 1500);
+    },
+    [currentQuestion, onComplete, score]
+  );
 
   return {
     currentQuestion,
     score,
     selectedAnswer,
     isCorrect,
-    handleAnswer
+    handleAnswer,
   };
-}; 
+};

@@ -12,7 +12,7 @@ import { GameContent } from './components/GameContent.component';
 const JSTypoHunter = memo(({ isPaused = false }: { isPaused?: boolean }) => {
   const { gameContent, isLoading, error } = useGameData();
   const { pageTitle, pageDescription } = useSEO();
-  
+
   const {
     isGameStarted,
     isGameOver,
@@ -23,12 +23,12 @@ const JSTypoHunter = memo(({ isPaused = false }: { isPaused?: boolean }) => {
     handleIncorrectAnswer,
     handleLevelComplete,
     handleRestart,
-    handleStartGame
+    handleStartGame,
   } = useGameState({
     gameContent,
-    isPaused
+    isPaused,
   });
-  
+
   return (
     <LoadingError isLoading={isLoading} error={error}>
       {gameContent && (
@@ -45,9 +45,9 @@ const JSTypoHunter = memo(({ isPaused = false }: { isPaused?: boolean }) => {
                 <title>{pageTitle}</title>
                 <meta name="description" content={pageDescription} />
               </Helmet>
-              
+
               <JSTypoHunterStats stats={gameStats} />
-              
+
               <GameContent
                 isGameOver={isGameOver}
                 gameStats={gameStats}

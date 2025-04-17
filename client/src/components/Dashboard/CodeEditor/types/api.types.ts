@@ -5,9 +5,9 @@ export type SavedCode = {
   createdAt: string;
   updatedAt: string;
   userId: string;
-}
+};
 
-export type SaveCodeDto ={
+export type SaveCodeDto = {
   code: string;
   title: string;
-} 
+};

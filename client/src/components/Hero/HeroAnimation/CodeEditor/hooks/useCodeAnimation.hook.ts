@@ -34,7 +34,7 @@ export const useCodeAnimation = () => {
     }
 
     const interval = TYPING_INTERVAL;
-    
+
     const typingInterval = setInterval(() => {
       if (currentLineIndex < memoizedCodeLines.length) {
         setVisibleLines(prev => [...prev, memoizedCodeLines[currentLineIndex]]);
@@ -52,6 +52,6 @@ export const useCodeAnimation = () => {
     visibleLines,
     currentLineIndex,
     isAnimationComplete,
-    resetAnimation
+    resetAnimation,
   };
-}; 
+};

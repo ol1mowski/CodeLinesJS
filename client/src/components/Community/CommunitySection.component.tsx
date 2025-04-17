@@ -1,7 +1,7 @@
-import { Container } from "../UI/Container/Container.component";
-import { Content } from "./components/Content.component";
-import { Header } from "../Header/Header.component";
-import { BackgroundPattern } from "../Features/components/BackgroundPattern.component";
+import { Container } from '../UI/Container/Container.component';
+import { Content } from './components/Content.component';
+import { Header } from '../Header/Header.component';
+import { BackgroundPattern } from '../Features/components/BackgroundPattern.component';
 
 export const CommunitySection = () => (
   <section

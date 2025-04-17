@@ -1,10 +1,10 @@
-import { MobileWrapper } from "../../UI/MobileWrapper/MobileWrapper.component";
-import { CodeEditor } from "./CodeEditor/CodeEditor.component";
-import { useMobileDetect } from "../../../hooks/useMobileDetect";
+import { MobileWrapper } from '../../UI/MobileWrapper/MobileWrapper.component';
+import { CodeEditor } from './CodeEditor/CodeEditor.component';
+import { useMobileDetect } from '../../../hooks/useMobileDetect';
 
 export const HeroAnimation = () => {
   const isMobile = useMobileDetect();
-  
+
   return (
     <MobileWrapper
       className="w-full xl:w-1/2 relative px-4 md:px-0 h-[45vh] flex items-center"
@@ -12,7 +12,7 @@ export const HeroAnimation = () => {
         initial: { opacity: 0, scale: 0.9 },
         whileInView: { opacity: 1, scale: 1 },
         viewport: { once: true },
-        transition: { duration: isMobile ? 0.3 : 0.8 }
+        transition: { duration: isMobile ? 0.3 : 0.8 },
       }}
     >
       <div className="rounded-xl border border-[#f7df1e]/20 bg-[#1E1E1E] overflow-hidden shadow-2xl w-full h-full flex flex-col">
@@ -24,11 +24,11 @@ export const HeroAnimation = () => {
           </div>
           <span className="text-gray-400 text-sm ml-2">script.js</span>
         </div>
-        
+
         <div className="flex-1 overflow-hidden">
           <CodeEditor />
         </div>
       </div>
     </MobileWrapper>
   );
-}; 
+};

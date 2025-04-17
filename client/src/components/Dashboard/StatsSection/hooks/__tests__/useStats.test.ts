@@ -1,27 +1,27 @@
-import { renderHook, waitFor } from "@testing-library/react";
-import { useStats } from "../useStats.hook";
-import { useAuth } from "../../../../../hooks/useAuth";
-import { useQuery } from "@tanstack/react-query";
-import { beforeEach, describe, expect, vi, it } from "vitest";
+import { renderHook, waitFor } from '@testing-library/react';
+import { useStats } from '../useStats.hook';
+import { useAuth } from '../../../../../hooks/useAuth';
+import { useQuery } from '@tanstack/react-query';
+import { beforeEach, describe, expect, vi, it } from 'vitest';
 
-vi.mock("../../../../../Hooks/useAuth", () => ({
-  useAuth: vi.fn()
+vi.mock('../../../../../Hooks/useAuth', () => ({
+  useAuth: vi.fn(),
 }));
-vi.mock("@tanstack/react-query", () => ({
-  useQuery: vi.fn()
+vi.mock('@tanstack/react-query', () => ({
+  useQuery: vi.fn(),
 }));
 
-describe("useStats", () => {
+describe('useStats', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("Should fetch data when user is authenticated", async () => {
+  it('Should fetch data when user is authenticated', async () => {
     vi.mocked(useAuth).mockReturnValue({
-      token: "fake-token",
+      token: 'fake-token',
       isAuthenticated: true,
       isAuthChecking: false,
-      user: { id: "1", _id: "1", email: "test@example.com", username: "testuser" },
+      user: { id: '1', _id: '1', email: 'test@example.com', username: 'testuser' },
       loading: false,
       error: null,
       logout: vi.fn(),
@@ -29,7 +29,7 @@ describe("useStats", () => {
       resetPassword: vi.fn(),
       forgotPassword: vi.fn(),
       register: vi.fn(),
-      loginWithGoogle: vi.fn()
+      loginWithGoogle: vi.fn(),
     });
     const mockStats = { total: 100, completed: 50 };
     vi.mocked(useQuery).mockReturnValue({
@@ -56,7 +56,7 @@ describe("useStats", () => {
       isPlaceholderData: false,
       isStale: false,
       refetch: vi.fn(),
-      remove: vi.fn()
+      remove: vi.fn(),
     } as any);
 
     const { result } = renderHook(() => useStats());
@@ -68,7 +68,7 @@ describe("useStats", () => {
     });
   });
 
-  it("Should not fetch data when user is not authenticated", () => {
+  it('Should not fetch data when user is not authenticated', () => {
     vi.mocked(useAuth).mockReturnValue({
       token: null,
       isAuthenticated: false,
@@ -81,7 +81,7 @@ describe("useStats", () => {
       login: vi.fn(),
       forgotPassword: vi.fn(),
       register: vi.fn(),
-      loginWithGoogle: vi.fn()
+      loginWithGoogle: vi.fn(),
     });
 
     vi.mocked(useQuery).mockReturnValue({
@@ -102,7 +102,7 @@ describe("useStats", () => {
       isFetching: true,
       isRefetching: false,
       isLoadingError: false,
-      isRefetchError: false
+      isRefetchError: false,
     } as any);
 
     const { result } = renderHook(() => useStats());
@@ -112,23 +112,23 @@ describe("useStats", () => {
     expect(result.current.error).toBeNull();
   });
 
-  it("Should handle authorization error", async () => {
+  it('Should handle authorization error', async () => {
     vi.mocked(useAuth).mockReturnValue({
       resetPassword: vi.fn(),
-      token: "fake-token",
+      token: 'fake-token',
       isAuthenticated: true,
       isAuthChecking: false,
-      user: { id: "1", _id: "1", email: "test@example.com", username: "testuser" },
+      user: { id: '1', _id: '1', email: 'test@example.com', username: 'testuser' },
       loading: false,
       error: null,
       logout: vi.fn(),
       login: vi.fn(),
       forgotPassword: vi.fn(),
       register: vi.fn(),
-      loginWithGoogle: vi.fn()
+      loginWithGoogle: vi.fn(),
     });
 
-    const mockError = new Error("Brak autoryzacji");
+    const mockError = new Error('Brak autoryzacji');
     vi.mocked(useQuery).mockReturnValue({
       data: undefined,
       isLoading: false,
@@ -152,7 +152,7 @@ describe("useStats", () => {
       isPlaceholderData: false,
       isStale: false,
       refetch: vi.fn(),
-      remove: vi.fn()
+      remove: vi.fn(),
     } as any);
 
     const { result } = renderHook(() => useStats());
@@ -164,23 +164,23 @@ describe("useStats", () => {
     });
   });
 
-  it("Should retry fetching data on other errors", async () => {
+  it('Should retry fetching data on other errors', async () => {
     vi.mocked(useAuth).mockReturnValue({
-      token: "fake-token",
+      token: 'fake-token',
       resetPassword: vi.fn(),
       isAuthenticated: true,
       isAuthChecking: false,
-      user: { id: "1", _id: "1", email: "test@example.com", username: "testuser" },
+      user: { id: '1', _id: '1', email: 'test@example.com', username: 'testuser' },
       loading: false,
       error: null,
       logout: vi.fn(),
       login: vi.fn(),
       forgotPassword: vi.fn(),
       register: vi.fn(),
-      loginWithGoogle: vi.fn()
+      loginWithGoogle: vi.fn(),
     });
 
-    const mockError = new Error("Błąd sieci");
+    const mockError = new Error('Błąd sieci');
     vi.mocked(useQuery).mockReturnValue({
       data: undefined,
       isLoading: false,
@@ -204,7 +204,7 @@ describe("useStats", () => {
       isPlaceholderData: false,
       isStale: false,
       refetch: vi.fn(),
-      remove: vi.fn()
+      remove: vi.fn(),
     } as any);
 
     const { result } = renderHook(() => useStats());
@@ -222,4 +222,3 @@ describe("useStats", () => {
     );
   });
 });
-    

@@ -14,6 +14,6 @@ export const useDashboardData = () => {
     refetchInterval: 1000 * 60,
     retry: (failureCount, error) => {
       return failureCount < 2 && !error.message.includes('autoryzacji');
-    }
+    },
   });
-}; 
+};

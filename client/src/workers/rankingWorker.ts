@@ -1,6 +1,6 @@
 import { RankingUser } from '../types/ranking.types';
 
-const ctx: Worker = self as any;
+const ctx: Worker = self as unknown as Worker;
 
 const calculateUserStats = (user: RankingUser) => {
   const efficiency = (user.stats.completedChallenges * user.stats.accuracy) / 100;
@@ -16,7 +16,7 @@ const sortUsers = (users: RankingUser[]) => {
   });
 };
 
-ctx.addEventListener('message', (event) => {
+ctx.addEventListener('message', event => {
   const { users, type } = event.data;
 
   switch (type) {
@@ -28,7 +28,7 @@ ctx.addEventListener('message', (event) => {
     case 'CALCULATE_STATS':
       const stats = users.map((user: RankingUser) => ({
         id: user.id,
-        stats: calculateUserStats(user)
+        stats: calculateUserStats(user),
       }));
       ctx.postMessage({ type: 'CALCULATED_STATS', stats });
       break;
@@ -38,4 +38,4 @@ ctx.addEventListener('message', (event) => {
   }
 });
 
-export {}; 
+export {};

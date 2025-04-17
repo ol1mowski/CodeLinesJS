@@ -1,7 +1,7 @@
-import { memo, useEffect, useState } from "react";
-import { motion, useMotionValue } from "framer-motion";
-import { FaCheck } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { memo, useEffect, useState } from 'react';
+import { motion, useMotionValue } from 'framer-motion';
+import { FaCheck } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 type LessonProgressProps = {
   currentSection: number;
@@ -11,10 +11,7 @@ type LessonProgressProps = {
   onComplete: () => Promise<void>;
 };
 
-export const LessonProgress = memo(({ 
-  isCompleted,
-  onComplete 
-}: LessonProgressProps) => {
+export const LessonProgress = memo(({ isCompleted, onComplete }: LessonProgressProps) => {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const motionValue = useMotionValue(0);
@@ -22,7 +19,7 @@ export const LessonProgress = memo(({
   const navigate = useNavigate();
 
   useEffect(() => {
-    const lessonContent = document.querySelector(".lesson-content");
+    const lessonContent = document.querySelector('.lesson-content');
     if (!lessonContent) return;
 
     const handleScroll = () => {
@@ -32,10 +29,10 @@ export const LessonProgress = memo(({
       motionValue.set(Math.min(progress, 100));
     };
 
-    lessonContent.addEventListener("scroll", handleScroll);
+    lessonContent.addEventListener('scroll', handleScroll);
     handleScroll();
 
-    return () => lessonContent.removeEventListener("scroll", handleScroll);
+    return () => lessonContent.removeEventListener('scroll', handleScroll);
   }, [motionValue]);
 
   const isLessonCompleted = scrollProgress >= 98 && !isCompleted;
@@ -45,11 +42,11 @@ export const LessonProgress = memo(({
       console.log('Nie można ukończyć lekcji:', { isLessonCompleted, isSubmitting });
       return;
     }
-    
+
     try {
       setIsSubmitting(true);
       await onComplete();
-      navigate("/dashboard/learn?tab=lessons");
+      navigate('/dashboard/learn?tab=lessons');
     } catch (error) {
     } finally {
       setIsSubmitting(false);
@@ -77,20 +74,22 @@ export const LessonProgress = memo(({
           onClick={handleComplete}
           disabled={!isLessonCompleted || isSubmitting}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors
-            ${isLessonCompleted && !isSubmitting
-              ? "bg-js/10 text-js hover:bg-js/20"
-              : "bg-gray-800/50 text-gray-500 cursor-not-allowed"}`}
+            ${
+              isLessonCompleted && !isSubmitting
+                ? 'bg-js/10 text-js hover:bg-js/20'
+                : 'bg-gray-800/50 text-gray-500 cursor-not-allowed'
+            }`}
         >
           <FaCheck className="w-4 h-4" />
-          {isSubmitting 
-            ? "Zapisywanie..." 
-            : isLessonCompleted 
-              ? "Zakończ lekcję" 
-              : "Przeczytaj całą lekcję"}
+          {isSubmitting
+            ? 'Zapisywanie...'
+            : isLessonCompleted
+              ? 'Zakończ lekcję'
+              : 'Przeczytaj całą lekcję'}
         </motion.button>
       </div>
     </div>
   );
 });
 
-LessonProgress.displayName = "LessonProgress";
+LessonProgress.displayName = 'LessonProgress';

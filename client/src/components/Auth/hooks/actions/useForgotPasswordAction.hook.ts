@@ -6,23 +6,25 @@ type AuthState = {
 };
 
 export const useForgotPasswordAction = (state: AuthState) => {
-
   const { setLoading, setError } = state;
 
   const forgotPassword = async (email: string): Promise<string> => {
     try {
       setLoading(true);
       setError(null);
-      
-      const response = await httpClient.post<{ message: string }>('auth/forgot-password', { email });
-      
+
+      const response = await httpClient.post<{ message: string }>('auth/forgot-password', {
+        email,
+      });
+
       if (response.error) {
         throw new Error(response.error);
       }
-      
-      return response.data?.message || 'Link do resetowania hasła został wysłany na Twój adres email.';
-    } catch (err) { 
-      
+
+      return (
+        response.data?.message || 'Link do resetowania hasła został wysłany na Twój adres email.'
+      );
+    } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
         throw err;
@@ -37,4 +39,4 @@ export const useForgotPasswordAction = (state: AuthState) => {
   };
 
   return forgotPassword;
-}; 
+};

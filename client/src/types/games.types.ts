@@ -1,4 +1,4 @@
-export type GameDifficulty = "easy" | "medium" | "hard";
+export type GameDifficulty = 'easy' | 'medium' | 'hard';
 
 export type Game = {
   _id: string;
@@ -22,4 +22,4 @@ export type Game = {
   thumbnailUrl: string;
   isCompleted: boolean;
   xpPoints: number;
-}; 
+};

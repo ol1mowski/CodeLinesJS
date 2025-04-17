@@ -48,10 +48,11 @@ export const useFilteredGames = (
   if (!games) return [];
 
   return games
-    .filter(game => 
-      (selectedDifficulty === 'all' || game.difficulty === selectedDifficulty) &&
-      (game.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-       game.description.toLowerCase().includes(searchQuery.toLowerCase()))
+    .filter(
+      game =>
+        (selectedDifficulty === 'all' || game.difficulty === selectedDifficulty) &&
+        (game.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          game.description.toLowerCase().includes(searchQuery.toLowerCase()))
     )
     .sort((a, b) => {
       switch (sortBy) {
@@ -67,4 +68,4 @@ export const useFilteredGames = (
           return 0;
       }
     });
-}; 
+};

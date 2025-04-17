@@ -43,13 +43,14 @@ export const JSTypoHunterStats = memo(({ stats }: JSTypoHunterStatsProps) => {
         <div className="w-full">
           <div className="text-sm text-gray-400">Czas</div>
           <div className="text-lg font-bold text-js flex flex-wrap w-full">
-            <span className="block w-full break-words">{formatTime(stats.timeElapsed)}/{formatTime(stats.maxTime)}</span>
+            <span className="block w-full break-words">
+              {formatTime(stats.timeElapsed)}/{formatTime(stats.maxTime)}
+            </span>
           </div>
         </div>
       </div>
-
     </motion.div>
   );
 });
 
-JSTypoHunterStats.displayName = 'JSTypoHunterStats'; 
+JSTypoHunterStats.displayName = 'JSTypoHunterStats';

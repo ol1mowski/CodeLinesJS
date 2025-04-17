@@ -31,6 +31,6 @@ export const useNavigation = () => {
     isExpanded,
     setIsExpanded,
     activeItem,
-    setActiveItem
+    setActiveItem,
   };
-}; 
+};

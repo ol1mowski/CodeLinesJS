@@ -1,11 +1,11 @@
-import { memo, useMemo, Suspense } from "react";
-import { motion } from "framer-motion";
-import { WelcomeSection } from "./WelcomeSection/WelcomeSection.component";
-import { NotificationsButton } from "./NotificationsSection/NotificationsButton.component";
-import { topNavigationStyles as styles } from "./style/TopNavigation.styles";
-import { useTopNavAnimation } from "./hooks/useTopNavAnimation";
-import { useUserProfile } from "./hooks/useUserProfile";
-import { ErrorBoundary } from "../../Common/ErrorBoundary.component";
+import { memo, useMemo, Suspense } from 'react';
+import { motion } from 'framer-motion';
+import { WelcomeSection } from './WelcomeSection/WelcomeSection.component';
+import { NotificationsButton } from './NotificationsSection/NotificationsButton.component';
+import { topNavigationStyles as styles } from './style/TopNavigation.styles';
+import { useTopNavAnimation } from './hooks/useTopNavAnimation';
+import { useUserProfile } from './hooks/useUserProfile';
+import { ErrorBoundary } from '../../Common/ErrorBoundary';
 
 export const TopNavigation = memo(() => {
   const animations = useTopNavAnimation();
@@ -15,11 +15,11 @@ export const TopNavigation = memo(() => {
     if (error) {
       return 'Użytkowniku';
     }
-    
+
     if (isLoading) {
       return 'Ładowanie...';
     }
-    
+
     return userProfile?.data.username || 'Użytkowniku';
   }, [userProfile?.data.username, isLoading, error]);
 
@@ -34,9 +34,11 @@ export const TopNavigation = memo(() => {
       >
         <div className={styles.content}>
           <WelcomeSection username={username} />
-          
+
           <div className={styles.actions}>
-            <Suspense fallback={<div className="w-10 h-10 rounded-full bg-gray-700 animate-pulse"></div>}>
+            <Suspense
+              fallback={<div className="w-10 h-10 rounded-full bg-gray-700 animate-pulse"></div>}
+            >
               <NotificationsButton />
             </Suspense>
           </div>
@@ -46,4 +48,4 @@ export const TopNavigation = memo(() => {
   );
 });
 
-TopNavigation.displayName = "TopNavigation";
+TopNavigation.displayName = 'TopNavigation';

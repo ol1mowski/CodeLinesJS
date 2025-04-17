@@ -26,4 +26,4 @@ export const InitialWarning = memo(({ onConfirm }: InitialWarningProps) => (
   </motion.div>
 ));
 
-InitialWarning.displayName = 'InitialWarning'; 
+InitialWarning.displayName = 'InitialWarning';

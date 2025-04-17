@@ -18,11 +18,8 @@ export const ResetPasswordPage = () => {
   }
 
   return (
-    <AuthSection
-      title="Resetowanie hasła"
-      subtitle="Wprowadź nowe hasło dla swojego konta"
-    >
+    <AuthSection title="Resetowanie hasła" subtitle="Wprowadź nowe hasło dla swojego konta">
       <ResetPasswordForm />
     </AuthSection>
   );
-}; 
+};

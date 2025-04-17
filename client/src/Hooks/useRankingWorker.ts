@@ -11,10 +11,9 @@ export const useRankingWorker = () => {
   const workerRef = useRef<Worker>();
 
   useEffect(() => {
-    workerRef.current = new Worker(
-      new URL('../workers/rankingWorker.ts', import.meta.url),
-      { type: 'module' }
-    );
+    workerRef.current = new Worker(new URL('../workers/rankingWorker.ts', import.meta.url), {
+      type: 'module',
+    });
 
     return () => {
       workerRef.current?.terminate();
@@ -22,7 +21,7 @@ export const useRankingWorker = () => {
   }, []);
 
   const sortUsers = useCallback((users: RankingUser[]) => {
-    return new Promise<RankingUser[]>((resolve) => {
+    return new Promise<RankingUser[]>(resolve => {
       if (!workerRef.current) return resolve(users);
 
       const handleMessage = (event: MessageEvent<WorkerMessage>) => {
@@ -38,7 +37,7 @@ export const useRankingWorker = () => {
   }, []);
 
   const calculateStats = useCallback((users: RankingUser[]) => {
-    return new Promise<Array<{ id: string; stats: number }>>((resolve) => {
+    return new Promise<Array<{ id: string; stats: number }>>(resolve => {
       if (!workerRef.current) return resolve([]);
 
       const handleMessage = (event: MessageEvent<WorkerMessage>) => {
@@ -55,6 +54,6 @@ export const useRankingWorker = () => {
 
   return {
     sortUsers,
-    calculateStats
+    calculateStats,
   };
-}; 
+};

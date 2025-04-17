@@ -15,14 +15,11 @@ export const CodeQuiz = memo(() => {
 
   return (
     <div className="flex flex-col">
-      <QuizHeader
-        title={title}
-        subtitle="Wybierz poprawną odpowiedź"
-      />
+      <QuizHeader title={title} subtitle="Wybierz poprawną odpowiedź" />
       <QuizCode code={code} />
       <div className="p-6">
         <div className="grid grid-cols-2 gap-4">
-          {options.map((option) => (
+          {options.map(option => (
             <QuizAnswer
               key={option.id}
               answer={option.text}
@@ -31,7 +28,6 @@ export const CodeQuiz = memo(() => {
               onClick={() => handleAnswerClick(option.id)}
               disabled={selectedAnswer !== null}
             />
-
           ))}
         </div>
       </div>
@@ -39,4 +35,4 @@ export const CodeQuiz = memo(() => {
   );
 });
 
-CodeQuiz.displayName = 'CodeQuiz'; 
+CodeQuiz.displayName = 'CodeQuiz';

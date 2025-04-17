@@ -1,17 +1,22 @@
-import { memo, useCallback, useEffect } from "react";
-import { useProfile } from "../../hooks/useProfile";
-import { useProfileFormLogic } from "../../hooks/useProfileFormLogic";
-import { ProfileFormContent } from "./components/ProfileFormContent/ProfileFormContent.component";
-import { LoadingScreen } from "../../../../UI/LoadingScreen/LoadingScreen.component";
-import { useQueryClient } from "@tanstack/react-query";
-import { toast } from "react-hot-toast";
+import { memo, useCallback, useEffect } from 'react';
+import { useProfile } from '../../hooks/useProfile';
+import { useProfileFormLogic } from '../../hooks/useProfileFormLogic';
+import { ProfileFormContent } from './components/ProfileFormContent/ProfileFormContent.component';
+import { LoadingScreen } from '../../../../UI/LoadingScreen/LoadingScreen.component';
+import { useQueryClient } from '@tanstack/react-query';
+import { toast } from 'react-hot-toast';
 
 export const ProfileForm = memo(() => {
   const { profile, isLoading, updateProfile } = useProfile();
   const { form, onSubmit } = useProfileFormLogic(profile || null);
   const queryClient = useQueryClient();
-  
-  const { register, formState: { errors, isSubmitting }, reset, setValue } = form;
+
+  const {
+    register,
+    formState: { errors, isSubmitting },
+    reset,
+    setValue,
+  } = form;
 
   useEffect(() => {
     if (profile) {
@@ -35,9 +40,9 @@ export const ProfileForm = memo(() => {
   const handleSubmit = async (data: any) => {
     try {
       await onSubmit(data);
-      await queryClient.invalidateQueries({ queryKey: ["userProfile"] });
+      await queryClient.invalidateQueries({ queryKey: ['userProfile'] });
     } catch (error) {
-      toast.error("Wystąpił błąd podczas aktualizacji profilu");
+      toast.error('Wystąpił błąd podczas aktualizacji profilu');
     }
   };
 
@@ -58,4 +63,4 @@ export const ProfileForm = memo(() => {
   );
 });
 
-ProfileForm.displayName = "ProfileForm"; 
+ProfileForm.displayName = 'ProfileForm';

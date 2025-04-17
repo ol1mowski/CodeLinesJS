@@ -52,6 +52,6 @@ export const useGameTimer = ({ maxTime, onTimeEnd, isPaused }: UseGameTimerProps
     resetTimer,
     startTimer,
     stopTimer,
-    isRunning
+    isRunning,
   };
-}; 
+};

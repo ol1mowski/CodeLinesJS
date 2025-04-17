@@ -11,9 +11,7 @@ type ConsoleOutputProps = {
 export const ConsoleOutput = memo(({ output, onClear, isExecuting }: ConsoleOutputProps) => (
   <div className="h-[calc(100%-4rem)] bg-[#1e1e1e] rounded-lg overflow-hidden flex flex-col">
     <div className="flex items-center justify-between px-4 py-2 bg-dark/30 border-b border-js/10">
-      <span className="text-sm text-gray-400">
-        {isExecuting ? 'Wykonywanie...' : 'Gotowe'}
-      </span>
+      <span className="text-sm text-gray-400">{isExecuting ? 'Wykonywanie...' : 'Gotowe'}</span>
       <button
         data-testid="clear-console-btn"
         onClick={onClear}
@@ -38,4 +36,4 @@ export const ConsoleOutput = memo(({ output, onClear, isExecuting }: ConsoleOutp
   </div>
 ));
 
-ConsoleOutput.displayName = 'ConsoleOutput'; 
+ConsoleOutput.displayName = 'ConsoleOutput';

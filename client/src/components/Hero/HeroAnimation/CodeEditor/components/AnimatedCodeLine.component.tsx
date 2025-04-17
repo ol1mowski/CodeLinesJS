@@ -13,14 +13,14 @@ type AnimatedCodeLineProps = {
 
 export const AnimatedCodeLine = ({ lineNumber, code, showCursor }: AnimatedCodeLineProps) => {
   const isMobile = useMobileDetect();
-  
+
   return (
     <MobileWrapper
       className="whitespace-pre relative"
       motionProps={{
         initial: { opacity: 0 },
         animate: { opacity: 1 },
-        transition: { duration: 0.2 }
+        transition: { duration: 0.2 },
       }}
     >
       <LineNumber number={lineNumber} />
@@ -28,4 +28,4 @@ export const AnimatedCodeLine = ({ lineNumber, code, showCursor }: AnimatedCodeL
       {showCursor && !isMobile && <BlinkingCursor />}
     </MobileWrapper>
   );
-}; 
+};

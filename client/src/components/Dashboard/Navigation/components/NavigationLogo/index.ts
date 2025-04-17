@@ -1,1 +1,1 @@
-export { NavigationLogo } from './NavigationLogo.component'; 
+export { NavigationLogo } from './NavigationLogo.component';

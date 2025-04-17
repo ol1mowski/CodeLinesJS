@@ -1,8 +1,8 @@
-import { motion, AnimatePresence } from "framer-motion";
-import { FaCode } from "react-icons/fa";
+import { motion, AnimatePresence } from 'framer-motion';
+import { FaCode } from 'react-icons/fa';
 
-import { memo } from "react";
-import { itemVariants } from "../../animations/navigationAnimations";
+import { memo } from 'react';
+import { itemVariants } from '../../animations/navigationAnimations';
 
 type NavigationLogoProps = {
   isExpanded: boolean;
@@ -35,4 +35,4 @@ export const NavigationLogo = memo(({ isExpanded }: NavigationLogoProps) => (
   </div>
 ));
 
-NavigationLogo.displayName = "NavigationLogo"; 
+NavigationLogo.displayName = 'NavigationLogo';

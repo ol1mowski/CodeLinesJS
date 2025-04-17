@@ -37,4 +37,4 @@ export const Toast = memo(({ message, type, isVisible, onClose }: ToastProps) =>
   );
 });
 
-Toast.displayName = 'Toast'; 
+Toast.displayName = 'Toast';

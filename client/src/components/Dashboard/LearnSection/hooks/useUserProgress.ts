@@ -17,11 +17,11 @@ export const useUserProgress = (userId: string) => {
     mutationFn: async (data: ProgressUpdate) => {
       console.log('Aktualizacja postępu użytkownika:', {
         userId,
-        ...data
+        ...data,
       });
 
       const lessonData = queryClient.getQueryData<any>(['lesson', data.lessonId]);
-      
+
       if (lessonData?.isCompleted && !data.isCompleted) {
         console.log('Lekcja już ukończona, pomijam aktualizację');
         return null;
@@ -31,13 +31,13 @@ export const useUserProgress = (userId: string) => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token') || sessionStorage.getItem('token')}`,
+          Authorization: `Bearer ${localStorage.getItem('token') || sessionStorage.getItem('token')}`,
         },
         body: JSON.stringify({
           lessonId: data.lessonId,
           points: data.points,
           isCompleted: data.isCompleted,
-          completedSections: data.completedSections
+          completedSections: data.completedSections,
         }),
       });
 
@@ -51,7 +51,7 @@ export const useUserProgress = (userId: string) => {
       console.log('Odpowiedź z serwera:', result);
       return result;
     },
-    onSuccess: (data) => {
+    onSuccess: data => {
       if (data) {
         queryClient.invalidateQueries({ queryKey: ['userProgress'] });
         queryClient.invalidateQueries({ queryKey: ['lessons'] });
@@ -64,10 +64,10 @@ export const useUserProgress = (userId: string) => {
         duration: 4000,
         position: 'bottom-right',
       });
-    }
+    },
   });
 
   return {
-    updateProgress
+    updateProgress,
   };
-}; 
+};

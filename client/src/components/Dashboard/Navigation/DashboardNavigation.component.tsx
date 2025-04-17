@@ -1,23 +1,23 @@
-import { motion, AnimatePresence } from "framer-motion";
-import { FaSignOutAlt } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../../hooks/useAuth";
-import { useNavigation } from "../../../hooks/useNavigation";
-import { NavigationLogo } from "./components/NavigationLogo";
-import { NavigationButton } from "./components/NavigationButton";
-import { NavigationSection } from "./components/NavigationSection";
-import { useIsHiddenPath } from "../../../hooks/useIsHiddingPath.hook";
-import { navVariants } from "./animations/navigationAnimations";
-import { useMemo, useCallback, memo } from "react";
-import type { NavigationItem } from ".";
-import { navigationItems } from "./constants/navigationItems";
-import { useMobileDetect, MOBILE_BREAKPOINT } from "../../../hooks/useMobileDetect";
-import { ErrorBoundary } from "../../Common/ErrorBoundary.component";
+import { motion, AnimatePresence } from 'framer-motion';
+import { FaSignOutAlt } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../../hooks/useAuth';
+import { useNavigation } from '../../../hooks/useNavigation';
+import { NavigationLogo } from './components/NavigationLogo';
+import { NavigationButton } from './components/NavigationButton';
+import { NavigationSection } from './components/NavigationSection';
+import { useIsHiddenPath } from '../../../hooks/useIsHiddingPath.hook';
+import { navVariants } from './animations/navigationAnimations';
+import { useMemo, useCallback, memo } from 'react';
+import type { NavigationItem } from '.';
+import { navigationItems } from './constants/navigationItems';
+import { useMobileDetect, MOBILE_BREAKPOINT } from '../../../hooks/useMobileDetect';
+import { ErrorBoundary } from '../../Common/ErrorBoundary';
 
 const SECTION_TITLES: Record<string, string> = {
-  main: "Główne",
-  game: "Nauka",
-  social: "Społeczność",
+  main: 'Główne',
+  game: 'Nauka',
+  social: 'Społeczność',
 };
 
 export const DashboardNavigation = memo(() => {
@@ -27,27 +27,34 @@ export const DashboardNavigation = memo(() => {
   const isHiddenPath = useIsHiddenPath();
   const isMobile = useMobileDetect();
 
-  const handleNavigation = useCallback((item: NavigationItem) => {
-    setActiveItem(item.id);
-    if (item.path) {
-      navigate(item.path);
-    }
-  }, [navigate, setActiveItem]);
+  const handleNavigation = useCallback(
+    (item: NavigationItem) => {
+      setActiveItem(item.id);
+      if (item.path) {
+        navigate(item.path);
+      }
+    },
+    [navigate, setActiveItem]
+  );
 
   const handleToggleExpand = useCallback(() => {
-    setIsExpanded((prev) => !prev);
+    setIsExpanded(prev => !prev);
   }, [setIsExpanded]);
 
-  const sections = useMemo(() =>
-    Object.entries(
-      navigationItems.reduce((acc, item) => {
-        if (!acc[item.section]) {
-          acc[item.section] = [];
-        }
-        acc[item.section].push(item);
-        return acc;
-      }, {} as Record<string, NavigationItem[]>)
-    ),
+  const sections = useMemo(
+    () =>
+      Object.entries(
+        navigationItems.reduce(
+          (acc, item) => {
+            if (!acc[item.section]) {
+              acc[item.section] = [];
+            }
+            acc[item.section].push(item);
+            return acc;
+          },
+          {} as Record<string, NavigationItem[]>
+        )
+      ),
     []
   );
 
@@ -63,7 +70,7 @@ export const DashboardNavigation = memo(() => {
     <ErrorBoundary>
       <motion.nav
         initial="collapsed"
-        animate={isExpanded ? "expanded" : "collapsed"}
+        animate={isExpanded ? 'expanded' : 'collapsed'}
         variants={navVariants}
         className={`${navVisibilityClass} fixed left-0 top-0 bg-gradient-to-b from-dark via-dark-medium to-dark backdrop-blur-lg border-r border-js/10 flex flex-col py-6 z-40 shadow-xl shadow-black/10 h-full`}
         aria-label="Menu nawigacyjne"
@@ -75,7 +82,7 @@ export const DashboardNavigation = memo(() => {
           whileTap={{ scale: 0.9 }}
           onClick={handleToggleExpand}
           className="absolute -right-3 top-8 w-6 h-6 bg-js rounded-full flex items-center justify-center hover:opacity-90 transition-all shadow-lg shadow-js/20"
-          aria-label={isExpanded ? "Zwiń menu" : "Rozwiń menu"}
+          aria-label={isExpanded ? 'Zwiń menu' : 'Rozwiń menu'}
         >
           <motion.span
             animate={{ rotate: isExpanded ? 180 : 0 }}
@@ -119,4 +126,4 @@ export const DashboardNavigation = memo(() => {
   );
 });
 
-DashboardNavigation.displayName = "DashboardNavigation";
+DashboardNavigation.displayName = 'DashboardNavigation';

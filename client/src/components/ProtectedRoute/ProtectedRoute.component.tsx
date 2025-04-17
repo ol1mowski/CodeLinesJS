@@ -4,11 +4,10 @@ import { ReactNode } from 'react';
 
 type ProtectedRouteProps = {
   children: ReactNode;
-}
+};
 
 export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { isAuthenticated, loading, isAuthChecking } = useAuth();
-
 
   if (loading || isAuthChecking) {
     return (
@@ -23,4 +22,4 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   }
 
   return <>{children}</>;
-}; 
+};

@@ -1,19 +1,16 @@
-import { memo, useState, useCallback, useRef, useEffect } from "react";
-import { motion } from "framer-motion";
-import Editor from "@monaco-editor/react";
-import { AsyncChallenge } from "../../../../../types/asyncQuest.types";
-import { AsyncQuestProgress } from "../AsyncQuestProgress/AsyncQuestProgress.component";
-import { useCodeExecution } from "../hooks/useCodeExecution";
-import { validateAsyncCode } from "../utils/codeValidation";
-import { AsyncQuestHint } from "../AsyncQuestHint/AsyncQuestHint.component";
-import { getErrorHint } from "../utils/errorHints";
+import { memo, useState, useCallback, useRef, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import Editor from '@monaco-editor/react';
+import { AsyncChallenge } from '../../../../../types/asyncQuest.types';
+import { AsyncQuestProgress } from '../AsyncQuestProgress/AsyncQuestProgress.component';
+import { useCodeExecution } from '../hooks/useCodeExecution';
+import { validateAsyncCode } from '../utils/codeValidation';
+import { AsyncQuestHint } from '../AsyncQuestHint/AsyncQuestHint.component';
+import { getErrorHint } from '../utils/errorHints';
 
 type AsyncQuestGameProps = {
   currentChallenge: AsyncChallenge;
-  onScoreUpdate: (
-    points: number,
-    category: "promises" | "async-await" | "callbacks"
-  ) => void;
+  onScoreUpdate: (points: number, category: 'promises' | 'async-await' | 'callbacks') => void;
   onLevelComplete: () => void;
   currentLevel: number;
   totalLevels: number;
@@ -27,7 +24,7 @@ export const AsyncQuestGame = memo(
     onLevelComplete,
     currentLevel,
     totalLevels,
-    onGameOver
+    onGameOver,
   }: AsyncQuestGameProps) => {
     const [code, setCode] = useState(currentChallenge.code);
     const [showExplanation, setShowExplanation] = useState(false);
@@ -48,7 +45,7 @@ export const AsyncQuestGame = memo(
       if (editorContainerRef.current) {
         editorContainerRef.current.scrollIntoView({
           behavior: 'smooth',
-          block: 'center'
+          block: 'center',
         });
       }
     }, []);
@@ -61,20 +58,23 @@ export const AsyncQuestGame = memo(
       }, 100);
     };
 
-    const handleEditorChange = useCallback((value: string | undefined) => {
-      if (value !== undefined) {
-        setCode(value);
-        setIsCorrect(null);
-        setErrorHint(null);
-        clearOutput();
-      }
-    }, [clearOutput]);
+    const handleEditorChange = useCallback(
+      (value: string | undefined) => {
+        if (value !== undefined) {
+          setCode(value);
+          setIsCorrect(null);
+          setErrorHint(null);
+          clearOutput();
+        }
+      },
+      [clearOutput]
+    );
 
     const scrollToFeedback = useCallback(() => {
       if (feedbackRef.current) {
         feedbackRef.current.scrollIntoView({
           behavior: 'smooth',
-          block: 'center'
+          block: 'center',
         });
       }
     }, []);
@@ -130,25 +130,34 @@ export const AsyncQuestGame = memo(
           onGameOver();
         }, 2000);
       }
-    }, [code, currentChallenge, executeCode, onScoreUpdate, onLevelComplete, onGameOver, clearOutput, scrollToFeedback]);
+    }, [
+      code,
+      currentChallenge,
+      executeCode,
+      onScoreUpdate,
+      onLevelComplete,
+      onGameOver,
+      clearOutput,
+      scrollToFeedback,
+    ]);
 
     const editorOptions = {
       minimap: { enabled: false },
       fontSize: 14,
       lineHeight: 24,
-      fontFamily: "JetBrains Mono, monospace",
+      fontFamily: 'JetBrains Mono, monospace',
       fontLigatures: true,
-      wordWrap: "on" as const,
+      wordWrap: 'on' as const,
       automaticLayout: true,
       padding: { top: 16, bottom: 16 },
       scrollBeyondLastLine: false,
       folding: true,
-      lineNumbers: "on" as const,
-      renderLineHighlight: "all" as const,
+      lineNumbers: 'on' as const,
+      renderLineHighlight: 'all' as const,
       suggestOnTriggerCharacters: true,
       parameterHints: { enabled: true },
       tabSize: 2,
-      theme: "vs-dark",
+      theme: 'vs-dark',
     };
 
     return (
@@ -159,13 +168,8 @@ export const AsyncQuestGame = memo(
       >
         <div className="bg-dark-800/50 rounded-xl p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-bold text-js">
-              {currentChallenge.title}
-            </h2>
-            <AsyncQuestProgress
-              currentLevel={currentLevel}
-              totalLevels={totalLevels}
-            />
+            <h2 className="text-2xl font-bold text-js">{currentChallenge.title}</h2>
+            <AsyncQuestProgress currentLevel={currentLevel} totalLevels={totalLevels} />
           </div>
           <div className="bg-dark-800/50 border border-js/10 rounded-lg p-6 mb-6">
             <h2 className="text-xl font-bold text-js mb-3">Opis zadania</h2>
@@ -178,13 +182,9 @@ export const AsyncQuestGame = memo(
               <p className="text-gray-300 text-base">{currentChallenge.task}</p>
             </div>
           </div>
-
         </div>
 
-        <div
-          ref={editorContainerRef}
-          className="bg-dark-800/50 rounded-xl p-6"
-        >
+        <div ref={editorContainerRef} className="bg-dark-800/50 rounded-xl p-6">
           <div className="h-[500px] relative rounded-lg overflow-hidden border border-js/10">
             <Editor
               height="100%"
@@ -204,12 +204,13 @@ export const AsyncQuestGame = memo(
           <button
             onClick={handleCodeRun}
             disabled={isRunning || !isEditorReady}
-            className={`mt-4 w-full px-6 py-3 rounded-lg font-medium transition-colors ${isRunning || !isEditorReady
-                ? "bg-gray-500 cursor-not-allowed"
-                : "bg-js text-dark hover:bg-js/90"
-              }`}
+            className={`mt-4 w-full px-6 py-3 rounded-lg font-medium transition-colors ${
+              isRunning || !isEditorReady
+                ? 'bg-gray-500 cursor-not-allowed'
+                : 'bg-js text-dark hover:bg-js/90'
+            }`}
           >
-            {isRunning ? "Wykonywanie..." : "Uruchom kod"}
+            {isRunning ? 'Wykonywanie...' : 'Uruchom kod'}
           </button>
         </div>
 
@@ -221,12 +222,8 @@ export const AsyncQuestGame = memo(
             className="bg-dark-800/50 rounded-xl p-6"
           >
             <AsyncQuestHint
-              type={isCorrect ? "hint" : "error"}
-              message={
-                isCorrect
-                  ? "Świetnie! Rozwiązanie jest poprawne."
-                  : currentChallenge.error
-              }
+              type={isCorrect ? 'hint' : 'error'}
+              message={isCorrect ? 'Świetnie! Rozwiązanie jest poprawne.' : currentChallenge.error}
               explanation={isCorrect ? undefined : errorHint?.explanation}
               code={isCorrect ? undefined : errorHint?.example}
             />
@@ -237,4 +234,4 @@ export const AsyncQuestGame = memo(
   }
 );
 
-AsyncQuestGame.displayName = "AsyncQuestGame";
+AsyncQuestGame.displayName = 'AsyncQuestGame';

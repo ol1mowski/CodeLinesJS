@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient, QueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { useAuth } from '../../../../../hooks/useAuth';
 import { API_URL } from '../../../../../config/api.config';
@@ -40,7 +40,9 @@ export interface RankingResponse {
 
 const RANKING_QUERY_KEY = 'ranking';
 
-const fetchRanking = async (token: string | null): Promise<RankingResponse | RankingUserResponse[]> => {
+const fetchRanking = async (
+  token: string | null
+): Promise<RankingResponse | RankingUserResponse[]> => {
   if (!token) {
     throw new Error('Brak autoryzacji - zaloguj się, aby zobaczyć ranking');
   }
@@ -49,9 +51,9 @@ const fetchRanking = async (token: string | null): Promise<RankingResponse | Ran
     const response = await fetch(`${API_URL}ranking`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
     });
 
     if (response.status === 401) {
@@ -69,8 +71,7 @@ const fetchRanking = async (token: string | null): Promise<RankingResponse | Ran
       try {
         const errorData = JSON.parse(errorText);
         errorMessage = errorData.message || errorData.error || errorMessage;
-      } catch (e) {
-      }
+      } catch (e) {}
 
       throw new Error(errorMessage);
     }
@@ -82,20 +83,7 @@ const fetchRanking = async (token: string | null): Promise<RankingResponse | Ran
   }
 };
 
-export const prefetchRanking = async (
-  queryClient: QueryClient,
-  token: string | null
-) => {
-  if (!token) return;
-
-  await queryClient.prefetchQuery({
-    queryKey: [RANKING_QUERY_KEY],
-    queryFn: () => fetchRanking(token),
-  });
-};
-
 export const useRanking = () => {
-  const queryClient = useQueryClient();
   const { token } = useAuth();
 
   const { data, isLoading, error } = useQuery({
@@ -105,17 +93,12 @@ export const useRanking = () => {
     retry: (failureCount, error) => {
       return failureCount < 3 && !error.message.includes('autoryzacji');
     },
-    enabled: !!token
+    enabled: !!token,
   });
-
-  const prefetchNextPeriod = async () => {
-    await prefetchRanking(queryClient, token);
-  };
 
   return {
     data,
     isLoading,
-    error,
-    prefetchNextPeriod
+    error
   };
-}; 
+};

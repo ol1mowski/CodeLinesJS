@@ -16,4 +16,4 @@ export const CommunityStats = memo(() => (
   </div>
 ));
 
-CommunityStats.displayName = 'CommunityStats'; 
+CommunityStats.displayName = 'CommunityStats';

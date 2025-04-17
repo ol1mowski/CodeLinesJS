@@ -9,7 +9,7 @@ type CommunityState = {
   };
 };
 
-type CommunityAction = 
+type CommunityAction =
   | { type: 'SET_ACTIVE_VIEW'; payload: CommunityState['activeView'] }
   | { type: 'SET_GROUPS_FILTER'; payload: string }
   | { type: 'SET_GROUPS_SORT'; payload: CommunityState['filters']['groupsSort'] }
@@ -20,8 +20,8 @@ const initialState: CommunityState = {
   filters: {
     groupsFilter: '',
     groupsSort: 'newest',
-    rankingPeriod: 'weekly'
-  }
+    rankingPeriod: 'weekly',
+  },
 };
 
 export const CommunityContext = createContext<{
@@ -68,14 +68,16 @@ export const CommunityProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <CommunityContext.Provider value={{
-      state,
-      dispatch,
-      setActiveView,
-      setGroupsFilter,
-      setGroupsSort,
-      setRankingPeriod
-    }}>
+    <CommunityContext.Provider
+      value={{
+        state,
+        dispatch,
+        setActiveView,
+        setGroupsFilter,
+        setGroupsSort,
+        setRankingPeriod,
+      }}
+    >
       {children}
     </CommunityContext.Provider>
   );

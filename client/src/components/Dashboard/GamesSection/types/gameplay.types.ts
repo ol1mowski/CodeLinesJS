@@ -5,4 +5,4 @@ export interface GameplayStats {
   currentLevel: number;
 }
 
-export type GameDifficulty = 'easy' | 'medium' | 'hard'; 
+export type GameDifficulty = 'easy' | 'medium' | 'hard';

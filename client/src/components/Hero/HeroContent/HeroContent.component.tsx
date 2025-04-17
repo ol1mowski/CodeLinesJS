@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { motion } from "framer-motion";
+import { motion } from 'framer-motion';
 import { MainHeading } from './components/MainHeading.component';
 import { Description } from './components/Description.component';
 import { ActionButtons } from './components/ActionButtons.component';

@@ -12,4 +12,4 @@ export const QuizHeader = memo(({ title, subtitle }: QuizHeaderProps) => (
   </div>
 ));
 
-QuizHeader.displayName = 'QuizHeader'; 
+QuizHeader.displayName = 'QuizHeader';

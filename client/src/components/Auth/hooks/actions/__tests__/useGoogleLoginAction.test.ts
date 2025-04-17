@@ -4,12 +4,12 @@ import { httpClient } from '../../../../../api/httpClient.api';
 
 vi.mock('../../../../../api/httpClient.api', () => ({
   httpClient: {
-    post: vi.fn()
-  }
+    post: vi.fn(),
+  },
 }));
 
 vi.mock('react-router-dom', () => ({
-  useNavigate: () => vi.fn()
+  useNavigate: () => vi.fn(),
 }));
 
 describe('useGoogleLoginAction', () => {
@@ -17,32 +17,32 @@ describe('useGoogleLoginAction', () => {
     setLoading: vi.fn(),
     setError: vi.fn(),
     setIsAuthenticated: vi.fn(),
-    setUser: vi.fn()
+    setUser: vi.fn(),
   };
 
   const mockResponse = {
     data: {
       token: 'google-test-token',
-      user: { id: '1', email: 'google-user@example.com', username: 'googleuser' }
+      user: { id: '1', email: 'google-user@example.com', username: 'googleuser' },
     },
     error: null,
-    status: 200
+    status: 200,
   };
 
   const mockErrorResponse = {
     data: null,
     error: 'Nieprawidłowy token Google',
-    status: 401
+    status: 401,
   };
 
   const mockCredentialResponse = {
-    credential: 'google-credential-token-123'
+    credential: 'google-credential-token-123',
   };
 
   beforeEach(() => {
     localStorage.clear();
     sessionStorage.clear();
-    
+
     vi.clearAllMocks();
   });
 
@@ -54,18 +54,15 @@ describe('useGoogleLoginAction', () => {
     vi.mocked(httpClient.post).mockResolvedValueOnce(mockResponse);
 
     const loginWithGoogle = useGoogleLoginAction(mockState);
-    
+
     await loginWithGoogle(mockCredentialResponse, false);
 
     expect(mockState.setLoading).toHaveBeenCalledWith(true);
     expect(mockState.setError).toHaveBeenCalledWith(null);
-    expect(httpClient.post).toHaveBeenCalledWith(
-      'auth/google-login',
-      { 
-        credential: mockCredentialResponse.credential,
-        rememberMe: false 
-      }
-    );
+    expect(httpClient.post).toHaveBeenCalledWith('auth/google-login', {
+      credential: mockCredentialResponse.credential,
+      rememberMe: false,
+    });
     expect(sessionStorage.getItem('token')).toBe('google-test-token');
     expect(mockState.setUser).toHaveBeenCalledWith(mockResponse.data.user);
     expect(mockState.setIsAuthenticated).toHaveBeenCalledWith(true);
@@ -76,7 +73,7 @@ describe('useGoogleLoginAction', () => {
     vi.mocked(httpClient.post).mockResolvedValueOnce(mockResponse);
 
     const loginWithGoogle = useGoogleLoginAction(mockState);
-    
+
     await loginWithGoogle(mockCredentialResponse, true);
 
     expect(localStorage.getItem('token')).toBe('google-test-token');
@@ -87,7 +84,7 @@ describe('useGoogleLoginAction', () => {
     vi.mocked(httpClient.post).mockResolvedValueOnce(mockErrorResponse);
 
     const loginWithGoogle = useGoogleLoginAction(mockState);
-    
+
     await loginWithGoogle(mockCredentialResponse, false);
 
     expect(mockState.setLoading).toHaveBeenCalledWith(true);
@@ -100,11 +97,13 @@ describe('useGoogleLoginAction', () => {
 
   it('should handle missing Google token', async () => {
     const loginWithGoogle = useGoogleLoginAction(mockState);
-    
+
     await loginWithGoogle({}, false);
 
     expect(mockState.setLoading).toHaveBeenCalledWith(true);
-    expect(mockState.setError).toHaveBeenCalledWith('Nie udało się uzyskać tokenu uwierzytelniającego z Google. Spróbuj ponownie.');
+    expect(mockState.setError).toHaveBeenCalledWith(
+      'Nie udało się uzyskać tokenu uwierzytelniającego z Google. Spróbuj ponownie.'
+    );
     expect(mockState.setIsAuthenticated).toHaveBeenCalledWith(false);
     expect(mockState.setLoading).toHaveBeenCalledWith(false);
     expect(httpClient.post).not.toHaveBeenCalled();
@@ -114,7 +113,7 @@ describe('useGoogleLoginAction', () => {
     vi.mocked(httpClient.post).mockRejectedValueOnce(new Error('Network error'));
 
     const loginWithGoogle = useGoogleLoginAction(mockState);
-    
+
     await loginWithGoogle(mockCredentialResponse, false);
 
     expect(mockState.setLoading).toHaveBeenCalledWith(true);
@@ -127,14 +126,16 @@ describe('useGoogleLoginAction', () => {
     vi.mocked(httpClient.post).mockResolvedValueOnce({
       data: null,
       error: null,
-      status: 200
+      status: 200,
     });
 
     const loginWithGoogle = useGoogleLoginAction(mockState);
-    
+
     await loginWithGoogle(mockCredentialResponse, false);
 
-    expect(mockState.setError).toHaveBeenCalledWith('Nieznany błąd logowania przez Google. Spróbuj ponownie później.');
+    expect(mockState.setError).toHaveBeenCalledWith(
+      'Nieznany błąd logowania przez Google. Spróbuj ponownie później.'
+    );
     expect(mockState.setIsAuthenticated).toHaveBeenCalledWith(false);
   });
-}); 
+});

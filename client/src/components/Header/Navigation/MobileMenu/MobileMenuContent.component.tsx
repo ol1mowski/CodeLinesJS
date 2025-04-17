@@ -1,8 +1,8 @@
-import { motion } from "framer-motion";
-import { Button } from "../../../UI/Button/Button.component";
-import { navigationLinks } from "../navigationData";
-import { MobileMenuItem } from "./MobileMenuItem.component";
-import { Link } from "react-router-dom";
+import { motion } from 'framer-motion';
+import { Button } from '../../../UI/Button/Button.component';
+import { navigationLinks } from '../navigationData';
+import { MobileMenuItem } from './MobileMenuItem.component';
+import { Link } from 'react-router-dom';
 
 type MobileMenuContentProps = {
   onClose: () => void;
@@ -16,12 +16,7 @@ export const MobileMenuContent = ({ onClose }: MobileMenuContentProps) => (
     className="h-screen flex flex-col items-center justify-center gap-8 px-4"
   >
     {navigationLinks.map((item, index) => (
-      <MobileMenuItem
-        key={item.href}
-        {...item}
-        index={index}
-        onClick={onClose}
-      />
+      <MobileMenuItem key={item.href} {...item} index={index} onClick={onClose} />
     ))}
     <motion.div
       initial={{ opacity: 0, y: 20 }}

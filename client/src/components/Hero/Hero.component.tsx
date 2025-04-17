@@ -1,9 +1,8 @@
-import { Container } from "../UI/Container/Container.component";
-import { HeroAnimation } from "./HeroAnimation/HeroAnimation.component";
-import { HeroContent } from "./HeroContent/HeroContent.component";
+import { Container } from '../UI/Container/Container.component';
+import { HeroAnimation } from './HeroAnimation/HeroAnimation.component';
+import { HeroContent } from './HeroContent/HeroContent.component';
 
 export const HeroSection = () => {
-
   return (
     <section className="relative min-h-screen pt-16 w-full bg-gradient-to-b from-dark via-dark/90 to-dark overflow-hidden flex items-center">
       <div className="absolute top-0 left-0 w-full h-full bg-[#1a1a1a] opacity-90" />

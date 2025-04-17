@@ -6,15 +6,15 @@ import { httpClient } from '../api/httpClient.api';
 export const useAuthCheck = (state: ReturnType<typeof useAuthState>) => {
   const { setIsAuthenticated, setIsLoading, setUser } = state;
   const { token } = useAuth();
-  
+
   useEffect(() => {
     const checkAuth = async () => {
       if (token) {
         try {
           const response = await httpClient.get('auth/verify', {
-            requiresAuth: true
+            requiresAuth: true,
           });
-          
+
           if (response.data && !response.error) {
             setIsAuthenticated(true);
             if (response.data.user) {
@@ -38,7 +38,7 @@ export const useAuthCheck = (state: ReturnType<typeof useAuthState>) => {
       }
       setIsLoading(false);
     };
-    
+
     checkAuth();
   }, [token, setIsAuthenticated, setIsLoading, setUser]);
-}; 
+};

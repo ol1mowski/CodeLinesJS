@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState, useCallback } from "react";
-import { loader } from "@monaco-editor/react";
+import { useEffect, useRef, useState, useCallback } from 'react';
+import { loader } from '@monaco-editor/react';
 
 export const useEditor = (defaultCode: string) => {
   const editorRef = useRef<any>(null);
@@ -25,4 +25,4 @@ export const useEditor = (defaultCode: string) => {
   }, []);
 
   return { code, isEditorReady, handleEditorDidMount, handleEditorChange };
-}; 
+};

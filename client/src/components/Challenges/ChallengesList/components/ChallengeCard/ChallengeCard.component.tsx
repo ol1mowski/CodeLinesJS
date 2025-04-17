@@ -9,13 +9,31 @@ import { cardAnimation } from '../../constants/animations';
 import { getDifficultyColor } from '../../constants/difficultyColors';
 import { ChallengeCardProps } from '../../types';
 
-export const ChallengeCard = memo(({ title, description, icon, difficulty, tags }: ChallengeCardProps) => {
-  const isMobile = useMobileDetect();
-  
-  if (isMobile) {
+export const ChallengeCard = memo(
+  ({ title, description, icon, difficulty, tags }: ChallengeCardProps) => {
+    const isMobile = useMobileDetect();
+
+    if (isMobile) {
+      return (
+        <div className="p-6 rounded-xl border border-js/20 bg-dark/50 backdrop-blur-sm space-y-4">
+          <ChallengeCardHeader
+            title={title}
+            difficulty={difficulty}
+            Icon={icon}
+            difficultyColor={getDifficultyColor(difficulty)}
+          />
+          <ChallengeCardContent description={description} />
+          <ChallengeCardTags tags={tags} />
+        </div>
+      );
+    }
+
     return (
-      <div className="p-6 rounded-xl border border-js/20 bg-dark/50 backdrop-blur-sm space-y-4">
-        <ChallengeCardHeader 
+      <motion.div
+        whileHover={cardAnimation.hover}
+        className="p-6 rounded-xl border border-js/20 bg-dark/50 backdrop-blur-sm space-y-4"
+      >
+        <ChallengeCardHeader
           title={title}
           difficulty={difficulty}
           Icon={icon}
@@ -23,25 +41,9 @@ export const ChallengeCard = memo(({ title, description, icon, difficulty, tags 
         />
         <ChallengeCardContent description={description} />
         <ChallengeCardTags tags={tags} />
-      </div>
+      </motion.div>
     );
   }
-  
-  return (
-    <motion.div
-      whileHover={cardAnimation.hover}
-      className="p-6 rounded-xl border border-js/20 bg-dark/50 backdrop-blur-sm space-y-4"
-    >
-      <ChallengeCardHeader 
-        title={title}
-        difficulty={difficulty}
-        Icon={icon}
-        difficultyColor={getDifficultyColor(difficulty)}
-      />
-      <ChallengeCardContent description={description} />
-      <ChallengeCardTags tags={tags} />
-    </motion.div>
-  );
-});
+);
 
-ChallengeCard.displayName = 'ChallengeCard'; 
+ChallengeCard.displayName = 'ChallengeCard';

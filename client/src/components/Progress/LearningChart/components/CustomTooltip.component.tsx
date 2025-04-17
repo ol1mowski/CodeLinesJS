@@ -17,4 +17,4 @@ export const CustomTooltip = memo(({ active, payload, label }: TooltipProps<numb
   );
 });
 
-CustomTooltip.displayName = 'CustomTooltip'; 
+CustomTooltip.displayName = 'CustomTooltip';

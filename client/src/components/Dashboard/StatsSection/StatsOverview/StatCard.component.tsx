@@ -1,7 +1,7 @@
-import { memo } from "react";
-import { motion } from "framer-motion";
-import { IconType } from "react-icons";
-import { statsSectionStyles as styles } from "../style/StatsSection.styles";
+import { memo } from 'react';
+import { motion } from 'framer-motion';
+import { IconType } from 'react-icons';
+import { statsSectionStyles as styles } from '../style/StatsSection.styles';
 
 type StatCardProps = {
   id: string;
@@ -14,7 +14,7 @@ type StatCardProps = {
 
 const item = {
   hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0 }
+  show: { opacity: 1, y: 0 },
 };
 
 export const StatCard = memo(({ icon: Icon, label, value, subValue }: StatCardProps) => (
@@ -29,12 +29,10 @@ export const StatCard = memo(({ icon: Icon, label, value, subValue }: StatCardPr
       <div className="min-w-0">
         <p className="text-gray-400 text-xs md:text-sm mb-0.5 md:mb-1">{label}</p>
         <p className="text-xl md:text-2xl font-bold font-space text-js truncate">{value}</p>
-        {subValue && (
-          <p className="text-xs md:text-sm text-gray-500 mt-0.5 md:mt-1">{subValue}</p>
-        )}
+        {subValue && <p className="text-xs md:text-sm text-gray-500 mt-0.5 md:mt-1">{subValue}</p>}
       </div>
     </div>
   </motion.div>
 ));
 
-StatCard.displayName = "StatCard"; 
+StatCard.displayName = 'StatCard';

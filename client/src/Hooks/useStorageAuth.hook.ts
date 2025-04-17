@@ -18,7 +18,6 @@ type UseStorageAuthReturn = {
   removeUser: () => void;
 };
 
-
 export const useStorageAuth = (): UseStorageAuthReturn => {
   const [token, setToken] = useState<string | null>(getAuthToken());
   const [user, setUser] = useState<User | null>(() => {
@@ -29,7 +28,7 @@ export const useStorageAuth = (): UseStorageAuthReturn => {
   useEffect(() => {
     const handleStorageChange = () => {
       setToken(getAuthToken());
-      
+
       const userString = localStorage.getItem('user') || sessionStorage.getItem('user');
       setUser(userString ? JSON.parse(userString) : null);
     };
@@ -57,7 +56,7 @@ export const useStorageAuth = (): UseStorageAuthReturn => {
       console.error('Błąd zapisywania użytkownika:', e);
     }
   }, []);
-  
+
   const removeUser = useCallback(() => {
     localStorage.removeItem('user');
     sessionStorage.removeItem('user');
@@ -71,6 +70,6 @@ export const useStorageAuth = (): UseStorageAuthReturn => {
     saveToken,
     removeToken,
     saveUser,
-    removeUser
+    removeUser,
   };
-}; 
+};

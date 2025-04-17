@@ -12,19 +12,19 @@ export const usePreferences = () => {
   const { data: preferences, isLoading } = useQuery({
     queryKey: ['preferences'],
     queryFn: () => fetchPreferences(token || ''),
-    enabled: !!token
+    enabled: !!token,
   });
 
   const updatePreferencesMutation = useMutation({
     mutationFn: (data: PreferencesData) => updatePreferences(data, token || ''),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['preferences'] });
-    }
+    },
   });
 
   return {
     preferences,
     isLoading,
-    updatePreferences: updatePreferencesMutation
+    updatePreferences: updatePreferencesMutation,
   };
-}; 
+};

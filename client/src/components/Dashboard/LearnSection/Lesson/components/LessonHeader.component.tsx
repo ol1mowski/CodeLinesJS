@@ -3,7 +3,6 @@ import { FaClock } from 'react-icons/fa';
 import { DifficultyBadge } from './DifficultyBadge.component';
 import { XpBadge } from './XpBadge.component';
 
-
 type LessonHeaderProps = {
   title: string;
   duration: string;
@@ -27,4 +26,4 @@ export const LessonHeader = memo(({ title, duration, difficulty, xp }: LessonHea
       </span>
     </div>
   </div>
-)); 
+));

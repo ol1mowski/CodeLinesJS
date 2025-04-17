@@ -6,11 +6,11 @@ export type Reward = {
   title: string;
   description: string;
   icon?: string;
-}
+};
 
 export type LessonReward = {
   completion: Reward[];
   quiz: {
     [score: number]: Reward[];
   };
-} 
+};

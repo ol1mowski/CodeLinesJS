@@ -1,11 +1,11 @@
-import { memo } from "react";
-import { motion } from "framer-motion";
-import { PageBackground } from "./components/PageBackground.component";
-import { PageHeader } from "./components/PageHeader.component";
-import { ReportForm } from "./components/ReportForm.component";
-import { ContactSection } from "./components/ContactSection.component";
-import { usePageAnimations } from "./hooks/usePageAnimations.hook";
-import { Helmet } from "react-helmet";
+import { memo } from 'react';
+import { motion } from 'framer-motion';
+import { PageBackground } from './components/PageBackground.component';
+import { PageHeader } from './components/PageHeader.component';
+import { ReportForm } from './components/ReportForm.component';
+import { ContactSection } from './components/ContactSection.component';
+import { usePageAnimations } from './hooks/usePageAnimations.hook';
+import { Helmet } from 'react-helmet';
 
 export const ReportBugPage = memo(() => {
   const animations = usePageAnimations();
@@ -15,7 +15,10 @@ export const ReportBugPage = memo(() => {
       <PageBackground />
       <Helmet>
         <title>Zgłoś Błąd | CodeLinesJS</title>
-        <meta name="description" content="Zgłoś błąd w CodeLinesJS - dołącz do nas i rozwijaj swoje umiejętności w przyjaznym środowisku." />
+        <meta
+          name="description"
+          content="Zgłoś błąd w CodeLinesJS - dołącz do nas i rozwijaj swoje umiejętności w przyjaznym środowisku."
+        />
       </Helmet>
       <div className="container mx-auto px-4 relative z-10">
         <motion.div
@@ -27,11 +30,11 @@ export const ReportBugPage = memo(() => {
           <motion.div variants={animations.item}>
             <PageHeader />
           </motion.div>
-          
+
           <motion.div variants={animations.item} className="w-full">
             <ReportForm />
           </motion.div>
-          
+
           <motion.div variants={animations.item}>
             <ContactSection />
           </motion.div>
@@ -41,4 +44,4 @@ export const ReportBugPage = memo(() => {
   );
 });
 
-ReportBugPage.displayName = "ReportBugPage"; 
+ReportBugPage.displayName = 'ReportBugPage';

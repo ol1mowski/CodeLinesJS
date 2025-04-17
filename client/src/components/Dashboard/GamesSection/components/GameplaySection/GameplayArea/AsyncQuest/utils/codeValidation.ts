@@ -1,6 +1,5 @@
 export const validateAsyncCode = (userCode: string, correctCode: string): boolean => {
-  const normalizeCode = (code: string) => 
-    code.replace(/\s+/g, ' ').trim();
+  const normalizeCode = (code: string) => code.replace(/\s+/g, ' ').trim();
 
   const normalizedUser = normalizeCode(userCode);
   const normalizedCorrect = normalizeCode(correctCode);
@@ -9,14 +8,11 @@ export const validateAsyncCode = (userCode: string, correctCode: string): boolea
     return true;
   }
 
-  const isAsyncFunction = (code: string) =>
-    code.includes('async') && code.includes('function');
-  
-  const hasPromiseHandling = (code: string) =>
-    code.includes('.then(') && code.includes('.catch(');
+  const isAsyncFunction = (code: string) => code.includes('async') && code.includes('function');
 
-  const hasErrorHandling = (code: string) =>
-    code.includes('try') && code.includes('catch');
+  const hasPromiseHandling = (code: string) => code.includes('.then(') && code.includes('.catch(');
+
+  const hasErrorHandling = (code: string) => code.includes('try') && code.includes('catch');
 
   if (isAsyncFunction(correctCode) && !isAsyncFunction(userCode)) {
     return false;
@@ -31,4 +27,4 @@ export const validateAsyncCode = (userCode: string, correctCode: string): boolea
   }
 
   return true;
-}; 
+};

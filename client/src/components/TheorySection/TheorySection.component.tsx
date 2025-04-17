@@ -1,7 +1,7 @@
-import { Container } from "../UI/Container/Container.component";
-import { SectionBackground } from "../UI/SectionBackground/SectionBackground.component";
-import { TheoryContent } from "./components/TheoryContent/TheoryContent.component";
-import { SectionHeader } from "../UI/SectionHeader/SectionHeader.component";
+import { Container } from '../UI/Container/Container.component';
+import { SectionBackground } from '../UI/SectionBackground/SectionBackground.component';
+import { TheoryContent } from './components/TheoryContent/TheoryContent.component';
+import { SectionHeader } from '../UI/SectionHeader/SectionHeader.component';
 
 export const TheorySection = () => (
   <section
@@ -23,4 +23,4 @@ export const TheorySection = () => (
       </div>
     </Container>
   </section>
-); 
+);

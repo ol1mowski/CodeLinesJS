@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo } from 'react';
 
 type ErrorMessageProps = {
   message: string;
@@ -10,4 +10,4 @@ export const ErrorMessage = memo(({ message }: ErrorMessageProps) => (
   </div>
 ));
 
-ErrorMessage.displayName = "ErrorMessage"; 
+ErrorMessage.displayName = 'ErrorMessage';

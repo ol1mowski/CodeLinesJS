@@ -15,11 +15,11 @@ export type HttpRequestOptions = {
 
 const getPolishNetworkErrorMessage = (error: Error): string => {
   const errorMessage = error.message.toLowerCase();
-  
+
   if (errorMessage.includes('failed to fetch')) {
     return 'Nie można połączyć się z serwerem. Sprawdź swoje połączenie internetowe.';
   }
-  
+
   if (errorMessage.includes('network request failed')) {
     return 'Błąd połączenia sieciowego. Sprawdź swoje połączenie internetowe.';
   }
@@ -40,21 +40,19 @@ const getPolishNetworkErrorMessage = (error: Error): string => {
 };
 
 export const httpClient = {
-  async request<T = any>(endpoint: string, options: HttpRequestOptions = {}): Promise<ApiResponse<T>> {
+  async request<T = any>(
+    endpoint: string,
+    options: HttpRequestOptions = {}
+  ): Promise<ApiResponse<T>> {
     try {
-      const {
-        method = 'GET',
-        headers = {},
-        body,
-        requiresAuth = false,
-      } = options;
+      const { method = 'GET', headers = {}, body, requiresAuth = false } = options;
 
       const apiUrl = API_URL.replace('www.', '');
       const url = `${apiUrl}${endpoint}`;
 
       const requestHeaders: Record<string, string> = {
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
+        Accept: 'application/json',
         ...headers,
       };
 
@@ -76,10 +74,10 @@ export const httpClient = {
       }
 
       const response = await fetch(url, requestOptions);
-      
+
       let data = null;
       let error = null;
-      
+
       try {
         const text = await response.text();
         if (text) {
@@ -102,11 +100,10 @@ export const httpClient = {
       };
     } catch (e) {
       console.error('Błąd zapytania HTTP:', e);
-      
-      const errorMessage = e instanceof Error 
-        ? getPolishNetworkErrorMessage(e)
-        : 'Nieznany błąd zapytania';
-      
+
+      const errorMessage =
+        e instanceof Error ? getPolishNetworkErrorMessage(e) : 'Nieznany błąd zapytania';
+
       return {
         data: null,
         error: errorMessage,
@@ -115,23 +112,41 @@ export const httpClient = {
     }
   },
 
-  async get<T = any>(endpoint: string, options: Omit<HttpRequestOptions, 'method' | 'body'> = {}): Promise<ApiResponse<T>> {
+  async get<T = any>(
+    endpoint: string,
+    options: Omit<HttpRequestOptions, 'method' | 'body'> = {}
+  ): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, { ...options, method: 'GET' });
   },
 
-  async post<T = any>(endpoint: string, body: any, options: Omit<HttpRequestOptions, 'method' | 'body'> = {}): Promise<ApiResponse<T>> {
+  async post<T = any>(
+    endpoint: string,
+    body: any,
+    options: Omit<HttpRequestOptions, 'method' | 'body'> = {}
+  ): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, { ...options, method: 'POST', body });
   },
 
-  async put<T = any>(endpoint: string, body: any, options: Omit<HttpRequestOptions, 'method' | 'body'> = {}): Promise<ApiResponse<T>> {
+  async put<T = any>(
+    endpoint: string,
+    body: any,
+    options: Omit<HttpRequestOptions, 'method' | 'body'> = {}
+  ): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, { ...options, method: 'PUT', body });
   },
 
-  async delete<T = any>(endpoint: string, options: Omit<HttpRequestOptions, 'method'> = {}): Promise<ApiResponse<T>> {
+  async delete<T = any>(
+    endpoint: string,
+    options: Omit<HttpRequestOptions, 'method'> = {}
+  ): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, { ...options, method: 'DELETE' });
   },
 
-  async patch<T = any>(endpoint: string, body: any, options: Omit<HttpRequestOptions, 'method' | 'body'> = {}): Promise<ApiResponse<T>> {
+  async patch<T = any>(
+    endpoint: string,
+    body: any,
+    options: Omit<HttpRequestOptions, 'method' | 'body'> = {}
+  ): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, { ...options, method: 'PATCH', body });
   },
-}; 
+};

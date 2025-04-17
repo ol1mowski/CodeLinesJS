@@ -12,12 +12,12 @@ vi.mock('../../../hooks/usePreferencesForm', () => ({
       watch: vi.fn().mockReturnValue({
         emailNotifications: true,
         pushNotifications: false,
-        language: 'pl'
+        language: 'pl',
       }),
-      setValue: vi.fn()
+      setValue: vi.fn(),
     },
-    onSubmit: vi.fn()
-  })
+    onSubmit: vi.fn(),
+  }),
 }));
 
 describe('PreferencesForm', () => {
@@ -30,7 +30,7 @@ describe('PreferencesForm', () => {
       preferences: {
         emailNotifications: true,
         pushNotifications: false,
-        language: 'pl'
+        language: 'pl',
       },
       isLoading: false,
       updatePreferences: {
@@ -46,15 +46,13 @@ describe('PreferencesForm', () => {
         status: 'idle',
         failureCount: 0,
         failureReason: null,
-        reset: vi.fn()
-      } as any
+        reset: vi.fn(),
+      } as any,
     });
   });
 
   it('should render the form with default values', () => {
-    render(
-      <PreferencesForm />
-    );
+    render(<PreferencesForm />);
 
     expect(screen.getByText('Powiadomienia')).toBeDefined();
     expect(screen.getByText('Język')).toBeDefined();
@@ -78,14 +76,12 @@ describe('PreferencesForm', () => {
         status: 'idle',
         failureCount: 0,
         failureReason: null,
-        reset: vi.fn()
-      } as any
+        reset: vi.fn(),
+      } as any,
     });
 
-    render(
-      <PreferencesForm />
-    );
+    render(<PreferencesForm />);
 
     expect(screen.getByRole('status')).toBeDefined();
   });
-}); 
+});

@@ -14,7 +14,7 @@ export const useAsyncQuestState = ({ gameContent, isPaused }: UseAsyncQuestState
   const initialCategoryStats = {
     promises: { total: 0, correct: 0, points: 0 },
     'async-await': { total: 0, correct: 0, points: 0 },
-    callbacks: { total: 0, correct: 0, points: 0 }
+    callbacks: { total: 0, correct: 0, points: 0 },
   };
 
   const [gameStats, setGameStats] = useState<GameStats>({
@@ -24,7 +24,7 @@ export const useAsyncQuestState = ({ gameContent, isPaused }: UseAsyncQuestState
     timeElapsed: 0,
     maxTime: gameContent?.estimatedTime ? gameContent.estimatedTime * 60 : 300,
     correctAnswers: 0,
-    categoryStats: initialCategoryStats
+    categoryStats: initialCategoryStats,
   });
 
   const [isGameOver, setIsGameOver] = useState(false);
@@ -44,7 +44,7 @@ export const useAsyncQuestState = ({ gameContent, isPaused }: UseAsyncQuestState
     if (gameContent) {
       setGameStats(prev => ({
         ...prev,
-        totalLevels: gameContent.gameData?.length || 0
+        totalLevels: gameContent.gameData?.length || 0,
       }));
     }
   }, [gameContent]);
@@ -61,22 +61,25 @@ export const useAsyncQuestState = ({ gameContent, isPaused }: UseAsyncQuestState
     }
   }, [isGameOver, isPaused, startTimer]);
 
-  const handleScoreUpdate = useCallback((points: number, category: 'promises' | 'async-await' | 'callbacks') => {
-    setGameStats(prev => ({
-      ...prev,
-      score: prev.score + points,
-      correctAnswers: prev.correctAnswers + 1,
-      categoryStats: {
-        ...prev.categoryStats,
-        [category]: {
-          ...prev.categoryStats[category],
-          total: prev.categoryStats[category].total + 1,
-          correct: prev.categoryStats[category].correct + 1,
-          points: prev.categoryStats[category].points + points
-        }
-      }
-    }));
-  }, []);
+  const handleScoreUpdate = useCallback(
+    (points: number, category: 'promises' | 'async-await' | 'callbacks') => {
+      setGameStats(prev => ({
+        ...prev,
+        score: prev.score + points,
+        correctAnswers: prev.correctAnswers + 1,
+        categoryStats: {
+          ...prev.categoryStats,
+          [category]: {
+            ...prev.categoryStats[category],
+            total: prev.categoryStats[category].total + 1,
+            correct: prev.categoryStats[category].correct + 1,
+            points: prev.categoryStats[category].points + points,
+          },
+        },
+      }));
+    },
+    []
+  );
 
   const handleLevelComplete = useCallback(() => {
     const nextLevel = gameStats.currentLevel + 1;
@@ -101,7 +104,7 @@ export const useAsyncQuestState = ({ gameContent, isPaused }: UseAsyncQuestState
     const initialCategoryStats = {
       promises: { total: 0, correct: 0, points: 0 },
       'async-await': { total: 0, correct: 0, points: 0 },
-      callbacks: { total: 0, correct: 0, points: 0 }
+      callbacks: { total: 0, correct: 0, points: 0 },
     };
 
     gameContent.gameData?.forEach((challenge: AsyncChallenge) => {
@@ -117,7 +120,7 @@ export const useAsyncQuestState = ({ gameContent, isPaused }: UseAsyncQuestState
       timeElapsed: 0,
       maxTime: gameContent.estimatedTime ? gameContent.estimatedTime * 60 : 300,
       correctAnswers: 0,
-      categoryStats: initialCategoryStats 
+      categoryStats: initialCategoryStats,
     });
 
     setIsGameOver(false);
@@ -142,6 +145,6 @@ export const useAsyncQuestState = ({ gameContent, isPaused }: UseAsyncQuestState
     handleLevelComplete,
     handleGameOver,
     handleRestart,
-    handleStartGame
+    handleStartGame,
   };
-}; 
+};

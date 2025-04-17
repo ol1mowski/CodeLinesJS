@@ -11,4 +11,4 @@ export const fetchGames = async (): Promise<GamesResponse> => {
     console.error('Błąd podczas pobierania gier:', error);
     throw error;
   }
-}; 
+};

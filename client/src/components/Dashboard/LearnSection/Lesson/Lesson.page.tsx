@@ -1,12 +1,12 @@
-import { useParams, Navigate } from "react-router-dom";
-import { useLessonData } from "./hooks/useLessonData";
-import { LessonLayout } from "./components/LessonLayout.component";
-import { LessonContent } from "./components/LessonContent.component";
-import { LessonNotFound } from "./components/LessonNotFound.component";
-import { ErrorMessage } from "../components/ErrorMessage.component";
-import { LoadingScreen } from "../../../UI/LoadingScreen/LoadingScreen.component";
-import { Helmet } from "react-helmet";
-import { FaLock } from "react-icons/fa";
+import { useParams, Navigate } from 'react-router-dom';
+import { useLessonData } from './hooks/useLessonData';
+import { LessonLayout } from './components/LessonLayout.component';
+import { LessonContent } from './components/LessonContent.component';
+import { LessonNotFound } from './components/LessonNotFound.component';
+import { ErrorMessage } from '../components/ErrorMessage.component';
+import { LoadingScreen } from '../../../UI/LoadingScreen/LoadingScreen.component';
+import { Helmet } from 'react-helmet';
+import { FaLock } from 'react-icons/fa';
 import { useStats } from '../../../Dashboard/StatsSection/hooks/useStats.hook';
 
 export const LessonPage = () => {
@@ -69,7 +69,13 @@ export const LessonPage = () => {
   );
 };
 
-const LessonLocked = ({ requiredLevel, userLevel }: { requiredLevel: number, userLevel: number }) => (
+const LessonLocked = ({
+  requiredLevel,
+  userLevel,
+}: {
+  requiredLevel: number;
+  userLevel: number;
+}) => (
   <LessonLayout>
     <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
       <div className="bg-dark-800/50 p-8 rounded-xl border border-js/10 max-w-md">
@@ -83,8 +89,8 @@ const LessonLocked = ({ requiredLevel, userLevel }: { requiredLevel: number, use
         <p className="text-sm text-gray-500 mb-4">
           Twój obecny poziom: <span className="text-js font-medium">{userLevel}</span>
         </p>
-        <button 
-          onClick={() => window.location.href = '/dashboard/learn'}
+        <button
+          onClick={() => (window.location.href = '/dashboard/learn')}
           className="mt-4 px-4 py-2 bg-js/10 text-js rounded-lg hover:bg-js/20 transition-colors w-full"
         >
           Wróć do listy lekcji
@@ -111,4 +117,4 @@ const LessonErrorState = ({ onRetry }: { onRetry: () => void }) => (
   </LessonLayout>
 );
 
-LessonPage.displayName = "LessonPage";
+LessonPage.displayName = 'LessonPage';

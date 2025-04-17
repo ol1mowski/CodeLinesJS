@@ -1,5 +1,5 @@
-import { motion } from "framer-motion";
-import { FaCode } from "react-icons/fa";
+import { motion } from 'framer-motion';
+import { FaCode } from 'react-icons/fa';
 
 export const FooterHeader = () => (
   <div className="flex items-center gap-3">
@@ -12,8 +12,6 @@ export const FooterHeader = () => (
         <FaCode className="w-6 h-6" />
       </motion.div>
     </div>
-    <h2 className="text-2xl font-bold text-js">
-      CodeLinesJs
-    </h2>
+    <h2 className="text-2xl font-bold text-js">CodeLinesJs</h2>
   </div>
-); 
+);

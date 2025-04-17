@@ -10,7 +10,7 @@ type CallToActionProps = {
   isExternal?: boolean;
   className?: string;
   icon?: React.ReactNode;
-}
+};
 
 export const CallToAction = ({
   text,
@@ -18,11 +18,11 @@ export const CallToAction = ({
   href,
   isExternal = false,
   className = '',
-  icon = <FaArrowRight />
+  icon = <FaArrowRight />,
 }: CallToActionProps) => {
   const isAnchor = href.startsWith('#');
   const isMobile = useMobileDetect();
-  
+
   const ButtonContent = () => (
     <>
       <span>{text}</span>
@@ -67,12 +67,8 @@ export const CallToAction = ({
     return (
       <div className={`pt-2 ${className}`}>
         {renderButton()}
-        
-        {description && (
-          <p className="mt-3 text-gray-400 text-sm">
-            {description}
-          </p>
-        )}
+
+        {description && <p className="mt-3 text-gray-400 text-sm">{description}</p>}
       </div>
     );
   }
@@ -86,12 +82,8 @@ export const CallToAction = ({
       className={`pt-2 ${className}`}
     >
       {renderButton()}
-      
-      {description && (
-        <p className="mt-3 text-gray-400 text-sm">
-          {description}
-        </p>
-      )}
+
+      {description && <p className="mt-3 text-gray-400 text-sm">{description}</p>}
     </motion.div>
   );
-}; 
+};

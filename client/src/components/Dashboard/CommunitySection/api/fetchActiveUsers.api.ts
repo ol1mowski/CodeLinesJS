@@ -1,10 +1,10 @@
-import { API_URL } from "../../../../config/api.config";
+import { API_URL } from '../../../../config/api.config';
 
 export const fetchActiveUsers = async (token: string) => {
   const response = await fetch(`${API_URL}users/active`, {
     headers: {
-      'Authorization': `Bearer ${token}`
-    }
+      Authorization: `Bearer ${token}`,
+    },
   });
 
   if (!response.ok) {

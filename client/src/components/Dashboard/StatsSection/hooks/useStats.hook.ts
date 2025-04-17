@@ -6,7 +6,11 @@ import { fetchStats } from '../api/fetchStats.api';
 export const useStats = () => {
   const { token, isAuthenticated } = useAuth();
 
-  const { data: stats, isLoading, error } = useQuery<UserStats, Error>({
+  const {
+    data: stats,
+    isLoading,
+    error,
+  } = useQuery<UserStats, Error>({
     queryKey: ['userProgress'],
     queryFn: () => fetchStats(token!),
     enabled: isAuthenticated && !!token,
@@ -15,8 +19,8 @@ export const useStats = () => {
     retry: (failureCount, error) => {
       if (error.message === 'Brak autoryzacji') return false;
       return failureCount < 3;
-    }
+    },
   });
 
   return { stats, isLoading, error };
-}; 
+};

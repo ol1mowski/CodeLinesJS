@@ -1,8 +1,8 @@
-import { memo } from "react";
-import { motion } from "framer-motion";
-import { useQuery } from "@tanstack/react-query";
-import { fetchActiveUsers } from "../api/fetchActiveUsers.api";
-import { useAuth } from "../../../../hooks/useAuth";
+import { memo } from 'react';
+import { motion } from 'framer-motion';
+import { useQuery } from '@tanstack/react-query';
+import { fetchActiveUsers } from '../api/fetchActiveUsers.api';
+import { useAuth } from '../../../../hooks/useAuth';
 
 type User = {
   users: {
@@ -17,8 +17,8 @@ export const ActiveUsers = memo(() => {
   const { token } = useAuth();
   const { data } = useQuery<User>({
     queryKey: ['activeUsers'],
-    queryFn: () => fetchActiveUsers(token || ""),
-    refetchInterval: 30000
+    queryFn: () => fetchActiveUsers(token || ''),
+    refetchInterval: 30000,
   });
 
   return (
@@ -29,16 +29,18 @@ export const ActiveUsers = memo(() => {
     >
       <h3 className="text-js text-sm font-medium mb-3">Aktywni użytkownicy</h3>
       <div className="flex items-center gap-2">
-        {data?.users.map((user) => (
+        {data?.users.map(user => (
           <motion.div
             key={user._id}
             className="relative group"
             whileHover={{ scale: 1.1 }}
-            transition={{ type: "spring", stiffness: 400, damping: 17 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 17 }}
           >
             <div className="w-10 h-10 rounded-full relative">
               <div className="w-10 h-10 rounded-full bg-js flex items-center justify-center">
-                <span className="text-dark font-bold text-xl">{user.username.charAt(0).toUpperCase()}</span>
+                <span className="text-dark font-bold text-xl">
+                  {user.username.charAt(0).toUpperCase()}
+                </span>
               </div>
               <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-dark">
                 <div className="absolute inset-0 bg-green-500 rounded-full animate-ping opacity-75"></div>
@@ -61,4 +63,4 @@ export const ActiveUsers = memo(() => {
   );
 });
 
-ActiveUsers.displayName = "ActiveUsers"; 
+ActiveUsers.displayName = 'ActiveUsers';

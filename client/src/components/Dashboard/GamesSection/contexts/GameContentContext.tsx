@@ -26,8 +26,8 @@ export const GameContentProvider = ({ children }: { children: React.ReactNode })
       const response = await fetch(`${API_URL}/games`, {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (!response.ok) {
@@ -50,7 +50,7 @@ export const GameContentProvider = ({ children }: { children: React.ReactNode })
         rewardPoints: game.rewardPoints,
         gameData: game.gameData,
         estimatedTime: game.estimatedTime,
-        isCompleted: game.isCompleted
+        isCompleted: game.isCompleted,
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Wystąpił nieznany błąd');
@@ -72,4 +72,4 @@ export const useGameContent = () => {
     throw new Error('useGameContent must be used within a GameContentProvider');
   }
   return context;
-}; 
+};

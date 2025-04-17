@@ -1,5 +1,5 @@
-import { SectionTitle } from "../../UI/SectionTitle/SectionTitle.component";
-import { motion } from "framer-motion";
+import { SectionTitle } from '../../UI/SectionTitle/SectionTitle.component';
+import { motion } from 'framer-motion';
 
 export const PracticeHeader = () => (
   <div className="w-full flex flex-col items-center">
@@ -14,7 +14,7 @@ export const PracticeHeader = () => (
         Krok 2: Praktyka
       </div>
     </motion.div>
-    
+
     <SectionTitle
       title="Zastosuj Wiedzę w Praktyce"
       subtitle="Sprawdź swoje umiejętności w interaktywnych grach i wyzwaniach"
@@ -23,4 +23,4 @@ export const PracticeHeader = () => (
       subtitleClassName="text-gray-400"
     />
   </div>
-); 
+);
