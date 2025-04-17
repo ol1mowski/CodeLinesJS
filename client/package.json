@@ -27,7 +27,8 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "clean": "rimraf dist",
-    "prepare": "cd .. && husky install client/.husky"
+    "prepare": "husky",
+    "postinstall": "husky"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
