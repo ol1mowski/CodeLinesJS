@@ -1,10 +1,11 @@
-import express, { Application, Request, Response } from "express";
-import { configureServer } from "./config/server.config.js";
-import { connectDB } from "./config/db.config.js";
-import { configureRoutes } from "./routes/index.js";
-import { configureGoogleSignIn } from "./middleware/google.middleware.js";
-import { configureStaticFiles } from "./middleware/static.middleware.js";
-import errorHandler from "./middleware/error.middleware.js";
+import express, { Application, Request, Response } from 'express';
+
+import { connectDB } from './config/db.config.js';
+import { configureServer } from './config/server.config.js';
+import errorHandler from './middleware/error.middleware.js';
+import { configureGoogleSignIn } from './middleware/google.middleware.js';
+import { configureStaticFiles } from './middleware/static.middleware.js';
+import { configureRoutes } from './routes/index.js';
 
 const app: Application = express();
 
@@ -23,10 +24,10 @@ configureStaticFiles(app);
 
 app.use(errorHandler);
 
-const PORT: number = parseInt(process.env.PORT || "5001", 10);
+const PORT: number = parseInt(process.env.PORT || '5001', 10);
 
 app.listen(PORT, () => {
-  console.log(`Serwer uruchomiony na porcie ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
 
-connectDB(); 
+connectDB();

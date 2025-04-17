@@ -140,7 +140,7 @@ describe('LearningPathService', () => {
       mockedLearningPathRepository.findAll.mockResolvedValue(mockPaths);
       mockedUserRepository.findUserWithLearningPathStats.mockResolvedValue(mockUser);
       mockedLearningPathMapper.toLearningPathResponse
-        .mockImplementation((path, userLevel, userLearningPaths) => {
+        .mockImplementation((path) => {
           if (path._id.equals(mockPaths[0]._id)) {
             return mockFormattedPaths[0];
           } else {

@@ -1,14 +1,11 @@
-import { IGroup, IGroupMember, GroupWithUserInfo } from '../../types/group.types.js';
 import { Types } from 'mongoose';
 
+import { GroupWithUserInfo } from '../../types/group.types.js';
+
 export class GroupEnricher {
-  static enrichWithUserInfo(
-    group: any,
-    members: any[],
-    userId?: string
-  ): GroupWithUserInfo {
+  static enrichWithUserInfo(group: any, members: any[], userId?: string): GroupWithUserInfo {
     const userMembership = userId
-      ? members.find(member => {
+      ? members.find((member) => {
           if (typeof member.user === 'object' && member.user) {
             return member.user._id.toString() === userId;
           }
@@ -36,4 +33,4 @@ export class GroupEnricher {
       joinedAt: userMembership ? userMembership.createdAt : null,
     } as GroupWithUserInfo;
   }
-} 
+}

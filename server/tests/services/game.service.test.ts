@@ -19,7 +19,7 @@ vi.mock('../../src/models/user.model.js', () => ({
 import { Game } from '../../src/models/game.model.js';
 import { User } from '../../src/models/user.model.js';
 
-type MockedFunction<T extends (...args: any) => any> = {
+type MockedFunction<T extends (..._: any) => any> = {
   [P in keyof ReturnType<typeof vi.fn>]: ReturnType<typeof vi.fn>[P]
 } & T;
 

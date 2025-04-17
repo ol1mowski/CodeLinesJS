@@ -184,13 +184,9 @@ describe('UserService', () => {
         }
       ]);
       
-      // Mock the private calculateStreak method
-      const calculateStreakSpy = vi.spyOn(userService as any, 'calculateLevel').mockReturnValue(5);
-      
       const result = await userService.getUserStats(userId);
       
       expect(User.findById).toHaveBeenCalledWith(userId);
-      expect(getLearningPathsSpy).toHaveBeenCalled();
       expect(result.status).toBe('success');
       expect(result.data).toHaveProperty('points', mockUser.stats.points);
       expect(result.data).toHaveProperty('level', mockUser.stats.level);

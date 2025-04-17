@@ -147,7 +147,7 @@ describe('AuthService', () => {
       }
     });
     
-    mockedAuthService.googleAuthentication.mockImplementation((token, rememberMe) => {
+    mockedAuthService.googleAuthentication.mockImplementation((token) => {
       if (token === 'google-token') {
         return Promise.resolve({
           token: 'jwt-token',

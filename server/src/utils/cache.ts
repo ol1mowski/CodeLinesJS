@@ -1,9 +1,10 @@
-// @ts-nocheck
 import { Request, Response, NextFunction } from 'express';
 
 const cache = new Map();
 
-export const cacheMiddleware = (duration = 300): ((req: Request, res: Response, next: NextFunction) => void) => {
+export const cacheMiddleware = (
+  duration = 300,
+): ((req: Request, res: Response, next: NextFunction) => void) => {
   return (req: Request, res: Response, next: NextFunction) => {
     if (req.method !== 'GET') {
       return next();
@@ -18,14 +19,14 @@ export const cacheMiddleware = (duration = 300): ((req: Request, res: Response, 
 
     const originalSend = res.send;
 
-    res.send = function(body): Response {
+    res.send = function (body): Response {
       if (res.statusCode === 200) {
         cache.set(key, {
           data: body,
-          expiry: Date.now() + duration * 1000
+          expiry: Date.now() + duration * 1000,
         });
       }
-      
+
       return originalSend.call(this, body);
     };
 
@@ -36,17 +37,17 @@ export const cacheMiddleware = (duration = 300): ((req: Request, res: Response, 
 export const setCache = (key: string, data, ttl = 300) => {
   cache.set(key, {
     data,
-    expiry: Date.now() + ttl * 1000
+    expiry: Date.now() + ttl * 1000,
   });
 };
 
 export const getCache = (key: string) => {
   const cachedItem = cache.get(key);
-  
+
   if (cachedItem && cachedItem.expiry > Date.now()) {
     return cachedItem.data;
   }
-  
+
   return undefined;
 };
 
@@ -54,7 +55,6 @@ export const deleteCache = (key: string) => {
   cache.delete(key);
 };
 
-
 export const flushCache = () => {
   cache.clear();
-}; 
+};

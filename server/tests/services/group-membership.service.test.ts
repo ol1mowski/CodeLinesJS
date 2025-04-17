@@ -137,13 +137,6 @@ describe('GroupMembershipService', () => {
         isOwner: false
       };
 
-      const mockMembership = {
-        _id: validMongoIds.member,
-        user: userId,
-        group: groupId,
-        role: 'member' as GroupRole
-      };
-
       mockGroupFacadeService.getGroupById.mockResolvedValue({ group: mockGroup });
       (GroupMemberRepository.remove as any).mockResolvedValue(true);
       (GroupRepository.update as any).mockResolvedValue({ ...mockGroup, members: [] });
