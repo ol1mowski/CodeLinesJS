@@ -5,7 +5,33 @@ import tseslint from 'typescript-eslint'
 
 
 export default tseslint.config(
-  { ignores: ['dist', 'node_modules', 'public', 'playwright-report', 'test-results'] },
+  { 
+    ignores: [
+      'dist/**',
+      'build/**',
+      'node_modules/**',
+      'public/**',
+      'coverage/**',
+      'dist-analyze/**',
+      'playwright-report/**',
+      'test-results/**',
+      '.cache/**',
+      '.temp/**',
+      '**/.DS_Store',
+      'e2e/**',
+      '**/*.spec.ts',
+      '**/*.spec.tsx',
+      '**/generated/**',
+      '**/*.generated.*',
+      '*.d.ts',
+      'README.md',
+      'LICENSE',
+      '.gitignore',
+      '.prettierignore',
+      '.env',
+      '.env.*'
+    ]
+  },
   // Podstawowe reguły
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
@@ -22,7 +48,7 @@ export default tseslint.config(
           jsx: true
         },
         ecmaVersion: 2022,
-        project: './tsconfig.json'
+        project: ['./tsconfig.json', './tsconfig.app.json', './tsconfig.node.json']
       }
     },
     plugins: {
