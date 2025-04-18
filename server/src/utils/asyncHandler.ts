@@ -1,10 +1,20 @@
 import { Request, Response, NextFunction } from 'express';
 
-export const asyncHandler = (
-  fn: (req: Request, res: Response, next: NextFunction) => Promise<void | Response | any>,
-) => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    Promise.resolve(fn(req, res, next)).catch(next);
+type AsyncHandler = (req: Request, res: Response, next: NextFunction) => Promise<any>;
+
+export const asyncHandler = (fn: AsyncHandler) => {
+  return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      await fn(req, res, next);
+    } catch (error) {
+      next(error);
+    }
+  };
+};
+
+export const wrapController = (fn: AsyncHandler) => {
+  return (req: Request, res: Response, next: NextFunction): void => {
+    fn(req, res, next).catch(next);
   };
 };
 
