@@ -3,9 +3,6 @@ import { ReportService } from '../../../services/reports/report.service.js';
 import { 
   AuthRequest, 
   CreateReportDTO, 
-  UpdateReportStatusDTO,
-  ReportStatus, 
-  ReportCategory
 } from '../../../types/reports/index.js';
 
 
