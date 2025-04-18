@@ -27,21 +27,18 @@ export const getUserStats = async (req: Request, res: Response, next: NextFuncti
     const currentStreak = calculateStreak(typedStats.chartData?.daily || []);
     const { currentStreak: updatedStreak, bestStreak } = await updateStreakStats(user, currentStreak);
 
-    res.json({
-      status: 'success',
-      data: {
-        points: typedStats.points || STATS_CONFIG.DEFAULT_VALUES.points,
-        level: typedStats.level || STATS_CONFIG.DEFAULT_LEVEL,
-        streak: updatedStreak,
-        bestStreak,
-        pointsToNextLevel: typedStats.pointsToNextLevel || STATS_CONFIG.DEFAULT_POINTS_TO_NEXT_LEVEL,
-        completedChallenges: typedStats.completedChallenges || STATS_CONFIG.DEFAULT_VALUES.completedChallenges,
-        badges: typedStats.badges || [],
-        lastActive: typedStats.lastActive,
-        learningPaths: learningPathsProgress,
-        chartData: typedStats.chartData || { daily: [], progress: [] }
-      }
-    });
+    res.success({
+      points: typedStats.points || STATS_CONFIG.DEFAULT_VALUES.points,
+      level: typedStats.level || STATS_CONFIG.DEFAULT_LEVEL,
+      streak: updatedStreak,
+      bestStreak,
+      pointsToNextLevel: typedStats.pointsToNextLevel || STATS_CONFIG.DEFAULT_POINTS_TO_NEXT_LEVEL,
+      completedChallenges: typedStats.completedChallenges || STATS_CONFIG.DEFAULT_VALUES.completedChallenges,
+      badges: typedStats.badges || [],
+      lastActive: typedStats.lastActive,
+      learningPaths: learningPathsProgress,
+      chartData: typedStats.chartData || { daily: [], progress: [] }
+    }, 'Statystyki użytkownika pobrane pomyślnie');
   } catch (error) {
     next(error);
   }
@@ -91,20 +88,17 @@ export const updateUserStats = async (req: Request, res: Response, next: NextFun
     user.markModified('stats');
     await user.save();
 
-    res.json({
-      status: 'success',
-      data: {
-        points: user.stats.points,
-        xp: user.stats.xp,
-        level: user.stats.level,
-        lastActive: user.stats.lastActive,
-        streak: updatedStreak,
-        bestStreak,
-        chartData: {
-          daily: todayStats
-        }
+    res.success({
+      points: user.stats.points,
+      xp: user.stats.xp,
+      level: user.stats.level,
+      lastActive: user.stats.lastActive,
+      streak: updatedStreak,
+      bestStreak,
+      chartData: {
+        daily: todayStats
       }
-    });
+    }, 'Statystyki użytkownika zaktualizowane pomyślnie');
   } catch (error) {
     next(error);
   }

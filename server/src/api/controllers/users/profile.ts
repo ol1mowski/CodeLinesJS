@@ -13,10 +13,7 @@ export const getUserProfile = async (req: Request, res: Response, next: NextFunc
 
     if (!user) throw new ValidationError('Nie znaleziono użytkownika');
 
-    res.json({
-      status: 'success',
-      data: user
-    });
+    res.success(user, 'Profil użytkownika pobrany pomyślnie');
   } catch (error) {
     next(error);
   }

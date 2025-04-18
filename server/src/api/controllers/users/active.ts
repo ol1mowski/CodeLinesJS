@@ -7,7 +7,7 @@ export const getActiveUsers = async (req: Request, res: Response, next: NextFunc
       .select('username')
       .lean();
     
-    res.json({ users });
+    res.success({ users }, 'Aktywni użytkownicy pobrani pomyślnie');
   } catch (error) {
     next(error);
   }

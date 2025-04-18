@@ -8,7 +8,7 @@ export const getUserProfile = async (req: Request, res: Response, next: NextFunc
     if (!userId) throw new AuthError('Brak autoryzacji');
 
     const profileResponse = await userService.getUserProfile(userId);
-    res.json(profileResponse);
+    res.success(profileResponse, 'Profil użytkownika pobrany pomyślnie');
   } catch (error) {
     next(error);
   }
@@ -17,7 +17,7 @@ export const getUserProfile = async (req: Request, res: Response, next: NextFunc
 export const getActiveUsers = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const activeUsersResponse = await userService.getActiveUsers();
-    res.json(activeUsersResponse);
+    res.success(activeUsersResponse, 'Aktywni użytkownicy pobrani pomyślnie');
   } catch (error) {
     next(error);
   }
