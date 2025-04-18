@@ -2,8 +2,8 @@ import { Lesson } from "../../../models/lesson.model.js";
 import { User } from "../../../models/user.model.js";
 import { LevelService } from "../../../services/level.service.js";
 import { IUser } from "../../../services/lesson/types.js";
-
-export const getLessonsController = async (req, res, next) => {
+import { Request, Response, NextFunction } from 'express';
+export const getLessonsController = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { category, difficulty, search } = req.query;
     const userId = req.user.userId;

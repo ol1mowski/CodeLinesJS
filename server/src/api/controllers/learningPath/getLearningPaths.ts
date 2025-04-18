@@ -8,7 +8,15 @@ export const getLearningPathsController = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const userId = req.user.userId;
+    const userId = req.user?.userId;
+    
+    if (!userId) {
+      res.fail('Brak identyfikatora użytkownika. Zaloguj się ponownie.', [
+        { code: 'AUTH_REQUIRED', message: 'Brak autoryzacji' }
+      ]);
+      return;
+    }
+    
     const { difficulty, search } = req.query as { 
       difficulty?: string;
       search?: string;
@@ -19,7 +27,7 @@ export const getLearningPathsController = async (
       search
     });
 
-    res.json(result);
+    res.success(result, 'Ścieżki nauki zostały pobrane');
   } catch (error) {
     next(error);
   }
