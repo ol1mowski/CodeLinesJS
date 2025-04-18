@@ -8,13 +8,9 @@ import { configureRoutes } from './routes/index.js';
 import { setupErrorHandlers } from './config/errorHandlers.config.js';
 import { setupLogger } from './config/logger.config.js';
 import { startServer } from './config/startServer.config.js';
-import { env } from './config/env.validator.js';
 
 const app: Application = express();
 
-if (env.NODE_ENV === 'production') {
-  app.disable('x-powered-by');
-}
 
 setupLogger(app);
 
@@ -26,7 +22,7 @@ configureStaticFiles(app);
 app.use(errorHandler);
 setupErrorHandlers(app);
 
-const PORT: number = parseInt(env.PORT, 10);
+const PORT: number = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
 startServer(app, PORT);
 

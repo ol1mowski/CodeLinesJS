@@ -1,5 +1,4 @@
 import dotenv from 'dotenv';
-import { env } from './env.validator.js';
 
 dotenv.config();
 
@@ -75,47 +74,47 @@ interface Config {
 
 const config: Config = {
   app: {
-    env: env.NODE_ENV,
-    port: env.PORT,
-    frontendUrl: env.FRONTEND_URL,
-    isProduction: env.NODE_ENV === 'production',
+    env: process.env.NODE_ENV,
+    port: process.env.PORT,
+    frontendUrl: process.env.FRONTEND_URL,
+    isProduction: process.env.NODE_ENV === 'production',
   },
   db: {
-    uri: env.MONGODB_URI,
+    uri: process.env.MONGODB_URI,
     options: {
       serverSelectionTimeoutMS: 5000,
       socketTimeoutMS: 45000,
     }
   },
   jwt: {
-    secret: env.JWT_SECRET,
-    expiresIn: env.JWT_EXPIRES_IN,
-    cookieExpiresIn: parseInt(env.JWT_COOKIE_EXPIRES_IN),
+    secret: process.env.JWT_SECRET,
+    expiresIn: process.env.JWT_EXPIRES_IN,
+    cookieExpiresIn: parseInt(process.env.JWT_COOKIE_EXPIRES_IN),
   },
   cors: {
-    origin: env.FRONTEND_URL,
+    origin: process.env.FRONTEND_URL,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'X-CSRF-Token'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
     exposedHeaders: ['Content-Length', 'X-Requested-With'],
     maxAge: 86400,
     preflightContinue: false,
     optionsSuccessStatus: 204
   },
   rateLimit: {
-    windowMs: parseInt(env.RATE_LIMIT_WINDOW_MS),
-    max: parseInt(env.RATE_LIMIT_MAX),
+    windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS),
+    max: parseInt(process.env.RATE_LIMIT_MAX),
     standardHeaders: true,
     legacyHeaders: false,
     message: 'Zbyt wiele zapytań z tego adresu IP, spróbuj ponownie za 15 minut'
   },
   email: {
-    host: env.EMAIL_HOST,
-    sendgridApiKey: env.SENDGRID_API_KEY,
-    port: env.EMAIL_PORT,
-    user: env.EMAIL_USER,
-    password: env.EMAIL_PASSWORD,
-    from: env.EMAIL_FROM,
+    host: process.env.EMAIL_HOST,
+    sendgridApiKey: process.env.SENDGRID_API_KEY,
+    port: process.env.EMAIL_PORT,
+    user: process.env.EMAIL_USER,
+    password: process.env.EMAIL_PASSWORD,
+    from: process.env.EMAIL_FROM,
   },
   limits: {
     jsonBodySize: '10kb',

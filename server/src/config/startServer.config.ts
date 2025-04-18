@@ -1,6 +1,5 @@
 import { Application } from 'express';
 import { Server } from 'http';
-import { env } from './env.validator.js';
 
 declare global {
   var server: Server | undefined;
@@ -8,7 +7,7 @@ declare global {
 
 export const startServer = (app: Application, port: number): Server => {
   const server = app.listen(port, () => {
-    console.log(`Serwer uruchomiony w trybie ${env.NODE_ENV} na porcie ${port}`);
+    console.log(`Server is running on port ${port}`);
   });
   
   global.server = server;

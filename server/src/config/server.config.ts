@@ -9,7 +9,6 @@ import hpp from "hpp";
 import config from "./config.js";
 import { responseEnhancer } from "../utils/response.js";
 import { cacheMiddleware } from "../utils/cache.js";
-import { setCSRFToken, validateCSRFToken } from "../middleware/csrf.middleware.js";
 
 export const configureServer = (app: Application): Application => {
   
@@ -115,9 +114,6 @@ export const configureServer = (app: Application): Application => {
   app.use(compression());
   
   app.use(cookieParser());
-  
-  app.use(setCSRFToken);
-  app.use('/api', validateCSRFToken);
   
   const apiLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
