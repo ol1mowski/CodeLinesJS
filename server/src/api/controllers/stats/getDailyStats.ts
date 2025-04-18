@@ -9,10 +9,7 @@ export const getDailyStats = async (req: Request, res: Response, next: NextFunct
 
     const dailyStats = await StatsService.getDailyStats(userId);
 
-    res.json({
-      status: 'success',
-      data: dailyStats
-    });
+    res.success(dailyStats, 'Dzienne statystyki użytkownika pobrane pomyślnie');
   } catch (error) {
     next(error);
   }

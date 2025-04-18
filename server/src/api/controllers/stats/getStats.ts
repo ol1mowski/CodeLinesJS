@@ -9,10 +9,7 @@ export const getStats = async (req: Request, res: Response, next: NextFunction) 
 
     const userStats = await StatsService.getUserStats(userId);
 
-    res.json({
-      status: 'success',
-      data: userStats
-    });
+    res.success(userStats, 'Statystyki użytkownika pobrane pomyślnie');
   } catch (error) {
     next(error);
   }
