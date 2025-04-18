@@ -3,14 +3,29 @@ import { User } from "../../../models/user.model.js";
 import { LevelService } from "../../../services/level.service.js";
 import { IUser } from "../../../services/lesson/types.js";
 import { Request, Response, NextFunction } from 'express';
-export const getLessonsController = async (req: Request, res: Response, next: NextFunction) => {
+
+export const getLessonsController = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { category, difficulty, search } = req.query;
-    const userId = req.user.userId;
+    const userId = req.user?.userId;
+    
+    if (!userId) {
+      res.fail('Brak identyfikatora użytkownika. Zaloguj się ponownie.', [
+        { code: 'AUTH_REQUIRED', message: 'Brak autoryzacji' }
+      ]);
+      return;
+    }
 
     const user = await User.findById(userId)
       .select("stats.learningPaths stats.level stats.points stats.pointsToNextLevel stats.streak stats.bestStreak")
       .lean();
+      
+    if (!user) {
+      res.fail('Użytkownik nie został znaleziony', [
+        { code: 'USER_NOT_FOUND', message: 'Użytkownik nie został znaleziony' }
+      ], 404);
+      return;
+    }
 
     const query: {
       isPublished: boolean;
@@ -26,16 +41,16 @@ export const getLessonsController = async (req: Request, res: Response, next: Ne
       isAvailable: true,
     };
 
-    const usersCompletedLessons = user.stats.learningPaths && user.stats.learningPaths.length > 0
+    const usersCompletedLessons = user.stats?.learningPaths && user.stats.learningPaths.length > 0
       ? user.stats.learningPaths[0].progress.completedLessons
       : [];
 
-    if (category) query.category = category;
-    if (difficulty) query.difficulty = difficulty;
+    if (category) query.category = category as string;
+    if (difficulty) query.difficulty = difficulty as string;
     if (search) {
       query.$or = [
-        { title: { $regex: search, $options: "i" } },
-        { description: { $regex: search, $options: "i" } },
+        { title: { $regex: search as string, $options: "i" } },
+        { description: { $regex: search as string, $options: "i" } },
       ];
     }
 
@@ -76,7 +91,7 @@ export const getLessonsController = async (req: Request, res: Response, next: Ne
 
     const levelStats = LevelService.getUserLevelStats(user as unknown as IUser);
 
-    res.json({
+    res.success({
       lessons: groupedLessons,
       stats: {
         total: lessons.length,
@@ -88,8 +103,8 @@ export const getLessonsController = async (req: Request, res: Response, next: Ne
         levelProgress: levelStats.progress,
         streak: user.stats?.streak || 0,
         bestStreak: user.stats?.bestStreak || 0
-      },
-    });
+      }
+    }, 'Lekcje zostały pobrane');
   } catch (error) {
     next(error);
   }
