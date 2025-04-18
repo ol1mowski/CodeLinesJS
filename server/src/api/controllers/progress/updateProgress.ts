@@ -19,7 +19,7 @@ export const updateProgressController = async (
 
     const result = await ProgressService.updateLessonProgress(userId, lessonId);
     
-    res.json(result);
+    res.success(result, 'Postęp lekcji zaktualizowany pomyślnie');
   } catch (error) {
     next(error);
   }
@@ -61,31 +61,28 @@ export const updateUserProgressController = async (
     
     await userDoc.save();
 
-    res.json({
-      message: update.level.leveledUp
-        ? `Punkty dodane! Awansowałeś na poziom ${update.level.level}!`
-        : "Punkty użytkownika zaktualizowane pomyślnie",
-      data: {
-        userStats: {
-          points: update.level.points,
-          pointsRequired: update.level.pointsToNextLevel,
-          xp: update.level.points,
-          level: update.level.level,
-          levelProgress: update.level.progress,
-          streak: update.streak.streak,
-          bestStreak: update.streak.bestStreak,
-          lastActive: new Date(),
-          leveledUp: update.level.leveledUp,
-          levelsGained: update.level.levelsGained
-        },
-        streak: {
-          current: update.streak.streak,
-          best: update.streak.bestStreak,
-          updated: update.streak.streakUpdated,
-          broken: update.streak.streakBroken
-        }
+    res.success({
+      userStats: {
+        points: update.level.points,
+        pointsRequired: update.level.pointsToNextLevel,
+        xp: update.level.points,
+        level: update.level.level,
+        levelProgress: update.level.progress,
+        streak: update.streak.streak,
+        bestStreak: update.streak.bestStreak,
+        lastActive: new Date(),
+        leveledUp: update.level.leveledUp,
+        levelsGained: update.level.levelsGained
+      },
+      streak: {
+        current: update.streak.streak,
+        best: update.streak.bestStreak,
+        updated: update.streak.streakUpdated,
+        broken: update.streak.streakBroken
       }
-    });
+    }, update.level.leveledUp
+      ? `Punkty dodane! Awansowałeś na poziom ${update.level.level}!`
+      : "Punkty użytkownika zaktualizowane pomyślnie");
   } catch (error) {
     next(error);
   }
