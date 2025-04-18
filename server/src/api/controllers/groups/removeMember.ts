@@ -1,67 +1,50 @@
-import { Group } from '../../../models/group.model.js';
-import { GroupMember } from '../../../models/groupMember.model.js';
-import { AuthError, ValidationError } from '../../../utils/errors.js';
+import { Request, Response, NextFunction } from 'express';
+import { GroupService } from '../../../services/group.service.js';
 
-export const removeMember = async (req, res, next) => {
+export const removeMember = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const userId = req.user?.userId;
-    if (!userId) throw new AuthError('Brak autoryzacji');
+    
+    if (!userId) {
+      res.fail('Brak identyfikatora użytkownika. Zaloguj się ponownie.', [
+        { code: 'AUTH_REQUIRED', message: 'Brak autoryzacji' }
+      ]);
+      return;
+    }
 
     const { groupId, memberId } = req.body;
 
     if (!groupId) {
-      throw new ValidationError('ID grupy jest wymagane');
+      res.fail('ID grupy jest wymagane', [
+        { code: 'MISSING_GROUP_ID', message: 'ID grupy jest wymagane', field: 'groupId' }
+      ]);
+      return;
     }
 
     if (!memberId) {
-      throw new ValidationError('ID członka jest wymagane');
+      res.fail('ID członka jest wymagane', [
+        { code: 'MISSING_MEMBER_ID', message: 'ID członka jest wymagane', field: 'memberId' }
+      ]);
+      return;
     }
-
-    const group = await Group.findById(groupId);
-    if (!group) {
-      throw new ValidationError('Grupa nie istnieje');
-    }
-
-    const userMembership = await GroupMember.findOne({
-      user: userId,
-      group: groupId,
+    
+    const result = await GroupService.removeMember(userId, {
+      userId: memberId,
+      groupId
     });
-
-    if (!userMembership || !['owner', 'admin'].includes(userMembership.role)) {
-      throw new AuthError('Nie masz uprawnień do usuwania członków grupy');
+    
+    if (!result.success) {
+      res.fail(result.message, [
+        { code: 'REMOVE_MEMBER_FAILED', message: result.message }
+      ]);
+      return;
     }
-
-    const memberToRemove = await GroupMember.findById(memberId);
-    if (!memberToRemove) {
-      throw new ValidationError('Członek nie istnieje');
-    }
-
-    if (memberToRemove.group.toString() !== groupId) {
-      throw new ValidationError('Członek nie należy do tej grupy');
-    }
-
-    if (memberToRemove.role === 'owner') {
-      throw new ValidationError('Nie można usunąć właściciela grupy');
-    }
-
-    if (userMembership.role === 'admin' && memberToRemove.role === 'admin') {
-      throw new AuthError('Administrator nie może usunąć innego administratora');
-    }
-
-    await GroupMember.findByIdAndDelete(memberId);
-
-    group.members = group.members.filter(
-      (id) => id.toString() !== memberId
-    );
-    await group.save();
-
-    res.json({
-      status: 'success',
-      message: 'Członek został usunięty z grupy pomyślnie',
-      data: {
-        removedMemberId: memberId,
-      },
-    });
+    
+    res.success({
+      success: true,
+      removedMemberId: memberId,
+      group: result.group
+    }, result.message || 'Członek został usunięty z grupy pomyślnie');
   } catch (error) {
     next(error);
   }

@@ -3,8 +3,7 @@ import { Message } from '../../../../models/message.model.js';
 import { Group } from '../../../../models/group.model.js';
 import { 
   AuthRequest, 
-  MessageController,
-  MessageActionResponse
+  MessageController
 } from './types.js';
 
 
@@ -16,6 +15,20 @@ export const deleteMessageController: MessageController = async (
   try {
     const { groupId, messageId } = req.params;
     const userId = req.user.userId;
+    
+    if (!messageId) {
+      res.fail('Identyfikator wiadomości jest wymagany', [
+        { code: 'MISSING_MESSAGE_ID', message: 'Identyfikator wiadomości jest wymagany', field: 'messageId' }
+      ]);
+      return;
+    }
+    
+    if (!groupId) {
+      res.fail('Identyfikator grupy jest wymagany', [
+        { code: 'MISSING_GROUP_ID', message: 'Identyfikator grupy jest wymagany', field: 'groupId' }
+      ]);
+      return;
+    }
 
     const [message, group] = await Promise.all([
       Message.findById(messageId),
@@ -23,10 +36,9 @@ export const deleteMessageController: MessageController = async (
     ]);
 
     if (!message) {
-      res.status(404).json({
-        status: 'error',
-        message: 'Wiadomość nie istnieje'
-      });
+      res.fail('Wiadomość nie istnieje', [
+        { code: 'MESSAGE_NOT_FOUND', message: 'Wiadomość nie istnieje' }
+      ], 404);
       return;
     }
 
@@ -34,21 +46,18 @@ export const deleteMessageController: MessageController = async (
     const isAdmin = group?.members[0].toString() === userId;
 
     if (!isAuthor && !isAdmin) {
-      res.status(403).json({
-        status: 'error',
-        message: 'Nie masz uprawnień do usunięcia tej wiadomości'
-      });
+      res.fail('Nie masz uprawnień do usunięcia tej wiadomości', [
+        { code: 'UNAUTHORIZED', message: 'Nie masz uprawnień do usunięcia tej wiadomości' }
+      ], 403);
       return;
     }
 
     await Message.findByIdAndDelete(messageId);
 
-    const response: MessageActionResponse = {
-      status: 'success',
-      message: 'Wiadomość została usunięta'
-    };
-
-    res.json(response);
+    res.success(
+      { deletedMessageId: messageId },
+      'Wiadomość została usunięta'
+    );
   } catch (error) {
     next(error);
   }

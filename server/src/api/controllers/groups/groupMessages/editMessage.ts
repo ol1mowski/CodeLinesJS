@@ -15,6 +15,20 @@ export const editMessageController: MessageController = async (
     const { groupId, messageId } = req.params;
     const { content } = req.body;
     const userId = req.user.userId;
+    
+    if (!content || content.trim().length === 0) {
+      res.fail('Treść wiadomości jest wymagana', [
+        { code: 'MISSING_CONTENT', message: 'Treść wiadomości jest wymagana', field: 'content' }
+      ]);
+      return;
+    }
+    
+    if (!messageId) {
+      res.fail('Identyfikator wiadomości jest wymagany', [
+        { code: 'MISSING_MESSAGE_ID', message: 'Identyfikator wiadomości jest wymagany', field: 'messageId' }
+      ]);
+      return;
+    }
 
     const message = await Message.findOne({
       _id: messageId,
@@ -23,10 +37,9 @@ export const editMessageController: MessageController = async (
     });
 
     if (!message) {
-      res.status(404).json({
-        status: 'error',
-        message: 'Wiadomość nie istnieje lub nie masz uprawnień do jej edycji'
-      });
+      res.fail('Wiadomość nie istnieje lub nie masz uprawnień do jej edycji', [
+        { code: 'MESSAGE_NOT_FOUND', message: 'Wiadomość nie istnieje lub nie masz uprawnień do jej edycji' }
+      ], 404);
       return;
     }
 
@@ -38,12 +51,10 @@ export const editMessageController: MessageController = async (
       .populate('author', 'username avatar')
       .lean();
 
-    res.json({
-      status: 'success',
-      data: {
-        message: updatedMessage
-      }
-    });
+    res.success(
+      { message: updatedMessage },
+      'Wiadomość została zaktualizowana'
+    );
   } catch (error) {
     next(error);
   }
