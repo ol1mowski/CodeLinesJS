@@ -17,7 +17,7 @@ import { Post } from '../models/post.model.js';
 const router = express.Router();
 
 
-router.get('/all', async (req, res) => {
+router.get('/all', async (req: Request, res: Response) => {
   try {
     const posts = await Post.find({})
       .populate({ path: 'author', select: 'username avatar' })
