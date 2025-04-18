@@ -5,9 +5,15 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
   try {
     const { email } = req.body;
     
+    if (!email) {
+      return res.fail('Email jest wymagany', [
+        { code: 'MISSING_EMAIL', message: 'Email jest wymagany', field: 'email' }
+      ]);
+    }
+    
     const result = await authService.forgotPassword(email);
     
-    res.json(result);
+    return res.success(result, 'Link do resetowania hasła został wysłany na podany adres email');
   } catch (error) {
     next(error);
   }
@@ -17,11 +23,22 @@ export const resetPassword = async (req: Request, res: Response, next: NextFunct
   try {
     const { token, password, confirmPassword } = req.body;
     
+    if (!token || !password || !confirmPassword) {
+      return res.fail('Wszystkie pola są wymagane', [
+        { code: 'MISSING_FIELDS', message: 'Wszystkie pola są wymagane' }
+      ]);
+    }
+    
+    if (password !== confirmPassword) {
+      return res.fail('Hasła nie są identyczne', [
+        { code: 'PASSWORD_MISMATCH', message: 'Hasła nie są identyczne', field: 'confirmPassword' }
+      ]);
+    }
+    
     const result = await authService.resetPassword(token, password, confirmPassword);
     
-    res.status(200).json(result);
+    return res.success(result, 'Hasło zostało zmienione pomyślnie');
   } catch (error) {
-    console.error('Błąd resetowania hasła:', error);
     next(error);
   }
 }; 

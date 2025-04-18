@@ -1,16 +1,20 @@
-import AppError from "../utils/appError.js";
 import config from "../config/config.js";
 import { Request, Response, NextFunction } from 'express';
+import { ApiError } from "../utils/apiResponse.js";
 
 interface ExtendedError extends Error {
   code?: number;
   keyValue?: Record<string, any>;
   statusCode?: number;
   status?: string;
-  errors?: Record<string, { message: string }>;
+  errors?: Record<string, { message: string; path?: string }>;
   isOperational?: boolean;
   path?: string;
   value?: any;
+}
+
+interface ExtendedRequest extends Request {
+  requestId?: string | string[];
 }
 
 const sanitizeErrorMessage = (message: string | undefined): string => {
@@ -28,76 +32,123 @@ const sanitizeErrorMessage = (message: string | undefined): string => {
     .substring(0, 500);
 };
 
-const handleDuplicateFields = (err: ExtendedError): AppError => {
-  const message = sanitizeErrorMessage(`Duplikat wartości pola: ${Object.keys(err.keyValue || {}).join(', ')}. Proszę użyć innej wartości.`);
-  return new AppError(message, 400);
+const handleDuplicateFields = (err: ExtendedError): ApiError[] => {
+  const field = Object.keys(err.keyValue || {})[0];
+  const value = err.keyValue?.[field];
+  
+  return [{
+    code: 'DUPLICATE_VALUE',
+    field,
+    message: `Wartość '${value}' dla pola '${field}' już istnieje. Proszę użyć innej wartości.`
+  }];
 };
 
-const handleValidationError = (err: ExtendedError): AppError => {
-  const errors = Object.values(err.errors || {}).map(val => sanitizeErrorMessage(val.message));
-  const message = `Nieprawidłowe dane wejściowe: ${errors.join('. ')}`;
-  return new AppError(message, 400);
+const handleValidationError = (err: ExtendedError): ApiError[] => {
+  return Object.values(err.errors || {}).map(val => ({
+    code: 'VALIDATION_ERROR',
+    field: val.path,
+    message: sanitizeErrorMessage(val.message)
+  }));
 };
 
-const handleJWTError = (): AppError =>
-  new AppError("Nieprawidłowy token. Zaloguj się ponownie.", 401);
-
-const handleJWTExpiredError = (): AppError =>
-  new AppError("Token wygasł. Zaloguj się ponownie.", 401);
-
-const handleCastError = (err: ExtendedError): AppError => {
-  const message = sanitizeErrorMessage(`Nieprawidłowa wartość ${err.path}: ${err.value}`);
-  return new AppError(message, 400);
+const handleJWTError = (): ApiError[] => {
+  return [{
+    code: 'INVALID_TOKEN',
+    message: "Nieprawidłowy token. Zaloguj się ponownie."
+  }];
 };
 
-const sendErrorDev = (err: ExtendedError, res: Response): void => {
-  const sanitizedMessage = sanitizeErrorMessage(err.message);
-
-  res.status(err.statusCode || 500).json({
-    status: err.status,
-    message: sanitizedMessage,
-    error: err,
-    stack: err.stack ? err.stack.split('\n').map(line => sanitizeErrorMessage(line)) : undefined
-  });
+const handleJWTExpiredError = (): ApiError[] => {
+  return [{
+    code: 'EXPIRED_TOKEN',
+    message: "Token wygasł. Zaloguj się ponownie."
+  }];
 };
 
-const sendErrorProd = (err: ExtendedError, res: Response): void => {
-  if (err.isOperational) {
-    const sanitizedMessage = sanitizeErrorMessage(err.message);
-
-    res.status(err.statusCode || 500).json({
-      status: err.status,
-      message: sanitizedMessage
-    });
-  } else {
-    console.error("ERROR 💥", err);
-
-    res.status(500).json({
-      status: "error",
-      message: "Coś poszło nie tak!"
-    });
-  }
+const handleCastError = (err: ExtendedError): ApiError[] => {
+  return [{
+    code: 'INVALID_ID',
+    field: err.path,
+    message: `Nieprawidłowa wartość ${err.path}: ${err.value}`
+  }];
 };
 
-export default (err: ExtendedError, req: Request, res: Response, next: NextFunction): void => {
+export default (err: ExtendedError, req: ExtendedRequest, res: Response, next: NextFunction): void => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || "error";
 
+  const requestId = req.headers['x-request-id'] || req.requestId || '';
+  
   res.setHeader('X-Content-Type-Options', 'nosniff');
 
   if (process.env.NODE_ENV === "development" || (config as any).env === "development") {
-    sendErrorDev(err, res);
-  } else {
-    let error: ExtendedError = { ...err };
-    error.message = err.message;
-    error.name = err.name;
+    const sanitizedMessage = sanitizeErrorMessage(err.message);
+    
+    res.status(err.statusCode).json({
+      status: err.statusCode >= 500 ? 'error' : 'fail',
+      code: err.statusCode,
+      message: sanitizedMessage,
+      errors: [{ code: err.name, message: sanitizedMessage }],
+      meta: {
+        timestamp: new Date().toISOString(),
+        requestId: requestId,
+        stack: err.stack ? err.stack.split('\n').map(line => sanitizeErrorMessage(line)) : undefined
+      }
+    });
+  } 
+  else {
+    let errorCode = err.statusCode;
+    let errorMessage = sanitizeErrorMessage(err.message);
+    let errors: ApiError[] = [];
 
-    if (error.name === "CastError") error = handleCastError(error);
-    if (error.code === 11000) error = handleDuplicateFields(error);
-    if (error.name === "ValidationError") error = handleValidationError(error);
-    if (error.name === "JsonWebTokenError") error = handleJWTError();
-    if (error.name === "TokenExpiredError") error = handleJWTExpiredError();
+    if (err.name === "CastError") {
+      errorCode = 400;
+      errors = handleCastError(err);
+    } 
+    else if (err.code === 11000) {
+      errorCode = 409;
+      errors = handleDuplicateFields(err);
+    } 
+    else if (err.name === "ValidationError") {
+      errorCode = 400;
+      errors = handleValidationError(err);
+    } 
+    else if (err.name === "JsonWebTokenError") {
+      errorCode = 401;
+      errors = handleJWTError();
+      errorMessage = "Nieprawidłowy token. Zaloguj się ponownie.";
+    } 
+    else if (err.name === "TokenExpiredError") {
+      errorCode = 401;
+      errors = handleJWTExpiredError();
+      errorMessage = "Token wygasł. Zaloguj się ponownie.";
+    }
+    else if (err.isOperational) {
+      errors = [{
+        code: err.name || 'OPERATIONAL_ERROR',
+        message: errorMessage
+      }];
+    } 
 
-    sendErrorProd(error, res);
+    else {
+      console.error("NIEOBSŁUGIWANY BŁĄD 💥", err);
+      errorCode = 500;
+      errorMessage = "Coś poszło nie tak!";
+      errors = [{
+        code: 'INTERNAL_SERVER_ERROR',
+        message: errorMessage
+      }];
+    }
+
+    res.status(errorCode).json({
+      status: errorCode >= 500 ? 'error' : 'fail',
+      code: errorCode,
+      message: errorMessage,
+      errors: errors,
+      meta: {
+        timestamp: new Date().toISOString(),
+        requestId: requestId
+      }
+    });
   }
 }; 
