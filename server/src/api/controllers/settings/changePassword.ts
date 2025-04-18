@@ -19,10 +19,7 @@ export const changePasswordController = async (
     
     await SettingsService.changePassword(userId, passwordData);
 
-    res.status(200).json({
-      success: true,
-      message: 'Hasło zostało zmienione'
-    });
+    res.success(null, 'Hasło zostało zmienione');
   } catch (error) {
     next(error);
   }

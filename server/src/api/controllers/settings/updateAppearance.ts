@@ -19,11 +19,7 @@ export const updateAppearanceController = async (
     
     const updatedAppearance = await SettingsService.updateAppearance(userId, appearanceData);
 
-    res.status(200).json({
-      success: true,
-      message: 'Ustawienia wyglądu zostały zaktualizowane',
-      data: updatedAppearance
-    });
+    res.success(updatedAppearance, 'Ustawienia wyglądu zostały zaktualizowane');
   } catch (error) {
     next(error);
   }
