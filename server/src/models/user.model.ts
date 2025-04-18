@@ -188,20 +188,10 @@ const userSchema = new mongoose.Schema(
 );
 
 userSchema.pre("save", async function (next) {
-  if (this.isNew) {
-    console.log(`Tworzę nowego użytkownika: ${this.username}`);
-    console.log(`Pierwotne hasło: ${this.password.substring(0, 10)}...`);
-  }
-
   if (this.isModified("password") && !this.password.startsWith("$2a$") && !this.password.startsWith("$2b$")) {
     const saltRounds = config.security.bcryptSaltRounds || 12;
-    const plainPassword = this.password;
     this.password = await bcrypt.hash(this.password, saltRounds);
     this.passwordChangedAt = new Date();
-    
-    console.log(`Hasło zostało zahashowane: 
-      - Oryginalne: ${plainPassword}
-      - Hash: ${this.password}`);
   }
   next();
 });
@@ -222,16 +212,12 @@ userSchema.methods.changedPasswordAfter = function(jwtTimestamp: number) {
 
 userSchema.methods.comparePassword = async function (candidatePassword: string) {
   if (!candidatePassword || !this.password) {
-    console.log('Brak hasła do porównania');
     return false;
   }
   try {
-    console.log(`Porównuję hasło, format hashu: ${this.password.substring(0, 7)}...`);
-    const isMatch = await bcrypt.compare(candidatePassword, this.password);
-    console.log(`Wynik porównania hasła: ${isMatch}`);
-    return isMatch;
+    return await bcrypt.compare(candidatePassword, this.password);
   } catch (error) {
-    console.error('Błąd podczas porównywania haseł:', error);
+    console.error('Błąd podczas porównywania haseł');
     return false;
   }
 };
