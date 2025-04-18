@@ -16,9 +16,7 @@ export const createReport = async (
     
     const result = await ReportService.createReport(reportData);
     
-    res.status(201).json({
-      success: true,
-      message: 'Zgłoszenie zostało przyjęte',
+    res.success({
       report: result.report,
       emailSent: result.emailSent.success,
       emailDetails: result.emailSent.success ? {
@@ -27,7 +25,7 @@ export const createReport = async (
       } : {
         error: result.emailSent.error
       }
-    });
+    }, 'Zgłoszenie zostało przyjęte', 201);
   } catch (error) {
     next(error);
   }
