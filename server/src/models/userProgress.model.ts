@@ -1,4 +1,3 @@
-// @ts-nocheck
 import mongoose from 'mongoose';
 
 const sectionProgressSchema = new mongoose.Schema({

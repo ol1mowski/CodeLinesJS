@@ -47,7 +47,7 @@ export const completeLessonController = async (req: Request, res: Response, next
 
       const streakData = typeof update.streak === 'object' ? update.streak : { streakUpdated: false };
 
-      return res.json({
+      res.json({
         message: update.level.leveledUp 
           ? `Lekcja ukończona! Awansowałeś na poziom ${update.level.level}!` 
           : 'Lekcja ukończona',
@@ -65,6 +65,7 @@ export const completeLessonController = async (req: Request, res: Response, next
           streakUpdated: streakData.streakUpdated
         },
       });
+      return;
     }
 
     const levelStats = LevelService.getUserLevelStats(user as unknown as IUser);

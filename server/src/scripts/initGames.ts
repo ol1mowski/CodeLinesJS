@@ -1,4 +1,3 @@
-// @ts-nocheck
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import { Game } from "../models/game.model.js";

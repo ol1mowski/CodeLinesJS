@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { Application, Request, Response, RequestHandler } from 'express';
 import authRoutes from "./auth.routes.js";
 import statsRoutes from "./stats.routes.js";

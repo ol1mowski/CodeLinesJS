@@ -3,7 +3,6 @@ import { LearningPathRepository, UserRepository } from './learningPath.repositor
 import { LearningPathMapper } from './learningPath.mapper.js';
 import { LearningPathResponse, LearningPathDetailResponse } from './types.js';
 
-// Lokalna definicja typu zapytania
 interface QueryOptions {
   difficulty?: string; 
   search?: string;

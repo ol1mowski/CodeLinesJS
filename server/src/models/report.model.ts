@@ -1,4 +1,3 @@
-// @ts-nocheck
 import mongoose from 'mongoose';
 
 const reportSchema = new mongoose.Schema({
@@ -43,7 +42,6 @@ const reportSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Indeksy dla szybszego wyszukiwania
 reportSchema.index({ category: 1 });
 reportSchema.index({ status: 1 });
 reportSchema.index({ email: 1 });

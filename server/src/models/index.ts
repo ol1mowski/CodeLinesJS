@@ -1,4 +1,3 @@
-// @ts-nocheck
 import mongoose from 'mongoose';
 import { lessonSchema } from './lesson.model.js';
 import { learningPathSchema } from './learningPath.model.js';
