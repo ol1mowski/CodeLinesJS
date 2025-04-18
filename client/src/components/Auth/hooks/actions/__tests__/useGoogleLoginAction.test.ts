@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { useGoogleLoginAction } from '../useGoogleLoginAction.hook';
-import { httpClient } from '../../../../../api/httpClient.api';
+import { ApiResponse, httpClient } from '../../../../../api/httpClient.api';
 
 vi.mock('../../../../../api/httpClient.api', () => ({
   httpClient: {
@@ -20,13 +20,17 @@ describe('useGoogleLoginAction', () => {
     setUser: vi.fn(),
   };
 
+  const userData = { id: '1', email: 'google-user@example.com', username: 'googleuser' };
+
   const mockResponse = {
     data: {
-      token: 'google-test-token',
-      user: { id: '1', email: 'google-user@example.com', username: 'googleuser' },
-    },
-    error: null,
-    status: 200,
+      data: {
+        token: 'google-test-token',
+        user: userData,
+      },
+      error: null,
+      status: 200,
+    }
   };
 
   const mockErrorResponse = {
@@ -51,7 +55,7 @@ describe('useGoogleLoginAction', () => {
   });
 
   it('should login user successfully', async () => {
-    vi.mocked(httpClient.post).mockResolvedValueOnce(mockResponse);
+    vi.mocked(httpClient.post).mockResolvedValueOnce(mockResponse as ApiResponse<unknown>);
 
     const loginWithGoogle = useGoogleLoginAction(mockState);
 
@@ -64,13 +68,13 @@ describe('useGoogleLoginAction', () => {
       rememberMe: false,
     });
     expect(sessionStorage.getItem('token')).toBe('google-test-token');
-    expect(mockState.setUser).toHaveBeenCalledWith(mockResponse.data.user);
+    expect(mockState.setUser).toHaveBeenCalledWith(userData);
     expect(mockState.setIsAuthenticated).toHaveBeenCalledWith(true);
     expect(mockState.setLoading).toHaveBeenCalledWith(false);
   });
 
   it('should save token to localStorage when rememberMe=true', async () => {
-    vi.mocked(httpClient.post).mockResolvedValueOnce(mockResponse);
+    vi.mocked(httpClient.post).mockResolvedValueOnce(mockResponse as ApiResponse<unknown>);
 
     const loginWithGoogle = useGoogleLoginAction(mockState);
 
@@ -81,7 +85,7 @@ describe('useGoogleLoginAction', () => {
   });
 
   it('should handle Google login error', async () => {
-    vi.mocked(httpClient.post).mockResolvedValueOnce(mockErrorResponse);
+    vi.mocked(httpClient.post).mockResolvedValueOnce(mockErrorResponse as ApiResponse<unknown>);
 
     const loginWithGoogle = useGoogleLoginAction(mockState);
 
