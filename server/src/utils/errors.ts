@@ -1,4 +1,3 @@
-// @ts-nocheck
 export class AppError extends Error {
   statusCode: number;
   status: string;
@@ -57,4 +56,4 @@ export class RateLimitError extends AppError {
     super(message, 429);
     this.name = 'RateLimitError';
   }
-} 
+}

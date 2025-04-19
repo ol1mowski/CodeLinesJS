@@ -1,7 +1,5 @@
-// @ts-nocheck
 import mongoose from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
-
 
 const postSchema = new mongoose.Schema({
   content: {
@@ -49,10 +47,5 @@ const postSchema = new mongoose.Schema({
 });
 
 postSchema.plugin(mongoosePaginate);
-
-postSchema.statics.paginate = function() {
-  const result = mongoosePaginate.paginate.apply(this, arguments);
-  return result;
-};
 
 export const Post = mongoose.model('Post', postSchema);

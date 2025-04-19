@@ -4,6 +4,17 @@ import { LearningPathService } from '../../../../src/services/learningPath/learn
 import { NextFunction, Response } from 'express';
 import { AuthRequest, LearningPathsResponse } from '../../../../src/services/learningPath/types.js';
 import { Types } from 'mongoose';
+import { mockResponseUtils } from '../../../setup/setupResponseMocks.js';
+
+// Rozszerzenie typu Response dla testów
+declare global {
+  namespace Express {
+    interface Response {
+      success: any;
+      fail: any;
+    }
+  }
+}
 
 vi.mock('../../../../src/services/learningPath/learningPath.service.js', () => ({
   LearningPathService: {
@@ -15,7 +26,7 @@ const mockedLearningPathService = vi.mocked(LearningPathService);
 
 describe('getLearningPathsController', () => {
   let req: AuthRequest;
-  let res: Response;
+  let res: ReturnType<typeof mockResponseUtils.createMockResponse>;
   let next: NextFunction;
 
   beforeEach(() => {
@@ -28,9 +39,7 @@ describe('getLearningPathsController', () => {
       query: {}
     } as unknown as AuthRequest;
 
-    res = {
-      json: vi.fn()
-    } as unknown as Response;
+    res = mockResponseUtils.createMockResponse();
 
     next = vi.fn() as unknown as NextFunction;
 
@@ -71,10 +80,10 @@ describe('getLearningPathsController', () => {
 
     mockedLearningPathService.getLearningPaths.mockResolvedValue(mockResult);
 
-    await getLearningPathsController(req, res, next);
+    await getLearningPathsController(req, res as any, next);
 
     expect(mockedLearningPathService.getLearningPaths).toHaveBeenCalledWith('user123', {});
-    expect(res.json).toHaveBeenCalledWith(mockResult);
+    expect(res.success).toHaveBeenCalledWith(mockResult, 'Ścieżki nauki zostały pobrane');
     expect(next).not.toHaveBeenCalled();
   });
 
@@ -117,23 +126,23 @@ describe('getLearningPathsController', () => {
 
     mockedLearningPathService.getLearningPaths.mockResolvedValue(mockResult);
 
-    await getLearningPathsController(req, res, next);
+    await getLearningPathsController(req, res as any, next);
 
     expect(mockedLearningPathService.getLearningPaths).toHaveBeenCalledWith('user123', {
       difficulty: 'advanced',
       search: 'javascript'
     });
-    expect(res.json).toHaveBeenCalledWith(mockResult);
+    expect(res.success).toHaveBeenCalledWith(mockResult, 'Ścieżki nauki zostały pobrane');
   });
 
   it('should pass errors to the next middleware', async () => {
     const mockError = new Error('Service error');
     mockedLearningPathService.getLearningPaths.mockRejectedValue(mockError);
 
-    await getLearningPathsController(req, res, next);
+    await getLearningPathsController(req, res as any, next);
 
     expect(mockedLearningPathService.getLearningPaths).toHaveBeenCalledWith('user123', {});
-    expect(res.json).not.toHaveBeenCalled();
+    expect(res.success).not.toHaveBeenCalled();
     expect(next).toHaveBeenCalledWith(mockError);
   });
 }); 

@@ -1,6 +1,4 @@
-// @ts-nocheck
 class AppError extends Error {
-  
   statusCode: number;
   status: string;
   isOperational: boolean;
@@ -16,4 +14,4 @@ class AppError extends Error {
   }
 }
 
-export default AppError; 
+export default AppError;

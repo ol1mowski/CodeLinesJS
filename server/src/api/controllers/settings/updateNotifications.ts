@@ -19,11 +19,7 @@ export const updateNotificationsController = async (
     
     const updatedNotifications = await SettingsService.updateNotifications(userId, notificationsData);
 
-    res.status(200).json({
-      success: true,
-      message: 'Ustawienia powiadomień zostały zaktualizowane',
-      data: updatedNotifications
-    });
+    res.success(updatedNotifications, 'Ustawienia powiadomień zostały zaktualizowane');
   } catch (error) {
     next(error);
   }

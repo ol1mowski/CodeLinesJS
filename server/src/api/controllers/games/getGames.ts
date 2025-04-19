@@ -8,8 +8,8 @@ export const getGames = async (req: Request, res: Response, next: NextFunction):
       category,
       sort,
       order,
-      page,
-      limit,
+      page = '1',
+      limit = '10',
     } = req.query;
 
     const userId = req.user?.userId;
@@ -26,10 +26,21 @@ export const getGames = async (req: Request, res: Response, next: NextFunction):
       userId
     );
 
-    res.json({
-      status: 'success',
-      data: result
-    });
+    if (!result) {
+      res.error('Błąd pobierania gier');
+    }
+
+    if (result.games && result.pagination) {
+      res.paginated(
+        result.games,
+        parseInt(page as string),
+        parseInt(limit as string),
+        result.pagination.total,
+        'Gry pobrane pomyślnie'
+      );
+    }
+
+    res.success(result, 'Gry pobrane pomyślnie');
   } catch (error) {
     next(error);
   }

@@ -7,15 +7,19 @@ export const googleAuth = async (req: Request, res: Response, next: NextFunction
     res.setHeader('Cross-Origin-Embedder-Policy', 'unsafe-none');
 
     const { credential, rememberMe } = req.body;
+    
+    if (!credential) {
+      return res.fail('Brak tokenu uwierzytelniającego Google', [
+        { code: 'MISSING_CREDENTIAL', message: 'Brak tokenu uwierzytelniającego Google', field: 'credential' }
+      ]);
+    }
 
     const result = await authService.googleAuthentication(credential, rememberMe);
     
-    res.json(result);
+    return res.success(result, 'Logowanie przez Google zakończone pomyślnie');
   } catch (error) {
-    console.error('Błąd logowania przez Google:', error);
-    res.status(400).json({
-      status: 'error',
-      message: error.message || 'Błąd uwierzytelniania przez Google'
-    });
+    return res.fail('Błąd uwierzytelniania przez Google', [
+      { code: 'GOOGLE_AUTH_ERROR', message: error.message || 'Błąd uwierzytelniania przez Google' }
+    ]);
   }
 }; 

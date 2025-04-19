@@ -14,9 +14,13 @@ vi.mock('../../../../src/models/user.model.js', () => ({
 
 const mockedUser = vi.mocked(User);
 
+interface CustomResponse extends Response {
+  success: (data?: any, message?: string, statusCode?: number) => Response;
+}
+
 describe('getRanking', () => {
   let req: Partial<Request & { user?: any }>;
-  let res: Partial<Response>;
+  let res: Partial<CustomResponse>;
   let next: NextFunction;
   let mockUsers: any[];
   
@@ -31,7 +35,8 @@ describe('getRanking', () => {
     };
     
     res = {
-      json: vi.fn()
+      json: vi.fn(),
+      success: vi.fn().mockReturnThis()
     };
     
     next = vi.fn() as unknown as NextFunction;
@@ -97,15 +102,22 @@ describe('getRanking', () => {
     expect(mockedUser.find().select).toHaveBeenCalled();
     expect(mockedUser.find().sort).toHaveBeenCalled();
     
-    const firstCall = (res.json as any).mock.calls[0][0];
-    expect(firstCall.ranking.length).toBe(3);
+    expect(res.success).toHaveBeenCalledWith({
+      ranking: expect.any(Array),
+      userStats: expect.objectContaining({
+        rank: 3,
+        total: 3
+      }),
+      totalUsers: 3
+    }, 'Ranking pobrany pomyślnie');
     
-    // Sprawdzamy, czy użytkownik z mocka jest oznaczony jako aktualny użytkownik
-    const currentUserEntry = firstCall.ranking.find((u: any) => u.username === 'currentuser');
+    const successCall = (res.success as any).mock.calls[0][0];
+    expect(successCall.ranking.length).toBe(3);
+    
+    const currentUserEntry = successCall.ranking.find((u: any) => u.username === 'currentuser');
     expect(currentUserEntry.isCurrentUser).toBe(true);
     
-    // Sprawdzamy, czy statystyki aktualnego użytkownika są poprawne
-    expect(firstCall.userStats).toEqual({
+    expect(successCall.userStats).toEqual({
       rank: 3,
       total: 3,
       username: 'currentuser',
@@ -163,7 +175,6 @@ describe('getRanking', () => {
       }
     }));
     
-    // Dodajemy element, który umieści użytkownika na 12. pozycji
     const extraUser = {
       _id: new Types.ObjectId('507f1f77bcf86cd799439022'),
       username: 'extrauser',
@@ -193,16 +204,25 @@ describe('getRanking', () => {
     
     await getRanking(req as Request, res as Response, next);
     
-    const result = (res.json as any).mock.calls[0][0];
+    expect(res.success).toHaveBeenCalledWith(
+      expect.objectContaining({
+        ranking: expect.any(Array),
+        userStats: expect.objectContaining({
+          rank: 12
+        }),
+        totalUsers: allUsers.length
+      }),
+      'Ranking pobrany pomyślnie'
+    );
     
-    // Powinniśmy mieć 10 użytkowników top + separator + kilka elementów wokół użytkownika (minimum 1)
-    expect(result.ranking.length).toBeGreaterThan(10);
-    expect(result.ranking[10]).toEqual({ isSeparator: true });
-    expect(result.ranking.some((item: any) => item.username === 'currentuser')).toBe(true);
+    const successCall = (res.success as any).mock.calls[0][0];
     
-    // Sprawdzamy, czy statystyki aktualnego użytkownika są poprawne
-    expect(result.userStats.rank).toBe(12);
-    expect(result.totalUsers).toBe(allUsers.length);
+    expect(successCall.ranking.length).toBeGreaterThan(10);
+    expect(successCall.ranking[10]).toEqual({ isSeparator: true });
+    expect(successCall.ranking.some((item: any) => item.username === 'currentuser')).toBe(true);
+    
+    expect(successCall.userStats.rank).toBe(12);
+    expect(successCall.totalUsers).toBe(allUsers.length);
   });
   
   it('should handle case when user is not authenticated', async () => {
@@ -210,11 +230,20 @@ describe('getRanking', () => {
     
     await getRanking(req as Request, res as Response, next);
     
-    const result = (res.json as any).mock.calls[0][0];
+    expect(res.success).toHaveBeenCalledWith(
+      expect.objectContaining({
+        ranking: expect.any(Array),
+        userStats: null,
+        totalUsers: mockUsers.length
+      }),
+      'Ranking pobrany pomyślnie'
+    );
     
-    expect(result.ranking.length).toBeLessThanOrEqual(10);
-    expect(result.userStats).toBeNull();
-    expect(result.totalUsers).toBe(mockUsers.length);
+    const successCall = (res.success as any).mock.calls[0][0];
+    
+    expect(successCall.ranking.length).toBeLessThanOrEqual(10);
+    expect(successCall.userStats).toBeNull();
+    expect(successCall.totalUsers).toBe(mockUsers.length);
   });
   
   it('should handle case when there are no users', async () => {
@@ -232,11 +261,11 @@ describe('getRanking', () => {
     
     await getRanking(req as Request, res as Response, next);
     
-    expect(res.json).toHaveBeenCalledWith({
+    expect(res.success).toHaveBeenCalledWith({
       ranking: [],
       userStats: null,
       totalUsers: 0
-    });
+    }, 'Ranking pobrany pomyślnie');
   });
   
   it('should call next with error when an exception occurs', async () => {
@@ -256,7 +285,7 @@ describe('getRanking', () => {
     
     await getRanking(req as Request, res as Response, next);
     
-    expect(res.json).not.toHaveBeenCalled();
+    expect(res.success).not.toHaveBeenCalled();
     expect(next).toHaveBeenCalledWith(mockError);
   });
 }); 

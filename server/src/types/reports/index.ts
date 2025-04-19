@@ -1,19 +1,10 @@
 import { Document, Types } from 'mongoose';
 import { Request } from 'express';
 
-/**
- * Statusy zgłoszeń
- */
 export type ReportStatus = 'new' | 'in_progress' | 'resolved' | 'closed';
 
-/**
- * Kategorie zgłoszeń
- */
 export type ReportCategory = 'bug' | 'feature' | 'performance' | 'security' | 'other';
 
-/**
- * Podstawowy interfejs reprezentujący dane zgłoszenia
- */
 export interface IReport {
   _id: Types.ObjectId;
   title: string;
@@ -25,14 +16,8 @@ export interface IReport {
   updatedAt?: Date;
 }
 
-/**
- * Interfejs modelu zgłoszenia
- */
 export interface IReportDocument extends Omit<Document, '_id'>, IReport {}
 
-/**
- * Typ dla danych wejściowych przy tworzeniu zgłoszenia
- */
 export interface CreateReportDTO {
   title: string;
   description: string;
@@ -40,16 +25,10 @@ export interface CreateReportDTO {
   email: string;
 }
 
-/**
- * Typ dla danych wejściowych przy aktualizacji statusu zgłoszenia
- */
 export interface UpdateReportStatusDTO {
   status: ReportStatus;
 }
 
-/**
- * Typ dla opcji filtrowania zgłoszeń
- */
 export interface ReportFilterOptions {
   category?: ReportCategory;
   status?: ReportStatus;
@@ -57,9 +36,6 @@ export interface ReportFilterOptions {
   limit?: number;
 }
 
-/**
- * Typ dla paginacji
- */
 export interface Pagination {
   total: number;
   page: number;
@@ -67,17 +43,11 @@ export interface Pagination {
   pages: number;
 }
 
-/**
- * Typ dla odpowiedzi z listą zgłoszeń
- */
 export interface ReportsListResponse {
   reports: IReport[];
   pagination: Pagination;
 }
 
-/**
- * Rozszerzenie interfejsu Request o typowanie dla roli użytkownika
- */
 export interface AuthRequest extends Request {
   user?: {
     userId: string;
@@ -89,9 +59,6 @@ export interface AuthRequest extends Request {
   };
 }
 
-/**
- * Typ dla odpowiedzi z potwierdzeniem wysłania emaila
- */
 export interface EmailConfirmation {
   success: boolean;
   messageId?: string;
@@ -99,9 +66,6 @@ export interface EmailConfirmation {
   error?: string;
 }
 
-/**
- * Typ dla odpowiedzi po utworzeniu zgłoszenia
- */
 export interface ReportCreationResponse {
   id: Types.ObjectId;
   title: string;

@@ -1,2 +1,1 @@
-// @ts-nocheck
-import './server.js'; 
+import './server.js';

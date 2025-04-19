@@ -40,10 +40,7 @@ export const getUserProgress = async (req: Request, res: Response, next: NextFun
       };
     });
 
-    res.json({
-      status: 'success',
-      data: progress
-    });
+    res.success(progress, 'Postęp użytkownika pobrany pomyślnie');
   } catch (error) {
     next(error);
   }

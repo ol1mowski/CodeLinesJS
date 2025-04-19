@@ -4,7 +4,6 @@ import { Group } from '../../../../models/group.model.js';
 import { 
   AuthRequest, 
   MessageController,
-  SendMessageResponse,
   MessageDocument
 } from './types.js';
 
@@ -19,10 +18,9 @@ export const sendMessageController: MessageController = async (
     const userId = req.user.userId;
 
     if (!content || content.trim().length === 0) {
-      res.status(400).json({
-        status: 'error',
-        message: 'Treść wiadomości jest wymagana'
-      });
+      res.fail('Treść wiadomości jest wymagana', [
+        { code: 'MISSING_CONTENT', message: 'Treść wiadomości jest wymagana', field: 'content' }
+      ]);
       return;
     }
     
@@ -32,10 +30,9 @@ export const sendMessageController: MessageController = async (
     });
 
     if (!group) {
-      res.status(403).json({
-        status: 'error',
-        message: 'Nie możesz wysyłać wiadomości w tej grupie'
-      });
+      res.fail('Nie możesz wysyłać wiadomości w tej grupie', [
+        { code: 'NOT_GROUP_MEMBER', message: 'Nie możesz wysyłać wiadomości w tej grupie' }
+      ], 403);
       return;
     }
 
@@ -53,14 +50,11 @@ export const sendMessageController: MessageController = async (
       .populate('author', 'username avatar')
       .lean();
 
-    const response: SendMessageResponse = {
-      status: 'success',
-      data: {
-        message: populatedMessage as unknown as MessageDocument
-      }
-    };
-
-    res.status(201).json(response);
+    res.success(
+      { message: populatedMessage as unknown as MessageDocument },
+      'Wiadomość została wysłana',
+      201
+    );
   } catch (error) {
     next(error);
   }

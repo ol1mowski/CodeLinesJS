@@ -19,11 +19,7 @@ export const updateProfileController = async (
     
     const updatedProfile = await SettingsService.updateProfile(userId, profileData);
 
-    res.status(200).json({
-      success: true,
-      message: 'Profil został zaktualizowany',
-      data: updatedProfile
-    });
+    res.success(updatedProfile, 'Profil został zaktualizowany');
   } catch (error) {
     next(error);
   }

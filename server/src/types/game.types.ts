@@ -1,10 +1,17 @@
 import { Document, Types } from 'mongoose';
 
 export type GameDifficulty = 'easy' | 'medium' | 'hard' | 'expert';
-export type GameCategory = 'basics' | 'challenges' | 'algorithms' | 'syntax' | 'variables' | 'async' | 'debugging' | 'regex';
+export type GameCategory =
+  | 'basics'
+  | 'challenges'
+  | 'algorithms'
+  | 'syntax'
+  | 'variables'
+  | 'async'
+  | 'debugging'
+  | 'regex';
 
 export interface GameData {
-  // Rozszerzenie typów w zależności od zawartości gameData
   [key: string]: any;
 }
 
@@ -86,4 +93,4 @@ export interface GameResponse {
 
 export interface SortOptions {
   [key: string]: 1 | -1;
-} 
+}

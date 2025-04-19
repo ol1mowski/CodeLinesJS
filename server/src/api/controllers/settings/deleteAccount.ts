@@ -19,10 +19,7 @@ export const deleteAccountController = async (
     
     await SettingsService.deleteAccount(userId, password);
 
-    res.status(200).json({
-      success: true,
-      message: 'Konto zostało usunięte'
-    });
+    res.success(null, 'Konto zostało usunięte');
   } catch (error) {
     next(error);
   }

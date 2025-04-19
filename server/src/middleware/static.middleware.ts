@@ -1,4 +1,3 @@
-// @ts-nocheck
 import express, { Application, Request, Response, NextFunction } from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -7,7 +6,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export const configureStaticFiles = (app: Application): Application => {
-  // Określ ścieżkę do plików statycznych - sprawdź, czy jesteśmy na Vercel
   const isVercel = process.env.VERCEL === '1';
   const publicPath = isVercel ? path.join(__dirname, '../public') : path.join(__dirname, '../../public');
   

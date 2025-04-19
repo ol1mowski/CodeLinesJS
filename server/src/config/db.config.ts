@@ -1,4 +1,3 @@
-// @ts-nocheck
 import mongoose from "mongoose";
 import config from "./config.js";
 import { initializeModels } from '../models/index.js';

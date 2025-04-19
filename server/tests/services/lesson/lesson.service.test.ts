@@ -579,7 +579,7 @@ describe('LessonService', () => {
         }
       };
 
-      mockedUserRepository.addCompletedLesson.mockImplementation((user, lessonId) => {
+      mockedUserRepository.addCompletedLesson.mockImplementation((user) => {
         user.stats.learningPaths[0].progress.completedLessons.push({
           _id: mockLesson._id,
           completedAt: new Date()
@@ -613,7 +613,6 @@ describe('LessonService', () => {
       expect(mockedUserRepository.saveUser).toHaveBeenCalledWith(mockUser);
       expect(mockedLevelService.getUserLevelStats).toHaveBeenCalledWith(mockUser);
       
-      // Symulacja, że po dodaniu lekcji, completedLessons będzie miało długość 1
       expect(mockUser.stats.learningPaths[0].progress.completedLessons).toHaveLength(1);
       
       expect(mockedLessonMapper.toCompleteLessonResponse).toHaveBeenCalledWith(
@@ -623,7 +622,7 @@ describe('LessonService', () => {
           ...mockLevelStats,
           xp: 500
         },
-        1  // Oczekujemy 1, bo po dodaniu lekcji jest jedna ukończona lekcja
+        1
       );
       expect(result).toEqual(mockCompletionResponse);
     });

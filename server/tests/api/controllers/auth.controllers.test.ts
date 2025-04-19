@@ -6,6 +6,18 @@ import { verifyToken } from '../../../src/api/controllers/auth/token.js';
 import { googleAuth } from '../../../src/api/controllers/auth/google.js';
 import authService from '../../../src/services/auth.service.js';
 import { AuthError } from '../../../src/utils/errors.js';
+import { mockResponseUtils } from '../../setup/setupResponseMocks.js';
+
+declare global {
+  namespace Express {
+    interface Response {
+      success: any;
+      fail: any;
+      error: any;
+      paginated: any;
+    }
+  }
+}
 
 vi.mock('../../../src/services/auth.service.js', () => ({
   default: {
@@ -18,9 +30,11 @@ vi.mock('../../../src/services/auth.service.js', () => ({
   }
 }));
 
+const mockedAuthService = vi.mocked(authService, true);
+
 describe('Auth Controllers', () => {
   let mockReq: any;
-  let mockRes: any;
+  let mockRes: ReturnType<typeof mockResponseUtils.createMockResponse>;
   let mockNext: any;
 
   beforeEach(() => {
@@ -32,11 +46,7 @@ describe('Auth Controllers', () => {
       params: {}
     };
 
-    mockRes = {
-      json: vi.fn(),
-      status: vi.fn().mockReturnThis(),
-      setHeader: vi.fn()
-    };
+    mockRes = mockResponseUtils.createMockResponse();
 
     mockNext = vi.fn();
   });
@@ -61,27 +71,29 @@ describe('Auth Controllers', () => {
 
       mockReq.body = credentials;
       // @ts-ignore
-      authService.loginUser.mockResolvedValue(loginResponse);
+      mockedAuthService.loginUser.mockResolvedValue(loginResponse);
 
-      await login(mockReq, mockRes, mockNext);
+      await login(mockReq, mockRes as any, mockNext);
 
-      expect(authService.loginUser).toHaveBeenCalledWith(
+      expect(mockedAuthService.loginUser).toHaveBeenCalledWith(
         credentials.email,
         credentials.password,
         credentials.rememberMe
       );
-      expect(mockRes.json).toHaveBeenCalledWith(loginResponse);
+      expect(mockRes.success).toHaveBeenCalledWith(loginResponse, 'Logowanie zakończone pomyślnie');
       expect(mockNext).not.toHaveBeenCalled();
     });
 
     it('should call next with an error when required fields are missing', async () => {
       mockReq.body = { email: 'test@example.com' }; // Brak hasła
 
-      await login(mockReq, mockRes, mockNext);
+      await login(mockReq, mockRes as any, mockNext);
 
-      expect(authService.loginUser).not.toHaveBeenCalled();
-      expect(mockRes.json).not.toHaveBeenCalled();
-      expect(mockNext).toHaveBeenCalledWith(expect.any(AuthError));
+      expect(mockedAuthService.loginUser).not.toHaveBeenCalled();
+      expect(mockRes.fail).toHaveBeenCalledWith('Email i hasło są wymagane', [
+        { code: 'MISSING_CREDENTIALS', message: 'Email i hasło są wymagane' }
+      ]);
+      expect(mockNext).not.toHaveBeenCalled();
     });
 
     it('should handle authentication service errors', async () => {
@@ -91,10 +103,9 @@ describe('Auth Controllers', () => {
       };
 
       const error = new AuthError('Nieprawidłowe dane logowania');
-      // @ts-ignore
-      authService.loginUser.mockRejectedValue(error);
+      mockedAuthService.loginUser.mockRejectedValue(error);
 
-      await login(mockReq, mockRes, mockNext);
+      await login(mockReq, mockRes as any, mockNext);
 
       expect(mockNext).toHaveBeenCalledWith(error);
     });
@@ -120,28 +131,27 @@ describe('Auth Controllers', () => {
 
       mockReq.body = userData;
       // @ts-ignore
-      authService.registerUser.mockResolvedValue(registerResponse);
+      mockedAuthService.registerUser.mockResolvedValue(registerResponse);
 
-      await register(mockReq, mockRes, mockNext);
+      await register(mockReq, mockRes as any, mockNext);
 
-      expect(authService.registerUser).toHaveBeenCalledWith(
+      expect(mockedAuthService.registerUser).toHaveBeenCalledWith(
         userData.email,
         userData.password,
         userData.username
       );
-      expect(mockRes.status).toHaveBeenCalledWith(201);
-      expect(mockRes.json).toHaveBeenCalledWith(registerResponse);
+      expect(mockRes.success).toHaveBeenCalledWith(registerResponse, 'Rejestracja zakończona pomyślnie', 201);
       expect(mockNext).not.toHaveBeenCalled();
     });
 
     it('should call next with an error when required fields are missing', async () => {
       mockReq.body = { email: 'new@example.com', password: 'password123' }; // Brak username
 
-      await register(mockReq, mockRes, mockNext);
+      await register(mockReq, mockRes as any, mockNext);
 
-      expect(authService.registerUser).not.toHaveBeenCalled();
-      expect(mockRes.json).not.toHaveBeenCalled();
-      expect(mockNext).toHaveBeenCalledWith(expect.any(AuthError));
+      expect(mockedAuthService.registerUser).not.toHaveBeenCalled();
+      expect(mockRes.fail).toHaveBeenCalledWith('Wszystkie pola są wymagane', expect.any(Array));
+      expect(mockNext).not.toHaveBeenCalled();
     });
 
     it('should call next with an error when password is too short', async () => {
@@ -151,11 +161,11 @@ describe('Auth Controllers', () => {
         username: 'newuser'
       };
 
-      await register(mockReq, mockRes, mockNext);
+      await register(mockReq, mockRes as any, mockNext);
 
-      expect(authService.registerUser).not.toHaveBeenCalled();
-      expect(mockRes.json).not.toHaveBeenCalled();
-      expect(mockNext).toHaveBeenCalledWith(expect.any(AuthError));
+      expect(mockedAuthService.registerUser).not.toHaveBeenCalled();
+      expect(mockRes.fail).toHaveBeenCalledWith('Hasło musi mieć co najmniej 8 znaków', expect.any(Array));
+      expect(mockNext).not.toHaveBeenCalled();
     });
 
     it('should call next with an error when email has an invalid format', async () => {
@@ -165,11 +175,11 @@ describe('Auth Controllers', () => {
         username: 'newuser'
       };
 
-      await register(mockReq, mockRes, mockNext);
+      await register(mockReq, mockRes as any, mockNext);
 
-      expect(authService.registerUser).not.toHaveBeenCalled();
-      expect(mockRes.json).not.toHaveBeenCalled();
-      expect(mockNext).toHaveBeenCalledWith(expect.any(AuthError));
+      expect(mockedAuthService.registerUser).not.toHaveBeenCalled();
+      expect(mockRes.fail).toHaveBeenCalledWith('Nieprawidłowy format adresu email', expect.any(Array));
+      expect(mockNext).not.toHaveBeenCalled();
     });
   });
 
@@ -179,13 +189,12 @@ describe('Auth Controllers', () => {
       const response = { message: 'Wysłano email do resetowania hasła' };
 
       mockReq.body = { email };
-      // @ts-ignore
-      authService.forgotPassword.mockResolvedValue(response);
+      mockedAuthService.forgotPassword.mockResolvedValue(response);
 
-      await forgotPassword(mockReq, mockRes, mockNext);
+      await forgotPassword(mockReq, mockRes as any, mockNext);
 
-      expect(authService.forgotPassword).toHaveBeenCalledWith(email);
-      expect(mockRes.json).toHaveBeenCalledWith(response);
+      expect(mockedAuthService.forgotPassword).toHaveBeenCalledWith(email);
+      expect(mockRes.success).toHaveBeenCalledWith(response, 'Link do resetowania hasła został wysłany na podany adres email');
       expect(mockNext).not.toHaveBeenCalled();
     });
 
@@ -193,10 +202,9 @@ describe('Auth Controllers', () => {
       mockReq.body = { email: 'test@example.com' };
 
       const error = new Error('Nie znaleziono użytkownika');
-      // @ts-ignore
-      authService.forgotPassword.mockRejectedValue(error);
+      mockedAuthService.forgotPassword.mockRejectedValue(error);
 
-      await forgotPassword(mockReq, mockRes, mockNext);
+      await forgotPassword(mockReq, mockRes as any, mockNext);
 
       expect(mockNext).toHaveBeenCalledWith(error);
     });
@@ -223,16 +231,16 @@ describe('Auth Controllers', () => {
 
       mockReq.body = passwordData;
       // @ts-ignore
-      authService.resetPassword.mockResolvedValue(response);
+      mockedAuthService.resetPassword.mockResolvedValue(response);
 
-      await resetPassword(mockReq, mockRes, mockNext);
+      await resetPassword(mockReq, mockRes as any, mockNext);
 
-      expect(authService.resetPassword).toHaveBeenCalledWith(
+      expect(mockedAuthService.resetPassword).toHaveBeenCalledWith(
         passwordData.token,
         passwordData.password,
         passwordData.confirmPassword
       );
-      expect(mockRes.json).toHaveBeenCalledWith(response);
+      expect(mockRes.success).toHaveBeenCalledWith(response, 'Hasło zostało zmienione pomyślnie');
       expect(mockNext).not.toHaveBeenCalled();
     });
 
@@ -244,10 +252,9 @@ describe('Auth Controllers', () => {
       };
 
       const error = new Error('Token resetowania hasła jest nieprawidłowy lub wygasł');
-      // @ts-ignore
-      authService.resetPassword.mockRejectedValue(error);
+      mockedAuthService.resetPassword.mockRejectedValue(error);
 
-      await resetPassword(mockReq, mockRes, mockNext);
+      await resetPassword(mockReq, mockRes as any, mockNext);
 
       expect(mockNext).toHaveBeenCalledWith(error);
     });
@@ -262,34 +269,35 @@ describe('Auth Controllers', () => {
       };
 
       // @ts-ignore
-      authService.verifyUserToken.mockResolvedValue(userData);
+      mockedAuthService.verifyUserToken.mockResolvedValue(userData);
 
-      await verifyToken(mockReq, mockRes, mockNext);
+      await verifyToken(mockReq, mockRes as any, mockNext);
 
-      expect(authService.verifyUserToken).toHaveBeenCalledWith('user-123');
-      expect(mockRes.json).toHaveBeenCalledWith(userData);
+      expect(mockedAuthService.verifyUserToken).toHaveBeenCalledWith('user-123');
+      expect(mockRes.success).toHaveBeenCalledWith(userData, 'Token zweryfikowany pomyślnie');
       expect(mockNext).not.toHaveBeenCalled();
     });
 
     it('should handle an invalid token error', async () => {
-      mockReq.user = null; 
+      mockReq.user = undefined;
 
-      await verifyToken(mockReq, mockRes, mockNext);
+      await verifyToken(mockReq, mockRes as any, mockNext);
 
-      expect(authService.verifyUserToken).not.toHaveBeenCalled();
-      expect(mockRes.status).toHaveBeenCalledWith(401);
-      expect(mockRes.json).toHaveBeenCalledWith({ error: 'Nieprawidłowy token' });
+      expect(mockedAuthService.verifyUserToken).not.toHaveBeenCalled();
+      expect(mockRes.fail).toHaveBeenCalledWith('Brak tokenu autoryzacyjnego', [
+        { code: 'MISSING_TOKEN', message: 'Brak tokenu autoryzacyjnego' }
+      ], 401);
     });
 
     it('should handle token verification errors', async () => {
-      const error = new AuthError('Użytkownik nie znaleziony');
-      // @ts-ignore
-      authService.verifyUserToken.mockRejectedValue(error);
+      const error = new Error('Nieprawidłowy token');
+      mockedAuthService.verifyUserToken.mockRejectedValue(error);
 
-      await verifyToken(mockReq, mockRes, mockNext);
+      await verifyToken(mockReq, mockRes as any, mockNext);
 
-      expect(mockRes.status).toHaveBeenCalledWith(401);
-      expect(mockRes.json).toHaveBeenCalledWith({ error: 'Nieprawidłowy token' });
+      expect(mockRes.fail).toHaveBeenCalledWith('Nieprawidłowy token', [
+        { code: 'INVALID_TOKEN', message: 'Nieprawidłowy token' }
+      ], 401);
     });
   });
 
@@ -312,32 +320,28 @@ describe('Auth Controllers', () => {
 
       mockReq.body = googleData;
       // @ts-ignore
-      authService.googleAuthentication.mockResolvedValue(response);
+      mockedAuthService.googleAuthentication.mockResolvedValue(response);
 
-      await googleAuth(mockReq, mockRes, mockNext);
+      await googleAuth(mockReq, mockRes as any, mockNext);
 
-      expect(authService.googleAuthentication).toHaveBeenCalledWith(
+      expect(mockedAuthService.googleAuthentication).toHaveBeenCalledWith(
         googleData.credential,
         googleData.rememberMe
       );
-      expect(mockRes.json).toHaveBeenCalledWith(response);
+      expect(mockRes.success).toHaveBeenCalledWith(response, 'Logowanie przez Google zakończone pomyślnie');
     });
 
     it('should handle Google authentication errors', async () => {
       mockReq.body = { credential: 'invalid-token' };
-      mockRes.setHeader = vi.fn();
 
       const error = new Error('Nieprawidłowy token Google');
-      // @ts-ignore
-      authService.googleAuthentication.mockRejectedValue(error);
+      mockedAuthService.googleAuthentication.mockRejectedValue(error);
 
-      await googleAuth(mockReq, mockRes, mockNext);
+      await googleAuth(mockReq, mockRes as any, mockNext);
 
-      expect(mockRes.status).toHaveBeenCalledWith(400);
-      expect(mockRes.json).toHaveBeenCalledWith({
-        status: 'error',
-        message: 'Nieprawidłowy token Google'
-      });
+      expect(mockRes.fail).toHaveBeenCalledWith('Błąd uwierzytelniania przez Google', [
+        { code: 'GOOGLE_AUTH_ERROR', message: error.message || 'Błąd uwierzytelniania przez Google' }
+      ]);
     });
   });
 }); 

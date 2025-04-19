@@ -10,10 +10,7 @@ export const updateStats = async (req: Request, res: Response, next: NextFunctio
     const updateData = req.body;
     const updatedStats = await StatsService.updateStats(userId, updateData);
 
-    res.json({
-      status: 'success',
-      data: updatedStats
-    });
+    res.success(updatedStats, 'Statystyki użytkownika zaktualizowane pomyślnie');
   } catch (error) {
     next(error);
   }

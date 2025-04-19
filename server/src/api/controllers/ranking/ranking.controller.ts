@@ -38,7 +38,7 @@ export const getRanking = async (req: Request, res: Response, next: NextFunction
       rankingToReturn = rankingToReturn.concat(formattedUsers.slice(start, end));
     }
 
-    res.json({
+    res.success({
       ranking: rankingToReturn,
       userStats: userRank ? {
         rank: userRank,
@@ -46,7 +46,7 @@ export const getRanking = async (req: Request, res: Response, next: NextFunction
         ...formattedUsers[userRankIndex]
       } : null,
       totalUsers: users.length
-    });
+    }, 'Ranking pobrany pomyślnie');
 
   } catch (error) {
     next(error);

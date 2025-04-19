@@ -4,8 +4,7 @@ import { Group } from '../../../../models/group.model.js';
 import { 
   AuthRequest, 
   MessageController,
-  MessageWithUserInfo,
-  GetMessagesResponse
+  MessageWithUserInfo
 } from './types.js';
 import { formatReactions, hasUserReported } from './utils.js';
 
@@ -21,16 +20,22 @@ export const getMessagesController: MessageController = async (
     const limit = parseInt(req.query.limit as string) || 50;
     const skip = (page - 1) * limit;
 
+    if (!groupId) {
+      res.fail('Identyfikator grupy jest wymagany', [
+        { code: 'MISSING_GROUP_ID', message: 'Identyfikator grupy jest wymagany', field: 'groupId' }
+      ]);
+      return;
+    }
+
     const group = await Group.findOne({
       _id: groupId,
       members: userId
     });
 
     if (!group) {
-      res.status(403).json({
-        status: 'error',
-        message: 'Brak dostępu do czatu grupy'
-      });
+      res.fail('Brak dostępu do czatu grupy', [
+        { code: 'NOT_GROUP_MEMBER', message: 'Brak dostępu do czatu grupy' }
+      ], 403);
       return;
     }
 
@@ -71,22 +76,13 @@ export const getMessagesController: MessageController = async (
       await Message.bulkWrite(bulkOps);
     }
 
-    const hasNextPage = skip + messages.length < total;
-
-    const response: GetMessagesResponse = {
-      status: 'success',
-      data: {
-        messages: formattedMessages.reverse(),
-        pagination: {
-          page,
-          limit,
-          total,
-          hasNextPage
-        }
-      }
-    };
-
-    res.json(response);
+    res.paginated(
+      formattedMessages.reverse(),
+      page,
+      limit,
+      total,
+      'Wiadomości zostały pobrane'
+    );
   } catch (error) {
     next(error);
   }

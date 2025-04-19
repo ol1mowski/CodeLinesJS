@@ -1,65 +1,58 @@
-import { Group } from '../../../models/group.model.js';
-import { GroupMember } from '../../../models/groupMember.model.js';
-import { AuthError, ValidationError } from '../../../utils/errors.js';
+import { Request, Response, NextFunction } from 'express';
+import { GroupService } from '../../../services/group.service.js';
 
-export const updateGroupRole = async (req, res, next) => {
+export const updateGroupRole = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const userId = req.user?.userId;
-    if (!userId) throw new AuthError('Brak autoryzacji');
+    
+    if (!userId) {
+      res.fail('Brak identyfikatora użytkownika. Zaloguj się ponownie.', [
+        { code: 'AUTH_REQUIRED', message: 'Brak autoryzacji' }
+      ]);
+      return;
+    }
 
     const { groupId, memberId, role } = req.body;
 
     if (!groupId) {
-      throw new ValidationError('ID grupy jest wymagane');
+      res.fail('ID grupy jest wymagane', [
+        { code: 'MISSING_GROUP_ID', message: 'ID grupy jest wymagane', field: 'groupId' }
+      ]);
+      return;
     }
 
     if (!memberId) {
-      throw new ValidationError('ID członka jest wymagane');
+      res.fail('ID członka jest wymagane', [
+        { code: 'MISSING_MEMBER_ID', message: 'ID członka jest wymagane', field: 'memberId' }
+      ]);
+      return;
     }
 
     if (!role || !['admin', 'member'].includes(role)) {
-      throw new ValidationError('Nieprawidłowa rola. Dozwolone wartości: admin, member');
-    }
-
-    const group = await Group.findById(groupId);
-    if (!group) {
-      throw new ValidationError('Grupa nie istnieje');
-    }
-
-    const userMembership = await GroupMember.findOne({
-      user: userId,
-      group: groupId,
-    });
-
-    if (!userMembership || userMembership.role !== 'owner') {
-      throw new AuthError('Tylko właściciel może zmieniać role członków grupy');
-    }
-
-    const memberToUpdate = await GroupMember.findById(memberId);
-    if (!memberToUpdate) {
-      throw new ValidationError('Członek nie istnieje');
-    }
-
-    if (memberToUpdate.group.toString() !== groupId) {
-      throw new ValidationError('Członek nie należy do tej grupy');
-    }
-
-    if (memberToUpdate.role === 'owner') {
-      throw new ValidationError('Nie można zmienić roli właściciela grupy');
+      res.fail('Nieprawidłowa rola. Dozwolone wartości: admin, member', [
+        { code: 'INVALID_ROLE', message: 'Nieprawidłowa rola. Dozwolone wartości: admin, member', field: 'role' }
+      ]);
+      return;
     }
     
-    memberToUpdate.role = role;
-    memberToUpdate.updatedAt = new Date();
-    await memberToUpdate.save();
-
-    res.json({
-      status: 'success',
-      message: 'Rola członka została zaktualizowana pomyślnie',
-      data: {
-        memberId: memberToUpdate._id,
-        role: memberToUpdate.role,
-      },
+    const result = await GroupService.updateMemberRole(userId, {
+      userId: memberId,
+      groupId,
+      role
     });
+    
+    if (!result.success) {
+      res.fail(result.message, [
+        { code: 'UPDATE_ROLE_FAILED', message: result.message }
+      ]);
+      return;
+    }
+    
+    res.success({
+      memberId,
+      role,
+      group: result.group
+    }, result.message || 'Rola członka została zaktualizowana pomyślnie');
   } catch (error) {
     next(error);
   }

@@ -36,12 +36,11 @@ export const updateStreakController = async (
       }
     }
     
-    res.json({
-      message,
+    res.success({
       streak: streakStats.streak,
       bestStreak: streakStats.bestStreak,
       streakUpdated: streakStats.streakUpdated
-    });
+    }, message);
   } catch (error) {
     next(error);
   }

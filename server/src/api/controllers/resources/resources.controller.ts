@@ -45,10 +45,10 @@ export const getResources = async (req: Request, res: Response, next: NextFuncti
       createdAt: resource.createdAt
     }));
     
-    res.json({
+    res.success({
       resources: formattedResources,
       total: formattedResources.length
-    });
+    }, 'Zasoby pobrane pomyślnie');
   } catch (error) {
     next(error);
   }

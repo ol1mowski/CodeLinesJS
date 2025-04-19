@@ -1,4 +1,3 @@
-// @ts-nocheck
 import mongoose from 'mongoose';
 
 const groupSchema = new mongoose.Schema(
@@ -56,7 +55,5 @@ const groupSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
-
-// Usunięto duplikat indeksu, ponieważ unique: true już tworzy indeks
 
 export const Group = mongoose.model('Group', groupSchema); 

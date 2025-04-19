@@ -1,5 +1,4 @@
-// @ts-nocheck
-import express from 'express';
+import express, { Request, Response } from 'express';
 import { authMiddleware } from '../middleware/auth.middleware.js';
 import { 
   getPostsController, 
@@ -18,7 +17,7 @@ import { Post } from '../models/post.model.js';
 const router = express.Router();
 
 
-router.get('/all', async (req, res) => {
+router.get('/all', async (req: Request, res: Response) => {
   try {
     const posts = await Post.find({})
       .populate({ path: 'author', select: 'username avatar' })
@@ -37,7 +36,6 @@ router.get('/all', async (req, res) => {
   }
 });
 
-// Zmieniam ścieżki na poprawne (z 'id' na 'postId')
 router.get('/', authMiddleware, getPostsController);
 router.post('/', authMiddleware, createPostController);
 router.get('/:postId', authMiddleware, getPostByIdController);
@@ -48,33 +46,5 @@ router.put('/:postId/save', authMiddleware, savePostController);
 router.get('/:postId/comments', authMiddleware, getCommentsController);
 router.post('/:postId/comments', authMiddleware, addCommentController);
 router.delete('/:postId/comments/:commentId', authMiddleware, deleteCommentController);
-
-// Dodaję prosty endpoint do testowego tworzenia posta
-router.post('/test-create', async (req, res) => {
-  try {
-    
-    if (!req.body.content || !req.body.authorId) {
-      return res.status(400).json({ 
-        status: 'error',
-        message: 'Wymagane pola: content, authorId'
-      });
-    }
-
-    const post = new Post({
-      content: req.body.content,
-      author: req.body.authorId,
-    });
-    
-    await post.save();
-    
-    res.status(201).json({
-      status: 'success',
-      message: 'Testowy post utworzony',
-      post: post
-    });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
 
 export default router; 

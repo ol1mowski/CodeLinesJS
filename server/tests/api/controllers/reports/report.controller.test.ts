@@ -4,6 +4,7 @@ import { ReportService } from '../../../../src/services/reports/report.service.j
 import { NextFunction, Response } from 'express';
 import { AuthRequest, CreateReportDTO, ReportCategory, ReportStatus } from '../../../../src/types/reports/index.js';
 import { Types } from 'mongoose';
+import { mockResponseUtils } from '../../../setup/setupResponseMocks.js';
 
 vi.mock('../../../../src/services/reports/report.service.js', () => ({
   ReportService: {
@@ -11,9 +12,15 @@ vi.mock('../../../../src/services/reports/report.service.js', () => ({
   }
 }));
 
+interface CustomResponse extends Response {
+  success: (data: any, message?: string, statusCode?: number) => void;
+  fail: (message?: string, errors?: any, statusCode?: number) => void;
+  error: (message?: string, statusCode?: number, errors?: any) => void;
+}
+
 describe('createReport controller', () => {
   let req: Partial<AuthRequest & { body: CreateReportDTO }>;
-  let res: Partial<Response>;
+  let res: Partial<CustomResponse>;
   let next: NextFunction;
   
   beforeEach(() => {
@@ -31,10 +38,7 @@ describe('createReport controller', () => {
       }
     };
     
-    res = {
-      status: vi.fn().mockReturnThis(),
-      json: vi.fn()
-    };
+    res = mockResponseUtils.createMockResponse() as unknown as Partial<CustomResponse>;
     
     next = vi.fn() as unknown as NextFunction;
     
@@ -63,17 +67,14 @@ describe('createReport controller', () => {
     await createReport(req as AuthRequest & { body: CreateReportDTO }, res as Response, next);
     
     expect(ReportService.createReport).toHaveBeenCalledWith(req.body);
-    expect(res.status).toHaveBeenCalledWith(201);
-    expect(res.json).toHaveBeenCalledWith({
-      success: true,
-      message: 'Zgłoszenie zostało przyjęte',
+    expect(res.success).toHaveBeenCalledWith({
       report: mockReportResponse.report,
       emailSent: true,
       emailDetails: {
         messageId: 'test-message-id',
         previewUrl: 'http://test-preview-url'
       }
-    });
+    }, 'Zgłoszenie zostało przyjęte', 201);
     expect(next).not.toHaveBeenCalled();
   });
   
@@ -97,16 +98,13 @@ describe('createReport controller', () => {
     
     await createReport(req as AuthRequest & { body: CreateReportDTO }, res as Response, next);
     
-    expect(res.status).toHaveBeenCalledWith(201);
-    expect(res.json).toHaveBeenCalledWith({
-      success: true,
-      message: 'Zgłoszenie zostało przyjęte',
+    expect(res.success).toHaveBeenCalledWith({
       report: mockReportResponse.report,
       emailSent: false,
       emailDetails: {
         error: 'Failed to send email'
       }
-    });
+    }, 'Zgłoszenie zostało przyjęte', 201);
   });
   
   it('should call next with error when service throws an exception', async () => {
@@ -116,8 +114,7 @@ describe('createReport controller', () => {
     await createReport(req as AuthRequest & { body: CreateReportDTO }, res as Response, next);
     
     expect(ReportService.createReport).toHaveBeenCalledWith(req.body);
-    expect(res.status).not.toHaveBeenCalled();
-    expect(res.json).not.toHaveBeenCalled();
+    expect(res.success).not.toHaveBeenCalled();
     expect(next).toHaveBeenCalledWith(mockError);
   });
 }); 

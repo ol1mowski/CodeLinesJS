@@ -1,4 +1,3 @@
-// @ts-nocheck
 import 'nodemailer';
 
 declare module 'nodemailer' {

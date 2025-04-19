@@ -16,7 +16,7 @@ export const getLeaderboardController = async (
       type
     });
     
-    res.json(leaderboardData);
+    res.success(leaderboardData, 'Dane rankingowe pobrane pomyślnie');
   } catch (error) {
     next(error);
   }

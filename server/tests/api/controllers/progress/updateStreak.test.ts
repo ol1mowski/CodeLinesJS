@@ -18,9 +18,13 @@ vi.mock('../../../../src/services/progress/index.js', () => ({
   }
 }));
 
+interface CustomResponse extends Response {
+  success: (data?: any, message?: string, statusCode?: number) => Response;
+}
+
 describe('updateStreakController', () => {
   let req: Partial<IUserRequest>;
-  let res: Partial<Response>;
+  let res: Partial<CustomResponse>;
   let next: NextFunction;
   let mockUser: any;
   
@@ -34,7 +38,8 @@ describe('updateStreakController', () => {
     };
     
     res = {
-      json: vi.fn()
+      json: vi.fn(),
+      success: vi.fn()
     };
     
     next = vi.fn() as unknown as NextFunction;
@@ -68,12 +73,11 @@ describe('updateStreakController', () => {
     expect(StreakService.updateStreak).toHaveBeenCalledWith(mockUser);
     expect(mockUser.save).toHaveBeenCalled();
     
-    expect(res.json).toHaveBeenCalledWith({
-      message: 'Świetnie! Twoje pasmo sukcesów wynosi teraz 4 dni!',
+    expect(res.success).toHaveBeenCalledWith({
       streak: 4,
       bestStreak: 7,
       streakUpdated: true
-    });
+    }, 'Świetnie! Twoje pasmo sukcesów wynosi teraz 4 dni!');
     
     expect(next).not.toHaveBeenCalled();
   });
@@ -90,12 +94,11 @@ describe('updateStreakController', () => {
     
     await updateStreakController(req as IUserRequest, res as Response, next);
     
-    expect(res.json).toHaveBeenCalledWith({
-      message: 'Rozpoczęto nowe pasmo sukcesów!',
+    expect(res.success).toHaveBeenCalledWith({
       streak: 1,
       bestStreak: 7,
       streakUpdated: true
-    });
+    }, 'Rozpoczęto nowe pasmo sukcesów!');
   });
   
   it('should return appropriate message for first day of learning', async () => {
@@ -112,12 +115,11 @@ describe('updateStreakController', () => {
     
     await updateStreakController(req as IUserRequest, res as Response, next);
     
-    expect(res.json).toHaveBeenCalledWith({
-      message: 'Pierwszy dzień nauki! Rozpoczęto pasmo sukcesów.',
+    expect(res.success).toHaveBeenCalledWith({
       streak: 1,
       bestStreak: 1,
       streakUpdated: true
-    });
+    }, 'Pierwszy dzień nauki! Rozpoczęto pasmo sukcesów.');
   });
   
   it('should return appropriate message when streak is not updated', async () => {
@@ -131,12 +133,11 @@ describe('updateStreakController', () => {
     
     await updateStreakController(req as IUserRequest, res as Response, next);
     
-    expect(res.json).toHaveBeenCalledWith({
-      message: 'Pasmo sukcesów nie zostało zaktualizowane',
+    expect(res.success).toHaveBeenCalledWith({
       streak: 3,
       bestStreak: 7,
       streakUpdated: false
-    });
+    }, 'Pasmo sukcesów nie zostało zaktualizowane');
   });
   
   it('should call next with error when user is not found', async () => {
@@ -146,7 +147,7 @@ describe('updateStreakController', () => {
     
     expect(User.findById).toHaveBeenCalledWith('user123');
     expect(StreakService.updateStreak).not.toHaveBeenCalled();
-    expect(res.json).not.toHaveBeenCalled();
+    expect(res.success).not.toHaveBeenCalled();
     expect(next).toHaveBeenCalledWith(expect.any(ValidationError));
   });
   
@@ -158,7 +159,7 @@ describe('updateStreakController', () => {
     
     expect(User.findById).toHaveBeenCalledWith('user123');
     expect(StreakService.updateStreak).not.toHaveBeenCalled();
-    expect(res.json).not.toHaveBeenCalled();
+    expect(res.success).not.toHaveBeenCalled();
     expect(next).toHaveBeenCalledWith(mockError);
   });
 }); 

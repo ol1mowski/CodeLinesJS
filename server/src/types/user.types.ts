@@ -1,9 +1,5 @@
-// @ts-nocheck
 import { Document, Types } from 'mongoose';
 
-/**
- * Interfejs reprezentujący model użytkownika
- */
 export interface IUser extends Document {
   _id: string | Types.ObjectId;
   email: string;

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import express, { NextFunction, Request, Response, Application } from "express";
 import cors from "cors";
 import helmet, { HelmetOptions } from "helmet";
@@ -114,6 +113,8 @@ export const configureServer = (app: Application): Application => {
   
   app.use(compression());
   
+  app.use(cookieParser());
+  
   const apiLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 500,
@@ -139,7 +140,6 @@ export const configureServer = (app: Application): Application => {
   app.use('/api/', apiLimiter);
   app.use('/api/auth', authLimiter);
   
-  app.use(cookieParser());
   app.use(mongoSanitize());
   app.use(compression());
   app.use(responseEnhancer);

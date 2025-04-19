@@ -17,10 +17,7 @@ export const getSettingsController = async (
 
     const settingsResponse = await SettingsService.getSettings(userId);
 
-    res.status(200).json({
-      success: true,
-      data: settingsResponse
-    });
+    res.success(settingsResponse, 'Ustawienia użytkownika pobrane pomyślnie');
   } catch (error) {
     next(error);
   }

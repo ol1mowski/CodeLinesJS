@@ -12,7 +12,7 @@ export const getUserProgressController = async (
     
     const progressData = await ProgressService.getUserProgress(userId);
     
-    res.json(progressData);
+    res.success(progressData, 'Postęp użytkownika pobrany pomyślnie');
   } catch (error) {
     next(error);
   }

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -11,7 +10,7 @@ interface AppConfig {
 }
 
 interface DbConfig {
-  uri: string | undefined;
+  uri: string;
   options: {
     serverSelectionTimeoutMS: number;
     socketTimeoutMS: number;
@@ -19,13 +18,13 @@ interface DbConfig {
 }
 
 interface JwtConfig {
-  secret: string | undefined;
+  secret: string;
   expiresIn: string;
   cookieExpiresIn: number;
 }
 
 interface CorsConfig {
-  origin: string | undefined;
+  origin: string;
   credentials: boolean;
   methods: string[];
   allowedHeaders: string[];
@@ -44,11 +43,11 @@ interface RateLimitConfig {
 }
 
 interface EmailConfig {
-  host: string | undefined;
-  sendgridApiKey: string | undefined;
-  port: string | undefined;
-  user: string | undefined;
-  password: string | undefined;
+  host: string;
+  sendgridApiKey: string;
+  port: string;
+  user: string;
+  password: string;
   from: string;
 }
 
@@ -75,9 +74,9 @@ interface Config {
 
 const config: Config = {
   app: {
-    env: process.env.NODE_ENV || 'development',
-    port: process.env.PORT || 5001,
-    frontendUrl: process.env.FRONTEND_URL || 'http://localhost:3000',
+    env: process.env.NODE_ENV,
+    port: process.env.PORT,
+    frontendUrl: process.env.FRONTEND_URL,
     isProduction: process.env.NODE_ENV === 'production',
   },
   db: {
@@ -89,11 +88,11 @@ const config: Config = {
   },
   jwt: {
     secret: process.env.JWT_SECRET,
-    expiresIn: process.env.JWT_EXPIRES_IN || '24h',
-    cookieExpiresIn: parseInt(process.env.JWT_COOKIE_EXPIRES_IN || '86400000'),
+    expiresIn: process.env.JWT_EXPIRES_IN,
+    cookieExpiresIn: parseInt(process.env.JWT_COOKIE_EXPIRES_IN),
   },
   cors: {
-    origin: process.env.FRONTEND_URL || '*',
+    origin: process.env.FRONTEND_URL,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
@@ -103,8 +102,8 @@ const config: Config = {
     optionsSuccessStatus: 204
   },
   rateLimit: {
-    windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000'),
-    max: parseInt(process.env.RATE_LIMIT_MAX || '100'),
+    windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS),
+    max: parseInt(process.env.RATE_LIMIT_MAX),
     standardHeaders: true,
     legacyHeaders: false,
     message: 'Zbyt wiele zapytań z tego adresu IP, spróbuj ponownie za 15 minut'
@@ -115,7 +114,7 @@ const config: Config = {
     port: process.env.EMAIL_PORT,
     user: process.env.EMAIL_USER,
     password: process.env.EMAIL_PASSWORD,
-    from: process.env.EMAIL_FROM || 'kontakt@codelinejs.pl',
+    from: process.env.EMAIL_FROM,
   },
   limits: {
     jsonBodySize: '10kb',

@@ -4,27 +4,21 @@ import { asyncHandler } from '../../../utils/asyncHandler.js';
 
 export const createPostController = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   const { content } = req.body;
-  
-  console.log('User w req:', req.user);
-  
-  // Zmiana z req.user.id na req.user.userId zgodnie z definicją w auth.middleware.ts
   const userId = req.user?.userId;
   
-  console.log('Pobrane userId w kontrolerze:', userId);
-  
   if (!userId) {
-    console.error('Brak userId w req.user');
-    res.status(400).json({
-      status: 'fail',
-      message: 'Brak identyfikatora użytkownika. Zaloguj się ponownie.'
-    });
-    return;
+    return res.fail('Brak identyfikatora użytkownika. Zaloguj się ponownie.', [
+      { code: 'AUTH_REQUIRED', message: 'Brak identyfikatora użytkownika. Zaloguj się ponownie.' }
+    ]);
+  }
+  
+  if (!content || content.trim() === '') {
+    return res.fail('Treść posta jest wymagana', [
+      { code: 'MISSING_CONTENT', message: 'Treść posta jest wymagana', field: 'content' }
+    ]);
   }
 
   const post = await PostService.createPost(content, userId);
 
-  res.status(201).json({
-    status: 'success',
-    data: post
-  });
+  return res.success(post, 'Post utworzony pomyślnie', 201);
 }); 

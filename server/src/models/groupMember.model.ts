@@ -1,4 +1,3 @@
-// @ts-nocheck
 import mongoose from 'mongoose';
 
 const groupMemberSchema = new mongoose.Schema(
@@ -33,7 +32,6 @@ const groupMemberSchema = new mongoose.Schema(
   }
 );
 
-// Indeks dla szybszego wyszukiwania członkostwa
 groupMemberSchema.index({ user: 1, group: 1 }, { unique: true });
 
 export const GroupMember = mongoose.model('GroupMember', groupMemberSchema); 

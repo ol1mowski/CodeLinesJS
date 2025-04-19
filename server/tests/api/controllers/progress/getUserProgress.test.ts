@@ -1,8 +1,17 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { getUserProgressController } from '../../../../src/api/controllers/progress/getUserProgress.js';
 import { ProgressService } from '../../../../src/services/progress/index.js';
-import { NextFunction, Response } from 'express';
+import { NextFunction} from 'express';
 import { IUserRequest } from '../../../../src/types/progress/index.js';
+import { mockResponseUtils } from '../../../setup/setupResponseMocks.js';
+
+declare global {
+  namespace Express {
+    interface Response {
+      success: any;
+    }
+  }
+}
 
 vi.mock('../../../../src/services/progress/index.js', () => ({
   ProgressService: {
@@ -12,7 +21,7 @@ vi.mock('../../../../src/services/progress/index.js', () => ({
 
 describe('getUserProgressController', () => {
   let req: Partial<IUserRequest>;
-  let res: Partial<Response>;
+  let res: ReturnType<typeof mockResponseUtils.createMockResponse>;
   let next: NextFunction;
   
   beforeEach(() => {
@@ -24,9 +33,7 @@ describe('getUserProgressController', () => {
       }
     };
     
-    res = {
-      json: vi.fn()
-    };
+    res = mockResponseUtils.createMockResponse();
     
     next = vi.fn() as unknown as NextFunction;
     
@@ -59,10 +66,10 @@ describe('getUserProgressController', () => {
     
     ProgressService.getUserProgress = vi.fn().mockResolvedValue(mockProgressData);
     
-    await getUserProgressController(req as IUserRequest, res as Response, next);
+    await getUserProgressController(req as IUserRequest, res as any, next);
     
     expect(ProgressService.getUserProgress).toHaveBeenCalledWith('user123');
-    expect(res.json).toHaveBeenCalledWith(mockProgressData);
+    expect(res.success).toHaveBeenCalledWith(mockProgressData, 'Postęp użytkownika pobrany pomyślnie');
     expect(next).not.toHaveBeenCalled();
   });
   
@@ -71,10 +78,10 @@ describe('getUserProgressController', () => {
     
     ProgressService.getUserProgress = vi.fn().mockRejectedValue(mockError);
     
-    await getUserProgressController(req as IUserRequest, res as Response, next);
+    await getUserProgressController(req as IUserRequest, res as any, next);
     
     expect(ProgressService.getUserProgress).toHaveBeenCalledWith('user123');
-    expect(res.json).not.toHaveBeenCalled();
+    expect(res.success).not.toHaveBeenCalled();
     expect(next).toHaveBeenCalledWith(mockError);
   });
 }); 

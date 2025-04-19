@@ -1,19 +1,32 @@
-// @ts-nocheck
 import { Request, Response, NextFunction } from 'express';
 
-export const asyncHandler = (fn: (req: Request, res: Response, next: NextFunction) => Promise<void>) => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    Promise.resolve(fn(req, res, next)).catch(next);
+type AsyncHandler = (req: Request, res: Response, next: NextFunction) => Promise<any>;
+
+export const asyncHandler = (fn: AsyncHandler) => {
+  return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      await fn(req, res, next);
+    } catch (error) {
+      next(error);
+    }
   };
 };
 
-export const withTransaction = (fn: (req: Request, res: Response, next: NextFunction) => Promise<void>) => {
+export const wrapController = (fn: AsyncHandler) => {
+  return (req: Request, res: Response, next: NextFunction): void => {
+    fn(req, res, next).catch(next);
+  };
+};
+
+export const withTransaction = (
+  fn: (req: Request, res: Response, next: NextFunction) => Promise<void | Response | any>,
+) => {
   return asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const mongoose = (await import('mongoose')).default;
     const session = await mongoose.startSession();
-    
+
     session.startTransaction();
-    
+
     try {
       req.dbSession = session;
       await fn(req, res, next);
@@ -25,4 +38,4 @@ export const withTransaction = (fn: (req: Request, res: Response, next: NextFunc
       session.endSession();
     }
   });
-}; 
+};

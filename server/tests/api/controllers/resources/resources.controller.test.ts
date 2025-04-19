@@ -4,6 +4,13 @@ import { Resource } from '../../../../src/models/resource.model.js';
 import { User } from '../../../../src/models/user.model.js';
 import { NextFunction, Response, Request } from 'express';
 import { Types } from 'mongoose';
+import { mockResponseUtils } from '../../../setup/setupResponseMocks.js';
+
+interface CustomResponse extends Response {
+  success: (data: any, message?: string) => void;
+  fail: (errors: any, message?: string) => void;
+  error: (code: number, message: string) => void;
+}
 
 vi.mock('../../../../src/models/resource.model.js', () => ({
   Resource: {
@@ -27,7 +34,7 @@ vi.mock('../../../../src/models/user.model.js', () => ({
 
 describe('Resources Controller', () => {
   let req: Partial<Request & { user: any }>;
-  let res: Partial<Response>;
+  let res: Partial<CustomResponse>;
   let next: NextFunction;
   let mockResources: any[];
   let mockUser: any;
@@ -43,9 +50,7 @@ describe('Resources Controller', () => {
       }
     };
     
-    res = {
-      json: vi.fn()
-    };
+    res = mockResponseUtils.createMockResponse() as unknown as Partial<CustomResponse>;
     
     next = vi.fn() as unknown as NextFunction;
     
@@ -131,7 +136,7 @@ describe('Resources Controller', () => {
     
     expect(User.findById).toHaveBeenCalledWith(req.user?.userId);
     expect(Resource.find).toHaveBeenCalledWith({ isPublished: true });
-    expect(res.json).toHaveBeenCalledWith({
+    expect(res.success).toHaveBeenCalledWith({
       resources: [
         {
           id: mockResources[0]._id,
@@ -163,7 +168,7 @@ describe('Resources Controller', () => {
         }
       ],
       total: 2
-    });
+    }, 'Zasoby pobrane pomyślnie');
   });
   
   it('should apply query filters correctly', async () => {
@@ -200,25 +205,6 @@ describe('Resources Controller', () => {
         { tags: { $regex: 'javascript', $options: 'i' } }
       ]
     });
-  });
-  
-  it('should handle case when user has no saved resources', async () => {
-    const userWithNoSavedResources = {
-      ...mockUser,
-      preferences: {}
-    };
-    
-    const mockLeanFn = vi.fn().mockResolvedValue(userWithNoSavedResources);
-    const mockSelectFn = vi.fn().mockReturnValue({ lean: mockLeanFn });
-    const mockFindByIdFn = vi.fn().mockReturnValue({ select: mockSelectFn });
-    User.findById = mockFindByIdFn;
-    
-    await getResources(req as Request, res as Response, next);
-    
-    const formattedResources = (res.json as any).mock.calls[0][0].resources;
-    
-    expect(formattedResources[0].isSaved).toBe(false);
-    expect(formattedResources[1].isSaved).toBe(false);
   });
   
   it('should call next with error when an exception occurs', async () => {

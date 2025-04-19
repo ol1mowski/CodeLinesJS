@@ -1,4 +1,3 @@
-// @ts-nocheck
 import {
   getSettingsController,
   updateProfileController,
@@ -8,7 +7,7 @@ import {
 } from './settings/index.js';
 
 import { User } from '../../models/user.model.js';
-import { AuthError, ValidationError } from '../../utils/errors.js';
+import { AuthError } from '../../utils/errors.js';
 import { Document } from 'mongoose';
 import { Request, Response, NextFunction } from 'express';
 
@@ -55,7 +54,7 @@ export const getProfile = async (req: Request, res: Response, next: NextFunction
       throw new AuthError('Użytkownik nie znaleziony');
     }
     
-    res.json({
+    return res.success({
       username: user.username,
       email: user.email,
       profile: user.profile || {},
@@ -65,7 +64,7 @@ export const getProfile = async (req: Request, res: Response, next: NextFunction
         totalPoints: user.stats?.points || 0,
         streak: user.stats?.streak || 0
       }
-    });
+    }, 'Profil użytkownika pobrany pomyślnie');
   } catch (error) {
     next(error);
   }
@@ -80,7 +79,7 @@ export const getPreferences = async (req: Request, res: Response, next: NextFunc
       throw new AuthError('Użytkownik nie znaleziony');
     }
     
-    res.json(user.preferences || {});
+    return res.success(user.preferences || {}, 'Preferencje użytkownika pobrane pomyślnie');
   } catch (error) {
     next(error);
   }
@@ -99,7 +98,7 @@ export const updatePreferences = async (req: Request, res: Response, next: NextF
       throw new AuthError('Użytkownik nie znaleziony');
     }
     
-    res.json(user.preferences || {});
+    return res.success(user.preferences || {}, 'Preferencje zaktualizowane pomyślnie');
   } catch (error) {
     next(error);
   }
@@ -116,12 +115,14 @@ export const deleteAccount = async (req: Request, res: Response, next: NextFunct
     
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
-      throw new AuthError('Nieprawidłowe hasło');
+      return res.fail('Nieprawidłowe hasło', [
+        { code: 'INVALID_PASSWORD', message: 'Nieprawidłowe hasło' }
+      ]);
     }
     
     await User.findByIdAndDelete(req.user?.userId);
     
-    res.json({ message: 'Konto zostało usunięte' });
+    return res.success(null, 'Konto zostało usunięte');
   } catch (error) {
     next(error);
   }
@@ -137,7 +138,7 @@ export const getUserData = async (req: Request, res: Response, next: NextFunctio
       throw new AuthError('Użytkownik nie znaleziony');
     }
     
-    res.json({
+    return res.success({
       email: user.email,
       username: user.username,
       avatar: user.avatar || '',
@@ -151,7 +152,7 @@ export const getUserData = async (req: Request, res: Response, next: NextFunctio
         theme: user.preferences?.theme || 'light',
         language: user.preferences?.language || 'pl'
       }
-    });
+    }, 'Dane użytkownika pobrane pomyślnie');
   } catch (error) {
     next(error);
   }
@@ -173,10 +174,12 @@ export const getUserByIdentifier = async (req: Request, res: Response, next: Nex
       .lean() as unknown as UserLeanDocument;
     
     if (!user) {
-      throw new ValidationError('Użytkownik nie znaleziony');
+      return res.fail('Użytkownik nie znaleziony', [
+        { code: 'USER_NOT_FOUND', message: 'Użytkownik nie znaleziony', field: 'identifier' }
+      ], 404);
     }
     
-    res.json({
+    return res.success({
       id: user._id,
       username: user.username,
       avatar: user.avatar || '',
@@ -186,7 +189,7 @@ export const getUserByIdentifier = async (req: Request, res: Response, next: Nex
         totalPoints: user.stats?.points || 0,
         streak: user.stats?.streak || 0
       }
-    });
+    }, 'Użytkownik znaleziony');
   } catch (error) {
     next(error);
   }

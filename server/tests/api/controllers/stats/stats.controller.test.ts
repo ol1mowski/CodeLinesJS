@@ -12,10 +12,14 @@ vi.mock('../../../../src/services/stats/stats.service.js', () => ({
     updateStats: vi.fn()
   }
 }));
+  
+interface CustomResponse extends Response {
+  success: (data?: any, message?: string, statusCode?: number) => Response;
+}
 
 describe('Stats Controllers', () => {
   let req: Partial<Request & { user?: { userId: string; id: string; email: string; role: string } }>;
-  let res: Partial<Response>;
+  let res: Partial<CustomResponse>;
   let next: NextFunction;
   
   beforeEach(() => {
@@ -30,7 +34,8 @@ describe('Stats Controllers', () => {
     };
     
     res = {
-      json: vi.fn()
+      json: vi.fn(),
+      success: vi.fn().mockReturnThis()
     };
     
     next = vi.fn() as unknown as NextFunction;
@@ -73,13 +78,7 @@ describe('Stats Controllers', () => {
       await getStats(req as Request, res as Response, next);
       
       expect(StatsService.getUserStats).toHaveBeenCalledWith('user123');
-      expect(res.json).toHaveBeenCalledWith({
-        status: 'success',
-        data: {
-          status: 'success',
-          data: mockUserStats
-        }
-      });
+      expect(res.success).toHaveBeenCalledWith(mockResponse, 'Statystyki użytkownika pobrane pomyślnie');
       expect(next).not.toHaveBeenCalled();
     });
     
@@ -90,7 +89,7 @@ describe('Stats Controllers', () => {
       
       expect(StatsService.getUserStats).not.toHaveBeenCalled();
       expect(next).toHaveBeenCalledWith(expect.any(AuthError));
-      expect(res.json).not.toHaveBeenCalled();
+      expect(res.success).not.toHaveBeenCalled();
     });
     
     it('should pass service errors to next middleware', async () => {
@@ -101,7 +100,7 @@ describe('Stats Controllers', () => {
       
       expect(StatsService.getUserStats).toHaveBeenCalledWith('user123');
       expect(next).toHaveBeenCalledWith(mockError);
-      expect(res.json).not.toHaveBeenCalled();
+      expect(res.success).not.toHaveBeenCalled();
     });
   });
   
@@ -122,13 +121,7 @@ describe('Stats Controllers', () => {
       await getDailyStats(req as Request, res as Response, next);
       
       expect(StatsService.getDailyStats).toHaveBeenCalledWith('user123');
-      expect(res.json).toHaveBeenCalledWith({
-        status: 'success',
-        data: {
-          status: 'success',
-          data: mockDailyStats
-        }
-      });
+      expect(res.success).toHaveBeenCalledWith(mockResponse, 'Dzienne statystyki użytkownika pobrane pomyślnie');
       expect(next).not.toHaveBeenCalled();
     });
     
@@ -139,7 +132,7 @@ describe('Stats Controllers', () => {
       
       expect(StatsService.getDailyStats).not.toHaveBeenCalled();
       expect(next).toHaveBeenCalledWith(expect.any(AuthError));
-      expect(res.json).not.toHaveBeenCalled();
+      expect(res.success).not.toHaveBeenCalled();
     });
     
     it('should pass service errors to next middleware', async () => {
@@ -150,7 +143,7 @@ describe('Stats Controllers', () => {
       
       expect(StatsService.getDailyStats).toHaveBeenCalledWith('user123');
       expect(next).toHaveBeenCalledWith(mockError);
-      expect(res.json).not.toHaveBeenCalled();
+      expect(res.success).not.toHaveBeenCalled();
     });
   });
   
@@ -199,13 +192,7 @@ describe('Stats Controllers', () => {
       await updateStats(req as Request, res as Response, next);
       
       expect(StatsService.updateStats).toHaveBeenCalledWith('user123', statsUpdateData);
-      expect(res.json).toHaveBeenCalledWith({
-        status: 'success',
-        data: {
-          status: 'success',
-          data: mockUpdatedStats
-        }
-      });
+      expect(res.success).toHaveBeenCalledWith(mockResponse, 'Statystyki użytkownika zaktualizowane pomyślnie');
       expect(next).not.toHaveBeenCalled();
     });
     
@@ -216,7 +203,7 @@ describe('Stats Controllers', () => {
       
       expect(StatsService.updateStats).not.toHaveBeenCalled();
       expect(next).toHaveBeenCalledWith(expect.any(AuthError));
-      expect(res.json).not.toHaveBeenCalled();
+      expect(res.success).not.toHaveBeenCalled();
     });
     
     it('should pass service errors to next middleware', async () => {
@@ -227,7 +214,7 @@ describe('Stats Controllers', () => {
       
       expect(StatsService.updateStats).toHaveBeenCalledWith('user123', req.body);
       expect(next).toHaveBeenCalledWith(mockError);
-      expect(res.json).not.toHaveBeenCalled();
+      expect(res.success).not.toHaveBeenCalled();
     });
   });
 }); 

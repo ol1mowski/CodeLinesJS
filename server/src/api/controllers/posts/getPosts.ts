@@ -4,7 +4,7 @@ import { asyncHandler } from '../../../utils/asyncHandler.js';
 
 export const getPostsController = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   
-  const { page, limit, category, search } = req.query as {
+  const { page = '1', limit = '10', category, search } = req.query as {
     page?: string;
     limit?: string;
     category?: string;
@@ -14,37 +14,34 @@ export const getPostsController = asyncHandler(async (req: Request, res: Respons
   const userId = req.user?.userId;
 
   if (!userId) {
-    res.status(400).json({
-      status: 'fail',
-      message: 'Brak identyfikatora użytkownika. Zaloguj się ponownie.'
-    });
-    return;
+    return res.fail('Brak identyfikatora użytkownika. Zaloguj się ponownie.', [
+      { code: 'AUTH_REQUIRED', message: 'Brak identyfikatora użytkownika. Zaloguj się ponownie.' }
+    ]);
   }
 
   try {
+    const currentPage = parseInt(page);
+    const itemsPerPage = parseInt(limit);
+    
     const result = await PostService.getPosts(userId, {
-      page: page ? parseInt(page) : undefined,
-      limit: limit ? parseInt(limit) : undefined,
+      page: currentPage,
+      limit: itemsPerPage,
       category,
       search
     });
     
     if (!result) {
-      res.status(500).json({
-        status: 'error',
-        message: 'Błąd serwera podczas pobierania postów'
-      });
-      return;
+      return res.error('Błąd serwera podczas pobierania postów');
     }
     
-    res.json({
-      status: 'success',
-      ...result
-    });
+    return res.paginated(
+      result.posts, 
+      currentPage, 
+      itemsPerPage, 
+      result.totalPosts, 
+      'Posty pobrane pomyślnie'
+    );
   } catch (error) {
-    res.status(500).json({
-      status: 'error',
-      message: error.message || 'Błąd podczas pobierania postów'
-    });
+    next(error);
   }
 }); 
