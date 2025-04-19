@@ -5,6 +5,7 @@ import { Lesson } from '../../../../src/models/lesson.model.js';
 import { User } from '../../../../src/models/user.model.js';
 import { LevelService } from '../../../../src/services/level.service.js';
 import { Types } from 'mongoose';
+import { mockResponseUtils } from '../../../setup/setupResponseMocks.js';
 
 vi.mock('../../../../src/models/lesson.model.js', () => ({
   Lesson: {
@@ -31,7 +32,7 @@ vi.mock('../../../../src/services/level.service.js', () => ({
 
 describe('getLessonsController', () => {
   let req: Partial<Request>;
-  let res: Partial<Response>;
+  let res: Response;
   let next: NextFunction;
   
   beforeEach(() => {
@@ -44,9 +45,7 @@ describe('getLessonsController', () => {
       query: {}
     };
     
-    res = {
-      json: vi.fn()
-    };
+    res = mockResponseUtils.createMockResponse();
     
     next = vi.fn() as unknown as NextFunction;
     
@@ -104,7 +103,7 @@ describe('getLessonsController', () => {
     
     LevelService.getUserLevelStats = vi.fn().mockReturnValue(mockLevelStats);
     
-    await getLessonsController(req as Request, res as Response, next);
+    await getLessonsController(req as Request, res, next);
     
     expect(Lesson.find).toHaveBeenCalledWith({
       isPublished: true,
@@ -116,6 +115,14 @@ describe('getLessonsController', () => {
         { description: { $regex: 'function', $options: 'i' } }
       ]
     });
+    
+    expect(mockResponseUtils.successMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        lessons: expect.any(Array),
+        stats: expect.any(Object)
+      }),
+      'Lekcje pobrane pomyślnie'
+    );
   });
   
   it('should handle users with no completed lessons', async () => {
@@ -175,35 +182,27 @@ describe('getLessonsController', () => {
     
     LevelService.getUserLevelStats = vi.fn().mockReturnValue(mockLevelStats);
     
-    await getLessonsController(req as Request, res as Response, next);
+    await getLessonsController(req as Request, res, next);
     
-    expect(res.json).toHaveBeenCalledWith(expect.objectContaining({
-      stats: expect.objectContaining({
-        total: 1,
-        completed: 0,
-        progress: 0
-      })
-    }));
+    expect(mockResponseUtils.successMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        stats: expect.objectContaining({
+          total: 1,
+          completed: 0,
+          progress: 0
+        })
+      }),
+      'Lekcje pobrane pomyślnie'
+    );
   });
   
   it('should handle error and pass to next middleware', async () => {
     const mockError = new Error('Database error');
+    User.findById = vi.fn().mockRejectedValue(mockError);
     
-    const mockSelectFn = vi.fn().mockReturnThis();
-    const mockLeanFn = vi.fn().mockRejectedValue(mockError);
-    
-    const mockFindById = vi.fn().mockImplementation(() => {
-      return {
-        select: mockSelectFn,
-        lean: mockLeanFn
-      };
-    });
-    
-    User.findById = mockFindById;
-    
-    await getLessonsController(req as Request, res as Response, next);
+    await getLessonsController(req as Request, res, next);
     
     expect(next).toHaveBeenCalledWith(mockError);
-    expect(res.json).not.toHaveBeenCalled();
+    expect(mockResponseUtils.successMock).not.toHaveBeenCalled();
   });
 }); 

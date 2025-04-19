@@ -18,6 +18,12 @@ import {
   UpdateAppearanceDTO
 } from '../../../../src/types/settings/index.js';
 
+interface CustomResponse extends Response {
+  success: (data?: any, message?: string, statusCode?: number) => Response;
+  error: (message?: string, statusCode?: number, errors?: any[]) => Response;
+  fail: (message: string, errors?: any[], statusCode?: number) => Response;
+}
+
 vi.mock('../../../../src/services/settings/settings.service.js', () => ({
   SettingsService: {
     getSettings: vi.fn(),
@@ -31,7 +37,7 @@ vi.mock('../../../../src/services/settings/settings.service.js', () => ({
 
 describe('Settings Controllers', () => {
   let req: Partial<AuthRequest>;
-  let res: Partial<Response>;
+  let res: Partial<CustomResponse>;
   let next: NextFunction;
   
   beforeEach(() => {
@@ -46,7 +52,11 @@ describe('Settings Controllers', () => {
     
     res = {
       status: vi.fn().mockReturnThis(),
-      json: vi.fn()
+      json: vi.fn(),
+      success: vi.fn().mockReturnThis(),
+      error: vi.fn().mockReturnThis(),
+      fail: vi.fn().mockReturnThis(),
+      setHeader: vi.fn()
     };
     
     next = vi.fn() as unknown as NextFunction;
@@ -85,11 +95,7 @@ describe('Settings Controllers', () => {
       await getSettingsController(req as AuthRequest, res as Response, next);
       
       expect(SettingsService.getSettings).toHaveBeenCalledWith('user123');
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith({
-        success: true,
-        data: mockSettings
-      });
+      expect(res.success).toHaveBeenCalledWith(mockSettings, 'Ustawienia użytkownika pobrane pomyślnie');
       expect(next).not.toHaveBeenCalled();
     });
     
@@ -100,8 +106,7 @@ describe('Settings Controllers', () => {
       
       expect(SettingsService.getSettings).not.toHaveBeenCalled();
       expect(next).toHaveBeenCalledWith(expect.any(ValidationError));
-      expect(res.status).not.toHaveBeenCalled();
-      expect(res.json).not.toHaveBeenCalled();
+      expect(res.success).not.toHaveBeenCalled();
     });
     
     it('should handle error from service', async () => {
@@ -111,8 +116,7 @@ describe('Settings Controllers', () => {
       await getSettingsController(req as AuthRequest, res as Response, next);
       
       expect(next).toHaveBeenCalledWith(error);
-      expect(res.status).not.toHaveBeenCalled();
-      expect(res.json).not.toHaveBeenCalled();
+      expect(res.success).not.toHaveBeenCalled();
     });
   });
   
@@ -139,12 +143,7 @@ describe('Settings Controllers', () => {
       await updateProfileController(req as AuthRequest, res as Response, next);
       
       expect(SettingsService.updateProfile).toHaveBeenCalledWith('user123', profileData);
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith({
-        success: true,
-        message: 'Profil został zaktualizowany',
-        data: mockUpdatedProfile
-      });
+      expect(res.success).toHaveBeenCalledWith(mockUpdatedProfile, 'Profil został zaktualizowany');
       expect(next).not.toHaveBeenCalled();
     });
     
@@ -155,8 +154,7 @@ describe('Settings Controllers', () => {
       
       expect(SettingsService.updateProfile).not.toHaveBeenCalled();
       expect(next).toHaveBeenCalledWith(expect.any(ValidationError));
-      expect(res.status).not.toHaveBeenCalled();
-      expect(res.json).not.toHaveBeenCalled();
+      expect(res.success).not.toHaveBeenCalled();
     });
   });
   
@@ -178,11 +176,7 @@ describe('Settings Controllers', () => {
           newPassword: 'newpassword'
         }
       );
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith({
-        success: true,
-        message: 'Hasło zostało zmienione'
-      });
+      expect(res.success).toHaveBeenCalledWith(null, 'Hasło zostało zmienione');
       expect(next).not.toHaveBeenCalled();
     });
     
@@ -193,8 +187,7 @@ describe('Settings Controllers', () => {
       
       expect(SettingsService.changePassword).not.toHaveBeenCalled();
       expect(next).toHaveBeenCalledWith(expect.any(ValidationError));
-      expect(res.status).not.toHaveBeenCalled();
-      expect(res.json).not.toHaveBeenCalled();
+      expect(res.success).not.toHaveBeenCalled();
     });
   });
   
@@ -223,12 +216,7 @@ describe('Settings Controllers', () => {
       await updateNotificationsController(req as AuthRequest, res as Response, next);
       
       expect(SettingsService.updateNotifications).toHaveBeenCalledWith('user123', notificationsData);
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith({
-        success: true,
-        message: 'Ustawienia powiadomień zostały zaktualizowane',
-        data: mockUpdatedNotifications
-      });
+      expect(res.success).toHaveBeenCalledWith(mockUpdatedNotifications, 'Ustawienia powiadomień zostały zaktualizowane');
       expect(next).not.toHaveBeenCalled();
     });
     
@@ -239,8 +227,7 @@ describe('Settings Controllers', () => {
       
       expect(SettingsService.updateNotifications).not.toHaveBeenCalled();
       expect(next).toHaveBeenCalledWith(expect.any(ValidationError));
-      expect(res.status).not.toHaveBeenCalled();
-      expect(res.json).not.toHaveBeenCalled();
+      expect(res.success).not.toHaveBeenCalled();
     });
   });
   
@@ -265,12 +252,7 @@ describe('Settings Controllers', () => {
       await updateAppearanceController(req as AuthRequest, res as Response, next);
       
       expect(SettingsService.updateAppearance).toHaveBeenCalledWith('user123', appearanceData);
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith({
-        success: true,
-        message: 'Ustawienia wyglądu zostały zaktualizowane',
-        data: mockUpdatedAppearance
-      });
+      expect(res.success).toHaveBeenCalledWith(mockUpdatedAppearance, 'Ustawienia wyglądu zostały zaktualizowane');
       expect(next).not.toHaveBeenCalled();
     });
     
@@ -281,8 +263,7 @@ describe('Settings Controllers', () => {
       
       expect(SettingsService.updateAppearance).not.toHaveBeenCalled();
       expect(next).toHaveBeenCalledWith(expect.any(ValidationError));
-      expect(res.status).not.toHaveBeenCalled();
-      expect(res.json).not.toHaveBeenCalled();
+      expect(res.success).not.toHaveBeenCalled();
     });
   });
   
@@ -297,11 +278,7 @@ describe('Settings Controllers', () => {
       await deleteAccountController(req as AuthRequest, res as Response, next);
       
       expect(SettingsService.deleteAccount).toHaveBeenCalledWith('user123', 'userpassword');
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith({
-        success: true,
-        message: 'Konto zostało usunięte'
-      });
+      expect(res.success).toHaveBeenCalledWith(null, 'Konto zostało usunięte');
       expect(next).not.toHaveBeenCalled();
     });
     
@@ -312,8 +289,7 @@ describe('Settings Controllers', () => {
       
       expect(SettingsService.deleteAccount).not.toHaveBeenCalled();
       expect(next).toHaveBeenCalledWith(expect.any(ValidationError));
-      expect(res.status).not.toHaveBeenCalled();
-      expect(res.json).not.toHaveBeenCalled();
+      expect(res.success).not.toHaveBeenCalled();
     });
     
     it('should handle missing password', async () => {
@@ -330,8 +306,7 @@ describe('Settings Controllers', () => {
       // W tym podejściu kontroler próbuje wywołać serwis, ale ten rzuca błąd walidacji
       expect(SettingsService.deleteAccount).toHaveBeenCalledWith('user123', undefined);
       expect(next).toHaveBeenCalledWith(expect.any(ValidationError));
-      expect(res.status).not.toHaveBeenCalled();
-      expect(res.json).not.toHaveBeenCalled();
+      expect(res.success).not.toHaveBeenCalled();
     });
   });
 }); 
