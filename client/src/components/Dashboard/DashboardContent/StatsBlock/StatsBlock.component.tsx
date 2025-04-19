@@ -29,17 +29,19 @@ type StatsBlockProps = {
 export const StatsBlock = memo(({ stats }: StatsBlockProps) => {
   const formatDate = useDateFormat();
 
+  console.log(stats);
+
   return (
     <div className={styles.container}>
       <div className={styles.stats.grid}>
-        <StatItem icon={<FaMedal />} label="Poziom" value={stats.level} />
+        <StatItem icon={<FaMedal />} label="Poziom" value={stats.progress.level} />
 
-        <StatItem icon={<FaStar />} label="Punkty" value={stats.points} />
+        <StatItem icon={<FaStar />} label="Punkty" value={stats.progress.points} />
 
-        <StatItem icon={<FaChartLine />} label="Seria" value={`${stats.streak} dni`} />
+        <StatItem icon={<FaChartLine />} label="Seria" value={`${stats.achievements.streak.current} dni`} />
       </div>
 
-      <p className={styles.lastActive}>Ostatnia aktywność: {formatDate(stats.lastActive)}</p>
+      <p className={styles.lastActive}>Ostatnia aktywność: {formatDate(stats.user.lastActive)}</p>
     </div>
   );
 });
