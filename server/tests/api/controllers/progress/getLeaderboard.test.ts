@@ -1,8 +1,17 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { getLeaderboardController } from '../../../../src/api/controllers/progress/getLeaderboard.js';
 import { ProgressService } from '../../../../src/services/progress/index.js';
-import { NextFunction, Response } from 'express';
+import { NextFunction} from 'express';
 import { IUserRequest, LeaderboardQueryDTO } from '../../../../src/types/progress/index.js';
+import { mockResponseUtils } from '../../../setup/setupResponseMocks.js';
+
+declare global {
+  namespace Express {
+    interface Response {
+      success: any;
+    }
+  }
+}
 
 vi.mock('../../../../src/services/progress/index.js', () => ({
   ProgressService: {
@@ -12,7 +21,7 @@ vi.mock('../../../../src/services/progress/index.js', () => ({
 
 describe('getLeaderboardController', () => {
   let req: Partial<IUserRequest & { query: LeaderboardQueryDTO }>;
-  let res: Partial<Response>;
+  let res: ReturnType<typeof mockResponseUtils.createMockResponse>;
   let next: NextFunction;
   
   beforeEach(() => {
@@ -28,9 +37,7 @@ describe('getLeaderboardController', () => {
       }
     };
     
-    res = {
-      json: vi.fn()
-    };
+    res = mockResponseUtils.createMockResponse();
     
     next = vi.fn() as unknown as NextFunction;
     
@@ -72,13 +79,13 @@ describe('getLeaderboardController', () => {
     
     ProgressService.getLeaderboard = vi.fn().mockResolvedValue(mockLeaderboardData);
     
-    await getLeaderboardController(req as IUserRequest & { query: LeaderboardQueryDTO }, res as Response, next);
+    await getLeaderboardController(req as IUserRequest & { query: LeaderboardQueryDTO }, res as any, next);
     
     expect(ProgressService.getLeaderboard).toHaveBeenCalledWith('user123', {
       limit: '10',
       type: 'points'
     });
-    expect(res.json).toHaveBeenCalledWith(mockLeaderboardData);
+    expect(res.success).toHaveBeenCalledWith(mockLeaderboardData, 'Dane rankingowe pobrane pomyślnie');
     expect(next).not.toHaveBeenCalled();
   });
   
@@ -103,13 +110,13 @@ describe('getLeaderboardController', () => {
     
     ProgressService.getLeaderboard = vi.fn().mockResolvedValue(mockLeaderboardData);
     
-    await getLeaderboardController(req as IUserRequest & { query: LeaderboardQueryDTO }, res as Response, next);
+    await getLeaderboardController(req as IUserRequest & { query: LeaderboardQueryDTO }, res as any, next);
     
     expect(ProgressService.getLeaderboard).toHaveBeenCalledWith('user123', {
       limit: '5',
       type: 'streak'
     });
-    expect(res.json).toHaveBeenCalledWith(mockLeaderboardData);
+    expect(res.success).toHaveBeenCalledWith(mockLeaderboardData, 'Dane rankingowe pobrane pomyślnie');
   });
   
   it('should call next with error when service throws exception', async () => {
@@ -117,13 +124,13 @@ describe('getLeaderboardController', () => {
     
     ProgressService.getLeaderboard = vi.fn().mockRejectedValue(mockError);
     
-    await getLeaderboardController(req as IUserRequest & { query: LeaderboardQueryDTO }, res as Response, next);
+    await getLeaderboardController(req as IUserRequest & { query: LeaderboardQueryDTO }, res as any, next);
     
     expect(ProgressService.getLeaderboard).toHaveBeenCalledWith('user123', {
       limit: '10',
       type: 'points'
     });
-    expect(res.json).not.toHaveBeenCalled();
+    expect(res.success).not.toHaveBeenCalled();
     expect(next).toHaveBeenCalledWith(mockError);
   });
 }); 
