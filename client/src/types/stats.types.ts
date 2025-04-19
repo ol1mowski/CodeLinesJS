@@ -33,10 +33,23 @@ export type UserStats = {
         points: number;
         challenges: number;
       }>;
-      progress: Array<any>; 
+      progress: Array<{
+        name: string;
+        progress: number;
+        timeSpent: number;
+      }>; 
     };
     learning: {
-      paths: Array<any>; 
+      paths: Array<{
+        pathId: string;
+        title: string;
+        progress: {
+          completed: number;
+          total: number;
+          percentage: number;
+          status: 'active' | 'completed' | 'paused' | 'locked';
+        }
+      }>; 
     };
   };
 };
