@@ -8,14 +8,21 @@ export interface Badge {
 
 export type UnlockedFeature = 'custom_themes' | 'create_challenges';
 
-export type UserStats = {
+export type LegacyUserStats = {
   data: {
-    level: number;
-    points: number;
-    pointsToNextLevel: number;
-    completedChallenges: number;
-    streak: number;
-    bestStreak: number;
+    progress: {
+      level: number;
+      points: number;
+      pointsToNextLevel: number;
+    };
+    achievements: {
+      streak: {
+        current: number;
+        best: number;
+      };
+      completedChallenges: number;
+      badges: Badge[];
+    };
     badges: Badge[];
     unlockedFeatures: UnlockedFeature[];
     levelUp?: boolean;
@@ -36,6 +43,37 @@ export type UserStats = {
         total: number;
       }>;
     };
+  };
+};
+
+export type UserStats = {
+  user: {
+    lastActive: string;
+  };
+  progress: {
+    level: number;
+    points: number;
+    pointsToNextLevel: number;
+    levelUp?: boolean;
+  };
+  achievements: {
+    streak: {
+      current: number;
+      best: number;
+    };
+    completedChallenges: number;
+    badges: Badge[];
+  };
+  stats: {
+    daily: Array<{
+      date: string;
+      points: number;
+      challenges: number;
+    }>;
+    progress: Array<any>; // Można uszczegółowić ten typ jeśli mamy więcej informacji
+  };
+  learning: {
+    paths: Array<any>; // Można uszczegółowić ten typ jeśli mamy więcej informacji
   };
 };
 

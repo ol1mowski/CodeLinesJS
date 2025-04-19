@@ -7,20 +7,21 @@ import { DashboardState } from '../DashboardContent/components/DashboardState.co
 import { LevelUpNotification } from '../../UI/Notifications/LevelUpNotification.component';
 import { LoadingScreen } from '../../UI/LoadingScreen/LoadingScreen.component';
 import { Helmet } from 'react-helmet';
+import { Badge, LegacyUserStats } from '../../../types/stats.types';
 
 export const StatsSection = memo(() => {
   const { stats, isLoading, error } = useStats();
   const [showLevelUp, setShowLevelUp] = useState(false);
   const [levelUpData, setLevelUpData] = useState<{
     level: number;
-    rewards?: any;
+    rewards?: Badge[];
   } | null>(null);
 
   useEffect(() => {
-    if (stats?.data.levelUp) {
+    if (stats?.progress?.levelUp) {
       setLevelUpData({
-        level: stats.data.level,
-        rewards: stats.data.rewards,
+        level: stats.progress.level,
+        rewards: stats.achievements?.badges || [],
       });
       setShowLevelUp(true);
     }
@@ -29,7 +30,7 @@ export const StatsSection = memo(() => {
   if (isLoading) {
     return <LoadingScreen />;
   }
-
+  
   if (error) {
     return (
       <DashboardState
@@ -42,6 +43,40 @@ export const StatsSection = memo(() => {
   if (!stats) {
     return <DashboardState type="empty" message="Brak dostępnych statystyk." />;
   }
+
+  const adaptedStats: LegacyUserStats = {
+    data: {
+      progress: {
+        level: stats.progress?.level || 0,
+        points: stats.progress?.points || 0,
+        pointsToNextLevel: stats.progress?.pointsToNextLevel || 0
+      },
+      achievements: {
+        streak: {
+          current: stats.achievements?.streak?.current || 0,
+          best: stats.achievements?.streak?.best || 0
+        },
+        completedChallenges: stats.achievements?.completedChallenges || 0,
+        badges: stats.achievements?.badges || []
+      },
+      badges: stats.achievements?.badges || [],
+      unlockedFeatures: [],
+      levelUp: stats.progress?.levelUp,
+      rewards: stats.achievements?.badges ? { 
+        badges: stats.achievements.badges,
+        bonusPoints: 0,
+        unlockedFeatures: []
+      } : undefined,
+      chartData: {
+        daily: stats.stats?.daily || [],
+        categories: []
+      }
+    }
+  };
+
+  const chartsData = {
+    daily: stats.stats?.daily || []
+  };
 
   return (
     <>
@@ -67,10 +102,10 @@ export const StatsSection = memo(() => {
 
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 flex-1">
           <div className="flex flex-col gap-6">
-            <StatsOverview stats={stats} isLoading={isLoading} error={error} />
+            <StatsOverview stats={adaptedStats} isLoading={isLoading} error={error} />
           </div>
           <div className="flex flex-col gap-6 h-full">
-            <StatsCharts data={stats?.data?.chartData} isLoading={isLoading} />
+            <StatsCharts data={chartsData} isLoading={isLoading} />
           </div>
         </div>
       </motion.div>
@@ -79,7 +114,11 @@ export const StatsSection = memo(() => {
         isVisible={showLevelUp}
         onClose={() => setShowLevelUp(false)}
         level={levelUpData?.level || 0}
-        rewards={levelUpData?.rewards}
+        rewards={{
+          badges: levelUpData?.rewards || [],
+          bonusPoints: 0,
+          unlockedFeatures: []
+        }}
       />
     </>
   );

@@ -6,10 +6,10 @@ import { StatCard } from './StatCard.component';
 import { BadgesGrid } from './BadgesGrid/BadgesGrid.component';
 import { ErrorState } from './components/ErrorState.component';
 import { useStatsCards } from './hooks/useStatsCards.hook';
-import { UserStats } from '../../../../types/stats.types';
+import { LegacyUserStats } from '../../../../types/stats.types';
 
 type StatsOverviewProps = {
-  stats: UserStats;
+  stats: LegacyUserStats;
   isLoading: boolean;
   error: Error | null;
 };
@@ -46,9 +46,9 @@ export const StatsOverview = memo(({ stats, isLoading, error }: StatsOverviewPro
   return (
     <motion.div variants={container} initial="hidden" animate="show" className="space-y-6">
       <LevelProgress
-        level={stats.data.level}
-        experience={stats.data.points}
-        nextLevel={stats.data.pointsToNextLevel}
+        level={stats.data.progress.level}
+        experience={stats.data.progress.points}
+        nextLevel={stats.data.progress.pointsToNextLevel}
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -57,7 +57,7 @@ export const StatsOverview = memo(({ stats, isLoading, error }: StatsOverviewPro
         ))}
       </div>
 
-      <BadgesGrid badges={stats.data.badges} />
+      <BadgesGrid badges={stats.data.achievements.badges} />
     </motion.div>
   );
 });

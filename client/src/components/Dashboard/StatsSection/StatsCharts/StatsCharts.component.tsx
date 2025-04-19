@@ -14,6 +14,8 @@ type StatsChartsProps = {
 };
 
 export const StatsCharts = memo(({ data, isLoading }: StatsChartsProps) => {
+  console.log(data);
+
   if (isLoading) {
     return <LoadingScreen />;
   }
