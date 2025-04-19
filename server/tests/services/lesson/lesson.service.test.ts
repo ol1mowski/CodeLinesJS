@@ -600,7 +600,7 @@ describe('LessonService', () => {
       expect(mockedUserRepository.findById).toHaveBeenCalledWith(userId);
       expect(mockedUserRepository.getCompletedLessons).toHaveBeenCalledWith(mockUser);
       expect(mockedUserRepository.isLessonCompleted).toHaveBeenCalledWith([], lessonId);
-      expect(mockedUserRepository.addCompletedLesson).toHaveBeenCalledWith(mockUser);
+      expect(mockedUserRepository.addCompletedLesson).toHaveBeenCalledWith(mockUser, lessonId);
       expect(mockedLevelService.updateUserLevelAndStreak).toHaveBeenCalledWith(
         userId,
         100,
