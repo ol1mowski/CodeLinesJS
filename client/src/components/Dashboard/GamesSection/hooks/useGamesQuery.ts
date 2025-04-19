@@ -8,8 +8,8 @@ export const useGamesQuery = () => {
     queryKey: ['games'],
     queryFn: () => fetchGames(token || ''),
     select: data => ({
-      games: data.data.games,
-      pagination: data.data.pagination,
+      games: data.data,
+      pagination: data.data,
     }),
     staleTime: 5 * 60 * 1000,
   });

@@ -17,6 +17,8 @@ type GamesListProps = {
 export const GamesList = memo(({ sortBy, searchQuery, selectedDifficulty }: GamesListProps) => {
   const { data, isLoading, isError } = useGamesQuery();
 
+  console.log(data);
+
   if (isLoading) return <GamesListSkeleton />;
 
   if (isError) {
