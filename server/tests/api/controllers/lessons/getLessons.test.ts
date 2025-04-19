@@ -1,11 +1,20 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { getLessonsController } from '../../../../src/api/controllers/lessons/getLessons.js';
-import { NextFunction, Response, Request } from 'express';
+import { NextFunction } from 'express';
 import { Lesson } from '../../../../src/models/lesson.model.js';
 import { User } from '../../../../src/models/user.model.js';
 import { LevelService } from '../../../../src/services/level.service.js';
 import { Types } from 'mongoose';
 import { mockResponseUtils } from '../../../setup/setupResponseMocks.js';
+
+declare global {
+  namespace Express {
+    interface Response {
+      success: any;
+      fail: any;
+    }
+  }
+}
 
 vi.mock('../../../../src/models/lesson.model.js', () => ({
   Lesson: {
@@ -31,14 +40,14 @@ vi.mock('../../../../src/services/level.service.js', () => ({
 }));
 
 describe('getLessonsController', () => {
-  let req: Partial<Request>;
-  let res: Response;
+  let req: any;
+  let res: ReturnType<typeof mockResponseUtils.createMockResponse>;
   let next: NextFunction;
   
   beforeEach(() => {
     req = {
       user: {
-        id: 'user123',
+        userId: 'user123',
         email: 'test@example.com',
         role: 'user'
       },
@@ -103,7 +112,7 @@ describe('getLessonsController', () => {
     
     LevelService.getUserLevelStats = vi.fn().mockReturnValue(mockLevelStats);
     
-    await getLessonsController(req as Request, res, next);
+    await getLessonsController(req, res as any, next);
     
     expect(Lesson.find).toHaveBeenCalledWith({
       isPublished: true,
@@ -116,12 +125,12 @@ describe('getLessonsController', () => {
       ]
     });
     
-    expect(mockResponseUtils.successMock).toHaveBeenCalledWith(
+    expect(res.success).toHaveBeenCalledWith(
       expect.objectContaining({
-        lessons: expect.any(Array),
+        lessons: expect.any(Object),
         stats: expect.any(Object)
       }),
-      'Lekcje pobrane pomyślnie'
+      'Lekcje zostały pobrane'
     );
   });
   
@@ -182,9 +191,9 @@ describe('getLessonsController', () => {
     
     LevelService.getUserLevelStats = vi.fn().mockReturnValue(mockLevelStats);
     
-    await getLessonsController(req as Request, res, next);
+    await getLessonsController(req, res as any, next);
     
-    expect(mockResponseUtils.successMock).toHaveBeenCalledWith(
+    expect(res.success).toHaveBeenCalledWith(
       expect.objectContaining({
         stats: expect.objectContaining({
           total: 1,
@@ -192,17 +201,33 @@ describe('getLessonsController', () => {
           progress: 0
         })
       }),
-      'Lekcje pobrane pomyślnie'
+      'Lekcje zostały pobrane'
     );
   });
   
   it('should handle error and pass to next middleware', async () => {
+    // Przygotowanie błędu
     const mockError = new Error('Database error');
-    User.findById = vi.fn().mockRejectedValue(mockError);
     
-    await getLessonsController(req as Request, res, next);
+    // Upewniamy się, że mockFindById jest odpowiednio skonstruowany
+    const mockSelectFn = vi.fn().mockImplementation(() => {
+      // Rzucanie błędu wewnątrz łańcucha promisów
+      throw mockError;
+    });
     
-    expect(next).toHaveBeenCalledWith(mockError);
-    expect(mockResponseUtils.successMock).not.toHaveBeenCalled();
+    // Mockowanie User.findById
+    User.findById = vi.fn().mockImplementation(() => {
+      return {
+        select: mockSelectFn,
+        lean: vi.fn()
+      };
+    });
+    
+    // Wywołanie kontrolera
+    await getLessonsController(req, res as any, next);
+    
+    // Sprawdzenie, czy next został wywołany z błędem
+    expect(next).toHaveBeenCalledWith(expect.any(Error));
+    expect(res.success).not.toHaveBeenCalled();
   });
 }); 

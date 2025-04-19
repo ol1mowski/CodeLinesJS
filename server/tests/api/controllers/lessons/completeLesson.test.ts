@@ -1,11 +1,20 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { completeLessonController } from '../../../../src/api/controllers/lessons/completeLesson.js';
-import { NextFunction, Response, Request } from 'express';
+import { NextFunction, Request } from 'express';
 import { Lesson } from '../../../../src/models/lesson.model.js';
 import { User } from '../../../../src/models/user.model.js';
 import { LevelService } from '../../../../src/services/level.service.js';
-import { ValidationError } from '../../../../src/utils/errors.js';
 import { Types } from 'mongoose';
+import { mockResponseUtils } from '../../../setup/setupResponseMocks.js';
+
+declare global {
+  namespace Express {
+    interface Response {
+      success: any;
+      fail: any;
+    }
+  }
+}
 
 vi.mock('../../../../src/models/lesson.model.js', () => ({
   Lesson: {
@@ -32,7 +41,7 @@ const mockedLevelService = vi.mocked(LevelService);
 
 describe('completeLessonController', () => {
   let req: Partial<Request>;
-  let res: Partial<Response>;
+  let res: ReturnType<typeof mockResponseUtils.createMockResponse>;
   let next: NextFunction;
   
   beforeEach(() => {
@@ -48,9 +57,7 @@ describe('completeLessonController', () => {
       }
     };
     
-    res = {
-      json: vi.fn()
-    };
+    res = mockResponseUtils.createMockResponse();
     
     next = vi.fn() as unknown as NextFunction;
     
@@ -108,7 +115,7 @@ describe('completeLessonController', () => {
     mockedLevelService.updateUserLevelAndStreak.mockResolvedValue(mockLevelUpdate as any);
     mockedLevelService.getUserLevelStats.mockReturnValue(mockLevelStats as any);
     
-    await completeLessonController(req as Request, res as Response, next);
+    await completeLessonController(req as Request, res as any, next);
     
     expect(mockedLesson.findOne).toHaveBeenCalledWith({ _id: lessonId });
     expect(mockedUser.findById).toHaveBeenCalledWith('user123');
@@ -129,8 +136,7 @@ describe('completeLessonController', () => {
     
     expect(mockUser.save).toHaveBeenCalled();
     
-    expect(res.json).toHaveBeenCalledWith({
-      message: 'Lekcja ukończona',
+    expect(res.success).toHaveBeenCalledWith({
       stats: {
         points: 400,
         pointsRequired: 100,
@@ -144,7 +150,7 @@ describe('completeLessonController', () => {
         bestStreak: 3,
         streakUpdated: true
       }
-    });
+    }, 'Lekcja ukończona');
     
     expect(next).not.toHaveBeenCalled();
   });
@@ -192,13 +198,12 @@ describe('completeLessonController', () => {
     mockedUser.findById.mockResolvedValue(mockUser as any);
     mockedLevelService.getUserLevelStats.mockReturnValue(mockLevelStats as any);
     
-    await completeLessonController(req as Request, res as Response, next);
+    await completeLessonController(req as Request, res as any, next);
     
     expect(mockedLevelService.updateUserLevelAndStreak).not.toHaveBeenCalled();
     expect(mockUser.save).not.toHaveBeenCalled();
     
-    expect(res.json).toHaveBeenCalledWith({
-      message: 'Lekcja została już wcześniej ukończona',
+    expect(res.success).toHaveBeenCalledWith({
       stats: {
         points: 400,
         pointsRequired: 100,
@@ -209,16 +214,20 @@ describe('completeLessonController', () => {
         streak: 1,
         bestStreak: 3
       }
-    });
+    }, 'Lekcja została już wcześniej ukończona');
   });
   
   it('should handle lesson not found error', async () => {
     mockedLesson.findOne.mockResolvedValue(null);
     
-    await completeLessonController(req as Request, res as Response, next);
+    await completeLessonController(req as Request, res as any, next);
     
-    expect(next).toHaveBeenCalledWith(expect.any(ValidationError));
-    expect(res.json).not.toHaveBeenCalled();
+    expect(res.fail).toHaveBeenCalledWith(
+      'Lekcja nie została znaleziona',
+      [{ code: 'LESSON_NOT_FOUND', message: 'Lekcja nie została znaleziona', field: 'id' }],
+      404
+    );
+    expect(res.success).not.toHaveBeenCalled();
   });
   
   it('should handle user with no learning paths error', async () => {
@@ -237,10 +246,13 @@ describe('completeLessonController', () => {
     mockedLesson.findOne.mockResolvedValue(mockLesson as any);
     mockedUser.findById.mockResolvedValue(mockUser as any);
     
-    await completeLessonController(req as Request, res as Response, next);
+    await completeLessonController(req as Request, res as any, next);
     
-    expect(next).toHaveBeenCalledWith(expect.any(ValidationError));
-    expect(res.json).not.toHaveBeenCalled();
+    expect(res.fail).toHaveBeenCalledWith(
+      'Użytkownik nie ma przypisanych ścieżek nauki',
+      [{ code: 'NO_LEARNING_PATHS', message: 'Użytkownik nie ma przypisanych ścieżek nauki' }]
+    );
+    expect(res.success).not.toHaveBeenCalled();
   });
   
   it('should handle level up response', async () => {
@@ -293,10 +305,9 @@ describe('completeLessonController', () => {
     mockedLevelService.updateUserLevelAndStreak.mockResolvedValue(mockLevelUpdate as any);
     mockedLevelService.getUserLevelStats.mockReturnValue(mockLevelStats as any);
     
-    await completeLessonController(req as Request, res as Response, next);
+    await completeLessonController(req as Request, res as any, next);
     
-    expect(res.json).toHaveBeenCalledWith({
-      message: 'Lekcja ukończona! Awansowałeś na poziom 3!',
+    expect(res.success).toHaveBeenCalledWith({
       stats: {
         points: 90,
         pointsRequired: 400,
@@ -310,16 +321,16 @@ describe('completeLessonController', () => {
         bestStreak: 5,
         streakUpdated: false
       }
-    });
+    }, 'Lekcja ukończona! Awansowałeś na poziom 3!');
   });
   
   it('should handle unexpected errors', async () => {
     const mockError = new Error('Database error');
     mockedLesson.findOne.mockRejectedValue(mockError);
     
-    await completeLessonController(req as Request, res as Response, next);
+    await completeLessonController(req as Request, res as any, next);
     
     expect(next).toHaveBeenCalledWith(mockError);
-    expect(res.json).not.toHaveBeenCalled();
+    expect(res.success).not.toHaveBeenCalled();
   });
 }); 
