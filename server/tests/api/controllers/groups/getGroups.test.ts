@@ -1,8 +1,20 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { getGroupsController } from '../../../../src/api/controllers/groups/getGroups.js';
 import { GroupService } from '../../../../src/services/group.service.js';
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Request } from 'express';
 import { GroupsResponse } from '../../../../src/types/group.types.js';
+import { mockResponseUtils } from '../../../setup/setupResponseMocks.js';
+
+declare global {
+  namespace Express {
+    interface Response {
+      success: any;
+      fail: any;
+      error: any;
+      paginated: any;
+    }
+  }
+}
 
 declare module 'express' {
   interface Request {
@@ -20,7 +32,7 @@ const mockedGroupService = vi.mocked(GroupService);
 
 describe('getGroupsController', () => {
   let req: Request;
-  let res: Response;
+  let res: ReturnType<typeof mockResponseUtils.createMockResponse>;
   let next: NextFunction;
 
   beforeEach(() => {
@@ -29,9 +41,7 @@ describe('getGroupsController', () => {
       user: { userId: 'user123' }
     } as unknown as Request;
 
-    res = {
-      json: vi.fn()
-    } as unknown as Response;
+    res = mockResponseUtils.createMockResponse();
 
     next = vi.fn() as unknown as NextFunction;
 
@@ -52,20 +62,25 @@ describe('getGroupsController', () => {
 
     mockedGroupService.getGroups.mockResolvedValue(mockGroups as GroupsResponse);
 
-    await getGroupsController(req, res, next);
+    await getGroupsController(req, res as any, next);
 
+    // Kontroler ustawia domyślne wartości page i limit
     expect(mockedGroupService.getGroups).toHaveBeenCalledWith({
       userId: 'user123',
       tag: undefined,
       search: undefined,
-      page: undefined,
-      limit: undefined
+      page: 1,
+      limit: 10
     });
 
-    expect(res.json).toHaveBeenCalledWith({
-      status: 'success',
-      data: mockGroups
-    });
+    // Sprawdź wywołanie res.paginated z danymi paginacji
+    expect(res.paginated).toHaveBeenCalledWith(
+      mockGroups.groups,
+      1,
+      10,
+      mockGroups.total,
+      'Grupy pobrane pomyślnie'
+    );
 
     expect(next).not.toHaveBeenCalled();
   });
@@ -75,7 +90,7 @@ describe('getGroupsController', () => {
       tag: 'javascript',
       search: 'coding',
       page: '2',
-      limit: '10'
+      limit: '15'
     };
 
     const mockGroups = {
@@ -85,68 +100,55 @@ describe('getGroupsController', () => {
       ],
       total: 10,
       page: 2,
-      limit: 10,
+      limit: 15,
       hasNextPage: false
     } as unknown as GroupsResponse;
 
     mockedGroupService.getGroups.mockResolvedValue(mockGroups as GroupsResponse);
 
-    await getGroupsController(req, res, next);
+    await getGroupsController(req, res as any, next);
 
     expect(mockedGroupService.getGroups).toHaveBeenCalledWith({
       userId: 'user123',
       tag: 'javascript',
       search: 'coding',
       page: 2,
-      limit: 10
+      limit: 15
     });
 
-    expect(res.json).toHaveBeenCalledWith({
-      status: 'success',
-      data: mockGroups
-    });
+    // Sprawdź wywołanie res.paginated z danymi paginacji
+    expect(res.paginated).toHaveBeenCalledWith(
+      mockGroups.groups,
+      2,
+      15,
+      mockGroups.total,
+      'Grupy pobrane pomyślnie'
+    );
   });
 
   it('should handle requests from unauthenticated users', async () => {
     req.user = undefined;
 
-    const mockGroups = {
-      groups: [
-        { _id: 'group1', name: 'Group 1' },
-        { _id: 'group2', name: 'Group 2' }
-      ],
-      total: 2,
-      page: 1,
-      limit: 20,
-      hasNextPage: false
-    } as unknown as GroupsResponse;
+    await getGroupsController(req, res as any, next);
 
-    mockedGroupService.getGroups.mockResolvedValue(mockGroups);
-
-    await getGroupsController(req, res, next);
-
-    expect(mockedGroupService.getGroups).toHaveBeenCalledWith({
-      userId: undefined,
-      tag: undefined,
-      search: undefined,
-      page: undefined,
-      limit: undefined
-    });
-
-    expect(res.json).toHaveBeenCalledWith({
-      status: 'success',
-      data: mockGroups
-    });
+    // Kontroler powinien zatrzymać się na walidacji userId i wywołać res.fail
+    expect(mockedGroupService.getGroups).not.toHaveBeenCalled();
+    expect(res.fail).toHaveBeenCalledWith(
+      'Brak identyfikatora użytkownika. Zaloguj się ponownie.',
+      [{ code: 'AUTH_REQUIRED', message: 'Brak identyfikatora użytkownika. Zaloguj się ponownie.' }]
+    );
+    expect(next).not.toHaveBeenCalled();
   });
 
   it('should call next with error if GroupService.getGroups throws', async () => {
     const mockError = new Error('Service error');
     mockedGroupService.getGroups.mockRejectedValue(mockError);
 
-    await getGroupsController(req, res, next);
+    await getGroupsController(req, res as any, next);
 
     expect(mockedGroupService.getGroups).toHaveBeenCalled();
-    expect(res.json).not.toHaveBeenCalled();
+    expect(res.success).not.toHaveBeenCalled();
+    expect(res.paginated).not.toHaveBeenCalled();
     expect(next).toHaveBeenCalledWith(mockError);
   });
 }); 

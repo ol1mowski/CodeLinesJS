@@ -1,6 +1,17 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { getGames } from '../../../../src/api/controllers/games/getGames.js';
 import { GameService } from '../../../../src/services/game.service.js';
+import { mockResponseUtils } from '../../../setup/setupResponseMocks.js';
+
+declare global {
+  namespace Express {
+    interface Response {
+      success: any;
+      error: any;
+      paginated: any;
+    }
+  }
+}
 
 vi.mock('../../../../src/services/game.service.js', () => ({
   GameService: {
@@ -10,7 +21,7 @@ vi.mock('../../../../src/services/game.service.js', () => ({
 
 describe('getGames Controller', () => {
   let req: any;
-  let res: any;
+  let res: ReturnType<typeof mockResponseUtils.createMockResponse>;
   let next: any;
 
   beforeEach(() => {
@@ -21,9 +32,7 @@ describe('getGames Controller', () => {
       user: { userId: 'user123' }
     };
 
-    res = {
-      json: vi.fn()
-    };
+    res = mockResponseUtils.createMockResponse();
 
     next = vi.fn();
   });
@@ -53,7 +62,7 @@ describe('getGames Controller', () => {
       limit: '10'
     };
 
-    await getGames(req, res, next);
+    await getGames(req, res as any, next);
 
     expect(GameService.getGames).toHaveBeenCalledWith(
       {
@@ -67,10 +76,14 @@ describe('getGames Controller', () => {
       'user123'
     );
 
-    expect(res.json).toHaveBeenCalledWith({
-      status: 'success',
-      data: mockGamesResponse
-    });
+    // Sprawdzamy, czy została wywołana metoda paginated dla wyników z paginacją
+    expect(res.paginated).toHaveBeenCalledWith(
+      mockGamesResponse.games,
+      1,
+      10,
+      mockGamesResponse.pagination.total,
+      'Gry pobrane pomyślnie'
+    );
 
     expect(next).not.toHaveBeenCalled();
   });
@@ -88,24 +101,29 @@ describe('getGames Controller', () => {
 
     (GameService.getGames as any).mockResolvedValue(mockGamesResponse);
 
-    await getGames(req, res, next);
+    await getGames(req, res as any, next);
 
+    // Kontroler ustawia domyślne wartości dla page i limit
     expect(GameService.getGames).toHaveBeenCalledWith(
       {
         difficulty: undefined,
         category: undefined,
         sort: undefined,
         order: undefined,
-        page: undefined,
-        limit: undefined
+        page: '1',
+        limit: '10'
       },
       'user123'
     );
 
-    expect(res.json).toHaveBeenCalledWith({
-      status: 'success',
-      data: mockGamesResponse
-    });
+    // Sprawdzamy, czy została wywołana metoda paginated
+    expect(res.paginated).toHaveBeenCalledWith(
+      mockGamesResponse.games,
+      1,
+      10,
+      mockGamesResponse.pagination.total,
+      'Gry pobrane pomyślnie'
+    );
   });
 
   it('should handle absence of user', async () => {
@@ -123,26 +141,38 @@ describe('getGames Controller', () => {
 
     (GameService.getGames as any).mockResolvedValue(mockGamesResponse);
 
-    await getGames(req, res, next);
+    await getGames(req, res as any, next);
 
     expect(GameService.getGames).toHaveBeenCalledWith(
-      expect.any(Object),
+      {
+        difficulty: undefined,
+        category: undefined,
+        sort: undefined,
+        order: undefined,
+        page: '1',
+        limit: '10'
+      },
       undefined
     );
 
-    expect(res.json).toHaveBeenCalledWith({
-      status: 'success',
-      data: mockGamesResponse
-    });
+    // Sprawdzamy, czy została wywołana metoda paginated
+    expect(res.paginated).toHaveBeenCalledWith(
+      mockGamesResponse.games,
+      1,
+      10,
+      mockGamesResponse.pagination.total,
+      'Gry pobrane pomyślnie'
+    );
   });
 
   it('should call next with error if GameService throws', async () => {
     const mockError = new Error('Service error');
     (GameService.getGames as any).mockRejectedValue(mockError);
 
-    await getGames(req, res, next);
+    await getGames(req, res as any, next);
 
     expect(next).toHaveBeenCalledWith(mockError);
-    expect(res.json).not.toHaveBeenCalled();
+    expect(res.paginated).not.toHaveBeenCalled();
+    expect(res.success).not.toHaveBeenCalled();
   });
 }); 
