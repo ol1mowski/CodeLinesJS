@@ -1,10 +1,20 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { getLearningPathByIdController } from '../../../../src/api/controllers/learningPath/getLearningPathById.js';
 import { LearningPathService } from '../../../../src/services/learningPath/learningPath.service.js';
-import { NextFunction, Response } from 'express';
+import { NextFunction } from 'express';
 import { AuthRequest, LearningPathDetailResponse } from '../../../../src/services/learningPath/types.js';
 import { Types } from 'mongoose';
 import { ValidationError } from '../../../../src/utils/errors.js';
+import { mockResponseUtils } from '../../../setup/setupResponseMocks.js';
+
+declare global {
+  namespace Express {
+    interface Response {
+      success: any;
+      fail: any;
+    }
+  }
+}
 
 vi.mock('../../../../src/services/learningPath/learningPath.service.js', () => ({
   LearningPathService: {
@@ -16,7 +26,7 @@ const mockedLearningPathService = vi.mocked(LearningPathService);
 
 describe('getLearningPathByIdController', () => {
   let req: AuthRequest;
-  let res: Response;
+  let res: ReturnType<typeof mockResponseUtils.createMockResponse>;
   let next: NextFunction;
 
   beforeEach(() => {
@@ -31,9 +41,7 @@ describe('getLearningPathByIdController', () => {
       }
     } as unknown as AuthRequest;
 
-    res = {
-      json: vi.fn()
-    } as unknown as Response;
+    res = mockResponseUtils.createMockResponse();
 
     next = vi.fn() as unknown as NextFunction;
 
@@ -101,10 +109,10 @@ describe('getLearningPathByIdController', () => {
 
     mockedLearningPathService.getLearningPathById.mockResolvedValue(mockDetailResponse);
 
-    await getLearningPathByIdController(req, res, next);
+    await getLearningPathByIdController(req, res as any, next);
 
     expect(mockedLearningPathService.getLearningPathById).toHaveBeenCalledWith('path123', 'user123');
-    expect(res.json).toHaveBeenCalledWith(mockDetailResponse);
+    expect(res.success).toHaveBeenCalledWith(mockDetailResponse, 'Ścieżka nauki została pobrana');
     expect(next).not.toHaveBeenCalled();
   });
 
@@ -112,32 +120,40 @@ describe('getLearningPathByIdController', () => {
     const mockError = new ValidationError('Ścieżka nauki nie została znaleziona');
     mockedLearningPathService.getLearningPathById.mockRejectedValue(mockError);
 
-    await getLearningPathByIdController(req, res, next);
+    await getLearningPathByIdController(req, res as any, next);
 
     expect(mockedLearningPathService.getLearningPathById).toHaveBeenCalledWith('path123', 'user123');
-    expect(res.json).not.toHaveBeenCalled();
-    expect(next).toHaveBeenCalledWith(mockError);
+    expect(res.fail).toHaveBeenCalledWith(
+      'Ścieżka nauki nie została znaleziona', 
+      [{ code: 'PATH_NOT_FOUND', message: 'Ścieżka nauki nie została znaleziona', field: 'id' }],
+      404
+    );
+    expect(res.success).not.toHaveBeenCalled();
   });
 
   it('should handle access level errors', async () => {
     const mockError = new ValidationError('Nie masz dostępu do tej ścieżki nauki');
     mockedLearningPathService.getLearningPathById.mockRejectedValue(mockError);
 
-    await getLearningPathByIdController(req, res, next);
+    await getLearningPathByIdController(req, res as any, next);
 
     expect(mockedLearningPathService.getLearningPathById).toHaveBeenCalledWith('path123', 'user123');
-    expect(res.json).not.toHaveBeenCalled();
-    expect(next).toHaveBeenCalledWith(mockError);
+    expect(res.fail).toHaveBeenCalledWith(
+      'Nie masz dostępu do tej ścieżki nauki', 
+      [{ code: 'PATH_NOT_AVAILABLE', message: 'Nie masz dostępu do tej ścieżki nauki. Wymagany wyższy poziom zaawansowania.' }],
+      403
+    );
+    expect(res.success).not.toHaveBeenCalled();
   });
 
   it('should handle unexpected errors', async () => {
     const mockError = new Error('Unexpected server error');
     mockedLearningPathService.getLearningPathById.mockRejectedValue(mockError);
 
-    await getLearningPathByIdController(req, res, next);
+    await getLearningPathByIdController(req, res as any, next);
 
     expect(mockedLearningPathService.getLearningPathById).toHaveBeenCalledWith('path123', 'user123');
-    expect(res.json).not.toHaveBeenCalled();
+    expect(res.success).not.toHaveBeenCalled();
     expect(next).toHaveBeenCalledWith(mockError);
   });
 }); 
