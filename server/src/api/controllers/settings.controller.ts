@@ -47,7 +47,7 @@ export const updateAppearance = updateAppearanceController;
 export const getProfile = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user = await User.findById(req.user?.userId)
-      .select('username email profile preferences stats')
+      .select('username email bio profile preferences stats')
       .lean() as unknown as UserLeanDocument;
     
     if (!user) {
@@ -55,8 +55,11 @@ export const getProfile = async (req: Request, res: Response, next: NextFunction
     }
     
     return res.success({
-      username: user.username,
-      email: user.email,
+      user: {
+        username: user.username,
+        email: user.email,
+        bio: user.bio || '',
+      },
       profile: user.profile || {},
       preferences: user.preferences || {},
       stats: {
@@ -72,13 +75,14 @@ export const getProfile = async (req: Request, res: Response, next: NextFunction
 
 export const getPreferences = async (req: Request, res: Response, next: NextFunction) => {
   try {
+        
     const user = await User.findById(req.user?.userId)
       .select('preferences');
     
     if (!user) {
       throw new AuthError('Użytkownik nie znaleziony');
     }
-    
+
     return res.success(user.preferences || {}, 'Preferencje użytkownika pobrane pomyślnie');
   } catch (error) {
     next(error);
@@ -88,6 +92,7 @@ export const getPreferences = async (req: Request, res: Response, next: NextFunc
 export const updatePreferences = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const updates = req.body;
+    
     const user = await User.findByIdAndUpdate(
       req.user?.userId,
       { $set: { preferences: { ...updates } } },

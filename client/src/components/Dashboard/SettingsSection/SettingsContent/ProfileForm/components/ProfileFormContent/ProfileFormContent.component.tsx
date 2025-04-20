@@ -5,7 +5,7 @@ import { BioField } from '../BioField/BioField.component';
 import { FormButtons } from '../FormButtons/FormButtons.component';
 import { styles } from '../../style/ProfileForm.styles';
 
-type ProfileFormContentProps = {
+export type ProfileFormContentProps = {
   handleCancel: () => void;
   register: any;
   errors: any;
@@ -13,6 +13,8 @@ type ProfileFormContentProps = {
   isSubmitting: boolean;
   isPending: boolean;
   onSubmit: (e: React.FormEvent) => void;
+  isSaved?: boolean;
+  isDirty?: boolean;
 };
 
 export const ProfileFormContent = memo(
@@ -24,6 +26,8 @@ export const ProfileFormContent = memo(
     isSubmitting,
     isPending,
     onSubmit,
+    isSaved = false,
+    isDirty = false,
   }: ProfileFormContentProps) => (
     <motion.form
       onSubmit={onSubmit}
@@ -38,6 +42,12 @@ export const ProfileFormContent = memo(
 
             <BioField register={register} errors={errors} defaultValue={defaultBio} />
           </div>
+          
+          {isSaved && !isDirty && (
+            <div className={styles.successMessage}>
+              ✓ Zapisano zmiany
+            </div>
+          )}
         </div>
       </div>
 
@@ -46,7 +56,10 @@ export const ProfileFormContent = memo(
         isSubmitting={isSubmitting || isPending}
         submitText="Zapisz profil"
         loadingText="Zapisywanie"
+        disabled={!isDirty || isSubmitting}
       />
     </motion.form>
   )
 );
+
+ProfileFormContent.displayName = 'ProfileFormContent';

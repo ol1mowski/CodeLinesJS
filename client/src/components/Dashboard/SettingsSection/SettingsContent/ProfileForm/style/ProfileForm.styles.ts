@@ -28,4 +28,6 @@ export const styles = {
     transition-colors duration-200`,
 
   error: 'text-red-500 text-sm mt-1',
+  
+  successMessage: 'text-green-500 mt-2 text-sm font-medium'
 } as const;
