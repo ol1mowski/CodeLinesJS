@@ -1,10 +1,10 @@
 import { memo } from 'react';
 import { HiOutlineTrophy } from 'react-icons/hi2';
-import { RankingUserResponse } from './hooks/useRanking';
+import { RankingUser } from './hooks/useRanking';
 import { RankingItem } from './components/RankingItem';
 
 interface RankingListProps {
-  users: RankingUserResponse[];
+  users: RankingUser[];
 }
 
 export const RankingList = memo(({ users }: RankingListProps) => {

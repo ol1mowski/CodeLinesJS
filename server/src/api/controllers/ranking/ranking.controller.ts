@@ -7,7 +7,7 @@ export const getRanking = async (req: Request, res: Response, next: NextFunction
 
     const users = await User.find({})
       .select('username stats.points stats.level stats.streak stats.bestStreak stats.lastActive')
-      .sort({ 'stats.points': -1 })
+      .sort({ 'stats.level': -1, 'stats.points': -1 })
       .lean();
 
     const userRankIndex = users.findIndex(user => user._id.toString() === userId);
