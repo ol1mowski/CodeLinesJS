@@ -23,12 +23,14 @@ export type Lesson = {
 };
 
 export type Resource = {
-  id: string;
-  title: string;
-  description: string;
-  url: string;
-  type: 'documentation' | 'tutorial' | 'article';
-  category: string;
-  difficulty: 'beginner' | 'intermediate' | 'advanced';
-  isRecommended: boolean;
+  data: {
+    id: string;
+    title: string;
+    description: string;
+    url: string;
+    type: 'documentation' | 'tutorial' | 'article';
+    category: string;
+    difficulty: 'beginner' | 'intermediate' | 'advanced';
+    isRecommended: boolean;
+  };
 };

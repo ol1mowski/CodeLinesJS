@@ -16,7 +16,14 @@ export const fetchLesson = async (lessonId: string, token: string): Promise<Less
     throw new Error('Błąd podczas pobierania lekcji');
   }
 
-  return response.json();
+  const responseData = await response.json();
+  
+  // Sprawdzamy, czy mamy strukturę API z polem data
+  if (responseData.data) {
+    return responseData.data;
+  }
+  
+  return responseData;
 };
 
 export const completeLesson = async ({

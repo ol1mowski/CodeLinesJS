@@ -27,6 +27,6 @@ export const useProfile = () => {
       queryClient.invalidateQueries({ queryKey: PROFILE_QUERY_KEY });
     },
   });
-
+  
   return { profile, bio: profile?.profile?.bio || '', isLoading, error, updateProfile };
 };

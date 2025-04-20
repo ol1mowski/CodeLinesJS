@@ -17,11 +17,11 @@ export const useLearningPaths = () => {
   });
 
   return {
-    paths: data?.paths || [],
-    userStats: data?.userStats,
+    paths: data?.data.paths || [],
+    userStats: data?.data.userStats,
     isLoading,
     error,
     refetch,
-    isEmpty: !data?.paths || data.paths.length === 0,
+    isEmpty: !data?.data.paths || data.data.paths.length === 0,
   };
 };

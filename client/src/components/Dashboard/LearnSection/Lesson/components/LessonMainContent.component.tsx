@@ -17,6 +17,17 @@ export const LessonMainContent = memo(({ lesson, onQuizComplete }: LessonMainCon
     return null;
   }
 
+  if (!lesson.content) {
+    return (
+      <div className="w-[85vw] mb-32 md:w-auto md:mb-auto col-span-9 lesson-content overflow-y-auto max-h-[calc(100vh-200px)]">
+        <div className="bg-dark-800/50 border border-js/10 rounded-xl p-6 md:p-8 text-center">
+          <h2 className="text-xl text-js mb-4">Brak treści lekcji</h2>
+          <p className="text-gray-400">Treść lekcji jest niedostępna. Spróbuj ponownie później.</p>
+        </div>
+      </div>
+    );
+  }
+
   const { sections = [] } = lesson.content;
 
   return (

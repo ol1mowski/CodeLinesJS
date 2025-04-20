@@ -11,7 +11,7 @@ export const Lessons = memo(() => {
   const { user } = useAuth();
   const { stats } = useStats();
   const userId = user?.id || 'current-user';
-  const userLevel = stats?.data?.level || 1;
+  const userLevel = stats?.data?.progress?.level || 1;
 
   const { filteredLessons, filter, setFilter, isLoading, requiredLevel, error, refetch } =
     useLessons();

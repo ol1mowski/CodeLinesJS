@@ -29,8 +29,6 @@ type StatsBlockProps = {
 export const StatsBlock = memo(({ stats }: StatsBlockProps) => {
   const formatDate = useDateFormat();
 
-  console.log(stats);
-
   return (
     <div className={styles.container}>
       <div className={styles.stats.grid}>

@@ -15,7 +15,7 @@ export const useRanking = () => {
     queryKey: [RANKING_QUERY_KEY],
     queryFn: async () => {
       const response = await fetchRanking();
-      return response as unknown as RankingResponse;
+      return response.data.ranking as unknown as RankingResponse;
     },
     staleTime: 1000 * 60 * 5,
   });

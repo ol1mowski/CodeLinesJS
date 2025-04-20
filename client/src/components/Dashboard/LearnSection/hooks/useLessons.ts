@@ -44,8 +44,8 @@ export const useLessons = () => {
     enabled: !!token,
   });
 
-  const allLessons = data?.lessons?.[category] ?? [];
-  const lessonStats = data?.stats ?? { total: 0, completed: 0, progress: 0 };
+  const allLessons = data?.data.lessons?.[category] ?? [];
+  const lessonStats = data?.data.stats ?? { total: 0, completed: 0, progress: 0 };
 
   const filteredLessons = useMemo(
     () =>
@@ -84,7 +84,7 @@ export const useLessons = () => {
     isEmpty,
     hasNoLessonsForFilter,
     filterState,
-    requiredLevel: data?.requiredLevel,
+    requiredLevel: data?.data.requiredLevel,
     stats: lessonStats,
   };
 };

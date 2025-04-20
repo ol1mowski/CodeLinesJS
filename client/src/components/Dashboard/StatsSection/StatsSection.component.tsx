@@ -45,7 +45,7 @@ export const StatsSection = memo(() => {
     return <DashboardState type="empty" message="Brak dostępnych statystyk." />;
   }
 
-  // Konwersja nowej struktury danych do formatu oczekiwanego przez komponenty potomne
+
   const adaptedStats: LegacyUserStats = {
     data: {
       progress: {

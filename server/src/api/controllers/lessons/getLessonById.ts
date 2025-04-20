@@ -5,6 +5,7 @@ import { LessonContent } from "../../../models/lessonContent.model.js";
 import { LevelService } from "../../../services/level.service.js";
 import { IUser } from "../../../services/lesson/types.js";
 import { NextFunction, Request, Response } from "express";
+import { sendSuccess } from "../../../utils/apiResponse.js";
 
 export const getLessonByIdController = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
@@ -114,8 +115,17 @@ export const getLessonByIdController = async (req: Request, res: Response, next:
           bestStreak: user.stats?.bestStreak || 0
         }
       };
-
-      res.success(response, 'Lekcja została pobrana');
+      
+      res.status(200).json({
+        status: 'success',
+        code: 200,
+        message: 'Lekcja została pobrana',
+        data: response,
+        meta: {
+          timestamp: new Date().toISOString(),
+          requestId: req.headers['x-request-id'] || `req-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+        }
+      });
     } catch (error) {
       next(error);
     }

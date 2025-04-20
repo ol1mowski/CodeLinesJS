@@ -100,7 +100,7 @@ export const useLessonData = (lessonSlug: string) => {
       throw error;
     }
   };
-
+  
   return {
     lesson,
     isLoading,
