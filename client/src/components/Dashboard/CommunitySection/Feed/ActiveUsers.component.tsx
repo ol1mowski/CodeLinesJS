@@ -1,25 +1,26 @@
 import { memo } from 'react';
 import { motion } from 'framer-motion';
-import { useQuery } from '@tanstack/react-query';
-import { fetchActiveUsers } from '../api/fetchActiveUsers.api';
-import { useAuth } from '../../../../hooks/useAuth';
-
-type User = {
-  users: {
-    _id: string;
-    username: string;
-    isActive: boolean;
-  }[];
-  totalActive: number;
-};
+import { useActiveUsers } from '../hooks/useActiveUsers';
 
 export const ActiveUsers = memo(() => {
-  const { token } = useAuth();
-  const { data } = useQuery<User>({
-    queryKey: ['activeUsers'],
-    queryFn: () => fetchActiveUsers(token || ''),
-    refetchInterval: 30000,
-  });
+  const { visibleUsers, extraUsers, isLoading, error } = useActiveUsers();
+
+  if (isLoading) {
+    return (
+      <div className="bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10 p-4 mb-6">
+        <h3 className="text-js text-sm font-medium mb-3">Aktywni użytkownicy</h3>
+        <div className="flex items-center gap-2">
+          {[...Array(3)].map((_, index) => (
+            <div key={index} className="w-10 h-10 rounded-full bg-dark-700 animate-pulse"></div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return null;
+  }
 
   return (
     <motion.div
@@ -29,7 +30,7 @@ export const ActiveUsers = memo(() => {
     >
       <h3 className="text-js text-sm font-medium mb-3">Aktywni użytkownicy</h3>
       <div className="flex items-center gap-2">
-        {data?.users.map(user => (
+        {visibleUsers.map(user => (
           <motion.div
             key={user._id}
             className="relative group"
@@ -49,13 +50,13 @@ export const ActiveUsers = memo(() => {
           </motion.div>
         ))}
 
-        {data?.users.length && data.users.length > 8 && (
+        {extraUsers > 0 && (
           <motion.div
             whileHover={{ scale: 1.1 }}
             className="w-10 h-10 rounded-full bg-js/10 flex items-center justify-center
                      text-js text-sm font-medium border-2 border-dark/50"
           >
-            +{data.users.length - 8}
+            +{extraUsers}
           </motion.div>
         )}
       </div>
