@@ -13,6 +13,8 @@ export interface UserStats {
 }
 
 export interface PathsResponse {
-  paths: LearningPath[];
-  userStats: UserStats;
+  data: {
+    paths: LearningPath[];
+    userStats: UserStats;
+  };
 }

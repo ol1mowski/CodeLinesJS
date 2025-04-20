@@ -2,7 +2,6 @@ import { useCallback } from 'react';
 import { useProfileForm } from './useProfileForm';
 import { UserProfile } from '../types/settings';
 import { useProfile } from '../hooks/useProfile';
-import { toast } from 'react-hot-toast';
 
 export const useProfileFormLogic = (profile: UserProfile | null) => {
   const { updateProfile } = useProfile();
@@ -17,9 +16,9 @@ export const useProfileFormLogic = (profile: UserProfile | null) => {
             bio: data.profile?.bio || '',
           },
         });
-        toast.success('Profil został zaktualizowany');
       } catch (error) {
-        toast.error('Nie udało się zaktualizować profilu');
+        console.error('Błąd w useProfileFormLogic:', error);
+        throw error;
       }
     },
     [updateProfile]

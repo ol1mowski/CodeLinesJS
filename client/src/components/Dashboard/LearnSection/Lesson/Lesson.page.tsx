@@ -13,6 +13,7 @@ export const LessonPage = () => {
   const { lessonSlug } = useParams<{ lessonSlug: string }>();
   const { stats, isLoading: isStatsLoading } = useStats();
 
+
   if (!lessonSlug) {
     return <Navigate to="/dashboard/learn" replace />;
   }
@@ -45,7 +46,7 @@ export const LessonPage = () => {
     return <LessonNotFound />;
   }
 
-  const userLevel = stats?.data?.level || 0;
+  const userLevel = stats?.data?.progress.level || 0;
 
   if (lesson.requiredLevel && userLevel < lesson.requiredLevel) {
     return <LessonLocked requiredLevel={lesson.requiredLevel} userLevel={userLevel} />;

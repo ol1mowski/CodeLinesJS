@@ -10,12 +10,65 @@ export type UnlockedFeature = 'custom_themes' | 'create_challenges';
 
 export type UserStats = {
   data: {
-    level: number;
-    points: number;
-    pointsToNextLevel: number;
-    completedChallenges: number;
-    streak: number;
-    bestStreak: number;
+    user: {
+      lastActive: string;
+    };
+    progress: {
+      level: number;
+      points: number;
+      pointsToNextLevel: number;
+      levelUp?: boolean;
+    };
+    achievements: {
+      streak: {
+        current: number;
+        best: number;
+      };
+      completedChallenges: number;
+      badges: Badge[];
+    };
+    stats: {
+      daily: Array<{
+        date: string;
+        points: number;
+        challenges: number;
+      }>;
+      progress: Array<{
+        name: string;
+        progress: number;
+        timeSpent: number;
+      }>; 
+    };
+    learning: {
+      paths: Array<{
+        pathId: string;
+        title: string;
+        progress: {
+          completed: number;
+          total: number;
+          percentage: number;
+          status: 'active' | 'completed' | 'paused' | 'locked';
+        }
+      }>; 
+    };
+  };
+};
+
+export type LegacyUserStats = {
+  data: {
+    progress: {
+      level: number;
+      points: number;
+      pointsToNextLevel: number;
+    };
+    achievements: {
+      streak: {
+        current: number;
+        best: number;
+      };
+      completedChallenges: number;
+      badges: Badge[];
+    };
     badges: Badge[];
     unlockedFeatures: UnlockedFeature[];
     levelUp?: boolean;

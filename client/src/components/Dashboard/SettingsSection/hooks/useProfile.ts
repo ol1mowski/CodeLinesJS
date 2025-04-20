@@ -28,5 +28,13 @@ export const useProfile = () => {
     },
   });
 
-  return { profile, bio: profile?.profile?.bio || '', isLoading, error, updateProfile };
+  return { 
+    profile,
+    username: profile?.username || '',
+    email: profile?.email || '', 
+    bio: profile?.profile?.bio || '', 
+    isLoading, 
+    error, 
+    updateProfile 
+  };
 };

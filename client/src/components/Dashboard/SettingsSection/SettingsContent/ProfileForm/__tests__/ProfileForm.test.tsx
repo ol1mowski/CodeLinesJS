@@ -60,6 +60,8 @@ describe('ProfileForm', () => {
     });
     vi.mocked(useProfile).mockReturnValue({
       profile: mockProfile,
+      username: 'testuser',
+      email: 'test@example.com',
       isLoading: false,
       bio: 'Test bio',
       error: null,
@@ -92,6 +94,8 @@ describe('ProfileForm', () => {
   it('should display loader during loading', () => {
     vi.mocked(useProfile).mockReturnValue({
       profile: undefined,
+      username: '',
+      email: '',
       isLoading: true,
       bio: '',
       error: null,
@@ -129,6 +133,8 @@ describe('ProfileForm', () => {
   it('should display loading state during saving', async () => {
     vi.mocked(useProfile).mockReturnValue({
       profile: mockProfile,
+      username: 'testuser',
+      email: 'test@example.com',
       isLoading: false,
       bio: 'Test bio',
       error: null,

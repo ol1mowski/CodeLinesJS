@@ -15,25 +15,35 @@ export const fetchUserProfile = async (token: string): Promise<UserProfile> => {
     throw new Error('Błąd podczas pobierania profilu');
   }
 
-  const data = await response.json();
+  const responseData = await response.json();
+  const data = responseData.data || responseData;
+  const user = data.user || data;
+  
   return {
-    username: data.username,
-    email: data.email,
+    username: user.username || '',
+    email: user.email || '',
     profile: {
-      bio: data.profile?.bio || '',
+      bio: user.bio || data.profile?.bio || '',
     },
   };
 };
 
 export const updateUserProfile = async (data: UserProfile, token: string) => {
+  const apiData = {
+    username: data.username,
+    email: data.email,
+    bio: data.profile?.bio || ''
+  };
+
   const response = await fetch(`${API_URL}settings/profile`, {
     method: 'PUT',
     headers: getAuthHeaders(token),
-    body: JSON.stringify(data),
+    body: JSON.stringify(apiData),
   });
 
   if (!response.ok) {
-    throw new Error('Błąd podczas aktualizacji profilu');
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || 'Błąd podczas aktualizacji profilu');
   }
 
   return response.json();

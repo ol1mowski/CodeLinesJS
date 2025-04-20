@@ -106,7 +106,6 @@ export class ApiResponseBuilder<T = any> {
         };
       }
 
-      // Jeśli żadna z kategorii nie pasuje, zachowaj oryginalne dane
       if (
         !this.userData &&
         !this.progressData &&
@@ -223,9 +222,29 @@ export class ApiResponseBuilder<T = any> {
   }
 
   public build(): ApiResponse<T> {
-    let responseData = this.response.data;
+    const combinedData: any = {};
 
-    // Jeśli mamy pogrupowane dane, złóżmy je w nową strukturę
+    if (this.userData) {
+      combinedData.user = this.userData;
+    }
+
+    if (this.progressData) {
+      combinedData.progress = this.progressData;
+    }
+
+    if (this.achievementsData) {
+      combinedData.achievements = this.achievementsData;
+    }
+
+    if (this.statsData) {
+      combinedData.stats = this.statsData;
+    }
+
+    if (this.learningData) {
+      combinedData.learning = this.learningData;
+    }
+
+    let responseData = this.response.data;
     if (
       this.userData ||
       this.progressData ||
@@ -233,16 +252,10 @@ export class ApiResponseBuilder<T = any> {
       this.statsData ||
       this.learningData
     ) {
-      responseData = {} as any;
-
-      if (this.userData) (responseData as any).user = this.userData;
-      if (this.progressData) (responseData as any).progress = this.progressData;
-      if (this.achievementsData) (responseData as any).achievements = this.achievementsData;
-      if (this.statsData) (responseData as any).stats = this.statsData;
-      if (this.learningData) (responseData as any).learning = this.learningData;
+      responseData = combinedData;
     }
 
-    return {
+    const fullResponse = {
       status: this.response.status || 'success',
       code: this.response.code || 200,
       message: this.response.message || '',
@@ -250,6 +263,8 @@ export class ApiResponseBuilder<T = any> {
       ...(this.response.errors && { errors: this.response.errors }),
       meta: this.response.meta || { timestamp: new Date().toISOString() },
     } as ApiResponse<T>;
+
+    return fullResponse;
   }
 }
 

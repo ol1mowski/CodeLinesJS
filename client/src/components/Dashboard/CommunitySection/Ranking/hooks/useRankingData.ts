@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { RankingResponse, useRanking } from './useRanking';
+import { useRanking } from './useRanking';
 
 interface ProcessedUserStats {
   username?: string;
@@ -9,45 +9,42 @@ interface ProcessedUserStats {
 }
 
 export const useRankingData = () => {
-  const { data, isLoading, error } = useRanking();
+  const { data, ranking, userStats, isLoading, error } = useRanking();
 
   const users = useMemo(() => {
-    if (!data) return [];
-
-    if (data && typeof data === 'object' && 'ranking' in data) {
-      return (data as RankingResponse).ranking;
+    if (ranking && ranking.length > 0) {
+      return ranking;
     }
 
-    return Array.isArray(data) ? data : [];
-  }, [data]);
+    if (data && 'ranking' in data) {
+      return data.ranking;
+    }
+
+    return [];
+  }, [ranking, data]);
 
   const currentUserStats = useMemo<ProcessedUserStats | null>(() => {
-    if (!data) return null;
+    if (userStats) {
+      return {
+        username: userStats.username,
+        rank: userStats.rank,
+        level: userStats.stats?.level || '-',
+        points: userStats.stats?.points || '-',
+      };
+    }
 
-    let userStats = null;
-
-    if (data && typeof data === 'object' && 'userStats' in data) {
-      const stats = (data as RankingResponse).userStats;
-      userStats = {
+    if (data && 'userStats' in data) {
+      const stats = data.userStats;
+      return {
         username: stats.username,
         rank: stats.rank,
         level: stats.stats?.level || '-',
         points: stats.stats?.points || '-',
       };
-    } else if (Array.isArray(data)) {
-      const currentUser = data.find(u => u.rank !== undefined || u.position !== undefined);
-      if (currentUser) {
-        userStats = {
-          username: currentUser.username,
-          rank: currentUser.rank || currentUser.position || '-',
-          level: currentUser.stats?.level || currentUser.level || '-',
-          points: currentUser.stats?.points || currentUser.points || '-',
-        };
-      }
     }
 
-    return userStats;
-  }, [data]);
+    return null;
+  }, [userStats, data]);
 
   return {
     users,

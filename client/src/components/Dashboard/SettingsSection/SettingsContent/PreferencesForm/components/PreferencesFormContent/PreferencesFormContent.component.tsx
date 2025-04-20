@@ -6,7 +6,7 @@ import { UseFormSetValue } from 'react-hook-form';
 import { PreferencesData } from '../../../../types/settings';
 import { FormButtons } from '../../../ProfileForm/components/FormButtons/FormButtons.component';
 
-type PreferencesFormContentProps = {
+export type PreferencesFormContentProps = {
   register: any;
   formValues: any;
   setValue: UseFormSetValue<PreferencesData>;
@@ -14,6 +14,8 @@ type PreferencesFormContentProps = {
   onCancel: () => void;
   isSubmitting: boolean;
   isPending: boolean;
+  isDirty?: boolean;
+  isSaved?: boolean;
 };
 
 export const PreferencesFormContent = memo(
@@ -25,6 +27,7 @@ export const PreferencesFormContent = memo(
     onCancel,
     isSubmitting,
     isPending,
+    isDirty = false,
   }: PreferencesFormContentProps) => (
     <motion.form
       onSubmit={onSubmit}
@@ -49,6 +52,7 @@ export const PreferencesFormContent = memo(
         isSubmitting={isSubmitting || isPending}
         submitText="Zapisz preferencje"
         loadingText="Zapisywanie"
+        disabled={!isDirty || isSubmitting}
       />
     </motion.form>
   )

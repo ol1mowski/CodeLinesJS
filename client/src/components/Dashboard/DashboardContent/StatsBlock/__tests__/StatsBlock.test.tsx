@@ -1,13 +1,23 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen, cleanup } from '@testing-library/react';
 import { StatsBlock } from '../StatsBlock.component';
+import { DashboardStats } from '../../types/dashboard.types';
 
 describe('StatsBlock', () => {
-  const mockStats = {
-    level: 2,
-    points: 500,
-    streak: 5,
-    lastActive: '2024-01-01T12:00:00Z',
+  const mockStats: DashboardStats = {
+    progress: {
+      level: 2,
+      points: 500,
+      streak: 5
+    },
+    achievements: {
+      streak: {
+        current: 5
+      }
+    },
+    user: {
+      lastActive: '2024-01-01T12:00:00Z'
+    }
   };
 
   beforeEach(() => {

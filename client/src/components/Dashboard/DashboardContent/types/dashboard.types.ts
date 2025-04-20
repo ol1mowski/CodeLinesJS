@@ -1,8 +1,17 @@
 export type DashboardStats = {
-  level: number;
-  points: number;
-  streak: number;
-  lastActive: string;
+  progress: {
+    level: number;
+    points: number;
+    streak: number;
+  };
+  achievements: {
+    streak: {
+      current: number;
+    };
+  };
+  user: {
+    lastActive: string;
+  };
 };
 
 export type DashboardProfile = {

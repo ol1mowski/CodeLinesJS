@@ -1,33 +1,48 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { usePreferencesForm } from './usePreferencesForm';
 import { usePreferences } from './usePreferences';
 import { toast } from 'react-hot-toast';
 
 export const usePreferencesFormLogic = () => {
-  const { preferences, isLoading, updatePreferences } = usePreferences();
+  const { preferences, isLoading, updatePreferences, refetch } = usePreferences();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
 
   const { form, onSubmit } = usePreferencesForm({
     onSubmit: async data => {
       try {
+        setIsSubmitting(true);
         await updatePreferences.mutateAsync({
           emailNotifications: data.emailNotifications,
           pushNotifications: data.pushNotifications,
           language: 'pl',
         });
-        toast.success('Preferencje zostały zaktualizowane');
+        // Toast jest obsługiwany w usePreferences
+        setIsSaved(true);
+        refetch();
       } catch (error) {
-        toast.error('Nie udało się zaktualizować preferencji');
+        // Błędy są obsługiwane w usePreferences
+        console.error('Błąd w usePreferencesFormLogic:', error);
+      } finally {
+        setIsSubmitting(false);
       }
     },
   });
 
   const {
     register,
-    formState: { isSubmitting },
+    formState: { isDirty },
     setValue,
     watch,
+    reset,
   } = form;
   const formValues = watch();
+  
+  useEffect(() => {
+    if (isDirty) {
+      setIsSaved(false);
+    }
+  }, [formValues, isDirty]);
 
   useEffect(() => {
     if (preferences) {
@@ -40,9 +55,12 @@ export const usePreferencesFormLogic = () => {
   const handleCancel = () => {
     try {
       if (preferences) {
-        setValue('emailNotifications', preferences.emailNotifications);
-        setValue('pushNotifications', preferences.pushNotifications);
-        setValue('language', 'pl');
+        reset({
+          emailNotifications: preferences.emailNotifications,
+          pushNotifications: preferences.pushNotifications,
+          language: 'pl',
+        });
+        setIsSaved(false);
         toast.success('Zmiany zostały anulowane');
       }
     } catch (error) {
@@ -54,7 +72,10 @@ export const usePreferencesFormLogic = () => {
     isLoading,
     register,
     formValues,
-    isSubmitting,
+    isSubmitting: isSubmitting || updatePreferences.isPending,
+    isPending: updatePreferences.isPending, 
+    isDirty,
+    isSaved,
     updatePreferences,
     handleCancel,
     onSubmit,

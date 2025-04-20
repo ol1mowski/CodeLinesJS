@@ -68,6 +68,7 @@ export interface AuthRequest extends Request {
 
 export interface UpdateProfileDTO {
   username: string;
+  email: string;
   bio?: string;
   avatar?: string;
 }

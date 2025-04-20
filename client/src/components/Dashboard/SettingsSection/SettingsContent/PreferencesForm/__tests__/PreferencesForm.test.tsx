@@ -33,6 +33,8 @@ describe('PreferencesForm', () => {
         language: 'pl',
       },
       isLoading: false,
+      error: null,
+      refetch: vi.fn(),
       updatePreferences: {
         mutateAsync: mockUpdatePreferences,
         isPending: false,
@@ -47,6 +49,7 @@ describe('PreferencesForm', () => {
         failureCount: 0,
         failureReason: null,
         reset: vi.fn(),
+        refetch: vi.fn(),
       } as any,
     });
   });
@@ -63,6 +66,8 @@ describe('PreferencesForm', () => {
     vi.mocked(usePreferences).mockReturnValue({
       preferences: undefined,
       isLoading: true,
+      error: null,
+      refetch: vi.fn(),
       updatePreferences: {
         mutateAsync: mockUpdatePreferences,
         isPending: false,

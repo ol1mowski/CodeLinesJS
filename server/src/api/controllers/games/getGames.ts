@@ -28,6 +28,7 @@ export const getGames = async (req: Request, res: Response, next: NextFunction):
 
     if (!result) {
       res.error('Błąd pobierania gier');
+      return;
     }
 
     if (result.games && result.pagination) {
@@ -38,6 +39,7 @@ export const getGames = async (req: Request, res: Response, next: NextFunction):
         result.pagination.total,
         'Gry pobrane pomyślnie'
       );
+      return;
     }
 
     res.success(result, 'Gry pobrane pomyślnie');

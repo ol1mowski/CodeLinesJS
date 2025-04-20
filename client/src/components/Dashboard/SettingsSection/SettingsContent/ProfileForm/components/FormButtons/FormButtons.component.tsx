@@ -2,11 +2,12 @@ import { memo } from 'react';
 import { Button } from '../../../../../../UI/Button/Button.component';
 import { styles } from './FormButtons.styles';
 
-type FormButtonsProps = {
+export type FormButtonsProps = {
   onCancel: () => void;
   isSubmitting: boolean;
   submitText?: string;
   loadingText?: string;
+  disabled?: boolean;
 };
 
 export const FormButtons = memo(
@@ -15,6 +16,7 @@ export const FormButtons = memo(
     isSubmitting,
     submitText = 'Zapisz zmiany',
     loadingText = 'Zapisywanie',
+    disabled = false,
   }: FormButtonsProps) => (
     <div className={styles.container}>
       <Button
@@ -26,7 +28,11 @@ export const FormButtons = memo(
         Anuluj zmiany
       </Button>
 
-      <Button type="submit" disabled={isSubmitting} className={styles.submitButton}>
+      <Button 
+        type="submit" 
+        disabled={isSubmitting || disabled} 
+        className={styles.submitButton}
+      >
         {isSubmitting ? (
           <div className="flex items-center justify-center gap-2 min-w-[100px]">
             <div className="w-4 h-4 border-2 border-dark border-t-transparent rounded-full animate-spin" />

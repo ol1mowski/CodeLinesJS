@@ -1,9 +1,9 @@
 import { motion } from 'framer-motion';
 import { memo } from 'react';
 import { FaExternalLinkAlt, FaStar } from 'react-icons/fa';
-import { Resource } from '../../../../types/learning.types';
+import { Resource } from '../types/resource.types';
 
-type ResourceCardProps = {
+type ResourceCardProps = { 
   resource: Resource;
   isRecommended?: boolean;
 };
@@ -49,14 +49,18 @@ export const ResourceCard = memo(({ resource, isRecommended }: ResourceCardProps
                 ? 'bg-blue-500/10 text-blue-400'
                 : resource.type === 'tutorial'
                   ? 'bg-green-500/10 text-green-400'
-                  : 'bg-purple-500/10 text-purple-400'
+                  : resource.type === 'video'
+                    ? 'bg-red-500/10 text-red-400'
+                    : 'bg-purple-500/10 text-purple-400'
             }`}
           >
             {resource.type === 'documentation'
               ? 'Dokumentacja'
               : resource.type === 'tutorial'
                 ? 'Tutorial'
-                : 'Artykuł'}
+                : resource.type === 'video'
+                  ? 'Wideo'
+                  : 'Artykuł'}
           </span>
 
           <span
