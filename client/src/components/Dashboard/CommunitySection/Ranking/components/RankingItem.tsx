@@ -1,10 +1,10 @@
 import { memo } from 'react';
 import { motion } from 'framer-motion';
 import { UserAvatar } from './UserAvatar';
-import { RankingUserResponse } from '../hooks/useRanking';
+import { RankingUser } from '../hooks/useRanking';
 
 interface RankingItemProps {
-  user: RankingUserResponse;
+  user: RankingUser;
   index: number;
   animationDelay?: number;
 }

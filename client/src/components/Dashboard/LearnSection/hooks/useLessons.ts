@@ -8,13 +8,15 @@ import { useAuth } from '../../../../hooks/useAuth';
 type Category = 'javascript' | 'react';
 
 export type LessonsResponse = {
-  lessons: Record<Category, Lesson[]>;
-  stats: {
-    total: number;
-    completed: number;
-    progress: number;
+  data: {
+    lessons: Record<Category, Lesson[]>;
+    stats: {
+      total: number;
+      completed: number;
+      progress: number;
+    };
+    requiredLevel: number;
   };
-  requiredLevel: number;
 };
 
 const getDifficultyLabel = (filter: FilterType) => {

@@ -16,11 +16,9 @@ export const useProfileFormLogic = (profile: UserProfile | null) => {
             bio: data.profile?.bio || '',
           },
         });
-        // Powiadomienia są obsługiwane w komponencie ProfileForm
       } catch (error) {
-        // Błędy są obsługiwane w komponencie ProfileForm
         console.error('Błąd w useProfileFormLogic:', error);
-        throw error; // Przekazujemy błąd dalej do obsługi w komponencie
+        throw error;
       }
     },
     [updateProfile]

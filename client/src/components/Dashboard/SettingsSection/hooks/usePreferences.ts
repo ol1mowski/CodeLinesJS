@@ -19,9 +19,8 @@ export const usePreferences = () => {
     queryKey: PREFERENCES_QUERY_KEY,
     queryFn: () => fetchPreferences(token || ''),
     enabled: !!token,
-    staleTime: 1000 * 60 * 5, // 5 minut
+    staleTime: 1000 * 60 * 5,
     retry: (failureCount, error) => {
-      // Nie próbuj ponownie w przypadku błędu AUTH_ERROR
       if (error instanceof PreferencesError && error.code === 'AUTH_ERROR') {
         toast.error('Sesja wygasła. Zaloguj się ponownie.');
         logout?.();
@@ -30,8 +29,7 @@ export const usePreferences = () => {
       return failureCount < 3; 
     },
   });
-
-  // Wyświetl błąd, jeśli występuje
+  
   if (error && !(error instanceof PreferencesError && error.code === 'AUTH_ERROR')) {
     toast.error(error instanceof Error ? error.message : 'Wystąpił błąd podczas ładowania preferencji');
   }

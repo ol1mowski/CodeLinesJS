@@ -21,8 +21,7 @@ export const ProfileForm = memo(() => {
     setValue,
     watch,
   } = form;
-
-  // Obserwuj zmiany w formularzu
+    
   const watchedValues = watch();
 
   useEffect(() => {

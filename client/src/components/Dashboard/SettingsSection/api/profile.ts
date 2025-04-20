@@ -16,7 +16,6 @@ export const fetchUserProfile = async (token: string): Promise<UserProfile> => {
   }
 
   const responseData = await response.json();
-  // Użyj struktura danych z odpowiedzi serwera (data.user)
   const data = responseData.data || responseData;
   const user = data.user || data;
   
@@ -30,7 +29,6 @@ export const fetchUserProfile = async (token: string): Promise<UserProfile> => {
 };
 
 export const updateUserProfile = async (data: UserProfile, token: string) => {
-  // Dostosowujemy format danych, aby pasował do wymagań API
   const apiData = {
     username: data.username,
     email: data.email,

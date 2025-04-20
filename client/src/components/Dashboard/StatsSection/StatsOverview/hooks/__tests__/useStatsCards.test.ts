@@ -1,22 +1,33 @@
 import { describe, it, expect } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { useStatsCards } from '../useStatsCards.hook';
-
-const mockStats = {
-  data: {
-    completedChallenges: 25,
-    streak: 7,
-    bestStreak: 14,
-    level: 5,
-    points: 1500,
-    pointsToNextLevel: 2000,
-    badges: [],
-    unlockedFeatures: [],
-    chartData: { daily: [], categories: [] },
-  },
-};
+import { LegacyUserStats } from '../../../../../../types/stats.types';
 
 describe('useStatsCards', () => {
+  const mockStats: LegacyUserStats = {
+    data: {
+      progress: {
+        level: 5,
+        points: 1500,
+        pointsToNextLevel: 2000,
+      },
+      achievements: {
+        completedChallenges: 25,
+        streak: {
+          current: 7,
+          best: 14
+        },
+        badges: []
+      },
+      badges: [],
+      unlockedFeatures: [],
+      chartData: {
+        daily: [],
+        categories: []
+      }
+    }
+  };
+
   it('returns empty array when no stats provided', () => {
     const { result } = renderHook(() => useStatsCards(undefined));
     expect(result.current).toEqual([]);
