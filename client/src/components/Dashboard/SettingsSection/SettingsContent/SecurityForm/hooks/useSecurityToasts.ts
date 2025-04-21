@@ -9,12 +9,10 @@ export const useSecurityToasts = () => {
 
   const handleError = useCallback((error: unknown) => {
     if (error instanceof SecurityError) {
-      switch (error.code) {
-        case 'INVALID_CURRENT_PASSWORD':
-          toast.error('Aktualne hasło jest nieprawidłowe');
-          return;
-      }
+      toast.error(error.message);
+      return;
     }
+    
     toast.error('Wystąpił błąd podczas zmiany hasła');
   }, []);
 

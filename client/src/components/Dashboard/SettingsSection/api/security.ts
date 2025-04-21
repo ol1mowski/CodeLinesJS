@@ -2,7 +2,7 @@ import { API_URL } from '../../../../config/api.config';
 
 export class SecurityError extends Error {
   constructor(
-    public code: 'INVALID_CURRENT_PASSWORD' | 'UNKNOWN_ERROR',
+    public code: string,
     message: string
   ) {
     super(message);
@@ -27,10 +27,11 @@ export const updatePassword = async (
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    if (error.code === 'INVALID_CURRENT_PASSWORD') {
-      throw new SecurityError('INVALID_CURRENT_PASSWORD', 'Aktualne hasło jest nieprawidłowe');
-    }
-    throw new SecurityError('UNKNOWN_ERROR', 'Wystąpił błąd podczas zmiany hasła');
+    const errorData = await response.json();
+    
+    const errorMessage = errorData.message || 'Wystąpił błąd podczas zmiany hasła';
+    const errorCode = errorData.code || 'UNKNOWN_ERROR';
+    
+    throw new SecurityError(errorCode, errorMessage);
   }
 };
