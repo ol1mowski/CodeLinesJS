@@ -1,6 +1,6 @@
 import { User } from '../../models/user.model.js';
-import { ValidationError } from '../../utils/errors.js';
 import { UserProfile, UpdateProfileDTO } from '../../types/settings/index.js';
+import { ValidationError } from '../../utils/errors.js';
 
 export class ProfileService {
   static async updateProfile(userId: string, profileData: UpdateProfileDTO): Promise<UserProfile> {
@@ -16,7 +16,7 @@ export class ProfileService {
 
     const existingUsername = await User.findOne({
       username,
-      _id: { $ne: userId }
+      _id: { $ne: userId },
     });
 
     if (existingUsername) {
@@ -25,7 +25,7 @@ export class ProfileService {
 
     const existingEmail = await User.findOne({
       email,
-      _id: { $ne: userId }
+      _id: { $ne: userId },
     });
 
     if (existingEmail) {
@@ -40,24 +40,21 @@ export class ProfileService {
 
     user.username = username;
     user.email = email;
-    
+
     if (bio !== undefined) {
       if (!user.profile) {
         user.profile = {};
       }
-      
+
       if (typeof user.profile !== 'object') {
         user.profile = {};
       }
-      
+
       user.profile.bio = bio;
     }
 
     if (avatar) {
-      if (!user.profile) {
-        user.profile = {};
-      }
-      user.profile.avatar = avatar;
+      user.avatar = avatar;
     }
 
     await user.save();
@@ -67,7 +64,7 @@ export class ProfileService {
       username: user.username,
       email: user.email,
       bio: user.profile?.bio || '',
-      avatar: user.profile?.avatar
+      avatar: user.avatar || '',
     };
   }
-} 
+}

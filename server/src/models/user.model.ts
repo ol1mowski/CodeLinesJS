@@ -1,18 +1,19 @@
-import mongoose from "mongoose";
-import bcrypt from "bcryptjs";
-import config from "../config/config.js";
+import bcrypt from 'bcryptjs';
+import mongoose from 'mongoose';
+
+import config from '../config/config.js';
 
 const userSchema = new mongoose.Schema(
   {
     username: {
       type: String,
       required: true,
-      unique: true, 
+      unique: true,
       trim: true,
     },
     email: {
       type: String,
-      required: true, 
+      required: true,
       unique: true,
       trim: true,
       lowercase: true,
@@ -23,8 +24,8 @@ const userSchema = new mongoose.Schema(
     },
     accountType: {
       type: String,
-      enum: ["local", "google"],
-      default: "local",
+      enum: ['local', 'google'],
+      default: 'local',
     },
     isEmailVerified: {
       type: Boolean,
@@ -34,6 +35,7 @@ const userSchema = new mongoose.Schema(
     profile: {
       displayName: String,
       bio: String,
+      avatar: String,
       socialLinks: {
         github: String,
         linkedin: String,
@@ -47,38 +49,40 @@ const userSchema = new mongoose.Schema(
       },
       theme: {
         type: String,
-        enum: ["light", "dark"],
-        default: "dark",
+        enum: ['light', 'dark'],
+        default: 'dark',
       },
       language: {
         type: String,
-        enum: ["pl", "en"],
-        default: "pl",
+        enum: ['pl', 'en'],
+        default: 'pl',
       },
     },
-    groups: [{
-      groupId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Group'
+    groups: [
+      {
+        groupId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Group',
+        },
+        joinedAt: {
+          type: Date,
+          default: Date.now,
+        },
+        role: {
+          type: String,
+          enum: ['member', 'moderator', 'admin'],
+          default: 'member',
+        },
+        notifications: {
+          type: Boolean,
+          default: true,
+        },
+        lastActivity: {
+          type: Date,
+          default: Date.now,
+        },
       },
-      joinedAt: {
-        type: Date,
-        default: Date.now
-      },
-      role: {
-        type: String,
-        enum: ['member', 'moderator', 'admin'],
-        default: 'member'
-      },
-      notifications: {
-        type: Boolean,
-        default: true
-      },
-      lastActivity: {
-        type: Date,
-        default: Date.now
-      }
-    }],
+    ],
     stats: {
       points: { type: Number, default: 0 },
       level: { type: Number, default: 1 },
@@ -94,42 +98,48 @@ const userSchema = new mongoose.Schema(
       currentStreak: { type: Number, default: 0 },
       averageScore: { type: Number, default: 0 },
       totalTimeSpent: { type: Number, default: 0 },
-      badges: [{
-        name: { type: String, default: 'Odznaka' },
-        icon: { type: String, default: '🏆' },
-        earnedAt: { type: Date, default: Date.now },
-        description: { type: String, default: 'Odznaka za osiągnięcie' }
-      }],
+      badges: [
+        {
+          name: { type: String, default: 'Odznaka' },
+          icon: { type: String, default: '🏆' },
+          earnedAt: { type: Date, default: Date.now },
+          description: { type: String, default: 'Odznaka za osiągnięcie' },
+        },
+      ],
       unlockedFeatures: [String],
       chartData: {
-        daily: [{
-          date: String,
-          points: { type: Number, default: 0 },
-          timeSpent: { type: Number, default: 0 }
-        }],
-        progress: [{
-          name: String,
-          progress: { type: Number, default: 0 },
-          timeSpent: { type: Number, default: 0 }
-        }]
+        daily: [
+          {
+            date: String,
+            points: { type: Number, default: 0 },
+            timeSpent: { type: Number, default: 0 },
+          },
+        ],
+        progress: [
+          {
+            name: String,
+            progress: { type: Number, default: 0 },
+            timeSpent: { type: Number, default: 0 },
+          },
+        ],
       },
       learningPaths: [
         {
           pathId: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "LearningPath",
+            ref: 'LearningPath',
           },
           status: {
             type: String,
-            enum: ["active", "completed", "locked"],
-            default: "locked",
+            enum: ['active', 'completed', 'locked'],
+            default: 'locked',
           },
           progress: {
             completedLessons: [
               {
                 lessonId: {
                   type: mongoose.Schema.Types.ObjectId,
-                  ref: "Lesson",
+                  ref: 'Lesson',
                 },
                 completedAt: {
                   type: Date,
@@ -140,7 +150,7 @@ const userSchema = new mongoose.Schema(
             totalLessons: Number,
             lastLesson: {
               type: mongoose.Schema.Types.ObjectId,
-              ref: "Lesson",
+              ref: 'Lesson',
             },
             lastActivity: Date,
             startedAt: Date,
@@ -152,7 +162,7 @@ const userSchema = new mongoose.Schema(
         {
           name: {
             type: String,
-            enum: ["javascript", "react", "node", "database", "testing"],
+            enum: ['javascript', 'react', 'node', 'database', 'testing'],
           },
           progress: {
             type: Number,
@@ -178,17 +188,21 @@ const userSchema = new mongoose.Schema(
     isActive: {
       type: Boolean,
       default: false,
-      index: true
+      index: true,
     },
     passwordChangedAt: Date,
   },
   {
     timestamps: true,
-  }
+  },
 );
 
-userSchema.pre("save", async function (next) {
-  if (this.isModified("password") && !this.password.startsWith("$2a$") && !this.password.startsWith("$2b$")) {
+userSchema.pre('save', async function (next) {
+  if (
+    this.isModified('password') &&
+    !this.password.startsWith('$2a$') &&
+    !this.password.startsWith('$2b$')
+  ) {
     const saltRounds = config.security.bcryptSaltRounds || 12;
     this.password = await bcrypt.hash(this.password, saltRounds);
     this.passwordChangedAt = new Date();
@@ -196,15 +210,17 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-userSchema.methods.changedPasswordAfter = function(jwtTimestamp: number) {
+userSchema.methods.changedPasswordAfter = function (jwtTimestamp: number) {
   if (this.passwordChangedAt) {
     const changedTimestamp = Math.floor(this.passwordChangedAt.getTime() / 1000);
-    
-    if (this.createdAt && 
-        Math.abs(this.createdAt.getTime() - this.passwordChangedAt.getTime()) < 5000) {
+
+    if (
+      this.createdAt &&
+      Math.abs(this.createdAt.getTime() - this.passwordChangedAt.getTime()) < 5000
+    ) {
       return false;
     }
-    
+
     return jwtTimestamp < changedTimestamp;
   }
   return false;
@@ -222,4 +238,4 @@ userSchema.methods.comparePassword = async function (candidatePassword: string) 
   }
 };
 
-export const User = mongoose.model("User", userSchema);
+export const User = mongoose.model('User', userSchema);
