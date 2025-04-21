@@ -64,7 +64,7 @@ export class ProfileService {
       username: user.username,
       email: user.email,
       bio: user.profile?.bio || '',
-      avatar: user.avatar,
+      avatar: user.avatar || '',
     };
   }
 }
