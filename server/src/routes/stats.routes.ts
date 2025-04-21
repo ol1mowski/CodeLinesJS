@@ -1,17 +1,9 @@
-import { Router } from 'express';
-import { authMiddleware } from '../middleware/auth.middleware.js';
-import { 
-  getStats, 
-  updateStats, 
-  getDailyStats,
-} from '../api/controllers/stats/index.js';
+import express from 'express';
+import { getGeneralStatsController } from '../api/controllers/stats/generalStats.controller.js';
+import { wrapController } from '../utils/asyncHandler.js';
 
-const router = Router();
+const router = express.Router();
 
-router.get('/', authMiddleware, getStats);
-
-router.put('/', authMiddleware, updateStats);
-
-router.get('/daily', authMiddleware, getDailyStats);
+router.get('/general', wrapController(getGeneralStatsController));
 
 export default router; 

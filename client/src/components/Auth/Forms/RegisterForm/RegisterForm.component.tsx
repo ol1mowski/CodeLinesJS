@@ -13,7 +13,12 @@ const RegisterForm = () => {
   return (
     <FormWrapper onSubmit={handleSubmit}>
       {errorMessage && (
-        <FormError message={errorMessage} variant="alert" title="Błąd rejestracji" />
+        <FormError 
+          message={errorMessage} 
+          variant="alert" 
+          title="Błąd rejestracji" 
+          className="mb-6 text-base border-2"
+        />
       )}
 
       <FormInput
@@ -50,6 +55,16 @@ const RegisterForm = () => {
       <FormLoadingButton isLoading={loading} loadingText="Rejestracja...">
         Zarejestruj się
       </FormLoadingButton>
+
+      {errorMessage && (
+        <div className="mt-4">
+          <FormError 
+            message={errorMessage} 
+            withIcon={true}
+            className="text-sm"
+          />
+        </div>
+      )}
     </FormWrapper>
   );
 };

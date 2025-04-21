@@ -67,6 +67,7 @@ export const httpClient = {
         method,
         headers: requestHeaders,
         mode: 'cors',
+        credentials: 'include',
       };
 
       if (body) {
@@ -75,32 +76,67 @@ export const httpClient = {
 
       const response = await fetch(url, requestOptions);
 
-      let data = null;
+      let responseData = null;
       let error = null;
 
       try {
         const text = await response.text();
         if (text) {
-          data = JSON.parse(text);
+          responseData = JSON.parse(text);
         }
       } catch (e) {
-        console.error('Błąd parsowania odpowiedzi:', e);
         error = 'Nieprawidłowa odpowiedź serwera';
       }
 
-      if (!response.ok) {
-        error = data?.message || data?.error || `Błąd ${response.status}: ${response.statusText}`;
-        data = null;
+      if (responseData) {
+        if (responseData.status === 'success') {
+          return {
+            data: responseData.data,
+            error: null,
+            status: responseData.code || response.status
+          };
+        } else if (responseData.status === 'fail' || responseData.status === 'error') {
+          error = 
+            responseData.message || 
+            responseData.errors?.[0]?.message || 
+            `Błąd: ${responseData.status}`;
+          
+          return {
+            data: null,
+            error,
+            status: responseData.code || response.status
+          };
+        }
+        else if (responseData.error) {
+          return {
+            data: null, 
+            error: responseData.error,
+            status: response.status
+          };
+        } else if (responseData.token) {
+          return {
+            data: responseData,
+            error: null,
+            status: response.status
+          };
+        }
+      }
+
+      if (!response.ok && !error) {
+        error = `Błąd ${response.status}: ${response.statusText}`;
+        return {
+          data: null,
+          error,
+          status: response.status
+        };
       }
 
       return {
-        data,
+        data: responseData?.data || responseData,
         error,
         status: response.status,
       };
     } catch (e) {
-      console.error('Błąd zapytania HTTP:', e);
-
       const errorMessage =
         e instanceof Error ? getPolishNetworkErrorMessage(e) : 'Nieznany błąd zapytania';
 

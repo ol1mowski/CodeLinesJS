@@ -28,6 +28,9 @@ export const useLoginAction = (state: AuthStateContext) => {
 
       const { token, user } = response.data;
 
+      localStorage.removeItem('token');
+      sessionStorage.removeItem('token');
+
       if (rememberMe) {
         localStorage.setItem('token', token);
       } else {
@@ -39,9 +42,7 @@ export const useLoginAction = (state: AuthStateContext) => {
 
       navigate('/dashboard');
     } catch (err) {
-      console.error('Błąd logowania:', err);
       const errorMessage = err instanceof Error ? err.message : 'Wystąpił błąd podczas logowania';
-
       setError(errorMessage);
       setIsAuthenticated(false);
     } finally {

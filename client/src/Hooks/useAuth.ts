@@ -23,6 +23,13 @@ export const useAuth = (): AuthStateAndActions => {
         return;
       }
 
+      if (typeof token !== 'string' || token.length < 10) {
+        localStorage.removeItem('token');
+        sessionStorage.removeItem('token');
+        state.setIsAuthenticated(false);
+        return;
+      }
+
       const apiUrl = API_URL.replace('www.', '');
 
       const response = await fetch(`${apiUrl}auth/verify`, {
@@ -32,6 +39,7 @@ export const useAuth = (): AuthStateAndActions => {
           Accept: 'application/json',
         },
         mode: 'cors',
+        credentials: 'include',
       });
 
       if (response.status === 429) {
@@ -39,19 +47,31 @@ export const useAuth = (): AuthStateAndActions => {
       }
 
       let data;
+      let responseText = '';
       try {
-        const text = await response.text();
-        if (!text) {
+        responseText = await response.text();
+        
+        if (!responseText) {
           throw new Error('Pusta odpowiedź serwera');
         }
 
-        data = JSON.parse(text);
+        data = JSON.parse(responseText);
       } catch (e) {
-        throw new Error('Nieprawidłowa odpowiedź serwera' + e);
+        throw new Error('Nieprawidłowa odpowiedź serwera: ' + e);
+      }
+
+      if (data?.status === 'success' && data?.data) {
+        state.setUser(data.data.user || data.data);
+        state.setIsAuthenticated(true);
+        return;
       }
 
       if (!response.ok) {
-        throw new Error(data.error || 'Nieznany błąd weryfikacji tokenu');
+        throw new Error(data?.error || data?.message || 'Nieznany błąd weryfikacji tokenu');
+      }
+
+      if (!data?.user) {
+        throw new Error('Odpowiedź API nie zawiera danych użytkownika');
       }
 
       state.setUser(data.user as User);

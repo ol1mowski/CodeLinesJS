@@ -29,7 +29,7 @@ describe('useSecurityToasts', () => {
     result.current.handleError(
       new SecurityError('INVALID_CURRENT_PASSWORD', 'Invalid current password')
     );
-    expect(toast.error).toHaveBeenCalledWith('Aktualne hasło jest nieprawidłowe');
+    expect(toast.error).toHaveBeenCalledWith('Invalid current password');
   });
 
   it('handles general error correctly', () => {

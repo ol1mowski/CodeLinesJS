@@ -59,6 +59,13 @@ export const useFormStatus = ({
         message = error.message;
       } else if (typeof error === 'string') {
         message = error;
+      } else if (error && typeof error === 'object') {
+        const errorObj = error as any;
+        message = 
+          errorObj.message || 
+          errorObj.error || 
+          (errorObj.errors && errorObj.errors[0]?.message) || 
+          'Wystąpił nieznany błąd. Spróbuj ponownie później.';
       } else {
         message = 'Wystąpił nieznany błąd. Spróbuj ponownie później.';
       }

@@ -31,7 +31,7 @@ describe('useRegisterAction', () => {
 
   const mockErrorResponse = {
     data: null,
-    error: 'Użytkownik o podanym adresie email już istnieje',
+    error: 'Użytkownik o podanym adresie email lub nazwie użytkownika już istnieje w systemie',
     status: 409,
   };
 

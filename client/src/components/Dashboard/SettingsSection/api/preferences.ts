@@ -3,7 +3,7 @@ import { API_URL } from '../../../../config/api.config';
 
 export class PreferencesError extends Error {
   constructor(
-    public code: 'VALIDATION_ERROR' | 'SAVE_ERROR' | 'UNKNOWN_ERROR' | 'AUTH_ERROR',
+    public code: string,
     message: string
   ) {
     super(message);
@@ -27,7 +27,7 @@ export const fetchPreferences = async (token: string): Promise<PreferencesData> 
       
       const errorData = await response.json().catch(() => null);
       throw new PreferencesError(
-        'UNKNOWN_ERROR', 
+        errorData?.code || 'UNKNOWN_ERROR', 
         errorData?.message || 'Błąd podczas pobierania preferencji'
       );
     }
@@ -71,15 +71,8 @@ export const updatePreferences = async (
       
       const errorData = await response.json().catch(() => ({ code: 'UNKNOWN_ERROR' }));
       
-      if (errorData.code === 'VALIDATION_ERROR') {
-        throw new PreferencesError('VALIDATION_ERROR', 'Nieprawidłowe dane preferencji');
-      }
-      if (errorData.code === 'SAVE_ERROR') {
-        throw new PreferencesError('SAVE_ERROR', 'Nie udało się zapisać preferencji');
-      }
-      
       throw new PreferencesError(
-        'UNKNOWN_ERROR', 
+        errorData?.code || 'UNKNOWN_ERROR', 
         errorData?.message || 'Wystąpił błąd podczas aktualizacji preferencji'
       );
     }

@@ -24,14 +24,24 @@ export const useRegisterAction = (state: AuthState) => {
       });
 
       if (response.error) {
+        if (response.error.includes("już istnieje")) {
+          setError("Użytkownik o podanym adresie email lub nazwie użytkownika już istnieje w systemie");
+          throw new Error("Użytkownik o podanym adresie email lub nazwie użytkownika już istnieje w systemie");
+        }
+        setError(response.error);
         throw new Error(response.error);
       }
 
       if (!response.data) {
-        throw new Error('Nieznany błąd rejestracji. Spróbuj ponownie później.');
+        const errorMsg = 'Nieznany błąd rejestracji. Spróbuj ponownie później.';
+        setError(errorMsg);
+        throw new Error(errorMsg);
       }
 
       const { token, user } = response.data;
+
+      localStorage.removeItem('token');
+      sessionStorage.removeItem('token');
 
       sessionStorage.setItem('token', token);
 
@@ -42,8 +52,8 @@ export const useRegisterAction = (state: AuthState) => {
       setIsAuthenticated(true);
       navigate('/dashboard');
     } catch (err) {
-      console.error('Błąd rejestracji:', err);
-      setError(err instanceof Error ? err.message : 'Wystąpił błąd podczas rejestracji');
+      const errorMessage = err instanceof Error ? err.message : 'Wystąpił błąd podczas rejestracji';
+      setError(errorMessage);
       setIsAuthenticated(false);
     } finally {
       setLoading(false);
