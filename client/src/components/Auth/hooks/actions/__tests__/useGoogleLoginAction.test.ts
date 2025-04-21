@@ -24,10 +24,9 @@ describe('useGoogleLoginAction', () => {
 
   const mockResponse = {
     data: {
-      data: {
-        token: 'google-test-token',
-        user: userData,
-      },
+      token: 'google-test-token',
+      user: userData,
+
       error: null,
       status: 200,
     }
