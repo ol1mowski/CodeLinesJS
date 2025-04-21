@@ -2,7 +2,6 @@ import { memo } from 'react';
 import { MobileWrapper } from '../../../UI/MobileWrapper/MobileWrapper.component';
 import { useMobileDetect } from '../../../../hooks/useMobileDetect';
 import { useGeneralStats } from '../hooks/useGeneralStats';
-import { AnimatedCounter } from './AnimatedCounter';
 
 export const StatsGrid = memo(() => {
   const { stats, isLoading } = useGeneralStats();
@@ -36,17 +35,16 @@ const StatItem = memo(({ value, label, index, isLoading }: StatItemProps) => {
         transition: { duration: 0.5, delay: isMobile ? 0 : index * 0.1 },
       }}
     >
-      <p className="text-3xl md:text-4xl font-bold font-space text-[#f7df1e]">
-        {isLoading ? (
-          <span className="animate-pulse">...</span>
-        ) : (
-          <AnimatedCounter 
-            value={value} 
-            duration={2000 + (index * 300)} 
-          />
-        )}
-      </p>
-      <p className="text-sm md:text-base text-gray-400 font-inter">{label}</p>
+
+      { isLoading ? (
+        <span className="animate-pulse">...</span>
+      ) : (
+        <>
+          <p className="text-3xl md:text-4xl font-bold font-space text-[#f7df1e]">{value}</p>
+          <p className="text-sm md:text-base text-gray-400 font-inter">{label}</p>
+        </>
+      )}
+
     </MobileWrapper>
   );
 });

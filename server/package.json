@@ -8,7 +8,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "build": "tsc && npm run copy-static",
+    "build": "rimraf dist && tsc && npm run copy-static",
     "start": "node dist/server.js",
     "dev": "nodemon",
     "init-data": "node --no-warnings --loader ts-node/esm --experimental-specifier-resolution=node src/scripts/initLearningData.ts",

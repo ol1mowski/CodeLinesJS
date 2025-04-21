@@ -313,7 +313,7 @@ The API uses specific error codes for different scenarios:
 
 ### Production Deployment
 
-```bash
+   ```bash
 # Build the application
 npm run build
 
@@ -325,7 +325,7 @@ npm start
 
 The server includes comprehensive tests:
 
-```bash
+   ```bash
 # Run all tests
 npm test
 

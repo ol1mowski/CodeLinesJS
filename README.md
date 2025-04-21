@@ -1,4 +1,4 @@
-# CodeLinesJS - Interaktywna Platforma do Nauki JavaScript
+# CodeLinesJS - Interactive JavaScript Learning Platform
 
 ## Landing page
 
@@ -52,10 +52,13 @@ CodeLinesJS is an innovative educational platform that transforms learning JavaS
 ### State Management & Routing
 - React Context API
 - React Router 6
+- React Query for data fetching
 
 ### Backend & Authentication
 - Express.js
+- JWT Authentication
 - Google Authentication
+- Password reset functionality
 
 ### Database
 - MongoDB
@@ -79,123 +82,215 @@ CodeLinesJS is an innovative educational platform that transforms learning JavaS
 # Clone the repository
 git clone https://github.com/ol1mowski/CodeLinesJS.git
 
-# Install dependencies
+# Install dependencies for both client and server
 cd CodeLinesJS
 npm install
 
 # Setup environment variables
-cp .env.example .env
-# Fill in the required values in the .env file
+# Create .env files for both client and server directories
+```
 
-# Run in development mode
+### Environment Variables
+
+#### Server (.env)
+Create a `.env` file in the server directory with the following variables:
+
+```
+PORT=5001                      # Server port
+MONGODB_URI=<your-mongodb-uri> # MongoDB connection string
+FRONTEND_URL=<frontend-url>    # URL of the frontend application
+
+NODE_ENV=development           # Environment (development/production)
+
+# JWT Configuration
+JWT_EXPIRES_IN=24h             # JWT token expiration time
+JWT_COOKIE_EXPIRES_IN=86400000 # JWT cookie expiration time in ms
+JWT_SECRET=<your-jwt-secret>   # Secret key for JWT
+
+# Email Configuration
+EMAIL_HOST=<your-email-host>   # SMTP host
+EMAIL_PORT=465                 # SMTP port
+EMAIL_USER=<your-email>        # Email username
+EMAIL_PASSWORD=<your-password> # Email password
+EMAIL_FROM=<your-email>        # Sender email address
+
+# Rate Limiting
+RATE_LIMIT_MAX=1000            # Maximum number of requests
+RATE_LIMIT_WINDOW_MS=900000    # Time window for rate limiting in ms
+
+# AI Services
+GEMINI_API_KEY=<your-api-key>  # Gemini AI API key
+HUGGING_FACE_API_KEY=<your-api-key> # Hugging Face API key
+
+# OAuth
+VITE_GOOGLE_CLIENT_ID=<your-client-id> # Google OAuth client ID
+
+# Email Service
+SENDGRID_API_KEY=<your-api-key> # SendGrid API key
+```
+
+#### Client (.env)
+Create a `.env` file in the client directory with the following variables:
+
+```
+VITE_GOOGLE_CLIENT_ID=<your-client-id> # Google OAuth client ID
+VITE_API_URL=<backend-api-url>         # Backend API URL
+```
+
+### Running the Application
+
+```bash
+# Run both server and client in development mode
 npm run dev
 
 # Build for production
 npm run build
+
+# Start production server
+npm run start
 ```
 
 ## 🐳 Docker
 
-CodeLinesJS jest w pełni skonteneryzowany, co umożliwia łatwe uruchomienie aplikacji w różnych środowiskach.
+CodeLinesJS is fully containerized, allowing easy deployment across different environments.
 
-### Uruchamianie za pomocą Docker Compose
+### Running with Docker Compose
 
 ```bash
-# Uruchomienie całej aplikacji
+# Run the entire application
 docker-compose up -d
 
-# Sprawdzenie logów
+# Check logs
 docker-compose logs -f
 
-# Zatrzymanie usług
+# Stop services
 docker-compose down
 ```
 
-### Dostępne obrazy Docker
+### Available Docker Images
 
-- `codelinesjs-client` - Frontend React
-- `codelinesjs-server` - Backend API
-- `mongo` - Baza danych MongoDB
+- `codelinesjs-client` - React Frontend
+- `codelinesjs-server` - Express Backend API
+- `mongo` - MongoDB Database
 
-### Budowanie własnych obrazów
+### Building Custom Images
 
 ```bash
-# Budowanie obrazu klienta
+# Build client image
 docker build -t codelinesjs-client -f Dockerfile.client .
 
-# Budowanie obrazu serwera
+# Build server image
 docker build -t codelinesjs-server -f Dockerfile.server .
 
-# Budowanie monolitycznego obrazu (zawierającego klienta i serwer)
+# Build monolithic image (containing both client and server)
 docker build -t codelinesjs .
 ```
 
 ## ☸️ Kubernetes
 
-Projekt zawiera pełną konfigurację Kubernetes, umożliwiającą wdrożenie w środowisku klastrowym.
+The project includes full Kubernetes configuration, enabling deployment in a cluster environment.
 
-### Struktura konfiguracji
+### Configuration Structure
 
 ```
 kubernetes/
-├── base/                     # Podstawowe manifesty
-│   ├── namespace.yaml        # Namespace dla aplikacji
-│   ├── mongodb.yaml          # Baza danych MongoDB
+├── base/                     # Base manifests
+│   ├── namespace.yaml        # Application namespace
+│   ├── mongodb.yaml          # MongoDB database
 │   ├── server.yaml           # Backend API
-│   ├── client.yaml           # Frontend React
-│   ├── ingress.yaml          # Ingress dla dostępu zewnętrznego
-│   └── cert-manager.yaml     # Konfiguracja certyfikatów SSL
+│   ├── client.yaml           # React Frontend
+│   ├── ingress.yaml          # Ingress for external access
+│   └── cert-manager.yaml     # SSL certificate configuration
 │
-└── overlays/                 # Nakładki dla różnych środowisk
-    ├── dev/                  # Środowisko deweloperskie
-    └── prod/                 # Środowisko produkcyjne
+└── overlays/                 # Overlays for different environments
+    ├── dev/                  # Development environment
+    └── prod/                 # Production environment
 ```
 
-### Wdrażanie na Kubernetes
+### Deploying to Kubernetes
 
 ```bash
-# Wdrażanie w środowisku deweloperskim
+# Deploy to development environment
 cd kubernetes && ./deploy.sh dev
 
-# Wdrażanie w środowisku produkcyjnym
+# Deploy to production environment
 cd kubernetes && ./deploy.sh prod
 ```
 
-### Wymagania
+### Requirements
 
-- Klaster Kubernetes (np. minikube, EKS, GKE, AKS)
-- kubectl i kustomize
-- Ingress-nginx i cert-manager (dla HTTPS)
+- Kubernetes cluster (e.g., minikube, EKS, GKE, AKS)
+- kubectl and kustomize
+- Ingress-nginx and cert-manager (for HTTPS)
 
-Więcej informacji w dokumentacji w katalogu `kubernetes/`.
+More information in the documentation in the `kubernetes/` directory.
 
 ## 📁 Project Structure
 
 ```
-src/
-├── components/         # React components
-│   ├── Auth/          # Authentication components
-│   ├── Dashboard/     # Dashboard and related components
-│   ├── Game/          # Game-related components
-│   └── UI/            # Shared UI components
-├── hooks/             # Custom hooks
-├── context/           # Context API state management
-├── services/          # External services (API, Firebase, etc.)
-└── utils/             # Utility functions
+CodeLinesJS/
+├── client/                    # Frontend application
+│   ├── src/
+│   │   ├── components/        # React components
+│   │   │   ├── Auth/          # Authentication components
+│   │   │   ├── Dashboard/     # Dashboard components
+│   │   │   ├── Game/          # Game-related components
+│   │   │   └── UI/            # Shared UI components
+│   │   ├── hooks/             # Custom React hooks
+│   │   ├── context/           # Context API state management
+│   │   ├── services/          # External services integration
+│   │   ├── utils/             # Utility functions
+│   │   ├── api/               # API client and service functions
+│   │   ├── types/             # TypeScript type definitions
+│   │   └── assets/            # Static assets and images
+│   ├── public/                # Public assets
+│   └── tests/                 # Frontend tests
+│
+├── server/                    # Backend application
+│   ├── src/
+│   │   ├── api/               # API endpoints
+│   │   │   └── controllers/   # Route controllers
+│   │   ├── models/            # Database models
+│   │   ├── services/          # Business logic
+│   │   ├── middleware/        # Express middleware
+│   │   ├── utils/             # Utility functions
+│   │   └── types/             # TypeScript type definitions
+│   ├── docs/                  # API documentation
+│   └── tests/                 # Backend tests
+│
+├── kubernetes/                # Kubernetes configuration
+├── .github/                   # GitHub Actions CI/CD pipeline
+└── docker-compose.yml         # Docker Compose configuration
 ```
 
 ## 🧪 Running Tests
 
 ```bash
-# Run unit tests
+# Run all tests
 npm run test
 
 # Run end-to-end tests
 npm run test:e2e
 
-# Run unit tests only
+# Run unit tests
 npm run test:unit
+
+# Run specific test suite
+npm run test -- -t "auth tests"
 ```
+
+## 📚 API Documentation
+
+The API documentation is available at `/api/docs` when running the server. It includes details about all endpoints, request/response formats, and authentication requirements.
+
+## 🔒 Security Features
+
+- JWT-based authentication
+- Password hashing with bcrypt
+- CORS protection
+- Rate limiting
+- Input validation and sanitization
+- Secure HTTP headers
 
 ## 📝 License
 
