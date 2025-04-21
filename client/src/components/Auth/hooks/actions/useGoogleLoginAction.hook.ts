@@ -28,6 +28,7 @@ export const useGoogleLoginAction = (state: AuthState) => {
         rememberMe,
       });
 
+
       if (response.error) {
         throw new Error(response.error);
       }
@@ -36,7 +37,7 @@ export const useGoogleLoginAction = (state: AuthState) => {
         throw new Error('Nieznany błąd logowania przez Google. Spróbuj ponownie później.');
       }
 
-      const responseData = response.data.data;
+      const responseData = response.data;
       const token = responseData.token;
       
       const user = responseData.user || (responseData.user && responseData.user.user);

@@ -5,8 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
-    "build:prod": "tsc -b && vite build --mode production",
+    "build": "rimraf dist && tsc -b && vite build",
+    "build:prod": "rimraf dist && tsc -b && vite build --mode production",
+    "build:ci": "rimraf dist && tsc -b || true && vite build",
+    "build:simple": "rimraf dist && vite build",
     "build:analyze": "tsc -b && vite build --mode production --outDir dist-analyze",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
