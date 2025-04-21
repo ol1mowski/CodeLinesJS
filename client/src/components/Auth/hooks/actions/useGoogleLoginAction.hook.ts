@@ -54,7 +54,8 @@ export const useGoogleLoginAction = (state: AuthState) => {
       setIsAuthenticated(true);
       navigate('/dashboard');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Wystąpił błąd podczas logowania przez Google');
+      const errorMessage = err instanceof Error ? err.message : 'Wystąpił błąd podczas logowania przez Google';
+      setError(errorMessage);
       setIsAuthenticated(false);
     } finally {
       setLoading(false);
