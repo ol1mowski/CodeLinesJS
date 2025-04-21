@@ -22,6 +22,12 @@ export const usePreferencesForm = ({ onSubmit, defaultValues }: UsePreferencesFo
       pushNotifications: false,
       language: 'pl',
     },
+    mode: 'onChange',
+    reValidateMode: 'onChange',
+    resetOptions: {
+      keepDirtyValues: true,
+      keepValues: true,
+    }
   });
 
   const handleSubmit = form.handleSubmit(async data => {

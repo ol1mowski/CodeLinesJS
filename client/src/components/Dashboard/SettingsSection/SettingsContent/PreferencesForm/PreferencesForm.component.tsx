@@ -20,12 +20,17 @@ export const PreferencesForm = memo(() => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isDirty) {
-      toast.success('Nie wprowadzono żadnych zmian');
-      return;
-    }
     
-    await handleFormSubmit(e);
+    try {
+      await handleFormSubmit(e);
+    } catch (error) {
+      console.error('Błąd podczas zapisywania preferencji:', error);
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error('Wystąpił nieznany błąd podczas zapisywania preferencji');
+      }
+    }
   };
 
   if (isLoading) {
@@ -33,26 +38,17 @@ export const PreferencesForm = memo(() => {
   }
 
   return (
-    <>
-      {isSaved && !isDirty && (
-        <div className="bg-green-500/10 border border-green-500/20 text-green-400 px-4 py-2 rounded-lg mb-4 flex items-center">
-          <span className="mr-2">✓</span>
-          Twoje preferencje zostały zaktualizowane pomyślnie
-        </div>
-      )}
-      
-      <PreferencesFormContent
-        register={register}
-        formValues={formValues}
-        setValue={setValue}
-        onSubmit={handleSubmit}
-        onCancel={handleCancel}
-        isSubmitting={isSubmitting}
-        isPending={isPending}
-        isDirty={isDirty}
-        isSaved={isSaved}
-      />
-    </>
+    <PreferencesFormContent
+      register={register}
+      formValues={formValues}
+      setValue={setValue}
+      onSubmit={handleSubmit}
+      onCancel={handleCancel}
+      isSubmitting={isSubmitting}
+      isPending={isPending}
+      isDirty={isDirty}
+      isSaved={isSaved}
+    />
   );
 });
 

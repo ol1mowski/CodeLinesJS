@@ -27,7 +27,6 @@ export const PreferencesFormContent = memo(
     onCancel,
     isSubmitting,
     isPending,
-    isDirty = false,
   }: PreferencesFormContentProps) => (
     <motion.form
       onSubmit={onSubmit}
@@ -52,7 +51,7 @@ export const PreferencesFormContent = memo(
         isSubmitting={isSubmitting || isPending}
         submitText="Zapisz preferencje"
         loadingText="Zapisywanie"
-        disabled={!isDirty || isSubmitting}
+        disabled={isSubmitting}
       />
     </motion.form>
   )

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { usePreferencesForm } from './usePreferencesForm';
 import { usePreferences } from './usePreferences';
 import { toast } from 'react-hot-toast';
+import { PreferencesError } from '../api/preferences';
 
 export const usePreferencesFormLogic = () => {
   const { preferences, isLoading, updatePreferences, refetch } = usePreferences();
@@ -17,12 +18,19 @@ export const usePreferencesFormLogic = () => {
           pushNotifications: data.pushNotifications,
           language: 'pl',
         });
-        // Toast jest obsługiwany w usePreferences
+        
         setIsSaved(true);
-        refetch();
+        await refetch();
       } catch (error) {
-        // Błędy są obsługiwane w usePreferences
         console.error('Błąd w usePreferencesFormLogic:', error);
+        
+        if (error instanceof PreferencesError) {
+          throw error;
+        } else if (error instanceof Error) {
+          throw new Error(error.message || 'Wystąpił błąd podczas aktualizacji preferencji');
+        } else {
+          throw new Error('Wystąpił nieznany błąd podczas aktualizacji preferencji');
+        }
       } finally {
         setIsSubmitting(false);
       }
@@ -36,6 +44,7 @@ export const usePreferencesFormLogic = () => {
     watch,
     reset,
   } = form;
+  
   const formValues = watch();
   
   useEffect(() => {
@@ -64,6 +73,7 @@ export const usePreferencesFormLogic = () => {
         toast.success('Zmiany zostały anulowane');
       }
     } catch (error) {
+      console.error('Błąd podczas anulowania zmian:', error);
       toast.error('Nie udało się anulować zmian');
     }
   };
