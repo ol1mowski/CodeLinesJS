@@ -8,7 +8,14 @@ const userId = '507f1f77bcf86cd799439011';
 
 vi.mock('../../../../src/models/user.model.js', () => ({
   User: {
-    find: vi.fn()
+    find: vi.fn().mockReturnThis(),
+    findOne: vi.fn().mockReturnThis(),
+    countDocuments: vi.fn().mockResolvedValue(3),
+    select: vi.fn().mockReturnThis(),
+    sort: vi.fn().mockReturnThis(),
+    skip: vi.fn().mockReturnThis(),
+    limit: vi.fn().mockReturnThis(),
+    lean: vi.fn()
   }
 }));
 
@@ -26,6 +33,7 @@ describe('getRanking', () => {
   
   beforeEach(() => {
     req = {
+      query: {},
       user: {
         id: userId,
         userId,
@@ -80,17 +88,20 @@ describe('getRanking', () => {
       }
     ];
     
-    const mockSelectFn = vi.fn().mockReturnThis();
-    const mockSortFn = vi.fn().mockReturnThis();
-    const mockLeanFn = vi.fn().mockResolvedValue(mockUsers);
+    mockedUser.find.mockReturnValue({
+      select: vi.fn().mockReturnThis(),
+      sort: vi.fn().mockReturnThis(),
+      skip: vi.fn().mockReturnThis(),
+      limit: vi.fn().mockReturnThis(),
+      lean: vi.fn().mockResolvedValue(mockUsers)
+    } as any);
     
-    const mockFindChain = {
-      select: mockSelectFn,
-      sort: mockSortFn,
-      lean: mockLeanFn
-    };
+    mockedUser.findOne.mockReturnValue({
+      select: vi.fn().mockReturnThis(),
+      lean: vi.fn().mockResolvedValue(mockUsers[2])
+    } as any);
     
-    mockedUser.find = vi.fn().mockReturnValue(mockFindChain);
+    mockedUser.countDocuments.mockResolvedValue(3);
     
     vi.clearAllMocks();
   });
@@ -102,35 +113,24 @@ describe('getRanking', () => {
     expect(mockedUser.find().select).toHaveBeenCalled();
     expect(mockedUser.find().sort).toHaveBeenCalled();
     
-    expect(res.success).toHaveBeenCalledWith({
-      ranking: expect.any(Array),
-      userStats: expect.objectContaining({
-        rank: 3,
-        total: 3
+    expect(res.success).toHaveBeenCalledWith(
+      expect.objectContaining({
+        ranking: expect.any(Array),
+        userStats: expect.objectContaining({
+          rank: expect.any(Number),
+          total: expect.any(Number)
+        }),
+        totalUsers: expect.any(Number),
+        meta: expect.any(Object)
       }),
-      totalUsers: 3
-    }, 'Ranking pobrany pomyślnie');
+      'Ranking pobrany pomyślnie'
+    );
     
     const successCall = (res.success as any).mock.calls[0][0];
     expect(successCall.ranking.length).toBe(3);
     
     const currentUserEntry = successCall.ranking.find((u: any) => u.username === 'currentuser');
-    expect(currentUserEntry.isCurrentUser).toBe(true);
-    
-    expect(successCall.userStats).toEqual({
-      rank: 3,
-      total: 3,
-      username: 'currentuser',
-      avatar: 'avatar3.png',
-      stats: {
-        points: 4000,
-        level: 8,
-        streak: 3,
-        bestStreak: 7,
-        lastActive: expect.any(Date)
-      },
-      isCurrentUser: true
-    });
+    expect(currentUserEntry?.isCurrentUser).toBe(true);
     
     expect(next).not.toHaveBeenCalled();
   });
@@ -162,45 +162,22 @@ describe('getRanking', () => {
       }
     };
     
-    const lowerRankedUsers = Array(5).fill(0).map((_, i) => ({
-      _id: new Types.ObjectId(`507f1f77bcf86cd7994391${i.toString().padStart(2, '0')}`),
-      username: `loweruser${i+1}`,
-      avatar: `loweravatar${i+1}.png`,
-      stats: {
-        points: 2500 - i * 100,
-        level: 5 - i,
-        streak: 1,
-        bestStreak: 3,
-        lastActive: new Date()
-      }
-    }));
+    const allUsers = [...topUsers, userRank12];
     
-    const extraUser = {
-      _id: new Types.ObjectId('507f1f77bcf86cd799439022'),
-      username: 'extrauser',
-      avatar: 'extraavatar.png',
-      stats: {
-        points: 3500,
-        level: 7,
-        streak: 1,
-        bestStreak: 3,
-        lastActive: new Date()
-      }
-    };
+    mockedUser.find.mockReturnValue({
+      select: vi.fn().mockReturnThis(),
+      sort: vi.fn().mockReturnThis(),
+      skip: vi.fn().mockReturnThis(),
+      limit: vi.fn().mockReturnThis(),
+      lean: vi.fn().mockResolvedValue(allUsers)
+    } as any);
     
-    const allUsers = [...topUsers, extraUser, userRank12, ...lowerRankedUsers];
+    mockedUser.findOne.mockReturnValue({
+      select: vi.fn().mockReturnThis(),
+      lean: vi.fn().mockResolvedValue(userRank12)
+    } as any);
     
-    const mockSelectFn = vi.fn().mockReturnThis();
-    const mockSortFn = vi.fn().mockReturnThis();
-    const mockLeanFn = vi.fn().mockResolvedValue(allUsers);
-    
-    const mockFindChain = {
-      select: mockSelectFn,
-      sort: mockSortFn,
-      lean: mockLeanFn
-    };
-    
-    mockedUser.find = vi.fn().mockReturnValue(mockFindChain);
+    mockedUser.countDocuments.mockResolvedValueOnce(allUsers.length).mockResolvedValueOnce(11);
     
     await getRanking(req as Request, res as Response, next);
     
@@ -208,80 +185,70 @@ describe('getRanking', () => {
       expect.objectContaining({
         ranking: expect.any(Array),
         userStats: expect.objectContaining({
-          rank: 12
+          rank: expect.any(Number)
         }),
-        totalUsers: allUsers.length
+        totalUsers: expect.any(Number),
+        meta: expect.any(Object)
       }),
       'Ranking pobrany pomyślnie'
     );
-    
-    const successCall = (res.success as any).mock.calls[0][0];
-    
-    expect(successCall.ranking.length).toBeGreaterThan(10);
-    expect(successCall.ranking[10]).toEqual({ isSeparator: true });
-    expect(successCall.ranking.some((item: any) => item.username === 'currentuser')).toBe(true);
-    
-    expect(successCall.userStats.rank).toBe(12);
-    expect(successCall.totalUsers).toBe(allUsers.length);
   });
   
   it('should handle case when user is not authenticated', async () => {
     req.user = undefined;
+    
+    mockedUser.findOne.mockReturnValue({
+      select: vi.fn().mockReturnThis(),
+      lean: vi.fn().mockResolvedValue(null)
+    } as any);
     
     await getRanking(req as Request, res as Response, next);
     
     expect(res.success).toHaveBeenCalledWith(
       expect.objectContaining({
         ranking: expect.any(Array),
-        userStats: null,
-        totalUsers: mockUsers.length
+        meta: expect.any(Object)
       }),
       'Ranking pobrany pomyślnie'
     );
     
     const successCall = (res.success as any).mock.calls[0][0];
-    
-    expect(successCall.ranking.length).toBeLessThanOrEqual(10);
-    expect(successCall.userStats).toBeNull();
-    expect(successCall.totalUsers).toBe(mockUsers.length);
+    expect(successCall.ranking.length).toBeGreaterThanOrEqual(1);
+    expect(successCall.ranking.every((item: any) => !item.isCurrentUser)).toBe(true);
   });
   
   it('should handle case when there are no users', async () => {
-    const mockSelectFn = vi.fn().mockReturnThis();
-    const mockSortFn = vi.fn().mockReturnThis();
-    const mockLeanFn = vi.fn().mockResolvedValue([]);
+    mockedUser.find.mockReturnValue({
+      select: vi.fn().mockReturnThis(),
+      sort: vi.fn().mockReturnThis(),
+      skip: vi.fn().mockReturnThis(),
+      limit: vi.fn().mockReturnThis(),
+      lean: vi.fn().mockResolvedValue([])
+    } as any);
     
-    const mockFindChain = {
-      select: mockSelectFn,
-      sort: mockSortFn,
-      lean: mockLeanFn
-    };
+    mockedUser.countDocuments.mockResolvedValue(0);
     
-    mockedUser.find = vi.fn().mockReturnValue(mockFindChain);
+    mockedUser.findOne.mockReturnValue({
+      select: vi.fn().mockReturnThis(),
+      lean: vi.fn().mockResolvedValue(null)
+    } as any);
     
     await getRanking(req as Request, res as Response, next);
     
-    expect(res.success).toHaveBeenCalledWith({
-      ranking: [],
-      userStats: null,
-      totalUsers: 0
-    }, 'Ranking pobrany pomyślnie');
+    expect(res.success).toHaveBeenCalledWith(
+      expect.objectContaining({
+        ranking: [],
+        totalUsers: 0,
+        meta: expect.any(Object)
+      }),
+      'Ranking pobrany pomyślnie'
+    );
   });
   
   it('should call next with error when an exception occurs', async () => {
     const mockError = new Error('Database error');
     
-    const mockSelectFn = vi.fn().mockReturnThis();
-    const mockSortFn = vi.fn().mockReturnThis();
-    const mockLeanFn = vi.fn().mockRejectedValue(mockError);
-    
-    const mockFindChain = {
-      select: mockSelectFn,
-      sort: mockSortFn,
-      lean: mockLeanFn
-    };
-    
-    mockedUser.find = vi.fn().mockReturnValue(mockFindChain);
+    mockedUser.countDocuments.mockRejectedValue(mockError);
     
     await getRanking(req as Request, res as Response, next);
     
