@@ -12,10 +12,14 @@ interface RankingItemProps {
 export const RankingItem = memo(({ user, index, animationDelay = 0.1 }: RankingItemProps) => {
   const position = user.position ?? index + 1;
   const rankClass = position <= 3 ? 'text-yellow-500' : 'text-gray-400';
+  
+  const currentUserClasses = user.isCurrentUser 
+    ? 'border-js ring-2 ring-js/30 bg-js/5 shadow-lg' 
+    : 'border-js/5 hover:border-js/10';
 
   return (
     <div 
-      className="bg-dark-card/50 backdrop-blur-sm rounded-lg border border-js/5 p-4 hover:border-js/10 transition-all flex items-center justify-between"
+      className={`backdrop-blur-sm rounded-lg border p-4 transition-all flex items-center justify-between ${currentUserClasses}`}
       style={{ 
         animation: `fadeIn 0.5s ease-out ${animationDelay * (index + 1)}s both`,
       }}
@@ -28,8 +32,7 @@ export const RankingItem = memo(({ user, index, animationDelay = 0.1 }: RankingI
         
         <div className="flex items-center space-x-3">
           <UserAvatar 
-            username={user.username} 
-            avatar={user.avatar} 
+            username={user.username}
             size="md"
             className={position <= 3 ? 'ring-2 ring-yellow-500/30' : ''}
           />
@@ -38,7 +41,7 @@ export const RankingItem = memo(({ user, index, animationDelay = 0.1 }: RankingI
             <div className="font-medium text-lg text-white">
               {user.username}
               {user.isCurrentUser && (
-                <span className="ml-2 text-xs font-medium bg-js/10 text-js px-2 py-0.5 rounded">
+                <span className="ml-2 text-xs font-medium bg-js/20 text-js px-2 py-0.5 rounded">
                   Ty
                 </span>
               )}
