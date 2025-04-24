@@ -10,9 +10,13 @@ interface RankingItemProps {
 }
 
 export const RankingItem = memo(({ user, index, animationDelay = 0.1 }: RankingItemProps) => {
+  if (!user) {
+    return null;
+  }
+
   const position = user.position || index + 1;
-  const points = user.stats?.points || user.points;
-  const level = user.stats?.level || user.level;
+  const points = user.stats?.points ?? user.points ?? 0;
+  const level = user.stats?.level ?? user.level ?? 0;
 
   return (
     <motion.div
@@ -43,7 +47,7 @@ export const RankingItem = memo(({ user, index, animationDelay = 0.1 }: RankingI
         </div>
 
         <div className="flex-1">
-          <div className="font-bold text-gray-200">{user.username}</div>
+          <div className="font-bold text-gray-200">{user.username || 'Nieznany użytkownik'}</div>
           <div className="text-sm text-gray-400">
             Poziom {level} • {points} punktów
           </div>

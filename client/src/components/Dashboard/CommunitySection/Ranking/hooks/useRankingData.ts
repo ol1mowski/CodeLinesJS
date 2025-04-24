@@ -9,7 +9,7 @@ interface ProcessedUserStats {
 }
 
 export const useRankingData = () => {
-  const { data, ranking, userStats, isLoading, error } = useRanking();
+  const { data, ranking, userStats, isLoading, error, pagination } = useRanking();
 
   const users = useMemo(() => {
     if (ranking && ranking.length > 0) {
@@ -51,5 +51,6 @@ export const useRankingData = () => {
     currentUserStats,
     isLoading,
     error,
+    pagination,
   };
 };

@@ -9,7 +9,9 @@ interface UserAvatarProps {
 
 export const UserAvatar = memo(
   ({ username, avatar, size = 'md', className = '' }: UserAvatarProps) => {
-    const firstLetter = username.charAt(0).toUpperCase();
+    const firstLetter = username && typeof username === 'string' 
+      ? username.charAt(0).toUpperCase() 
+      : '?';
 
     const dimensions = {
       sm: 'w-8 h-8',
