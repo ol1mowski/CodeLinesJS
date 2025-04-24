@@ -7,6 +7,7 @@ export interface RankingUser {
   avatar: string | null;
   position: number;
   rank: string;
+  isCurrentUser?: boolean;
   progress: {
     currentPoints: number;
     nextRankPoints: number;
@@ -25,10 +26,17 @@ export interface RankingResponse {
     rank: number;
     total: number;
     username: string;
+    avatar: string | null;
     stats: {
       level: number;
       points: number;
     };
     isCurrentUser: boolean;
+  };
+  meta: {
+    page: number;
+    limit: number;
+    totalPages: number;
+    totalResults: number;
   };
 } 

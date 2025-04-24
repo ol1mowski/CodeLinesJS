@@ -1,7 +1,15 @@
 import { API_URL } from '../../../../../config/api.config';
 import { RankingResponse } from '../types/ranking.types';
 
-export const fetchRanking = async (token: string): Promise<{
+interface FetchRankingParams {
+  page?: number;
+  limit?: number;
+}
+
+export const fetchRanking = async (
+  token: string, 
+  params: FetchRankingParams = { page: 1, limit: 10 }
+): Promise<{
   status: string;
   code: number;
   message: string;
@@ -13,7 +21,14 @@ export const fetchRanking = async (token: string): Promise<{
   }
 
   try {
-    const response = await fetch(`${API_URL}ranking`, {
+    // Dodajemy parametry paginacji do URL
+    const queryParams = new URLSearchParams();
+    if (params.page) queryParams.append('page', params.page.toString());
+    if (params.limit) queryParams.append('limit', params.limit.toString());
+    
+    const url = `${API_URL}ranking?${queryParams.toString()}`;
+    
+    const response = await fetch(url, {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -43,7 +58,6 @@ export const fetchRanking = async (token: string): Promise<{
 
     return await response.json();
   } catch (error) {
-    console.error('Błąd pobierania rankingu:', error);
     throw error instanceof Error ? error : new Error('Nieznany błąd podczas pobierania rankingu');
   }
 }; 

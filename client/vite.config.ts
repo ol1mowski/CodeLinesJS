@@ -18,11 +18,12 @@ export default defineConfig(() => {
       }),
       splitVendorChunkPlugin(),
       compression({ algorithm: 'gzip' }),
-      visualizer({
+      process.env.ANALYZE === 'true' && visualizer({
         open: false,
         gzipSize: true,
+        filename: '.stats-temp/stats.html'
       })
-    ],
+    ].filter(Boolean),
     server: {
       host: '0.0.0.0',
       port: 3000,

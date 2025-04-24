@@ -6,22 +6,25 @@ interface ProcessedUserStats {
   rank: number | string;
   level: number | string;
   points: number | string;
+  avatar?: string | null;
 }
 
 export const useRankingData = () => {
-  const { data, ranking, userStats, isLoading, error } = useRanking();
+  const { 
+    ranking, 
+    userStats, 
+    isLoading, 
+    error, 
+    page, 
+    totalPages, 
+    nextPage, 
+    prevPage, 
+    goToPage 
+  } = useRanking();
 
   const users = useMemo(() => {
-    if (ranking && ranking.length > 0) {
-      return ranking;
-    }
-
-    if (data && 'ranking' in data) {
-      return data.ranking;
-    }
-
-    return [];
-  }, [ranking, data]);
+    return ranking || [];
+  }, [ranking]);
 
   const currentUserStats = useMemo<ProcessedUserStats | null>(() => {
     if (userStats) {
@@ -30,26 +33,28 @@ export const useRankingData = () => {
         rank: userStats.rank,
         level: userStats.stats?.level || '-',
         points: userStats.stats?.points || '-',
+        avatar: userStats.avatar
       };
     }
-
-    if (data && 'userStats' in data) {
-      const stats = data.userStats;
-      return {
-        username: stats.username,
-        rank: stats.rank,
-        level: stats.stats?.level || '-',
-        points: stats.stats?.points || '-',
-      };
-    }
-
     return null;
-  }, [userStats, data]);
+  }, [userStats]);
+
+  const paginationData = useMemo(() => ({
+    page,
+    totalPages,
+    hasNextPage: page < totalPages,
+    hasPrevPage: page > 1,
+    nextPage,
+    prevPage,
+    goToPage,
+    isLoadingPage: isLoading && !!users.length,
+  }), [page, totalPages, nextPage, prevPage, goToPage, isLoading, users.length]);
 
   return {
     users,
     currentUserStats,
     isLoading,
     error,
+    pagination: paginationData,
   };
 };

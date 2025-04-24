@@ -1,49 +1,97 @@
 import { useQuery } from '@tanstack/react-query';
-
-import { useAuth } from '../../../../../hooks/useAuth';
-import { fetchRanking } from '../api/fetchRanking.api';
+import { httpClient } from '../../../../../api/httpClient.api';
 import { RankingResponse, RankingUser } from '../types/ranking.types';
+import { useState } from 'react';
 
-const RANKING_QUERY_KEY = 'ranking';
+export interface UseRankingResult {
+  ranking: RankingUser[] | undefined;
+  totalUsers: number;
+  userStats: RankingResponse['userStats'] | undefined;
+  isLoading: boolean;
+  error: Error | null;
+  page: number;
+  limit: number;
+  nextPage: () => void;
+  prevPage: () => void;
+  goToPage: (page: number) => void;
+  totalPages: number;
+  pagination: {
+    page: number;
+    limit: number;
+    totalItems: number;
+    totalPages: number;
+  } | null;
+}
 
-export type { RankingResponse, RankingUser };
-
-export const useRanking = () => {
-  const { token } = useAuth();
+export const useRanking = (
+  initialPage = 1,
+  initialLimit = 10
+): UseRankingResult => {
+  const [page, setPage] = useState(initialPage);
+  const limit = initialLimit;
 
   const {
-    data,
+    data: response,
     isLoading,
     error,
-    refetch,
-  } = useQuery<{
-    status: string;
-    code: number;
-    message: string;
-    data: RankingResponse;
-    meta: any;
-  }, Error>({
-    queryKey: [RANKING_QUERY_KEY],
-    queryFn: () => fetchRanking(token || ''),
-    staleTime: 5 * 60 * 1000, // 5 minut
-    retry: (failureCount, error) => {
-      return failureCount < 3 && !error.message.includes('autoryzacji');
+  } = useQuery({
+    queryKey: ['ranking', page, limit],
+    queryFn: async () => {
+      const response = await httpClient.get<RankingResponse>(
+        `ranking?page=${page}&limit=${limit}`, 
+        { requiresAuth: true }
+      );
+
+      if (response.error) {
+        throw new Error(response.error);
+      }
+
+      return response;
     },
-    enabled: !!token,
   });
 
-  const rankingData = data?.data;
-  const ranking = rankingData?.ranking || [];
-  const totalUsers = rankingData?.totalUsers || 0;
-  const userStats = rankingData?.userStats || null;
+  const responseData = response?.data;
   
+  const ranking = responseData?.ranking;
+  const totalUsers = responseData?.totalUsers || 0;
+  const meta = responseData?.meta;
+  const totalPages = meta?.totalPages || Math.ceil(totalUsers / limit);
+
+  const nextPage = () => {
+    if (page < totalPages) {
+      setPage((prev) => prev + 1);
+    }
+  };
+
+  const prevPage = () => {
+    if (page > 1) {
+      setPage((prev) => prev - 1);
+    }
+  };
+
+  const goToPage = (pageNumber: number) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setPage(pageNumber);
+    }
+  };
+
   return {
-    data: rankingData,
     ranking,
     totalUsers,
-    userStats,
+    userStats: responseData?.userStats,
     isLoading,
-    error,
-    refetch,
+    error: error as Error | null,
+    page,
+    limit,
+    nextPage,
+    prevPage,
+    goToPage,
+    totalPages,
+    pagination: meta ? {
+      page: meta.page,
+      limit: meta.limit,
+      totalItems: meta.totalResults,
+      totalPages: meta.totalPages
+    } : null
   };
 };
