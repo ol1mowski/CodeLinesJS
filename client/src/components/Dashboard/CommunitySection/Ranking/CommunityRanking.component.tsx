@@ -7,8 +7,12 @@ import { LoadingSpinner } from '../../../../components/UI/LoadingSpinner/Loading
 const CommunityRanking = memo(() => {
   const { users, currentUserStats, isLoading, error, pagination } = useRankingData();
 
-  if (isLoading && !pagination.page) {
-    return <LoadingSpinner text="Ładowanie rankingu..." />;
+  if (isLoading && (!users || users.length === 0)) {
+    return (
+      <div className="flex items-center justify-center min-h-[300px]">
+        <LoadingSpinner text="Ładowanie rankingu..." size="lg" />
+      </div>
+    );
   }
 
   if (error) {
@@ -40,7 +44,13 @@ const CommunityRanking = memo(() => {
               </div>
             )}
           </div>
-          <RankingList users={users} pagination={pagination} />
+          {isLoading && pagination.page ? (
+            <div className="py-8 flex items-center justify-center">
+              <LoadingSpinner text="Ładowanie danych..." />
+            </div>
+          ) : (
+            <RankingList users={users} pagination={pagination} />
+          )}
         </div>
       </div>
       <div className="space-y-6">
