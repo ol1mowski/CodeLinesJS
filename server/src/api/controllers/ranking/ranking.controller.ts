@@ -4,17 +4,58 @@ import { Request, Response, NextFunction } from 'express';
 export const getRanking = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.userId;
+    
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    
+    const validPage = page > 0 ? page : 1;
+    const validLimit = limit > 0 && limit <= 50 ? limit : 10;
+    
+    const skip = (validPage - 1) * validLimit;
+
+    const totalUsers = await User.countDocuments();
 
     const users = await User.find({})
-      .select('username stats.points stats.level stats.streak stats.bestStreak stats.lastActive')
+      .select('username stats.points stats.level stats.streak stats.bestStreak stats.lastActive avatar')
       .sort({ 'stats.level': -1, 'stats.points': -1 })
+      .skip(skip)
+      .limit(validLimit)
       .lean();
 
-    const userRankIndex = users.findIndex(user => user._id.toString() === userId);
-    const userRank = userRankIndex !== -1 ? userRankIndex + 1 : null;
+    const userRankDoc = await User.findOne({ _id: userId })
+      .select('username stats.points stats.level');
+      
+    let userRank = null;
+    let userRankData = null;
+    
+    if (userRankDoc) {
+      const betterUsers = await User.countDocuments({
+        $or: [
+          { 'stats.level': { $gt: userRankDoc.stats?.level || 1 } },
+          { 
+            'stats.level': userRankDoc.stats?.level || 1,
+            'stats.points': { $gt: userRankDoc.stats?.points || 0 }
+          }
+        ]
+      });
+      
+      userRank = betterUsers + 1;
+      
+      userRankData = {
+        rank: userRank,
+        total: totalUsers,
+        username: userRankDoc.username,
+        avatar: userRankDoc.avatar,
+        stats: {
+          points: userRankDoc.stats?.points || 0,
+          level: userRankDoc.stats?.level || 1,
+        },
+        isCurrentUser: true
+      };
+    }
 
     const formattedUsers = users.map((user, index) => ({
-      rank: index + 1,
+      rank: skip + index + 1,
       username: user.username,
       avatar: user.avatar,
       stats: {
@@ -27,25 +68,18 @@ export const getRanking = async (req: Request, res: Response, next: NextFunction
       isCurrentUser: user._id.toString() === userId
     }));
 
-    let rankingToReturn = formattedUsers.slice(0, 10);
-
-    if (userRank > 10) {
-
-      rankingToReturn.push({ isSeparator: true } as any);
-      
-      const start = Math.max(userRankIndex - 2, 10);
-      const end = Math.min(userRankIndex + 3, users.length);
-      rankingToReturn = rankingToReturn.concat(formattedUsers.slice(start, end));
-    }
+    const totalPages = Math.ceil(totalUsers / validLimit);
 
     res.success({
-      ranking: rankingToReturn,
-      userStats: userRank ? {
-        rank: userRank,
-        total: users.length,
-        ...formattedUsers[userRankIndex]
-      } : null,
-      totalUsers: users.length
+      ranking: formattedUsers,
+      userStats: userRankData,
+      totalUsers: totalUsers,
+      meta: {
+        page: validPage,
+        limit: validLimit,
+        totalPages: totalPages,
+        totalResults: totalUsers
+      }
     }, 'Ranking pobrany pomyślnie');
 
   } catch (error) {

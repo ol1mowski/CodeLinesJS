@@ -58,7 +58,6 @@ export const fetchRanking = async (
 
     return await response.json();
   } catch (error) {
-    console.error('Błąd pobierania rankingu:', error);
     throw error instanceof Error ? error : new Error('Nieznany błąd podczas pobierania rankingu');
   }
 }; 

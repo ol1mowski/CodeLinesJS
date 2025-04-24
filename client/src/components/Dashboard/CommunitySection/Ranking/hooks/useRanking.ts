@@ -1,82 +1,97 @@
 import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
-import { useAuth } from '../../../../../hooks/useAuth';
-import { fetchRanking } from '../api/fetchRanking.api';
+import { httpClient } from '../../../../../api/httpClient.api';
 import { RankingResponse, RankingUser } from '../types/ranking.types';
+import { useState } from 'react';
 
-const RANKING_QUERY_KEY = 'ranking';
+export interface UseRankingResult {
+  ranking: RankingUser[] | undefined;
+  totalUsers: number;
+  userStats: RankingResponse['userStats'] | undefined;
+  isLoading: boolean;
+  error: Error | null;
+  page: number;
+  limit: number;
+  nextPage: () => void;
+  prevPage: () => void;
+  goToPage: (page: number) => void;
+  totalPages: number;
+  pagination: {
+    page: number;
+    limit: number;
+    totalItems: number;
+    totalPages: number;
+  } | null;
+}
 
-export type { RankingResponse, RankingUser };
-
-export const useRanking = () => {
-  const { token } = useAuth();
-  const [page, setPage] = useState(1);
-  const [limit] = useState(10); // Stała wartość, można dodać opcję zmiany
+export const useRanking = (
+  initialPage = 1,
+  initialLimit = 10
+): UseRankingResult => {
+  const [page, setPage] = useState(initialPage);
+  const limit = initialLimit;
 
   const {
-    data,
+    data: response,
     isLoading,
     error,
-    refetch,
-    isFetching,
-    isPending
   } = useQuery({
-    queryKey: [RANKING_QUERY_KEY, page, limit],
-    queryFn: () => fetchRanking(token || '', { page, limit }),
-    staleTime: 5 * 60 * 1000, // 5 minut
-    retry: (failureCount, error) => {
-      return failureCount < 3 && !error.message.includes('autoryzacji');
+    queryKey: ['ranking', page, limit],
+    queryFn: async () => {
+      const response = await httpClient.get<RankingResponse>(
+        `ranking?page=${page}&limit=${limit}`, 
+        { requiresAuth: true }
+      );
+
+      if (response.error) {
+        throw new Error(response.error);
+      }
+
+      return response;
     },
-    enabled: !!token,
-    placeholderData: (previousData) => previousData, // Zastępuje keepPreviousData w nowszej wersji
   });
 
-  const responseData = data;
-  const rankingData = responseData?.data;
-  const ranking = rankingData?.ranking || [];
-  const totalUsers = rankingData?.totalUsers || 0;
-  const userStats = rankingData?.userStats || null;
+  const responseData = response?.data;
   
-  // Obliczanie całkowitej liczby stron
-  const totalPages = Math.ceil(totalUsers / limit);
-  
-  // Funkcje do nawigacji między stronami
+  const ranking = responseData?.ranking;
+  const totalUsers = responseData?.totalUsers || 0;
+  const meta = responseData?.meta;
+  const totalPages = meta?.totalPages || Math.ceil(totalUsers / limit);
+
   const nextPage = () => {
     if (page < totalPages) {
-      setPage(p => p + 1);
+      setPage((prev) => prev + 1);
     }
   };
-  
+
   const prevPage = () => {
     if (page > 1) {
-      setPage(p => p - 1);
+      setPage((prev) => prev - 1);
     }
   };
-  
+
   const goToPage = (pageNumber: number) => {
     if (pageNumber >= 1 && pageNumber <= totalPages) {
       setPage(pageNumber);
     }
   };
-  
+
   return {
-    data: rankingData,
     ranking,
     totalUsers,
-    userStats,
+    userStats: responseData?.userStats,
     isLoading,
-    error,
-    refetch,
-    pagination: {
-      page,
-      limit,
-      totalPages,
-      nextPage,
-      prevPage,
-      goToPage,
-      hasNextPage: page < totalPages,
-      hasPrevPage: page > 1,
-      isLoadingPage: isFetching || isPending
-    },
+    error: error as Error | null,
+    page,
+    limit,
+    nextPage,
+    prevPage,
+    goToPage,
+    totalPages,
+    pagination: meta ? {
+      page: meta.page,
+      limit: meta.limit,
+      totalItems: meta.totalResults,
+      totalPages: meta.totalPages
+    } : null
   };
 };

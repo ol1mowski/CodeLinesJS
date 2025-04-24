@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { HiOutlineTrophy, HiArrowLeft, HiArrowRight } from 'react-icons/hi2';
-import { RankingUser } from './hooks/useRanking';
+import { RankingUser } from './types/ranking.types';
 import { RankingItem } from './components/RankingItem';
 
 interface RankingListProps {
@@ -12,6 +12,7 @@ interface RankingListProps {
     hasPrevPage: boolean;
     nextPage: () => void;
     prevPage: () => void;
+    goToPage?: (page: number) => void;
     isLoadingPage: boolean;
   };
 }
