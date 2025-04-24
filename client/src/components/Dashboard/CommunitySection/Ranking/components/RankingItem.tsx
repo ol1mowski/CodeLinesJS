@@ -7,10 +7,13 @@ interface RankingItemProps {
   user: RankingUser;
   index: number;
   animationDelay?: number;
+  page?: number;
+  limit?: number;
 }
 
-export const RankingItem = memo(({ user, index, animationDelay = 0.1 }: RankingItemProps) => {
-  const position = user.position ?? index + 1;
+export const RankingItem = memo(({ user, index, animationDelay = 0.1, page = 1, limit = 10 }: RankingItemProps) => {
+  // Używamy rank z API jeśli istnieje, w przeciwnym razie obliczamy na podstawie indexu i strony
+  const position = user.rank ? parseInt(user.rank) : (page - 1) * limit + index + 1;
   const rankClass = position <= 3 ? 'text-yellow-500' : 'text-gray-400';
   
   const currentUserClasses = user.isCurrentUser 

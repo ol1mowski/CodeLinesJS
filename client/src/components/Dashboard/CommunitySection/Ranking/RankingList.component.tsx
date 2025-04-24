@@ -14,6 +14,7 @@ interface RankingListProps {
     prevPage: () => void;
     goToPage?: (page: number) => void;
     isLoadingPage: boolean;
+    limit?: number;
   };
 }
 
@@ -27,11 +28,20 @@ export const RankingList = memo(({ users, pagination }: RankingListProps) => {
     );
   }
 
+  const currentPage = pagination?.page || 1;
+  const itemsPerPage = pagination?.limit || 10;
+
   return (
     <div>
       <div className="space-y-4">
         {users.map((user, index) => (
-          <RankingItem key={user.id || user._id || index} user={user} index={index} />
+          <RankingItem 
+            key={user.id || user._id || index} 
+            user={user} 
+            index={index} 
+            page={currentPage}
+            limit={itemsPerPage}
+          />
         ))}
       </div>
       
