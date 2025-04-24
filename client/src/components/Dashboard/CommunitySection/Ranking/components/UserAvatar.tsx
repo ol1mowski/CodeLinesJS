@@ -2,13 +2,12 @@ import { memo } from 'react';
 
 interface UserAvatarProps {
   username: string;
-  avatar?: string | null;
   size?: 'sm' | 'md' | 'lg';
   className?: string;
 }
 
 export const UserAvatar = memo(
-  ({ username, avatar, size = 'md', className = '' }: UserAvatarProps) => {
+  ({ username, size = 'md', className = '' }: UserAvatarProps) => {
     const firstLetter = username && typeof username === 'string' 
       ? username.charAt(0).toUpperCase() 
       : '?';
@@ -28,11 +27,11 @@ export const UserAvatar = memo(
     return (
       <div
         className={`
-      rounded-full bg-js/30 flex items-center justify-center text-dark
+      rounded-full bg-js flex items-center justify-center text-dark
       ${dimensions[size]} ${className}
     `}
       >
-        {avatar || <span className={`font-bold ${textSizes[size]}`}>{firstLetter}</span>}
+        <span className={`font-bold ${textSizes[size]}`}>{firstLetter}</span>
       </div>
     );
   }
