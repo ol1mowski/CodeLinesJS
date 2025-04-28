@@ -13,7 +13,7 @@ export const AuthFormSection = ({ children, title, subtitle }: AuthFormSectionPr
     {children ? (
       <div className="w-full max-w-md bg-dark/30 backdrop-blur-xl rounded-2xl p-8 border border-js/20">
         <div className="flex flex-col justify-center items-center mb-8">
-          <span className="block text-2xl bg-[#f7df1e] text-black px-2 py-1 rounded">JS</span>
+          <span className="block text-2xl bg-[#f7df1e] text-black px-2 py-1 rounded">CLJS</span>
           <h2 className="mt-2 text-xl font-bold text-js">CodeLinesJS</h2>
         </div>
 
