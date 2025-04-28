@@ -24,7 +24,7 @@ export const AuthContent = () => {
       aria-label="Formularz autoryzacji"
     >
       <div className="flex flex-col justify-center items-center mb-6">
-        <span className="block text-2xl bg-[#f7df1e] text-black px-2 py-1 rounded">JS</span>
+        <span className="block text-2xl bg-[#f7df1e] text-black px-2 py-1 rounded">CLJS</span>
         <h2 className="mt-2 text-xl font-bold text-js">CodeLinesJS</h2>
       </div>
 
