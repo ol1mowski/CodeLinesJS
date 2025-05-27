@@ -10,7 +10,7 @@ export const ChatButton = ({ isOpen, onClick, hasNewMessages }: ChatButtonProps)
   return (
     <motion.button
       onClick={onClick}
-      className="relative w-16 h-16 rounded-full shadow-lg transition-all duration-300 bg-[#f7df1e] hover:bg-yellow-400 flex items-center justify-center group font-space"
+      className="relative w-16 h-16 rounded-full shadow-lg transition-all duration-300 bg-[#f7df1e] hover:bg-yellow-400 flex items-center justify-center group font-space border-2 border-black"
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.95 }}
       initial={{ scale: 0 }}
