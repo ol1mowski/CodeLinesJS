@@ -15,19 +15,17 @@ describe('FeaturesList', () => {
     const { container } = render(<FeaturesList />);
 
     const grid = container.firstChild as HTMLElement;
-    expect(grid.classList.contains('grid')).toBe(true);
-    expect(grid.classList.contains('grid-cols-1')).toBe(true);
-    expect(grid.classList.contains('sm:grid-cols-2')).toBe(true);
+    expect(grid.classList.contains('space-y-4')).toBe(true);
+    expect(grid.classList.contains('sm:space-y-6')).toBe(true);
   });
 
   it('renders all feature items with correct texts', () => {
     render(<FeaturesList />);
 
     const expectedTexts = [
-      'Interaktywne lekcje',
-      'Wyzwania i gry',
-      'Śledzenie postępów',
+      'Szybki rozwój',
       'Społeczność',
+      'Praktyka',
     ];
 
     expectedTexts.forEach(text => {

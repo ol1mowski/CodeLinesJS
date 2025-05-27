@@ -66,9 +66,6 @@ describe('AuthFormSection', () => {
 
     const mainDiv = container.firstChild as HTMLElement;
     expect(mainDiv.classList.contains('w-full')).toBe(true);
-    expect(mainDiv.classList.contains('md:w-2/5')).toBe(true);
-
-    const bgDiv = container.querySelector('.blur-3xl');
-    expect(bgDiv).not.toBeNull();
+    expect(mainDiv.classList.contains('max-w-sm')).toBe(true);
   });
 });

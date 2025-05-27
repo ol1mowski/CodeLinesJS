@@ -4,9 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { AuthSection } from './AuthSection.component';
 import { HelmetProvider } from 'react-helmet-async';
 
-vi.mock('./AuthBackground/AuthBackground.component', () => ({
-  AuthBackground: () => <div data-testid="auth-background">Background</div>,
-}));
+
 
 vi.mock('../Common/Seo/Seo.component', () => ({
   Seo: ({ title }: { title: string }) => <div data-testid="helmet">{title}</div>,
@@ -84,8 +82,8 @@ describe('AuthSection', () => {
     const helmet = screen.getByTestId('helmet-mock');
     expect(helmet).not.toBeNull();
 
-    const background = screen.getByTestId('auth-background');
-    expect(background).not.toBeNull();
+    const formSection = screen.getByTestId('auth-form-section');
+    expect(formSection).not.toBeNull();
   });
 
   it('renders with custom title and subtitle', () => {

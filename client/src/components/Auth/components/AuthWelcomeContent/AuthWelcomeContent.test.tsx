@@ -18,7 +18,7 @@ describe('AuthWelcomeContent', () => {
     expect(headings.length).toBeGreaterThan(0);
 
     const heading = headings[0];
-    expect(heading.textContent).toBe('Odkryj JavaScript w nowy sposób');
+    expect(heading.textContent).toBe('Witaj w świecie JavaScript');
 
     const jsHighlight = heading.querySelector('span');
     expect(jsHighlight).not.toBeNull();
@@ -30,7 +30,7 @@ describe('AuthWelcomeContent', () => {
 
     const paragraph = container.querySelector('p');
     expect(paragraph).not.toBeNull();
-    expect(paragraph?.textContent).toContain('Ucz się, programuj i baw się jednocześnie');
+    expect(paragraph?.textContent).toContain('Dołącz do społeczności programistów');
     expect(paragraph?.classList.contains('text-gray-300')).toBe(true);
   });
 
