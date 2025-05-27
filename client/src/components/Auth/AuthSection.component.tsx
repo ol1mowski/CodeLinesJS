@@ -44,7 +44,7 @@ export const AuthSection = ({ children, title, subtitle }: AuthSectionProps = {}
         <meta name="description" content={getPageDescription()} />
       </Helmet>
       
-      <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-[#1e293b] via-[#334155] to-[#1e293b] items-center justify-center p-8">
+      <div className="hidden lg:flex w-1/2 bg-black items-center justify-center p-8">
         <AuthLeftSection />
       </div>
       <div className="w-full lg:w-1/2 bg-[#f7df1e] flex items-center justify-center p-4 sm:p-6 lg:p-8">
