@@ -21,17 +21,17 @@ export const GoogleLoginButton = memo(({ rememberMe }: GoogleLoginButtonProps) =
   return (
     <>
       {errorMessage && (
-        <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+        <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-600 text-sm">
           {errorMessage}
         </div>
       )}
 
-      <div className="flex flex-col items-center">
+      <div className="w-full">
         <GoogleLogin
           onSuccess={handleSuccess}
           onError={handleError}
-          theme="filled_black"
-          shape="pill"
+          theme="outline"
+          shape="rectangular"
           text="continue_with"
           locale="pl"
           useOneTap={false}

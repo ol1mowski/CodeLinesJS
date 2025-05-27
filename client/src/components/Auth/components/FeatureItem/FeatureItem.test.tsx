@@ -7,7 +7,7 @@ describe('FeatureItem', () => {
     const testText = 'Test Feature';
     render(<FeatureItem text={testText} />);
 
-    expect(screen.getByText(`✓ ${testText}`)).not.toBeNull();
+    expect(screen.getByText(testText)).not.toBeNull();
   });
 
   it('applies correct styling', () => {
@@ -15,13 +15,12 @@ describe('FeatureItem', () => {
 
     const featureDiv = container.firstChild as HTMLElement;
     expect(featureDiv.classList.contains('flex')).toBe(true);
-    expect(featureDiv.classList.contains('items-center')).toBe(true);
-    expect(featureDiv.classList.contains('bg-[#f7df1e]/10')).toBe(true);
-    expect(featureDiv.classList.contains('rounded-lg')).toBe(true);
+    expect(featureDiv.classList.contains('items-start')).toBe(true);
+    expect(featureDiv.classList.contains('gap-3')).toBe(true);
 
     const textSpan = screen.getByText(/Styling Test/) as HTMLElement;
-    expect(textSpan.classList.contains('text-[#f7df1e]')).toBe(true);
-    expect(textSpan.classList.contains('font-medium')).toBe(true);
+    expect(textSpan.classList.contains('text-white')).toBe(true);
+    expect(textSpan.classList.contains('font-semibold')).toBe(true);
   });
 
   it('changes justification based on screen size', () => {
@@ -29,6 +28,6 @@ describe('FeatureItem', () => {
 
     const featureDiv = container.firstChild as HTMLElement;
     expect(featureDiv.classList.contains('justify-center')).toBe(true);
-    expect(featureDiv.classList.contains('md:justify-start')).toBe(true);
+    expect(featureDiv.classList.contains('lg:justify-start')).toBe(true);
   });
 });

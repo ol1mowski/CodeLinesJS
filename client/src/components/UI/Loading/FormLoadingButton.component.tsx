@@ -15,7 +15,7 @@ export const FormLoadingButton = ({
   ...props
 }: FormLoadingButtonProps) => {
   const baseClasses =
-    'relative w-full bg-js hover:bg-js/90 text-black font-bold py-3 rounded-lg transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-js/20 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100';
+    'relative w-full bg-[#f7df1e] hover:bg-[#f7df1e]/90 text-black font-semibold py-2 sm:py-3 text-sm sm:text-base rounded-lg transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100';
 
   return (
     <button
@@ -27,7 +27,7 @@ export const FormLoadingButton = ({
       {isLoading ? (
         <div className="flex items-center justify-center">
           <svg
-            className="animate-spin -ml-1 mr-2 h-4 w-4 text-black"
+            className="animate-spin -ml-1 mr-2 h-3 w-3 sm:h-4 sm:w-4 text-black"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -46,7 +46,7 @@ export const FormLoadingButton = ({
               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
             ></path>
           </svg>
-          <span>{loadingText}</span>
+          <span className="text-sm sm:text-base">{loadingText}</span>
         </div>
       ) : (
         children

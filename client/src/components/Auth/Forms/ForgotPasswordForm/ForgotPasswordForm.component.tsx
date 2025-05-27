@@ -1,9 +1,8 @@
 import { FaEnvelope } from 'react-icons/fa';
 import { FormInput } from '../../../UI/Form/FormInput/FormInput.component';
-import { Button } from '../../../UI/Button/Button.component';
 import { FormWrapper } from '../../../UI/Form/FormWrapper/FormWrapper.component';
-import { ErrorAlert } from '../../../UI/Alerts/ErrorAlert.component';
-import { SuccessAlert } from '../../../UI/Alerts/SuccessAlert.component';
+import { FormError } from '../../../UI/FormError/FormError.component';
+import { FormLoadingButton } from '../../../UI/Loading/FormLoadingButton.component';
 import { useForgotPasswordForm } from './useForgotPasswordForm';
 
 const ForgotPasswordForm = () => {
@@ -12,12 +11,18 @@ const ForgotPasswordForm = () => {
 
   return (
     <FormWrapper onSubmit={handleSubmit}>
-      {errorMessage && <ErrorAlert message={errorMessage} title="Błąd resetowania hasła" />}
-      {successMessage && <SuccessAlert message={successMessage} />}
+      {errorMessage && <FormError message={errorMessage} withIcon variant="alert" title="Błąd resetowania hasła" />}
+      
+      {successMessage && (
+        <div className="p-4 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
+          <p className="font-semibold mb-1">Email wysłany!</p>
+          <p>{successMessage}</p>
+        </div>
+      )}
 
       {!successMessage && (
         <>
-          <p className="text-gray-400 text-sm mb-6">
+          <p className="text-gray-600 text-sm mb-6">
             Podaj swój adres email, a wyślemy Ci link do zresetowania hasła.
           </p>
 
@@ -30,9 +35,9 @@ const ForgotPasswordForm = () => {
             {...register('email')}
           />
 
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? 'Wysyłanie...' : 'Wyślij link resetujący'}
-          </Button>
+          <FormLoadingButton isLoading={loading} loadingText="Wysyłanie...">
+            Wyślij link resetujący
+          </FormLoadingButton>
         </>
       )}
     </FormWrapper>

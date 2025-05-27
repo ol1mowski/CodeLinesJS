@@ -37,9 +37,9 @@ describe('AuthTabs', () => {
     const registerButton = Array.from(buttons).find(b => b.textContent?.includes('Rejestracja'));
     const forgotButton = Array.from(buttons).find(b => b.textContent?.includes('Reset hasła'));
 
-    expect(loginButton?.classList.contains('bg-js/20')).toBe(false);
-    expect(registerButton?.classList.contains('bg-js/20')).toBe(true);
-    expect(forgotButton?.classList.contains('bg-js/20')).toBe(false);
+    expect(loginButton?.classList.contains('border-2')).toBe(false);
+    expect(registerButton?.classList.contains('border-2')).toBe(true);
+    expect(forgotButton?.classList.contains('border-2')).toBe(false);
   });
 
   it('calls onTabChange with correct value when tab is clicked', () => {

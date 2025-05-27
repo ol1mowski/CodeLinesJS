@@ -11,7 +11,7 @@ export const RememberMeCheckbox = memo(({ register }: RememberMeCheckboxProps) =
     <label className="flex items-center gap-2 cursor-pointer group">
       <div className="relative">
         <input type="checkbox" className="peer sr-only" {...register('rememberMe')} />
-        <div className="w-4 h-4 border border-js/30 rounded bg-dark/70 peer-checked:bg-js peer-checked:border-js transition-colors"></div>
+        <div className="w-4 h-4 border border-gray-300 rounded bg-white peer-checked:bg-[#f7df1e] peer-checked:border-[#f7df1e] transition-colors"></div>
         <div className="absolute inset-0 flex items-center justify-center text-black scale-0 peer-checked:scale-100 transition-transform">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -27,7 +27,7 @@ export const RememberMeCheckbox = memo(({ register }: RememberMeCheckboxProps) =
           </svg>
         </div>
       </div>
-      <span className="text-sm text-gray-400 group-hover:text-gray-300 transition-colors">
+      <span className="text-sm text-gray-600 group-hover:text-gray-800 transition-colors">
         Zapamiętaj mnie
       </span>
     </label>

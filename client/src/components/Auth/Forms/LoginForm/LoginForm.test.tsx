@@ -53,7 +53,7 @@ describe('LoginForm', () => {
 
     const passwordInput = container.querySelector('input[type="password"]');
     expect(passwordInput).not.toBeNull();
-    expect(passwordInput?.getAttribute('placeholder')).toBe('••••••••');
+    expect(passwordInput?.getAttribute('placeholder')).toBe('Wprowadź hasło');
 
     // Używamy querySelector na kontenerze zamiast getByRole, które może zwrócić wiele elementów
     const loginButton = container.querySelector('button[type="submit"]');

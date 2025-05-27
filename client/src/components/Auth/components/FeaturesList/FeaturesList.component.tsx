@@ -1,10 +1,21 @@
 import { FeatureItem } from '../FeatureItem/FeatureItem.component';
 
 export const FeaturesList = () => (
-  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-    <FeatureItem text="Interaktywne lekcje" />
-    <FeatureItem text="Wyzwania i gry" />
-    <FeatureItem text="Śledzenie postępów" />
-    <FeatureItem text="Społeczność" />
+  <div className="space-y-4 sm:space-y-6">
+    <FeatureItem 
+      text="Szybki rozwój" 
+      description="Naucz się nowoczesnych technologii JS"
+      icon="⚡" 
+    />
+    <FeatureItem 
+      text="Społeczność" 
+      description="Połącz się z innymi developerami"
+      icon="☕" 
+    />
+    <FeatureItem 
+      text="Praktyka" 
+      description="Rozwiązuj prawdziwe problemy"
+      icon=">" 
+    />
   </div>
 );
