@@ -9,6 +9,7 @@ import { AboutGameSection } from '../components/AboutGame/AboutGame.component';
 import { LatestNewsSection } from '../components/LatestNews/LatestNews.component';
 import { WhyThisGameSection } from '../components/WhyThisGame/WhyThisGame.component';
 import { CTASection } from '../components/CTA/CTA.component';
+import { Chat } from '../components/Chat/Chat.component';
 
 const Home = () => {
   return (
@@ -23,6 +24,7 @@ const Home = () => {
       <TestimonialsSection />
       <CTASection />
       <Footer />
+      <Chat />
     </div>
   );
 };
