@@ -3,9 +3,9 @@ import { WhyThisGameContent } from './components/WhyThisGameContent/WhyThisGameC
 
 export const WhyThisGameSection = () => (
   <section
-    id="why-this-game"
+    id="dlaczego-warto"
     className="min-h-screen w-full bg-gradient-to-b from-[#1a1a1a] via-[#242424] to-[#1a1a1a] py-16 md:py-24 relative overflow-hidden"
-    aria-labelledby="why-this-game-title"
+    aria-labelledby="dlaczego-warto-title"
   >
 
     <Container className="relative z-10">
