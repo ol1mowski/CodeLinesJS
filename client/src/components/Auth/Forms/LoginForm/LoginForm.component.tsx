@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion';
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -32,13 +31,18 @@ const LoginForm = () => {
   };
 
   return (
-    <motion.form
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+    <form
       onSubmit={handleSubmit(onSubmit)}
-      className="space-y-5"
+      className="space-y-6"
     >
       {error && <FormError message={error} withIcon variant="standard" />}
+
+      <GoogleLoginButton rememberMe={rememberMe} />
+
+      <div className="relative flex items-center justify-center my-6">
+        <div className="border-t border-gray-200 w-full"></div>
+        <span className="bg-white px-4 text-sm text-gray-500 absolute">LUB</span>
+      </div>
 
       <FormInput
         type="email"
@@ -52,7 +56,7 @@ const LoginForm = () => {
       <FormInput
         type={showPassword ? 'text' : 'password'}
         label="Hasło"
-        placeholder="••••••••"
+        placeholder="Wprowadź hasło"
         icon={<FaLock />}
         error={errors.password?.message}
         {...register('password')}
@@ -60,7 +64,7 @@ const LoginForm = () => {
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="focus:outline-none text-gray-400 hover:text-js transition-colors"
+            className="bg-white focus:outline-none hover:text-gray-600 transition-colors"
           >
             {showPassword ? <FaEyeSlash /> : <FaEye />}
           </button>
@@ -69,6 +73,12 @@ const LoginForm = () => {
 
       <div className="flex items-center justify-between">
         <RememberMeCheckbox register={register} />
+        <a 
+          href="/logowanie?mode=forgot" 
+          className="text-sm text-[#f7df1e] hover:underline font-medium"
+        >
+          Zapomniałeś hasła?
+        </a>
       </div>
 
       <div className="pt-2">
@@ -76,14 +86,7 @@ const LoginForm = () => {
           Zaloguj się
         </FormLoadingButton>
       </div>
-
-      <div className="relative flex items-center justify-center my-4">
-        <div className="border-t border-gray-600 w-full"></div>
-        <span className="bg-dark/50 px-3 text-sm text-gray-400 absolute">lub</span>
-      </div>
-
-      <GoogleLoginButton rememberMe={rememberMe} />
-    </motion.form>
+    </form>
   );
 };
 

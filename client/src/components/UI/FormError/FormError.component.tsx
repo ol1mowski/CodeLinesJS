@@ -25,7 +25,7 @@ export const FormError = memo(
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className={`p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm flex items-start ${className}`}
+          className={`p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm flex items-start ${className}`}
         >
           <FaExclamationTriangle className="mr-2 mt-0.5 flex-shrink-0" />
           <div>
@@ -40,7 +40,7 @@ export const FormError = memo(
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className={`p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm ${className} ${withIcon ? 'flex items-center' : ''}`}
+        className={`p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm ${className} ${withIcon ? 'flex items-center' : ''}`}
       >
         {withIcon && <FaExclamationTriangle className="mr-2 flex-shrink-0" />}
         <span>{message}</span>

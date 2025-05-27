@@ -1,6 +1,3 @@
-import { motion } from 'framer-motion';
-import { FaSignInAlt, FaUserPlus, FaKey } from 'react-icons/fa';
-
 type AuthMode = 'login' | 'register' | 'forgot';
 
 type AuthTabsProps = {
@@ -9,23 +6,20 @@ type AuthTabsProps = {
 };
 
 export const AuthTabs = ({ activeTab, onTabChange }: AuthTabsProps) => (
-  <div className="flex items-center justify-center gap-4 mb-8">
+  <div className="flex items-center justify-center gap-1 mb-6 sm:mb-8 bg-gray-50 rounded-lg p-1">
     <TabButton
       isActive={activeTab === 'login'}
       onClick={() => onTabChange('login')}
-      icon={<FaSignInAlt />}
       label="Logowanie"
     />
     <TabButton
       isActive={activeTab === 'register'}
       onClick={() => onTabChange('register')}
-      icon={<FaUserPlus />}
       label="Rejestracja"
     />
     <TabButton
       isActive={activeTab === 'forgot'}
       onClick={() => onTabChange('forgot')}
-      icon={<FaKey />}
       label="Reset hasła"
     />
   </div>
@@ -34,20 +28,18 @@ export const AuthTabs = ({ activeTab, onTabChange }: AuthTabsProps) => (
 type TabButtonProps = {
   isActive: boolean;
   onClick: () => void;
-  icon: React.ReactNode;
   label: string;
 };
 
-const TabButton = ({ isActive, onClick, icon, label }: TabButtonProps) => (
-  <motion.button
-    whileHover={{ scale: 1.05 }}
-    whileTap={{ scale: 0.95 }}
+const TabButton = ({ isActive, onClick, label }: TabButtonProps) => (
+  <button
     onClick={onClick}
-    className={`flex flex-col items-center gap-2 p-3 rounded-lg transition-colors ${
-      isActive ? 'bg-js/20 text-js' : 'text-gray-400 hover:text-js'
+    className={`flex-1 px-2 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-medium transition-colors duration-150 ${
+      isActive 
+        ? 'bg-white text-gray-900 border border-gray-900 border-2' 
+        : 'bg-white text-gray-900'
     }`}
   >
-    {icon}
-    <span className="text-sm font-medium">{label}</span>
-  </motion.button>
+    {label}
+  </button>
 );
