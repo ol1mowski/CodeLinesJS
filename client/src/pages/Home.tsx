@@ -16,9 +16,9 @@ const Home = () => {
       <HeroSection />
       <LatestNewsSection />
       <AboutGameSection />
-      <WhyThisGameSection />
       <TheorySection />
       <PracticeSection />
+      <WhyThisGameSection />
       <ProgressSection />
       <TestimonialsSection />
       <Footer />

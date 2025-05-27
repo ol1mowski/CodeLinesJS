@@ -6,7 +6,6 @@ export const GameDescription = () => {
 
   const content = (
     <div className="space-y-6">
-      {/* Główny tytuł */}
       <h2 
         id="why-this-game-title"
         className="text-3xl md:text-4xl lg:text-5xl font-bold text-white font-space leading-tight"
@@ -14,14 +13,12 @@ export const GameDescription = () => {
         Dlaczego nasza gra zmieni Twoje podejście do programowania?
       </h2>
 
-      {/* Pierwszy akapit */}
       <p className="text-lg md:text-xl text-gray-400 leading-relaxed">
         Stworzona przez doświadczonych programistów i edukatorów, nasza gra 
         oferuje unikalne doświadczenie nauki JavaScript poprzez praktyczne 
         wyzwania, interaktywne projekty i realistyczne scenariusze.
       </p>
 
-      {/* Drugi akapit */}
       <p className="text-lg md:text-xl text-gray-400 leading-relaxed">
         Każdy poziom został starannie zaprojektowany, aby wprowadzić nowe 
         koncepty na podstawie solidnych fundamentów programistycznych. Na tyle 
@@ -29,7 +26,6 @@ export const GameDescription = () => {
         krok po kroku.
       </p>
 
-      {/* Lista punktów */}
       <div className="space-y-4 mt-8">
         <div className="flex items-start gap-3">
           <div className="w-2 h-2 bg-[#f7df1e] rounded-full mt-3 shrink-0" />

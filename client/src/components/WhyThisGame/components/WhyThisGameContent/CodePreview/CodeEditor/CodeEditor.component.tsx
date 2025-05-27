@@ -15,24 +15,19 @@ const challenge = {
 
   return (
     <div className="bg-[#1e1e1e] rounded-lg border border-gray-700 overflow-hidden shadow-2xl">
-      {/* Header editora */}
       <div className="bg-[#2d2d2d] px-4 py-3 flex items-center gap-3 border-b border-gray-700">
-        {/* Kontrolki okna */}
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 bg-red-500 rounded-full" />
           <div className="w-3 h-3 bg-yellow-500 rounded-full" />
           <div className="w-3 h-3 bg-green-500 rounded-full" />
         </div>
         
-        {/* Nazwa pliku */}
         <div className="text-gray-300 text-sm font-mono">
           game-challenge.js
         </div>
       </div>
 
-      {/* Zawartość editora */}
       <div className="p-4 font-mono text-sm">
-        {/* Numeracja linii */}
         <div className="flex">
           <div className="text-gray-500 select-none mr-4 text-right" style={{ minWidth: '2rem' }}>
             {codeExample.split('\n').map((_, index) => (
@@ -42,7 +37,6 @@ const challenge = {
             ))}
           </div>
           
-          {/* Kod */}
           <div className="flex-1">
             <pre className="text-gray-300 leading-6">
               <code>

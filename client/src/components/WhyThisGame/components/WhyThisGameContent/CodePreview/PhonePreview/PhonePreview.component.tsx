@@ -1,11 +1,8 @@
 export const PhonePreview = () => {
   return (
     <div className="relative">
-      {/* Ramka telefonu */}
       <div className="w-64 h-[500px] bg-gray-900 rounded-[2.5rem] p-2 shadow-2xl border-4 border-gray-800">
-        {/* Ekran telefonu */}
         <div className="w-full h-full bg-[#1a1a1a] rounded-[2rem] overflow-hidden relative">
-          {/* Status bar */}
           <div className="bg-[#2d2d2d] px-4 py-2 flex justify-between items-center text-white text-xs">
             <span>9:41</span>
             <div className="flex items-center gap-1">
@@ -15,9 +12,7 @@ export const PhonePreview = () => {
             </div>
           </div>
 
-          {/* Zawartość aplikacji */}
           <div className="p-4 space-y-4">
-            {/* Header aplikacji */}
             <div className="text-center">
               <h3 className="text-[#f7df1e] font-bold text-lg font-space">
                 JavaScript Game
@@ -25,7 +20,6 @@ export const PhonePreview = () => {
               <p className="text-gray-400 text-sm">Poziom 15</p>
             </div>
 
-            {/* Wyzwanie */}
             <div className="bg-[#2d2d2d] rounded-lg p-3 border border-[#f7df1e]/20">
               <h4 className="text-white font-semibold text-sm mb-2">
                 Wyzwanie: Sortowanie
@@ -36,7 +30,6 @@ export const PhonePreview = () => {
               </p>
             </div>
 
-            {/* Postęp */}
             <div className="space-y-2">
               <div className="flex justify-between text-xs">
                 <span className="text-gray-400">Postęp</span>
@@ -47,7 +40,6 @@ export const PhonePreview = () => {
               </div>
             </div>
 
-            {/* Przyciski akcji */}
             <div className="space-y-2">
               <button className="w-full bg-[#f7df1e] text-[#1a1a1a] py-2 rounded-lg font-semibold text-sm">
                 Uruchom Kod
@@ -57,7 +49,6 @@ export const PhonePreview = () => {
               </button>
             </div>
 
-            {/* Wskazówka */}
             <div className="bg-[#f7df1e]/10 border border-[#f7df1e]/20 rounded-lg p-3">
               <p className="text-[#f7df1e] text-xs">
                 💡 Wskazówka: Użyj rekurencji do podziału tablicy
@@ -67,7 +58,6 @@ export const PhonePreview = () => {
         </div>
       </div>
 
-      {/* Efekt świetlny wokół telefonu */}
       <div className="absolute inset-0 bg-[#f7df1e] rounded-[2.5rem] blur-xl opacity-20 -z-10" />
     </div>
   );

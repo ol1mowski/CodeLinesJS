@@ -8,17 +8,14 @@ export const CodePreview = () => {
 
   const content = (
     <div className="relative">
-      {/* Editor kodu */}
       <div className="relative z-10">
         <CodeEditor />
       </div>
 
-      {/* Podgląd telefonu - pozycjonowany absolutnie */}
       <div className="absolute -bottom-8 -right-8 z-20 hidden lg:block">
         <PhonePreview />
       </div>
 
-      {/* Podgląd telefonu na mobile - pod editorem */}
       <div className="mt-8 lg:hidden">
         <PhonePreview />
       </div>
