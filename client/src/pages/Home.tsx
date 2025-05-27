@@ -7,6 +7,7 @@ import { Footer } from '../components/Footer/Footer.component';
 import { TestimonialsSection } from '../components/Testimonials/TestimonialsSection.component';
 import { AboutGameSection } from '../components/AboutGame/AboutGame.component';
 import { LatestNewsSection } from '../components/LatestNews/LatestNews.component';
+import { WhyThisGameSection } from '../components/WhyThisGame/WhyThisGame.component';
 
 const Home = () => {
   return (
@@ -15,6 +16,7 @@ const Home = () => {
       <HeroSection />
       <LatestNewsSection />
       <AboutGameSection />
+      <WhyThisGameSection />
       <TheorySection />
       <PracticeSection />
       <ProgressSection />
