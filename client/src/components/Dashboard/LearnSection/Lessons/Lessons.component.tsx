@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { ErrorMessage } from '../components/ErrorMessage.component';
-import { LoadingSpinner } from '../../../UI/LoadingSpinner/LoadingSpinner.component';
+import { LoadingScreen } from '../../../UI/LoadingScreen/LoadingScreen.component';
 import { LessonsHeader } from './LessonsHeader.component';
 import { LessonsList } from './LessonsList.component';
 import { useLessons } from '../hooks/useLessons';
@@ -25,33 +25,22 @@ export const Lessons = memo(() => {
     );
   }
 
-  if (isLoading && (!filteredLessons || filteredLessons.length === 0)) {
-    return (
-      <div className="flex items-center justify-center min-h-[300px]">
-        <LoadingSpinner text="Ładowanie lekcji..." size="lg" />
-      </div>
-    );
+  if (isLoading && !stats) {
+    return <LoadingScreen />;
   }
 
   return (
     <div className="space-y-6">
       <LessonsHeader onFilterChange={setFilter} />
-      
-      {isLoading ? (
-        <div className="py-8 flex items-center justify-center">
-          <LoadingSpinner text="Ładowanie danych..." />
-        </div>
-      ) : (
-        <LessonsList
-          lessons={filteredLessons}
-          filter={filter}
-          userId={userId}
-          userData={{
-            userLevel: userLevel,
-            requiredLevel: requiredLevel || 1,
-          }}
-        />
-      )}
+      <LessonsList
+        lessons={filteredLessons}
+        filter={filter}
+        userId={userId}
+        userData={{
+          userLevel: userLevel,
+          requiredLevel: requiredLevel || 1,
+        }}
+      />
     </div>
   );
 });

@@ -3,7 +3,6 @@ import { Container } from '../UI/Container/Container.component';
 
 import { TestimonialCard } from './components/TestimonialCard';
 import { SectionHeader } from './components/SectionHeader';
-import { SectionBackground } from './components/SectionBackground';
 import { CallToAction } from './components/CallToAction';
 import { useTestimonials } from './hooks/useTestimonials';
 
@@ -15,7 +14,6 @@ export const TestimonialsSection = memo(() => {
       id="opinie"
       className="py-20 overflow-hidden bg-gradient-to-b from-dark via-dark-medium to-dark relative"
     >
-      <SectionBackground />
 
       <Container>
         <SectionHeader title="Co mówią nasi użytkownicy" />
