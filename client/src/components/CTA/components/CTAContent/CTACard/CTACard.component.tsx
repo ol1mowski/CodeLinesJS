@@ -6,7 +6,7 @@ import { useCTAStyles } from './hooks/useCTAStyles';
 
 interface CTAButton {
   text: string;
-  action: () => void;
+  to: string;
 }
 
 interface CTACardProps {

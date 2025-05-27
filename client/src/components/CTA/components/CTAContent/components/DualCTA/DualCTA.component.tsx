@@ -11,7 +11,7 @@ export const DualCTA = () => {
         description="Tylko 3% graczy ukończyło wszystkie poziomy. Czy dołączysz do elit?"
         primaryButton={{
           text: "🏆 PRZYJMIJ WYZWANIE",
-          action: () => console.log('Accept challenge')
+          to: "/dashboard"
         }}
       />
 
@@ -23,7 +23,7 @@ export const DualCTA = () => {
         description="Naucz się podstaw w 30 minut i zacznij budować swoje pierwsze aplikacje!"
         primaryButton={{
           text: "🌟 ZACZNIJ OD PODSTAW",
-          action: () => console.log('Start basics')
+          to: "/dashboard"
         }}
       />
     </div>

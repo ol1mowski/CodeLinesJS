@@ -10,11 +10,11 @@ export const PrimaryCTA = () => {
         subtitle="Dołącz do 75,000+ graczy którzy już opanowują JavaScript przez zabawę!"
         primaryButton={{
           text: "⚡ ZACZNIJ GRAĆ ZA DARMO",
-          action: () => console.log('Start game')
+          to: "/dashboard"
         }}
         secondaryButton={{
           text: "👁️ ZOBACZ GAMEPLAY",
-          action: () => console.log('View gameplay')
+          to: "/dashboard"
         }}
         note="✨ Bez rejestracji • Najwspanialszy start • 100% za darmo"
       />

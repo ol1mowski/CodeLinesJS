@@ -11,7 +11,7 @@ export const SecondaryCTA = () => {
         description="Nie czekaj - zacznij dziś!"
         primaryButton={{
           text: "🎯 ROZPOCZNIJ PRZYGODĘ!",
-          action: () => console.log('Start adventure')
+          to: "/dashboard"
         }}
         features={[
           "🔒 Bez zobowiązań",
