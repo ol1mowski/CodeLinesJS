@@ -1,7 +1,6 @@
 import { Container } from '../UI/Container/Container.component';
 import { Content } from './components/Content.component';
 import { Header } from '../Header/Header.component';
-import { BackgroundPattern } from '../Features/components/BackgroundPattern.component';
 
 export const CommunitySection = () => (
   <section
@@ -16,7 +15,6 @@ export const CommunitySection = () => (
         <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-[#f7df1e] rounded-full blur-[100px] opacity-10" />
         <div className="absolute bottom-1/4 right-1/4 w-32 h-32 bg-[#f7df1e] rounded-full blur-[100px] opacity-10" />
       </div>
-      <BackgroundPattern />
     </div>
     <Container className="relative z-10">
       <div className="flex flex-col items-center gap-12 md:gap-20">

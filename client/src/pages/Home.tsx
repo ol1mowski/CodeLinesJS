@@ -7,12 +7,14 @@ import { HeroSection } from '../components/Hero/Hero.component';
 import { Footer } from '../components/Footer/Footer.component';
 import { CommunitySection } from '../components/Community/CommunitySection.component';
 import { TestimonialsSection } from '../components/Testimonials/TestimonialsSection.component';
+import { AboutGameSection } from '../components/AboutGame/AboutGame.component';
 
 const Home = () => {
   return (
     <div className="bg-gray-900">
       <Header />
       <HeroSection />
+      <AboutGameSection />
       <TheorySection />
       <PracticeSection />
       <ChallengesSection />
