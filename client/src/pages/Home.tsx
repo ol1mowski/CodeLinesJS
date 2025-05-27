@@ -1,5 +1,5 @@
 import { Header } from '../components/Header/Header.component';
-import { ProgressSection } from '../components/Progress/ProgressSection.component';
+
 import { TheorySection } from '../components/TheorySection/TheorySection.component';
 import { PracticeSection } from '../components/PracticeSection/PracticeSection.component';
 import { HeroSection } from '../components/Hero/Hero.component';
@@ -8,6 +8,7 @@ import { TestimonialsSection } from '../components/Testimonials/TestimonialsSect
 import { AboutGameSection } from '../components/AboutGame/AboutGame.component';
 import { LatestNewsSection } from '../components/LatestNews/LatestNews.component';
 import { WhyThisGameSection } from '../components/WhyThisGame/WhyThisGame.component';
+import { CTASection } from '../components/CTA/CTA.component';
 
 const Home = () => {
   return (
@@ -19,8 +20,8 @@ const Home = () => {
       <TheorySection />
       <PracticeSection />
       <WhyThisGameSection />
-      <ProgressSection />
       <TestimonialsSection />
+      <CTASection />
       <Footer />
     </div>
   );
