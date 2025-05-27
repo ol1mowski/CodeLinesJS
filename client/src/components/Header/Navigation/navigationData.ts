@@ -1,6 +1,6 @@
 export const navigationLinks = [
-  { href: '#', label: 'Start' },
+  { href: '#nowosci', label: 'Co nowego ?' },
   { href: '#gra', label: 'O grze' },
-  { href: '#wyzwania', label: 'Wyzwania' },
+  { href: '#dlaczego-warto', label: 'Dlaczego warto ?' },
   { href: '#opinie', label: 'Opinie' },
 ];

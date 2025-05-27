@@ -14,7 +14,7 @@ export const NewsHeader = () => {
       
       <h2 
         id="latest-news-title"
-        className="text-5xl md:text-6xl lg:text-7xl font-bold text-[#f7df1e] font-space uppercase tracking-wider transform -skew-x-12"
+        className="text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-bold text-[#f7df1e] font-space uppercase tracking-wider transform -skew-x-12"
         style={{
           textShadow: '2px 2px 0px rgba(26, 26, 26, 0.5)'
         }}

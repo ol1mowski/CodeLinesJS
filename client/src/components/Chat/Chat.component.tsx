@@ -11,11 +11,13 @@ export const Chat = () => {
   const [hasNewMessages, setHasNewMessages] = useState(false);
   const [bubbleMessage, setBubbleMessage] = useState<string>('Cześć! 👋 Sprawdź nowego asystenta kodowania!');
   const [showBubble, setShowBubble] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
   const { messages, addMessage, isTyping } = useChatState();
   const isMobile = useMobileDetect();
 
   const toggleChat = () => {
     setIsOpen(!isOpen);
+    setHasInteracted(true); 
     if (!isOpen) {
       setHasNewMessages(false); 
       setShowBubble(false); 
@@ -27,22 +29,20 @@ export const Chat = () => {
     setShowBubble(false);
     setHasNewMessages(false);
     setIsOpen(true);
+    setHasInteracted(true); 
   };
 
   useEffect(() => {
-    if (!isOpen) {
+    if (!isOpen && !hasInteracted) {
       const bubbleTimer = setTimeout(() => {
-        console.log('Showing automatic bubble');
         setShowBubble(true);
         
         setTimeout(() => {
-          console.log('Hiding automatic bubble');
           setShowBubble(false);
         }, 4000);
       }, 3000);
 
       const notificationTimer = setTimeout(() => {
-        console.log('Showing automatic notification badge');
         setHasNewMessages(true);
       }, 5000);
 
@@ -51,41 +51,34 @@ export const Chat = () => {
         clearTimeout(notificationTimer);
       };
     }
-  }, [isOpen]);
+  }, [isOpen, hasInteracted]);
 
   useEffect(() => {
-    console.log('Messages changed:', messages.length, 'isOpen:', isOpen);
-    
-    if (messages.length > 1 && !isOpen) { 
+    if (messages.length > 1 && !isOpen && !hasInteracted) { 
       const lastMessage = messages[messages.length - 1];
-      console.log('Last message:', lastMessage);
       
       if (lastMessage.sender === 'bot') {
-        console.log('Showing bubble for bot message');
         
         setTimeout(() => {
           setBubbleMessage(lastMessage.text);
           setShowBubble(true);
           
           setTimeout(() => {
-            console.log('Hiding bubble');
             setShowBubble(false);
           }, 4000);
         }, 1000);
 
         setTimeout(() => {
-          console.log('Showing notification badge');
           setHasNewMessages(true);
         }, 2000);
       }
     }
-  }, [messages, isOpen]);
+  }, [messages, isOpen, hasInteracted]);
 
   const handleBackdropClick = () => {
     setIsOpen(false);
   };
 
-  console.log('Render - showBubble:', showBubble, 'bubbleMessage:', bubbleMessage.substring(0, 20));
 
   return (
     <>

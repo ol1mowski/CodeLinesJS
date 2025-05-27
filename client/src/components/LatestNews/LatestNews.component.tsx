@@ -3,7 +3,7 @@ import { NewsContent } from './components/NewsContent/NewsContent.component';
 
 export const LatestNewsSection = () => (
   <section
-    id="latest-news"
+    id="nowosci"
     className="relative w-full bg-gradient-to-b from-[#1a1a1a] via-[#242424] to-[#1a1a1a] py-16 md:py-24 overflow-hidden"
     aria-labelledby="latest-news-title"
   >
