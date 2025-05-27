@@ -1,5 +1,4 @@
 import { Header } from '../components/Header/Header.component';
-import { ChallengesSection } from '../components/Challenges/ChallengesSection.component';
 import { ProgressSection } from '../components/Progress/ProgressSection.component';
 import { TheorySection } from '../components/TheorySection/TheorySection.component';
 import { PracticeSection } from '../components/PracticeSection/PracticeSection.component';
@@ -17,7 +16,6 @@ const Home = () => {
       <AboutGameSection />
       <TheorySection />
       <PracticeSection />
-      <ChallengesSection />
       <CommunitySection />
       <ProgressSection />
       <TestimonialsSection />
