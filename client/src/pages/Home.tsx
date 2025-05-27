@@ -4,7 +4,6 @@ import { TheorySection } from '../components/TheorySection/TheorySection.compone
 import { PracticeSection } from '../components/PracticeSection/PracticeSection.component';
 import { HeroSection } from '../components/Hero/Hero.component';
 import { Footer } from '../components/Footer/Footer.component';
-import { CommunitySection } from '../components/Community/CommunitySection.component';
 import { TestimonialsSection } from '../components/Testimonials/TestimonialsSection.component';
 import { AboutGameSection } from '../components/AboutGame/AboutGame.component';
 import { LatestNewsSection } from '../components/LatestNews/LatestNews.component';
@@ -18,7 +17,6 @@ const Home = () => {
       <AboutGameSection />
       <TheorySection />
       <PracticeSection />
-      <CommunitySection />
       <ProgressSection />
       <TestimonialsSection />
       <Footer />

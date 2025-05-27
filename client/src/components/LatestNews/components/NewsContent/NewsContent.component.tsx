@@ -5,10 +5,8 @@ export const NewsContent = () => {
   return (
     <div className="w-full max-w-6xl mx-auto">
       <div className="space-y-12">
-        {/* Nagłówek sekcji */}
         <NewsHeader />
         
-        {/* Karty z newsami */}
         <NewsCards />
       </div>
     </div>
