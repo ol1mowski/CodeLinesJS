@@ -6,7 +6,6 @@ export const NewsContent = () => {
     <div className="w-full max-w-6xl mx-auto">
       <div className="space-y-12">
         <NewsHeader />
-        
         <NewsCards />
       </div>
     </div>
