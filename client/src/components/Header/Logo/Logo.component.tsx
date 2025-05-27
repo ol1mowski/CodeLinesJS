@@ -8,7 +8,7 @@ export const Logo = () => (
       className="text-3xl font-bold font-space text-[#f7df1e] hover:text-[#f7df1e]/90 
                  transition-colors flex items-center gap-2"
     >
-      <span className="text-2xl bg-[#f7df1e] text-black px-2 py-1 rounded">CLJS</span>
+      <span className="text-2xl bg-[#f7df1e] text-black px-2 py-1 rounded">JS</span>
       <span>CodeLines</span>
     </Link>
   </motion.div>

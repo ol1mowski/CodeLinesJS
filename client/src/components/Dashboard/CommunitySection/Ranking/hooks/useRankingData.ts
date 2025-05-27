@@ -16,7 +16,6 @@ export const useRankingData = () => {
     isLoading, 
     error, 
     page, 
-    limit,
     totalPages, 
     nextPage, 
     prevPage, 
@@ -42,7 +41,6 @@ export const useRankingData = () => {
 
   const paginationData = useMemo(() => ({
     page,
-    limit,
     totalPages,
     hasNextPage: page < totalPages,
     hasPrevPage: page > 1,
@@ -50,7 +48,7 @@ export const useRankingData = () => {
     prevPage,
     goToPage,
     isLoadingPage: isLoading && !!users.length,
-  }), [page, limit, totalPages, nextPage, prevPage, goToPage, isLoading, users.length]);
+  }), [page, totalPages, nextPage, prevPage, goToPage, isLoading, users.length]);
 
   return {
     users,
