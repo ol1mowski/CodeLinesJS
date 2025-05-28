@@ -44,7 +44,7 @@ const CommunityRanking = memo(() => {
         </div>
       </div>
       <div className="space-y-6">
-        <RankingStats currentUserStats={currentUserStats} />
+        <RankingStats currentUserStats={currentUserStats} isLoading={isLoading} />
       </div>
     </div>
   );
