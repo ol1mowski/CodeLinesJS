@@ -10,12 +10,18 @@ interface RankingItemProps {
 }
 
 export const RankingItem = memo(({ user, index, animationDelay = 0.1 }: RankingItemProps) => {
-  const position = user.position ?? index + 1;
+  const position = user.position;
   const rankClass = position <= 3 ? 'text-yellow-500' : 'text-gray-400';
+  
+  // Podświetlenie dla aktualnego użytkownika
+  const isCurrentUser = user.isCurrentUser;
+  const backgroundClass = isCurrentUser 
+    ? 'bg-js/10 border-js/30' 
+    : 'bg-dark-card/50 border-js/5 hover:border-js/10';
 
   return (
     <div 
-      className="bg-dark-card/50 backdrop-blur-sm rounded-lg border border-js/5 p-4 hover:border-js/10 transition-all flex items-center justify-between"
+      className={`backdrop-blur-sm rounded-lg border p-4 transition-all flex items-center justify-between ${backgroundClass}`}
       style={{ 
         animation: `fadeIn 0.5s ease-out ${animationDelay * (index + 1)}s both`,
       }}
@@ -38,14 +44,14 @@ export const RankingItem = memo(({ user, index, animationDelay = 0.1 }: RankingI
             <div className="font-medium text-lg text-white">
               {user.username}
               {user.isCurrentUser && (
-                <span className="ml-2 text-xs font-medium bg-js/10 text-js px-2 py-0.5 rounded">
+                <span className="ml-2 text-xs font-medium bg-js text-black px-2 py-0.5 rounded font-bold">
                   Ty
                 </span>
               )}
             </div>
             <div className="text-gray-400 text-sm">
-              Poziom: <span className="text-js">{user.stats?.level || user.level || 1}</span> • 
-              Punkty: <span className="text-js">{user.stats?.points || user.points || 0}</span>
+              Poziom: <span className="text-js">{user.stats.level}</span> • 
+              Punkty: <span className="text-js">{user.stats.points}</span>
             </div>
           </div>
         </div>

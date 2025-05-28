@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { memo } from 'react';
 import { FaTrophy, FaStar, FaCalendarDay } from 'react-icons/fa';
 import { StatCard } from './components/StatCard';
+import { LoadingScreen } from '../../../UI/LoadingScreen/LoadingScreen.component';
 
 interface ProcessedUserStats {
   username?: string;
@@ -12,9 +13,18 @@ interface ProcessedUserStats {
 
 interface RankingStatsProps {
   currentUserStats: ProcessedUserStats | null;
+  isLoading?: boolean;
 }
 
-export const RankingStats = memo(({ currentUserStats }: RankingStatsProps) => {
+export const RankingStats = memo(({ currentUserStats, isLoading = false }: RankingStatsProps) => {
+  if (isLoading) {
+    return (
+      <div className="bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10 p-6 shadow-lg">
+        <LoadingScreen />
+      </div>
+    );
+  }
+
   if (!currentUserStats) {
     return (
       <motion.div

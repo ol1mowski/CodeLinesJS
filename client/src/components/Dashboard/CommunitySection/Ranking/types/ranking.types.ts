@@ -1,21 +1,14 @@
 export interface RankingUser {
-  id: string;
-  _id: string;
-  username: string;
-  points: number;
-  level: number;
-  avatar: string | null;
   position: number;
-  rank: string;
+  username: string;
+  avatar: string | null;
   isCurrentUser?: boolean;
-  progress: {
-    currentPoints: number;
-    nextRankPoints: number;
-    percentage: number;
-  };
-  stats?: {
+  stats: {
     level: number;
     points: number;
+    streak: number;
+    bestStreak: number;
+    lastActive: Date | null;
   };
 }
 

@@ -1,6 +1,5 @@
 import { memo } from 'react';
 import { ErrorMessage } from '../components/ErrorMessage.component';
-import { LoadingScreen } from '../../../UI/LoadingScreen/LoadingScreen.component';
 import { LessonsHeader } from './LessonsHeader.component';
 import { LessonsList } from './LessonsList.component';
 import { useLessons } from '../hooks/useLessons';
@@ -25,10 +24,6 @@ export const Lessons = memo(() => {
     );
   }
 
-  if (isLoading && !stats) {
-    return <LoadingScreen />;
-  }
-
   return (
     <div className="space-y-6">
       <LessonsHeader onFilterChange={setFilter} />
@@ -40,6 +35,7 @@ export const Lessons = memo(() => {
           userLevel: userLevel,
           requiredLevel: requiredLevel || 1,
         }}
+        isLoading={isLoading}
       />
     </div>
   );

@@ -5,6 +5,7 @@ import type { Lesson } from '../types/lesson.types';
 import { FilterType } from '../types/filter.types';
 import { FaSearch, FaSadTear } from 'react-icons/fa';
 import { Helmet } from 'react-helmet';
+import { LoadingScreen } from '../../../UI/LoadingScreen/LoadingScreen.component';
 
 type LessonsListProps = {
   lessons: Lesson[];
@@ -14,6 +15,7 @@ type LessonsListProps = {
     userLevel: number;
     requiredLevel: number;
   };
+  isLoading?: boolean;
 };
 
 const containerVariants = {
@@ -39,7 +41,11 @@ const getDifficultyLabel = (filter: FilterType) => {
   }
 };
 
-export const LessonsList = memo(({ lessons, filter, userData }: LessonsListProps) => {
+export const LessonsList = memo(({ lessons, filter, userData, isLoading = false }: LessonsListProps) => {
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
   const processedLessons = lessons.map(lesson => ({
     ...lesson,
     isLocked: lesson.requiredLevel ? lesson.requiredLevel > userData.userLevel : false,
