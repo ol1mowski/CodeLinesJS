@@ -2,9 +2,11 @@ import { memo } from 'react';
 import { HiOutlineTrophy, HiArrowLeft, HiArrowRight } from 'react-icons/hi2';
 import { RankingUser } from './types/ranking.types';
 import { RankingItem } from './components/RankingItem';
+import { LoadingScreen } from '../../../UI/LoadingScreen/LoadingScreen.component';
 
 interface RankingListProps {
   users: RankingUser[];
+  isLoading?: boolean;
   pagination?: {
     page: number;
     totalPages: number;
@@ -17,7 +19,11 @@ interface RankingListProps {
   };
 }
 
-export const RankingList = memo(({ users, pagination }: RankingListProps) => {
+export const RankingList = memo(({ users, isLoading = false, pagination }: RankingListProps) => {
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
   if (!users?.length) {
     return (
       <div className="text-center text-gray-400 py-8">
