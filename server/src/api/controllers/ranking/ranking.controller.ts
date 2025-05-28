@@ -59,7 +59,7 @@ export const getRanking = async (req: Request, res: Response, next: NextFunction
     }
 
     const formattedUsers = users.map((user, index) => ({
-      rank: skip + index + 1,
+      position: skip + index + 1,
       username: user.username,
       avatar: user.avatar,
       stats: {

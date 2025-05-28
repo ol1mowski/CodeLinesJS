@@ -10,7 +10,7 @@ interface RankingItemProps {
 }
 
 export const RankingItem = memo(({ user, index, animationDelay = 0.1 }: RankingItemProps) => {
-  const position = user.position ?? index + 1;
+  const position = user.position;
   const rankClass = position <= 3 ? 'text-yellow-500' : 'text-gray-400';
   
   // Podświetlenie dla aktualnego użytkownika
@@ -50,8 +50,8 @@ export const RankingItem = memo(({ user, index, animationDelay = 0.1 }: RankingI
               )}
             </div>
             <div className="text-gray-400 text-sm">
-              Poziom: <span className="text-js">{user.stats?.level || user.level || 1}</span> • 
-              Punkty: <span className="text-js">{user.stats?.points || user.points || 0}</span>
+              Poziom: <span className="text-js">{user.stats.level}</span> • 
+              Punkty: <span className="text-js">{user.stats.points}</span>
             </div>
           </div>
         </div>
