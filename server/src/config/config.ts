@@ -84,7 +84,7 @@ const config: Config = {
     options: {
       serverSelectionTimeoutMS: 5000,
       socketTimeoutMS: 45000,
-    }
+    },
   },
   jwt: {
     secret: process.env.JWT_SECRET,
@@ -92,21 +92,21 @@ const config: Config = {
     cookieExpiresIn: parseInt(process.env.JWT_COOKIE_EXPIRES_IN),
   },
   cors: {
-    origin: 'http://localhost:3000',
+    origin: process.env.FRONTEND_URL,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
     exposedHeaders: ['Content-Length', 'X-Requested-With'],
     maxAge: 86400,
     preflightContinue: false,
-    optionsSuccessStatus: 204
+    optionsSuccessStatus: 204,
   },
   rateLimit: {
     windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS),
     max: parseInt(process.env.RATE_LIMIT_MAX),
     standardHeaders: true,
     legacyHeaders: false,
-    message: 'Zbyt wiele zapytań z tego adresu IP, spróbuj ponownie za 15 minut'
+    message: 'Zbyt wiele zapytań z tego adresu IP, spróbuj ponownie za 15 minut',
   },
   email: {
     host: process.env.EMAIL_HOST,
@@ -123,7 +123,7 @@ const config: Config = {
   security: {
     bcryptSaltRounds: 12,
     passwordResetTokenExpiresIn: 60 * 60 * 1000,
-  }
+  },
 };
 
-export default config; 
+export default config;
