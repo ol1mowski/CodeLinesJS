@@ -175,7 +175,14 @@ export class ProgressService {
     
     const levelStats = LevelService.updateLevel(user, earnedPoints);
     
-    const streakStats = StreakService.updateStreak(user);
+    const hasEarnedPoints = earnedPoints > 0;
+    const streakStats = StreakService.updateStreak(user, hasEarnedPoints);
+    
+    StreakService.updateDailyProgress(user, {
+      points: statsUpdate.points,
+      challenges: statsUpdate.challenges || 0,
+      timeSpent: statsUpdate.timeSpent || 0
+    });
     
     user.stats.completedChallenges = (user.stats.completedChallenges || 0) + (statsUpdate.challenges || 0);
     user.stats.timeSpent = (user.stats.timeSpent || 0) + (statsUpdate.timeSpent || 0);

@@ -107,6 +107,7 @@ const gameComponents = {
   'async-quest': lazy(() => import('./AsyncQuest/AsyncQuest.component')),
   'regex-raider': lazy(() => import('./RegexRaider/RegexRaider.component')),
   'js-quiz': lazy(() => import('./JSQuiz/JSQuiz.component')),
+  'method-quiz': lazy(() => import('./MethodQuiz/MethodQuiz.component')),
 };
 
 export const GameplayArea = memo(() => {
