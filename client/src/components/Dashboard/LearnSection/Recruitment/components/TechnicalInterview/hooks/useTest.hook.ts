@@ -1,14 +1,8 @@
 import { useState, useCallback } from 'react';
 import { Question, getRandomQuestions } from '../data/questionsData';
+import { Answer } from './useResultsScreen.hook';
 
 export type TestState = 'setup' | 'inProgress' | 'completed';
-
-export interface Answer {
-  questionId: number;
-  selectedAnswer: number;
-  isCorrect: boolean;
-  timeTaken?: number;
-}
 
 export const useTest = () => {
   const [testState, setTestState] = useState<TestState>('setup');

@@ -7,8 +7,8 @@ import { TheoryHeader } from './components/TheoryHeader.component';
 import { QuestionSelector } from './components/QuestionSelector.component';
 import { TestInfoSection } from './components/TestInfoSection.component';
 import { StartButton } from './components/StartButton.component';
-import TestScreen from './components/TestScreen.component';
-import ResultsScreen from './components/ResultsScreen.component';
+import { TestScreen } from './components/TestScreen.component';
+import { ResultsScreen } from './components/ResultsScreen.component';
 
 type TheorySectionProps = {
   onBack: () => void;
