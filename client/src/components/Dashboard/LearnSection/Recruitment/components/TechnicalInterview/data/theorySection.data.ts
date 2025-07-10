@@ -1,3 +1,5 @@
+import { getQuestionsFromDatabase } from './questionsData';
+
 export type QuestionOption = {
   value: number;
   label: string;
@@ -11,9 +13,15 @@ export const questionOptions: QuestionOption[] = [
   { value: 20, label: '20 pytań', time: '~20 min' },
 ];
 
+const { totalQuestions } = getQuestionsFromDatabase();
+
 export const testInfo = {
   topics: 'podstawy JavaScript, hoisting, closures, prototypy, event loop, ES6+',
   details: [
+    {
+      title: 'Pytania w bazie',
+      description: `${totalQuestions} pytań dostępnych`,
+    },
     {
       title: 'Format',
       description: 'Pytania wielokrotnego wyboru',
@@ -21,10 +29,6 @@ export const testInfo = {
     {
       title: 'Czas',
       description: 'Bez ograniczeń czasowych',
-    },
-    {
-      title: 'Wynik',
-      description: 'Natychmiastowa ocena',
     },
   ],
 }; 

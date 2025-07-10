@@ -1,18 +1,20 @@
 import { memo } from 'react';
 import { motion } from 'framer-motion';
 import { useTheorySection } from './hooks/useTheorySection.hook';
+import { useTest } from './hooks/useTest.hook';
 import { BackButton } from './components/BackButton.component';
 import { TheoryHeader } from './components/TheoryHeader.component';
 import { QuestionSelector } from './components/QuestionSelector.component';
 import { TestInfoSection } from './components/TestInfoSection.component';
 import { StartButton } from './components/StartButton.component';
+import TestScreen from './components/TestScreen.component';
+import ResultsScreen from './components/ResultsScreen.component';
 
 type TheorySectionProps = {
   onBack: () => void;
-  onStart: (questionCount: number) => void;
 };
 
-export const TheorySection = memo(({ onBack, onStart }: TheorySectionProps) => {
+export const TheorySection = memo(({ onBack }: TheorySectionProps) => {
   const {
     selectedCount,
     questionOptions,
@@ -21,9 +23,60 @@ export const TheorySection = memo(({ onBack, onStart }: TheorySectionProps) => {
     handleQuestionCountChange,
   } = useTheorySection();
 
+  const {
+    testState,
+    questions,
+    currentQuestionIndex,
+    selectedAnswer,
+    answers,
+    startTest,
+    selectAnswer,
+    nextQuestion,
+    resetTest,
+    restartTest,
+    goBackToSetup,
+    setSelectedQuestionCount,
+    getTotalTime
+  } = useTest();
+
   const handleStart = () => {
-    onStart(selectedCount);
+    startTest(selectedCount);
   };
+
+  const handleBackFromTest = () => {
+    goBackToSetup();
+  };
+
+  const handleBackToMain = () => {
+    resetTest();
+    onBack();
+  };
+
+  if (testState === 'inProgress') {
+    return (
+      <TestScreen
+        questions={questions}
+        currentQuestionIndex={currentQuestionIndex}
+        selectedAnswer={selectedAnswer}
+        onAnswerSelect={selectAnswer}
+        onNext={nextQuestion}
+        onBack={handleBackFromTest}
+        totalQuestions={questions.length}
+      />
+    );
+  }
+
+  if (testState === 'completed') {
+    return (
+      <ResultsScreen
+        questions={questions}
+        answers={answers}
+        onRestart={restartTest}
+        onBack={handleBackFromTest}
+        totalTime={getTotalTime()}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-dark/50 backdrop-blur-sm flex items-center justify-center p-4">
@@ -34,7 +87,7 @@ export const TheorySection = memo(({ onBack, onStart }: TheorySectionProps) => {
         className="max-w-2xl w-full space-y-8"
       >
         <div className="flex items-center justify-between">
-          <BackButton onBack={onBack} />
+          <BackButton onBack={handleBackToMain} />
         </div>
 
         <motion.div
@@ -48,7 +101,10 @@ export const TheorySection = memo(({ onBack, onStart }: TheorySectionProps) => {
           <QuestionSelector
             options={questionOptions}
             selectedCount={selectedCount}
-            onSelectionChange={handleQuestionCountChange}
+            onSelectionChange={(count) => {
+              setSelectedQuestionCount(count);
+              handleQuestionCountChange(count);
+            }}
           />
 
           <TestInfoSection details={testInfo.details} />
