@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { Question } from '../data/questionsData';
+import { Question } from '../data/questionsData.data';
 import { useResultsScreen, Answer } from '../hooks/useResultsScreen.hook';
 import { ResultsHeader } from './results/ResultsHeader.component';
 import { MainResultCard } from './results/MainResultCard.component';

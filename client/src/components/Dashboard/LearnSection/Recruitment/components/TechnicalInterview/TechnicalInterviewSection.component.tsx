@@ -5,6 +5,7 @@ import { TechnicalInterviewHeader } from './TechnicalInterviewHeader.component';
 import { InterviewBlockCard } from './InterviewBlockCard.component';
 import { InterviewTipsSection } from './InterviewTipsSection.component';
 import { TheorySection } from './TheorySection.component';
+import PracticeSection from './PracticeSection.component';
 import type { TechnicalInterviewView } from '../../types/recruitment.types';
 
 type TechnicalInterviewSectionProps = {
@@ -26,23 +27,23 @@ export const TechnicalInterviewSection = memo(({ onBack }: TechnicalInterviewSec
   const handleBackToMain = () => {
     setCurrentView('main');
   };
-
-  const handleStartTest = (questionCount: number) => {
-    console.log(`Starting theory test with ${questionCount} questions`);
-    // TODO: Implement test logic
-  };
-
-  // Widok sekcji teorii
+        
   if (currentView === 'theory') {
     return (
       <TheorySection 
         onBack={handleBackToMain} 
-        onStart={handleStartTest}
       />
     );
   }
 
-  // Główny widok przygotowania do rozmowy technicznej
+  if (currentView === 'practice') {
+    return (
+      <PracticeSection 
+        onBack={handleBackToMain} 
+      />
+    );
+  }
+
   return (
     <motion.div
       variants={containerVariants}

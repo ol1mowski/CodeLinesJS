@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { Question } from '../data/questionsData';
+import { Question } from '../data/questionsData.data';
 import { useTestScreen } from '../hooks/useTestScreen.hook';
 import { TestHeader } from './test/TestHeader.component';
 import { QuestionCard } from './test/QuestionCard.component';

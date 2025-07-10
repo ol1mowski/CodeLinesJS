@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Question } from '../data/questionsData';
+import { Question } from '../data/questionsData.data';
 
 export interface Answer {
   questionId: number;

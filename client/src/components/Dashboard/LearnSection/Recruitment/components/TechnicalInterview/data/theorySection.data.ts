@@ -1,4 +1,4 @@
-import { getQuestionsFromDatabase } from './questionsData';
+import { getQuestionsFromDatabase } from './questionsData.data';
 
 export type QuestionOption = {
   value: number;

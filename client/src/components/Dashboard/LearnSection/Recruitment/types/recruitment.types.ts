@@ -32,6 +32,21 @@ export type InterviewTip = {
   tips: string[];
 };
 
+export type PracticeTask = {
+  id: string;
+  title: string;
+  description: string;
+  difficulty: 'easy' | 'medium' | 'hard';
+  category: string;
+  estimatedTime: number; 
+  taskContent: string;
+  solution: string;
+  tips: string[];
+  tags: string[];
+};
+
+export type TaskDifficulty = 'easy' | 'medium' | 'hard';
+
 export type AnimationVariants = {
   hidden: {
     opacity: number;

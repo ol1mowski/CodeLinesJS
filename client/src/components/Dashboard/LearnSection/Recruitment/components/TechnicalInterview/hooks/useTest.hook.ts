@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Question, getRandomQuestions } from '../data/questionsData';
+import { Question, getRandomQuestions } from '../data/questionsData.data';
 import { Answer } from './useResultsScreen.hook';
 
 export type TestState = 'setup' | 'inProgress' | 'completed';
