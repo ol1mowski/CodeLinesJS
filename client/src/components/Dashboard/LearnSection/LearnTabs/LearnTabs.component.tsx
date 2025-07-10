@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion';
 import { memo } from 'react';
-import { FaGraduationCap, FaBook, FaLightbulb } from 'react-icons/fa';
+import { FaGraduationCap, FaBook, FaLightbulb, FaUserTie } from 'react-icons/fa';
 
-type TabType = 'paths' | 'lessons' | 'resources' | 'articles';
+type TabType = 'paths' | 'lessons' | 'resources' | 'articles' | 'recruitment';
 
 type LearnTabsProps = {
   activeTab: TabType;
@@ -13,6 +13,7 @@ const tabs = [
   { id: 'paths' as const, label: 'Ścieżki nauki', icon: FaGraduationCap },
   { id: 'lessons' as const, label: 'Lekcje', icon: FaBook },
   { id: 'resources' as const, label: 'Materiały', icon: FaLightbulb },
+  { id: 'recruitment' as const, label: 'Rekrutacja', icon: FaUserTie, badge: 'Nowość' },
 ];
 
 export const LearnTabs = memo(({ activeTab, onTabChange }: LearnTabsProps) => {
@@ -33,6 +34,13 @@ export const LearnTabs = memo(({ activeTab, onTabChange }: LearnTabsProps) => {
         >
           <tab.icon className="w-4 h-4" />
           {tab.label}
+          
+          {tab.badge && (
+            <span className="ml-1 px-2 py-0.5 text-xs font-bold bg-gradient-to-r from-js to-js/80 text-dark rounded-full">
+              {tab.badge}
+            </span>
+          )}
+          
           {activeTab === tab.id && (
             <motion.div
               layoutId="activeTab"
