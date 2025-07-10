@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { motion } from 'framer-motion';
 import { FaUsers } from 'react-icons/fa';
-import type { RecruitmentStats } from '../hooks/useRecruitment.hook';
+import type { RecruitmentStats } from '../types/recruitment.types';
 
 type RecruitmentStatsProps = {
   stats: RecruitmentStats;

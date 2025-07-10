@@ -5,8 +5,7 @@ import { RecruitmentHeader } from './components/RecruitmentHeader.component';
 import { RecruitmentCard } from './components/RecruitmentCard.component';
 import { RecruitmentStatsSection } from './components/RecruitmentStats.component';
 import { TechnicalInterviewSection } from './components/TechnicalInterview/TechnicalInterviewSection.component';
-
-type ViewMode = 'main' | 'technical-interview' | 'cv-preparation';
+import type { ViewMode } from './types/recruitment.types';
 
 export const Recruitment = memo(() => {
   const [currentView, setCurrentView] = useState<ViewMode>('main');

@@ -1,20 +1,6 @@
 import { useMemo } from 'react';
 import { FaLaptopCode, FaFileAlt } from 'react-icons/fa';
-
-export type RecruitmentSection = {
-  id: string;
-  title: string;
-  description: string;
-  icon: React.ComponentType<{ className?: string }>;
-  features: string[];
-  isAvailable: boolean;
-};
-
-export type RecruitmentStats = {
-  technicalQuestions: number;
-  practicalTasks: number;
-  cvTips: number;
-};
+import type { RecruitmentSection, RecruitmentStats, AnimationVariants } from '../types/recruitment.types';
 
 export const useRecruitment = () => {
   const recruitmentSections: RecruitmentSection[] = useMemo(
@@ -58,7 +44,7 @@ export const useRecruitment = () => {
     []
   );
 
-  const containerVariants = useMemo(
+  const containerVariants: AnimationVariants = useMemo(
     () => ({
       hidden: { opacity: 0 },
       visible: {
@@ -71,7 +57,7 @@ export const useRecruitment = () => {
     []
   );
 
-  const itemVariants = useMemo(
+  const itemVariants: AnimationVariants = useMemo(
     () => ({
       hidden: { opacity: 0, y: 20 },
       visible: {
