@@ -7,6 +7,7 @@ export type RecruitmentSection = {
   description: string;
   icon: React.ComponentType<{ className?: string }>;
   features: string[];
+  isAvailable: boolean;
 };
 
 export type RecruitmentStats = {
@@ -23,6 +24,7 @@ export const useRecruitment = () => {
         title: 'Przygotowanie do rozmowy technicznej',
         description: 'Naucz się odpowiadać na pytania techniczne i rozwiązywać zadania programistyczne na żywo',
         icon: FaLaptopCode,
+        isAvailable: true,
         features: [
           'Typowe pytania JavaScript',
           'Zadania algorytmiczne',
@@ -35,6 +37,7 @@ export const useRecruitment = () => {
         title: 'Przygotowanie CV',
         description: 'Stwórz profesjonalne CV, które przyciągnie uwagę rekruterów i wyróżni Cię na rynku',
         icon: FaFileAlt,
+        isAvailable: false,
         features: [
           'Szablony CV dla programistów',
           'Opis projektów i umiejętności',

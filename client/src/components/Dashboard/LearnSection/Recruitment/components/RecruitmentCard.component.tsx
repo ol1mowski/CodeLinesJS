@@ -5,13 +5,15 @@ import type { RecruitmentSection } from '../hooks/useRecruitment.hook';
 type RecruitmentCardProps = {
   section: RecruitmentSection;
   variants: any;
+  onClick?: () => void;
 };
 
-export const RecruitmentCard = memo(({ section, variants }: RecruitmentCardProps) => {
+export const RecruitmentCard = memo(({ section, variants, onClick }: RecruitmentCardProps) => {
   return (
     <motion.div
       variants={variants}
       whileHover={{ scale: 1.02 }}
+      onClick={onClick}
       className="bg-dark-700/50 border border-js/10 rounded-xl p-6 hover:border-js/20 transition-all cursor-pointer group"
     >
       <div className="flex items-start gap-4 mb-4">
@@ -43,8 +45,12 @@ export const RecruitmentCard = memo(({ section, variants }: RecruitmentCardProps
       <div className="mt-6 pt-4 border-t border-gray-700">
         <div className="flex items-center justify-between">
           <span className="text-xs text-gray-500">Status:</span>
-          <span className="text-xs bg-js/10 text-js px-2 py-1 rounded border border-js/20">
-            Wkrótce dostępne
+          <span className={`text-xs px-2 py-1 rounded border ${
+            section.isAvailable 
+              ? 'bg-green-500/10 text-green-400 border-green-500/20' 
+              : 'bg-js/10 text-js border-js/20'
+          }`}>
+            {section.isAvailable ? 'Dostępne' : 'Wkrótce dostępne'}
           </span>
         </div>
       </div>
