@@ -1,4 +1,4 @@
-import type { PracticeTask } from '../../../types/recruitment.types';
+import type { PracticeTask } from '../../../../../types/recruitment.types';
 
 export const practiceTasks: PracticeTask[] = [
   {

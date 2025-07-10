@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { practiceTasks, practiceCategories } from '../data/practiceData.data';
-import type { PracticeTask, TaskDifficulty } from '../../../types/recruitment.types';
+import type { PracticeTask, TaskDifficulty } from '../../../../../types/recruitment.types';
 
 export const usePracticeSection = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('Wszystkie');
