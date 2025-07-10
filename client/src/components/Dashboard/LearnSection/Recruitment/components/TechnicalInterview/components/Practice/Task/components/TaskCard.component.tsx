@@ -1,8 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FaClock, FaCode } from 'react-icons/fa';
-import { difficultyLabels } from './data/practiceData.data';
-import type { PracticeTask } from '../../../../types/recruitment.types';
+import { difficultyLabels } from '../../data/practiceData.data';
+import type { PracticeTask } from '../../../../../../types/recruitment.types';
 
 interface TaskCardProps {
     task: PracticeTask;
