@@ -1,5 +1,5 @@
 import { FaBook, FaCode } from 'react-icons/fa';
-import type { InterviewBlock, InterviewTip } from '../types/recruitment.types';
+import type { InterviewBlock, InterviewTip } from '../../../types/recruitment.types';
 
 export const interviewBlocks: InterviewBlock[] = [
   {

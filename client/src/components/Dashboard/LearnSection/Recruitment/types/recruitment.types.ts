@@ -17,6 +17,8 @@ export type RecruitmentStats = {
 
 export type ViewMode = 'main' | 'technical-interview' | 'cv-preparation';
 
+export type TechnicalInterviewView = 'main' | 'theory' | 'practice';
+
 export type InterviewBlock = {
   id: string;
   title: string;

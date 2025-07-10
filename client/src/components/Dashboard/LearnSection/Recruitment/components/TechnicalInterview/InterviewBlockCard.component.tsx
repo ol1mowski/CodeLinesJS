@@ -5,13 +5,15 @@ import type { InterviewBlock, AnimationVariants } from '../../types/recruitment.
 type InterviewBlockCardProps = {
   block: InterviewBlock;
   variants: AnimationVariants;
+  onClick?: () => void;
 };
 
-export const InterviewBlockCard = memo(({ block, variants }: InterviewBlockCardProps) => {
+export const InterviewBlockCard = memo(({ block, variants, onClick }: InterviewBlockCardProps) => {
   return (
     <motion.div
       variants={variants}
       whileHover={{ scale: 1.02 }}
+      onClick={onClick}
       className="bg-dark-700/50 border border-js/10 rounded-xl p-6 hover:border-js/20 transition-all cursor-pointer group"
     >
       <div className="flex items-start gap-4 mb-4">
@@ -43,8 +45,8 @@ export const InterviewBlockCard = memo(({ block, variants }: InterviewBlockCardP
       <div className="mt-6 pt-4 border-t border-gray-700">
         <div className="flex items-center justify-between">
           <span className="text-xs text-gray-500">Dostępność:</span>
-          <span className="text-xs bg-js/10 text-js px-2 py-1 rounded border border-js/20">
-            Wkrótce dostępne
+          <span className="text-xs bg-green-500/10 text-green-400 border border-green-500/20 px-2 py-1 rounded">
+            Dostępne
           </span>
         </div>
       </div>
