@@ -6,11 +6,12 @@ import { Lessons } from './Lessons/Lessons.component';
 import { Resources } from './Resources/Resources.component';
 import { LearningPaths } from './LearningPaths/LearningPaths.component';
 import { LearnTabs } from './LearnTabs/LearnTabs.component';
+import { Recruitment } from './Recruitment/Recruitment.component';
 import { useAuth } from './hooks/useAuth';
 import { LoadingScreen } from '../../UI/LoadingScreen/LoadingScreen.component';
 import { Helmet } from 'react-helmet';
 
-type TabType = 'paths' | 'lessons' | 'resources' | 'articles';
+type TabType = 'paths' | 'lessons' | 'resources' | 'articles' | 'recruitment';
 
 export const LearnSection = memo(() => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -92,6 +93,7 @@ export const LearnSection = memo(() => {
             {activeTab === 'paths' && <LearningPaths />}
             {activeTab === 'lessons' && <Lessons />}
             {activeTab === 'resources' && <Resources />}
+            {activeTab === 'recruitment' && <Recruitment />}
           </motion.div>
         </div>
       </div>

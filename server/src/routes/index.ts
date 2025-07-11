@@ -7,12 +7,14 @@ import latestFeaturesRoutes from './latestFeatures.routes.js';
 import learningPathsRoutes from './learningPaths.routes.js';
 import lessonsRoutes from './lessons.routes.js';
 import postsRoutes from './posts.routes.js';
+import practiceTasksRoutes from './practiceTasks.routes.js';
 import progressRoutes from './progress.routes.js';
 import rankingRoutes from './ranking.routes.js';
 import reportsRoutes from './reports.routes.js';
 import resourcesRoutes from './resources.routes.js';
 import settingsRoutes from './settings.routes.js';
 import statsRoutes from './stats.routes.js';
+import theoryQuestionsRoutes from './theoryQuestions.routes.js';
 import usersRoutes from './users.routes.js';
 
 export const configureRoutes = (app: Application): Application => {
@@ -35,11 +37,14 @@ export const configureRoutes = (app: Application): Application => {
   app.use('/api/learning-paths', learningPathsRoutes);
   app.use('/api/lessons', lessonsRoutes);
   app.use('/api/resources', resourcesRoutes);
+  app.use('/api/theory-questions', theoryQuestionsRoutes);
+  app.use('/api/practice-tasks', practiceTasksRoutes);
   app.use('/api/users', usersRoutes);
   app.use('/api/reports', reportsRoutes);
   app.use('/api/latest-features', latestFeaturesRoutes);
 
   const notFoundHandler: RequestHandler = (req, res) => {
+    // eslint-disable-next-line no-console
     console.log(`API endpoint not found: ${req.method} ${req.originalUrl}`);
     res.status(404).json({ error: 'API endpoint not found' });
   };
