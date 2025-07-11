@@ -1,5 +1,5 @@
 import { FaClock, FaCode } from 'react-icons/fa';
-import type { PracticeTask } from '../../../../../../types/recruitment.types';
+import type { PracticeTask } from '../../hooks/usePracticeApi.hook';
 
 interface TaskHeaderProps {
     task: PracticeTask;

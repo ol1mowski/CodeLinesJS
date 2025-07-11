@@ -6,7 +6,7 @@ const difficultyLabels = {
   medium: 'Średnie',
   hard: 'Trudne'
 };
-import type { PracticeTask } from '../../../../../../types/recruitment.types';
+import type { PracticeTask } from '../../hooks/usePracticeApi.hook';
 
 interface TaskCardProps {
     task: PracticeTask;

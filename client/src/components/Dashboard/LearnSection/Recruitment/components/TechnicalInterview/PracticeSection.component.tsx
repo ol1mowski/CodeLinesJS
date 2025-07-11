@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FaArrowLeft } from 'react-icons/fa';
-import { usePracticeSectionApi } from './components/Practice/hooks/usePracticeSectionApi.hook';
+import { usePracticeSection } from './components/Practice/hooks/usePracticeSection.hook';
 import TaskDetails from './components/Practice/Task/components/TaskDetails.component';
 import TaskCard from './components/Practice/Task/components/TaskCard.component';
 import StatsSection from './components/Practice/StatsSection.component';
@@ -31,7 +31,7 @@ const PracticeSection: React.FC<PracticeSectionProps> = ({ onBack }) => {
         handleBackToList,
         handleShowSolution,
         resetFilters
-    } = usePracticeSectionApi();
+    } = usePracticeSection();
 
     if (selectedTask) {
         return (
