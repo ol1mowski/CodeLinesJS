@@ -1,14 +1,15 @@
 import React, { memo } from 'react';
 import { motion } from 'framer-motion';
 import { CVHeader } from '../Common/CVHeader.component';
-import { cvExamples } from '../../data/cvData.data';
 import { ExampleCard } from './ExampleCard.component';
+import type { CVExample } from '../../types/cv.types';
 
 interface ExamplesSectionProps {
+  examples: CVExample[];
   onBack: () => void;
 }
 
-export const ExamplesSection: React.FC<ExamplesSectionProps> = memo(({ onBack }) => {
+export const ExamplesSection: React.FC<ExamplesSectionProps> = memo(({ examples, onBack }) => {
   return (
     <div className="min-h-screen bg-dark/50 backdrop-blur-sm p-4">
       <div className="max-w-6xl mx-auto">
@@ -29,7 +30,7 @@ export const ExamplesSection: React.FC<ExamplesSectionProps> = memo(({ onBack })
             transition={{ delay: 0.2 }}
             className="grid gap-6"
           >
-            {cvExamples.map((example, index) => (
+            {examples.map((example: CVExample, index: number) => (
               <ExampleCard
                 key={example.id}
                 example={example}

@@ -29,9 +29,6 @@ export const TipCard: React.FC<TipCardProps> = memo(({ tip, index }) => {
     >
       <div className="p-6">
         <div className="flex items-start gap-4 mb-4">
-          <div className={`p-3 rounded-lg ${colors.bg} ${colors.border} border`}>
-            <tip.icon className={`w-6 h-6 ${colors.text}`} />
-          </div>
           
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">

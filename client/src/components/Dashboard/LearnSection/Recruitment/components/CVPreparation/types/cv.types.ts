@@ -27,24 +27,19 @@ export interface CVTip {
   id: string;
   title: string;
   description: string;
-  category: CVTipCategory;
+  category: 'content' | 'skills' | 'design' | 'projects';
   importance: 'low' | 'medium' | 'high' | 'critical';
-  icon: IconType;
+  icon: string;
   examples: {
     good: string[];
     bad: string[];
   };
+  tags: string[];
+  viewCount: number;
+  helpfulCount: number;
+  createdAt: string;
+  updatedAt: string;
 }
-
-export type CVTipCategory = 
-  | 'personal-info'
-  | 'experience'
-  | 'skills'
-  | 'education'
-  | 'projects'
-  | 'achievements'
-  | 'design'
-  | 'content';
 
 export interface CVExample {
   id: string;
@@ -55,17 +50,68 @@ export interface CVExample {
   field: 'frontend' | 'backend' | 'fullstack' | 'mobile' | 'devops';
   content: string;
   highlightPoints: string[];
+  tags: string[];
+  viewCount: number;
+  copyCount: number;
+  helpfulCount: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface CVStats {
-  totalTemplates: number;
   totalTips: number;
   totalExamples: number;
-  userProgress: {
-    sectionsCompleted: number;
+  userProgress?: {
+    tipsViewed: number;
+    examplesViewed: number;
+    completedSections: number;
     totalSections: number;
-    lastUpdated: string;
+    completionPercentage: number;
+    lastActivityAt: string;
   };
+}
+
+export interface CVTipQuery {
+  category?: string;
+  importance?: 'low' | 'medium' | 'high' | 'critical';
+  search?: string;
+  tags?: string[];
+  limit?: number;
+  page?: number;
+  sortBy?: 'createdAt' | 'importance' | 'viewCount' | 'helpfulCount' | 'order';
+  sortOrder?: 'asc' | 'desc';
+}
+
+export interface CVExampleQuery {
+  type?: 'full-cv' | 'section' | 'skill-description' | 'project-description';
+  level?: 'junior' | 'mid' | 'senior';
+  field?: 'frontend' | 'backend' | 'fullstack' | 'mobile' | 'devops';
+  search?: string;
+  tags?: string[];
+  limit?: number;
+  page?: number;
+  sortBy?: 'createdAt' | 'viewCount' | 'copyCount' | 'helpfulCount' | 'order';
+  sortOrder?: 'asc' | 'desc';
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
+}
+
+export interface CVUserProgressUpdate {
+  type: 'tip_viewed' | 'example_viewed' | 'example_copied' | 'section_completed';
+  itemId: string;
+  sectionId?: string;
+  timeSpent?: number;
+  isHelpful?: boolean;
 }
 
 export interface CVBuilderData {
@@ -150,6 +196,24 @@ export interface Language {
 }
 
 export type CVView = 'main' | 'content-tips' | 'technical-tips' | 'design-tips' | 'examples';
+
+export interface CVPreparationState {
+  activeSection: CVSection | null;
+  activeView: CVView;
+  tips: CVTip[];
+  examples: CVExample[];
+  stats: CVStats | null;
+  loading: boolean;
+  error: string | null;
+  searchQuery: string;
+  selectedFilters: {
+    category?: string;
+    importance?: string;
+    level?: string;
+    field?: string;
+    type?: string;
+  };
+}
 
 export interface CVPreparationSection {
   id: string;

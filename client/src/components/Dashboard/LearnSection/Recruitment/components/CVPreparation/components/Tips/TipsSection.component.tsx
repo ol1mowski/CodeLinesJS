@@ -2,8 +2,8 @@ import React, { memo, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { CVHeader } from '../Common/CVHeader.component';
 import { TipCard } from './TipCard.component';
-import { cvTips } from '../../data/cvData.data';
 import type { CVView } from '../../types/cv.types';
+import { useCVPreparation } from '../../hooks/useCVPreparation.hook';
 
 interface TipsSectionProps {
   onBack: () => void;
@@ -11,6 +11,7 @@ interface TipsSectionProps {
 }
 
 export const TipsSection: React.FC<TipsSectionProps> = memo(({ onBack, category }) => {
+  const { tips } = useCVPreparation();
   const { filteredTips, title, description } = useMemo(() => {
     const categoryMap = {
       'content-tips': {
@@ -31,7 +32,7 @@ export const TipsSection: React.FC<TipsSectionProps> = memo(({ onBack, category 
     };
 
     const config = categoryMap[category as keyof typeof categoryMap];
-    const filtered = config ? cvTips.filter(tip => config.categories.includes(tip.category)) : cvTips;
+    const filtered = config ? tips.filter(tip => config.categories.includes(tip.category)) : tips;
 
     return {
       filteredTips: filtered,
