@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { motion } from 'framer-motion';
 import { FaTrophy } from 'react-icons/fa';
-import { PerformanceLevel } from '../../hooks/useResultsScreen.hook';
+import { PerformanceLevel } from '../../../hooks/useResultsScreen.hook';
 
 interface MainResultCardProps {
   correctAnswers: number;

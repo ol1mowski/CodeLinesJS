@@ -1,12 +1,13 @@
 import React, { memo } from 'react';
-import { Question } from '../data/questionsData.data';
-import { useTestScreen } from '../hooks/useTestScreen.hook';
+import { ITheoryQuestion } from '../../api/theoryQuestions.api';
+import { useTestScreen } from '../../hooks/useTestScreen.hook';
 import { TestHeader } from './test/TestHeader.component';
 import { QuestionCard } from './test/QuestionCard.component';
 import { TestActions } from './test/TestActions.component';
 
+
 interface TestScreenProps {
-  questions: Question[];
+  questions: ITheoryQuestion[];
   currentQuestionIndex: number;
   selectedAnswer: number | null;
   onAnswerSelect: (answerIndex: number) => void;

@@ -1,5 +1,3 @@
-import { getQuestionsFromDatabase } from './questionsData.data';
-
 export type QuestionOption = {
   value: number;
   label: string;
@@ -13,7 +11,7 @@ export const questionOptions: QuestionOption[] = [
   { value: 20, label: '20 pytań', time: '~20 min' },
 ];
 
-const { totalQuestions } = getQuestionsFromDatabase();
+const totalQuestions = 100;
 
 export const testInfo = {
   topics: 'podstawy JavaScript, hoisting, closures, prototypy, event loop, ES6+',

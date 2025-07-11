@@ -1,51 +1,16 @@
 import { useState, useCallback } from 'react';
 import { getTheoryQuestions, checkTheoryAnswer, ITheoryQuestion } from '../api/theoryQuestions.api';
-import { Question as OldQuestion } from '../data/questionsData.data';
-import { Answer as OldAnswer } from './useResultsScreen.hook';
-
-interface ApiQuestion extends ITheoryQuestion {
-  id: string;
-}
-
-interface ApiAnswer {
-  questionId: string;
-  selectedAnswer: number;
-  isCorrect: boolean;
-  timeTaken?: number;
-  explanation?: string;
-  correctAnswer?: number;
-}
+import { Answer } from './useResultsScreen.hook';
 
 export type TestState = 'setup' | 'inProgress' | 'completed';
-
-const convertQuestionForComponents = (apiQuestion: ApiQuestion): OldQuestion => ({
-  id: parseInt(apiQuestion._id.slice(-6), 16),
-  question: apiQuestion.question,
-  options: apiQuestion.options,
-  correctAnswer: apiQuestion.correctAnswer,
-  explanation: apiQuestion.explanation,
-  category: apiQuestion.category
-});
-
-const convertAnswerForComponents = (apiAnswer: ApiAnswer): OldAnswer & { 
-  explanation?: string; 
-  correctAnswer?: number; 
-} => ({
-  questionId: parseInt(apiAnswer.questionId.slice(-6), 16),
-  selectedAnswer: apiAnswer.selectedAnswer,
-  isCorrect: apiAnswer.isCorrect,
-  timeTaken: apiAnswer.timeTaken,
-  explanation: apiAnswer.explanation,
-  correctAnswer: apiAnswer.correctAnswer
-});
 
 export const useTest = () => {
   const [testState, setTestState] = useState<TestState>('setup');
   const [selectedQuestionCount, setSelectedQuestionCount] = useState<number>(10);
-  const [questions, setQuestions] = useState<ApiQuestion[]>([]);
+  const [questions, setQuestions] = useState<ITheoryQuestion[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
-  const [answers, setAnswers] = useState<ApiAnswer[]>([]);
+  const [answers, setAnswers] = useState<Answer[]>([]);
   const [startTime, setStartTime] = useState<number>(0);
   const [questionStartTime, setQuestionStartTime] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
@@ -65,12 +30,7 @@ export const useTest = () => {
       }
 
       if (response.data) {
-        const testQuestions: ApiQuestion[] = response.data.map(q => ({
-          ...q,
-          id: q._id
-        }));
-        
-        setQuestions(testQuestions);
+        setQuestions(response.data);
         setSelectedQuestionCount(questionCount);
         setCurrentQuestionIndex(0);
         setSelectedAnswer(null);
@@ -99,8 +59,8 @@ export const useTest = () => {
     try {
       const checkResponse = await checkTheoryAnswer(currentQuestion._id, selectedAnswer);
       
-      const newAnswer: ApiAnswer = {
-        questionId: currentQuestion.id,
+      const newAnswer: Answer = {
+        questionId: currentQuestion._id,
         selectedAnswer,
         isCorrect: checkResponse.data?.isCorrect || false,
         timeTaken,
@@ -121,8 +81,8 @@ export const useTest = () => {
       setError('Błąd podczas sprawdzania odpowiedzi');
       
       const isCorrect = selectedAnswer === currentQuestion.correctAnswer;
-      const newAnswer: ApiAnswer = {
-        questionId: currentQuestion.id,
+      const newAnswer: Answer = {
+        questionId: currentQuestion._id,
         selectedAnswer,
         isCorrect,
         timeTaken,
@@ -198,10 +158,10 @@ export const useTest = () => {
   return {
     testState,
     selectedQuestionCount,
-    questions: questions.map(convertQuestionForComponents),
+    questions,
     currentQuestionIndex,
     selectedAnswer,
-    answers: answers.map(convertAnswerForComponents),
+    answers,
     loading,
     error,
 

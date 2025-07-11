@@ -1,11 +1,11 @@
 import React, { memo } from 'react';
 import { motion } from 'framer-motion';
 import { FaCheck, FaTimes } from 'react-icons/fa';
-import { Question } from '../../data/questionsData.data';
-import { Answer } from '../../hooks/useResultsScreen.hook';
+import { ITheoryQuestion } from '../../../api/theoryQuestions.api';
+import { Answer } from '../../../hooks/useResultsScreen.hook';
 
 interface DetailedAnswersProps {
-  questions: Question[];
+  questions: ITheoryQuestion[];
   answers: Answer[];
 }
 
@@ -27,7 +27,7 @@ export const DetailedAnswers: React.FC<DetailedAnswersProps> = memo(({
           const isCorrect = answer?.isCorrect;
           
           return (
-            <div key={question.id} className="border border-js/10 rounded-xl p-4">
+            <div key={question._id} className="border border-js/10 rounded-xl p-4"> 
               <div className="flex items-start gap-3 mb-3">
                 <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
                   isCorrect ? 'bg-green-500' : 'bg-red-500'

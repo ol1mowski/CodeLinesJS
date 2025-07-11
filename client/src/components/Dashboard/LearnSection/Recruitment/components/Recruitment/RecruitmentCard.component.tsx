@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { motion } from 'framer-motion';
-import type { RecruitmentSection } from '../types/recruitment.types';
+import type { RecruitmentSection } from '../../types/recruitment.types';
 
 type RecruitmentCardProps = {
   section: RecruitmentSection;

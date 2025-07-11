@@ -1,9 +1,9 @@
 import { motion } from 'framer-motion';
 import { memo, useState } from 'react';
 import { useRecruitment } from './hooks/useRecruitment.hook';
-import { RecruitmentHeader } from './components/RecruitmentHeader.component';
-import { RecruitmentCard } from './components/RecruitmentCard.component';
-import { RecruitmentStatsSection } from './components/RecruitmentStats.component';
+import { RecruitmentHeader } from './components/Recruitment/RecruitmentHeader.component';
+import { RecruitmentCard } from './components/Recruitment/RecruitmentCard.component';
+import { RecruitmentStatsSection } from './components/Recruitment/RecruitmentStats.component';
 import { TechnicalInterviewSection } from './components/TechnicalInterview/TechnicalInterviewSection.component';
 import type { ViewMode } from './types/recruitment.types';
 

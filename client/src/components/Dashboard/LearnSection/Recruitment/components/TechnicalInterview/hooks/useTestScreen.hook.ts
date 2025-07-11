@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
-import { Question } from '../data/questionsData.data';
+import { ITheoryQuestion } from '../api/theoryQuestions.api';
 
 export const useTestScreen = (
-  questions: Question[],
+  questions: ITheoryQuestion[],
   currentQuestionIndex: number,
   totalQuestions: number
 ) => {

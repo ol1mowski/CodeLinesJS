@@ -1,10 +1,10 @@
 import React, { memo } from 'react';
 import { motion } from 'framer-motion';
 import { FaCheck } from 'react-icons/fa';
-import { Question } from '../../data/questionsData.data';
+import { ITheoryQuestion } from '../../../api/theoryQuestions.api';
 
 interface QuestionCardProps {
-  question: Question;
+  question: ITheoryQuestion;
   selectedAnswer: number | null;
   onAnswerSelect: (answerIndex: number) => void;
   currentQuestionIndex: number;

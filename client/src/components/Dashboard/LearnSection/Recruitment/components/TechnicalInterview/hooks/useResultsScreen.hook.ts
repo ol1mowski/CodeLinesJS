@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
-import { Question } from '../data/questionsData.data';
+import { ITheoryQuestion } from '../api/theoryQuestions.api';
 
 export interface Answer {
-  questionId: number;
+  questionId: string;
   selectedAnswer: number;
   isCorrect: boolean;
   timeTaken?: number;
@@ -17,7 +17,7 @@ export interface PerformanceLevel {
 }
 
 export const useResultsScreen = (
-  questions: Question[],
+  questions: ITheoryQuestion[],
   answers: Answer[],
   totalTime: number = 0
 ) => {

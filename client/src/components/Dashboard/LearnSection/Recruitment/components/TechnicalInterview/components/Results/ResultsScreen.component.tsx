@@ -1,16 +1,18 @@
 import React, { memo } from 'react';
-import { Question } from '../data/questionsData.data';
-import { useResultsScreen, Answer } from '../hooks/useResultsScreen.hook';
-import { ResultsHeader } from './results/ResultsHeader.component';
-import { MainResultCard } from './results/MainResultCard.component';
-import { StatsCard } from './results/StatsCard.component';
-import { CategoryStatsCard } from './results/CategoryStatsCard.component';
-import { RecommendationsCard } from './results/RecommendationsCard.component';
-import { DetailedAnswers } from './results/DetailedAnswers.component';
-import { ResultsActions } from './results/ResultsActions.component';
+import { ITheoryQuestion } from '../../api/theoryQuestions.api';
+import { useResultsScreen, Answer } from '../../hooks/useResultsScreen.hook';
+import { 
+  ResultsHeader,
+  MainResultCard,
+  StatsCard,
+  CategoryStatsCard,
+  RecommendationsCard,
+  DetailedAnswers,
+  ResultsActions
+} from './components';
 
 interface ResultsScreenProps {
-  questions: Question[];
+  questions: ITheoryQuestion[];
   answers: Answer[];
   onRestart: () => void;
   onBack: () => void;
@@ -66,4 +68,4 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = memo(({
   );
 });
 
-ResultsScreen.displayName = 'ResultsScreen';
+ResultsScreen.displayName = 'ResultsScreen'; 
