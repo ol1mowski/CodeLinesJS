@@ -23,7 +23,7 @@ export const useRecruitment = () => {
         title: 'Przygotowanie CV',
         description: 'Stwórz profesjonalne CV, które przyciągnie uwagę rekruterów i wyróżni Cię na rynku',
         icon: FaFileAlt,
-        isAvailable: false,
+        isAvailable: true,
         features: [
           'Szablony CV dla programistów',
           'Opis projektów i umiejętności',
