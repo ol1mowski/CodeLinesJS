@@ -29,6 +29,8 @@ export const TheorySection = memo(({ onBack }: TheorySectionProps) => {
     currentQuestionIndex,
     selectedAnswer,
     answers,
+    loading,
+    error,
     startTest,
     selectAnswer,
     nextQuestion,
@@ -39,8 +41,8 @@ export const TheorySection = memo(({ onBack }: TheorySectionProps) => {
     getTotalTime
   } = useTest();
 
-  const handleStart = () => {
-    startTest(selectedCount);
+  const handleStart = async () => {
+    await startTest(selectedCount);
   };
 
   const handleBackFromTest = () => {
@@ -109,7 +111,17 @@ export const TheorySection = memo(({ onBack }: TheorySectionProps) => {
 
           <TestInfoSection details={testInfo.details} />
 
-          <StartButton questionCount={selectedCount} onStart={handleStart} />
+          <StartButton questionCount={selectedCount} onStart={handleStart} loading={loading} />
+          
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 text-red-400 text-center"
+            >
+              {error}
+            </motion.div>
+          )}
         </motion.div>
 
         <motion.div

@@ -6,6 +6,8 @@ export interface Answer {
   selectedAnswer: number;
   isCorrect: boolean;
   timeTaken?: number;
+  explanation?: string;
+  correctAnswer?: number;
 }
 
 export interface PerformanceLevel {

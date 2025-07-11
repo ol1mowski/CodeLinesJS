@@ -10,7 +10,7 @@ interface TestScreenProps {
   currentQuestionIndex: number;
   selectedAnswer: number | null;
   onAnswerSelect: (answerIndex: number) => void;
-  onNext: () => void;
+  onNext: () => void | Promise<void>;
   onBack: () => void;
   totalQuestions: number;
 }

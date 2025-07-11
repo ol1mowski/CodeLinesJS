@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { motion } from 'framer-motion';
 
 interface TestActionsProps {
-  onNext: () => void;
+  onNext: () => void | Promise<void>;
   selectedAnswer: number | null;
   isLastQuestion: boolean;
 }
@@ -14,10 +14,16 @@ export const TestActions: React.FC<TestActionsProps> = memo(({
 }) => {
   const canProceed = selectedAnswer !== null;
 
+  const handleNext = async () => {
+    if (canProceed) {
+      await onNext();
+    }
+  };
+
   return (
     <div className="flex justify-end">
       <motion.button
-        onClick={onNext}
+        onClick={handleNext}
         disabled={!canProceed}
         className={`px-8 py-4 rounded-xl font-medium text-lg transition-all duration-200 ${
           canProceed

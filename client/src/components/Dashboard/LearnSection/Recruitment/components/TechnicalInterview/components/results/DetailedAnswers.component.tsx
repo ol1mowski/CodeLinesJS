@@ -43,19 +43,16 @@ export const DetailedAnswers: React.FC<DetailedAnswersProps> = memo(({
                   <div className="text-white font-medium mb-2">{question.question}</div>
                   
                   <div className="space-y-2">
-                    {!isCorrect && (
-                      <>
-                        <div className="text-red-400 text-sm">
-                          Twoja odpowiedź: {question.options[answer?.selectedAnswer || 0]}
-                        </div>
-                        <div className="text-green-400 text-sm">
-                          Poprawna odpowiedź: {question.options[question.correctAnswer]}
-                        </div>
-                      </>
-                    )}
+                    <div className={`text-sm ${isCorrect ? 'text-green-400' : 'text-red-400'}`}>
+                      Twoja odpowiedź: {question.options[answer?.selectedAnswer || 0]}
+                    </div>
+                    
+                    <div className="text-green-400 text-sm">
+                      Poprawna odpowiedź: {question.options[answer?.correctAnswer ?? question.correctAnswer]}
+                    </div>
                     
                     <div className="text-gray-300 text-sm bg-dark-700/50 p-3 rounded-lg">
-                      <strong>Wyjaśnienie:</strong> {question.explanation}
+                      <strong>Wyjaśnienie:</strong> {answer?.explanation || question.explanation}
                     </div>
                   </div>
                 </div>
