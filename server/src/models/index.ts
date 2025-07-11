@@ -8,8 +8,9 @@ export const Lesson = mongoose.model('Lesson', lessonSchema);
 export const LearningPath = mongoose.model('LearningPath', learningPathSchema);
 export const Resource = mongoose.model('Resource', resourceSchema);
 
-// Export LatestFeature model
 export { LatestFeature } from './latestFeature.model.js';
+
+export { TheoryQuestion } from './theoryQuestion.model.js';
 
 export const initializeModels = () => {
   if (!mongoose.modelNames().includes('Lesson')) {

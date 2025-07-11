@@ -13,6 +13,7 @@ import reportsRoutes from './reports.routes.js';
 import resourcesRoutes from './resources.routes.js';
 import settingsRoutes from './settings.routes.js';
 import statsRoutes from './stats.routes.js';
+import theoryQuestionsRoutes from './theoryQuestions.routes.js';
 import usersRoutes from './users.routes.js';
 
 export const configureRoutes = (app: Application): Application => {
@@ -35,6 +36,7 @@ export const configureRoutes = (app: Application): Application => {
   app.use('/api/learning-paths', learningPathsRoutes);
   app.use('/api/lessons', lessonsRoutes);
   app.use('/api/resources', resourcesRoutes);
+  app.use('/api/theory-questions', theoryQuestionsRoutes);
   app.use('/api/users', usersRoutes);
   app.use('/api/reports', reportsRoutes);
   app.use('/api/latest-features', latestFeaturesRoutes);
