@@ -1,7 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FaClock, FaCode } from 'react-icons/fa';
-import { difficultyLabels } from '../../data/practiceData.data';
+const difficultyLabels = {
+  easy: 'Łatwe',
+  medium: 'Średnie',
+  hard: 'Trudne'
+};
 import type { PracticeTask } from '../../../../../../types/recruitment.types';
 
 interface TaskCardProps {

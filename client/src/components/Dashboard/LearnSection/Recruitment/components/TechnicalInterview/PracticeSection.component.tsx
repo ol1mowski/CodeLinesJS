@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FaArrowLeft } from 'react-icons/fa';
-import { usePracticeSection } from './components/Practice/hooks/usePracticeSection.hook';
+import { usePracticeSectionApi } from './components/Practice/hooks/usePracticeSectionApi.hook';
 import TaskDetails from './components/Practice/Task/components/TaskDetails.component';
 import TaskCard from './components/Practice/Task/components/TaskCard.component';
 import StatsSection from './components/Practice/StatsSection.component';
@@ -22,6 +22,8 @@ const PracticeSection: React.FC<PracticeSectionProps> = ({ onBack }) => {
         selectedCategory,
         selectedDifficulty,
         searchQuery,
+        loading,
+        error,
         setSelectedCategory,
         setSelectedDifficulty,
         setSearchQuery,
@@ -29,7 +31,7 @@ const PracticeSection: React.FC<PracticeSectionProps> = ({ onBack }) => {
         handleBackToList,
         handleShowSolution,
         resetFilters
-    } = usePracticeSection();
+    } = usePracticeSectionApi();
 
     if (selectedTask) {
         return (
@@ -39,6 +41,42 @@ const PracticeSection: React.FC<PracticeSectionProps> = ({ onBack }) => {
                 onBack={handleBackToList}
                 onShowSolution={handleShowSolution}
             />
+        );
+    }
+
+    if (loading) {
+        return (
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="flex items-center justify-center min-h-[400px]"
+            >
+                <div className="text-center space-y-4">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+                    <p className="text-gray-300">Ładowanie zadań...</p>
+                </div>
+            </motion.div>
+        );
+    }
+
+    if (error) {
+        return (
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="flex items-center justify-center min-h-[400px]"
+            >
+                <div className="text-center space-y-4">
+                    <div className="text-red-400 text-xl">⚠️</div>
+                    <p className="text-red-400">{error}</p>
+                    <button
+                        onClick={() => window.location.reload()}
+                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    >
+                        Spróbuj ponownie
+                    </button>
+                </div>
+            </motion.div>
         );
     }
 
@@ -82,7 +120,7 @@ const PracticeSection: React.FC<PracticeSectionProps> = ({ onBack }) => {
             />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {tasks.map((task, index) => (
+                {tasks.map((task: any, index: number) => (
                     <TaskCard
                         key={task.id}
                         task={task}

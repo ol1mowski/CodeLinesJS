@@ -1,10 +1,15 @@
 import { FaClock, FaCode } from 'react-icons/fa';
-import { difficultyLabels } from '../../data/practiceData.data';
 import type { PracticeTask } from '../../../../../../types/recruitment.types';
 
 interface TaskHeaderProps {
     task: PracticeTask;
 }
+
+const difficultyLabels = {
+    easy: 'Łatwe',
+    medium: 'Średnie',
+    hard: 'Trudne'
+};
 
 const TaskHeader: React.FC<TaskHeaderProps> = ({ task }) => {
     return (
