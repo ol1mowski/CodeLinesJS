@@ -15,6 +15,7 @@
     "update-stats": "node --no-warnings --loader ts-node/esm --experimental-specifier-resolution=node src/scripts/updateUserStats.ts",
     "init-paths": "node --no-warnings --loader ts-node/esm --experimental-specifier-resolution=node src/scripts/initLearningPaths.ts",
     "init-theory-questions": "node --no-warnings --loader ts-node/esm --experimental-specifier-resolution=node src/scripts/initTheoryQuestions.ts",
+    "init-practice-tasks": "node --no-warnings --loader ts-node/esm --experimental-specifier-resolution=node src/scripts/initPracticeTasks.ts",
     "vercel-build": "npm run build && npm run verify-public",
     "copy-static": "mkdir -p dist && mkdir -p dist/public && cp -r public/* dist/public/ || true",
     "prebuild": "mkdir -p dist && mkdir -p dist/public",
