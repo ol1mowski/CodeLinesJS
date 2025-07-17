@@ -1,15 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
 import { fetchResources } from '../lib/api/resources';
-import { type Resource } from '../types/resource.types';
+import type { Resource } from '../types/resource.types';
 import { useAuth } from '../../../../hooks/useAuth';
 
 export type ResourcesResponse = {
   resources: Resource[];
   total: number;
+  page: number;
+  limit: number;
 };
 
 export const useResources = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isAuthChecking } = useAuth();
 
   const {
     data,
@@ -27,8 +29,10 @@ export const useResources = () => {
     queryFn: () => fetchResources(),
     retry: 2,
     staleTime: 1000 * 60 * 5,
-    enabled: isAuthenticated,
+    enabled: isAuthenticated && !isAuthChecking,
   });
+  
+  const isDataLoading = isLoading || (!data && !error);
 
   const resources = data?.data?.resources || [];
 
@@ -38,7 +42,7 @@ export const useResources = () => {
   return {
     recommendedResources,
     otherResources,
-    isLoading,
+    isLoading: isDataLoading,
     error,
     refetch,
   };

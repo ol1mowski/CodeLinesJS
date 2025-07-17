@@ -1,11 +1,14 @@
 import { memo } from 'react';
 import { ActiveUsers } from './ActiveUsers.component';
+import { ErrorBoundary } from '../../../Common/ErrorBoundary';
 
 const CommunityFeed = memo(() => {
   return (
-    <div className="space-y-6">
-      <ActiveUsers />
-    </div>
+    <ErrorBoundary>
+      <div className="space-y-6">
+        <ActiveUsers />
+      </div>
+    </ErrorBoundary>
   );
 });
 

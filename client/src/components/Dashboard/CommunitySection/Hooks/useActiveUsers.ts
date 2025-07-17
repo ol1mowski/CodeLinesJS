@@ -14,7 +14,7 @@ export type ActiveUsersResponse = {
 };
 
 export const useActiveUsers = () => {
-  const { token } = useAuth();
+  const { isAuthenticated, isAuthChecking } = useAuth();
 
   const {
     data,
@@ -29,11 +29,11 @@ export const useActiveUsers = () => {
     meta: any;
   }, Error>({
     queryKey: ['activeUsers'],
-    queryFn: () => fetchActiveUsers(token || ''),
+    queryFn: () => fetchActiveUsers(),
     retry: 2,
     refetchInterval: 30000,
-    staleTime: 1000 * 60, // 1 minuta
-    enabled: !!token,
+    staleTime: 1000 * 60,
+    enabled: isAuthenticated && !isAuthChecking,
   });
 
   const users = data?.data?.users || [];

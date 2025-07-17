@@ -18,7 +18,8 @@ export const FormError = memo(
     title = 'Błąd',
     className = '',
   }: FormErrorProps) => {
-    if (!message) return null;
+    if (!message || message === 'Brak tokenu autoryzacji. Zaloguj się, aby uzyskać dostęp.')
+      return null;
 
     if (variant === 'alert') {
       return (

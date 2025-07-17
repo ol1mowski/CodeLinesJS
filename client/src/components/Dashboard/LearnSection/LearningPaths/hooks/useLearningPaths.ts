@@ -4,7 +4,7 @@ import type { PathsResponse } from '../types/learning-paths.types';
 import { useAuth } from '../../../../../hooks/useAuth';
 
 export const useLearningPaths = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isAuthChecking } = useAuth();
 
   const { data, isLoading, error, refetch } = useQuery<PathsResponse, Error>({
     queryKey: ['learningPaths', 'userProgress'],
@@ -13,13 +13,16 @@ export const useLearningPaths = () => {
     retry: 2,
     refetchOnWindowFocus: true,
     refetchOnReconnect: true,
-    enabled: isAuthenticated,
+    enabled: isAuthenticated && !isAuthChecking,
   });
+
+  // Loading jest true, jeśli query się ładuje LUB jeśli dane nie są jeszcze dostępne
+  const isDataLoading = isLoading || (!data && !error);
 
   return {
     paths: data?.data.paths || [],
     userStats: data?.data.userStats,
-    isLoading,
+    isLoading: isDataLoading,
     error,
     refetch,
     isEmpty: !data?.data.paths || data.data.paths.length === 0,

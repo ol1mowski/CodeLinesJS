@@ -15,7 +15,7 @@ type TabType = 'paths' | 'lessons' | 'resources' | 'articles' | 'recruitment';
 
 export const LearnSection = memo(() => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isAuthChecking } = useAuth();
 
   const activeTab = (searchParams.get('tab') as TabType) || 'paths';
 
@@ -43,7 +43,7 @@ export const LearnSection = memo(() => {
     },
   };
 
-  if (!isAuthenticated) {
+  if (isAuthChecking || !isAuthenticated) {
     return (
       <div className="flex justify-center py-12">
         <LoadingScreen />
