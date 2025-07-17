@@ -8,10 +8,11 @@ type PasswordInputProps = {
   placeholder?: string;
   error?: string;
   showIcon?: boolean;
+  styles?: 'default' | 'white';
 } & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type'>;
 
 export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
-  ({ label, placeholder = '••••••••', error, showIcon = true, ...props }, ref) => {
+  ({ label, placeholder = '••••••••', error, showIcon = true, styles = 'default', ...props }, ref) => {
     const { isVisible, toggleVisibility, inputType } = usePasswordVisibility();
 
     return (
@@ -21,6 +22,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
         label={label}
         placeholder={placeholder}
         error={error}
+        styles={styles}
         icon={showIcon ? <FaLock /> : undefined}
         rightIcon={
           <button
