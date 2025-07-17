@@ -7,18 +7,16 @@ export const PROFILE_QUERY_KEY = ['profile'] as const;
 
 export const useProfile = () => {
   const queryClient = useQueryClient();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isAuthChecking } = useAuth();
 
-  const {
-    data: profile,
-    isLoading,
-    error,
-  } = useQuery({
+  const query = useQuery({
     queryKey: PROFILE_QUERY_KEY,
     queryFn: () => fetchUserProfile(),
-    enabled: isAuthenticated,
+    enabled: isAuthenticated && !isAuthChecking,
     staleTime: 1000 * 60 * 5,
   });
+
+  const isLoading = query.isLoading || isAuthChecking;
 
   const updateProfile = useMutation({
     mutationFn: (data: UserProfile) => updateUserProfile(data),
@@ -29,12 +27,12 @@ export const useProfile = () => {
   });
 
   return { 
-    profile,
-    username: profile?.username || '',
-    email: profile?.email || '', 
-    bio: profile?.profile?.bio || '', 
+    profile: query.data,
+    username: query.data?.username || '',
+    email: query.data?.email || '', 
+    bio: query.data?.profile?.bio || '', 
     isLoading, 
-    error, 
+    error: query.error, 
     updateProfile 
   };
 };

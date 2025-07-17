@@ -12,7 +12,7 @@ type FormInputProps = {
 export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
   ({ label, error, icon, rightIcon, className = '', ...props }, ref) => (
     <div className="space-y-1 sm:space-y-2">
-      <label className="block text-xs sm:text-sm font-medium text-gray-700">{label}</label>
+      <label className="block text-xs sm:text-sm font-medium text-gray-400">{label}</label>
       <div className="relative">
         {icon && (
           <div className="absolute inset-y-0 left-0 pl-2 sm:pl-3 flex items-center pointer-events-none text-gray-500">
@@ -22,11 +22,11 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
         <input
           ref={ref}
           className={`
-            w-full py-2 sm:py-3 text-sm sm:text-base
+            w-full py-2 sm:py-3 text-sm sm:text-base bg-dark-medium
             ${icon ? 'pl-8 sm:pl-10' : 'pl-3 sm:pl-4'} 
             ${rightIcon ? 'pr-8 sm:pr-10' : 'pr-3 sm:pr-4'}
-            bg-white border rounded-lg 
-            text-gray-900 placeholder-gray-400
+             border rounded-lg border-js/10
+            text-gray-500 placeholder-gray-400
             focus:outline-none focus:ring-2
             transition-all duration-200
             ${

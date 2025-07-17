@@ -7,18 +7,13 @@ import { toast } from 'react-hot-toast';
 export const PREFERENCES_QUERY_KEY = ['preferences'];
 
 export const usePreferences = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isAuthChecking } = useAuth();
   const queryClient = useQueryClient();
 
-  const { 
-    data: preferences, 
-    isLoading,
-    error,
-    refetch 
-  } = useQuery({
+  const query = useQuery({
     queryKey: PREFERENCES_QUERY_KEY,
     queryFn: () => fetchPreferences(),
-    enabled: isAuthenticated,
+    enabled: isAuthenticated && !isAuthChecking,
     staleTime: 1000 * 60 * 5,
     retry: (failureCount, error) => {
       if (error instanceof PreferencesError && error.code === 'AUTH_ERROR') {
@@ -28,9 +23,11 @@ export const usePreferences = () => {
       return failureCount < 3; 
     },
   });
+
+  const isLoading = query.isLoading || isAuthChecking;
   
-  if (error && !(error instanceof PreferencesError && error.code === 'AUTH_ERROR')) {
-    toast.error(error instanceof Error ? error.message : 'Wystąpił błąd podczas ładowania preferencji');
+  if (query.error && !(query.error instanceof PreferencesError && query.error.code === 'AUTH_ERROR')) {
+    toast.error(query.error instanceof Error ? query.error.message : 'Wystąpił błąd podczas ładowania preferencji');
   }
 
   const updatePreferencesMutation = useMutation({
@@ -54,10 +51,10 @@ export const usePreferences = () => {
   });
 
   return {
-    preferences,
+    preferences: query.data,
     isLoading,
-    error,
+    error: query.error,
     updatePreferences: updatePreferencesMutation,
-    refetch
+    refetch: query.refetch
   };
 };

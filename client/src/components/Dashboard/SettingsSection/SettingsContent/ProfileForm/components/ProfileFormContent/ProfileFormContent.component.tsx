@@ -15,6 +15,7 @@ export type ProfileFormContentProps = {
   onSubmit: (e: React.FormEvent) => void;
   isSaved?: boolean;
   isDirty?: boolean;
+  isLoading?: boolean;
 };
 
 export const ProfileFormContent = memo(
@@ -28,6 +29,7 @@ export const ProfileFormContent = memo(
     onSubmit,
     isSaved = false,
     isDirty = false,
+    isLoading = false,
   }: ProfileFormContentProps) => (
     <motion.form
       onSubmit={onSubmit}
@@ -37,11 +39,18 @@ export const ProfileFormContent = memo(
     >
       <div className={styles.container}>
         <div className={styles.header}>
-          <div className={styles.infoSection}>
-            <UserInfoFields register={register} errors={errors} />
+          {isLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-js"></div>
+              <span className="ml-3 text-js">Ładowanie profilu...</span>
+            </div>
+          ) : (
+            <div className={styles.infoSection}>
+              <UserInfoFields register={register} errors={errors} />
 
-            <BioField register={register} errors={errors} defaultValue={defaultBio} />
-          </div>
+              <BioField register={register} errors={errors} defaultValue={defaultBio} />
+            </div>
+          )}
           
           {isSaved && !isDirty && (
             <div className={styles.successMessage}>

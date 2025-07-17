@@ -1,7 +1,6 @@
 import { memo } from 'react';
 import { usePreferencesFormLogic } from '../../hooks/usePreferencesFormLogic';
 import { PreferencesFormContent } from './components/PreferencesFormContent/PreferencesFormContent.component';
-import { LoadingScreen } from '../../../../UI/LoadingScreen/LoadingScreen.component';
 import { toast } from 'react-hot-toast';
 
 export const PreferencesForm = memo(() => {
@@ -33,9 +32,6 @@ export const PreferencesForm = memo(() => {
     }
   };
 
-  if (isLoading) {
-    return <LoadingScreen />;
-  }
 
   return (
     <PreferencesFormContent
@@ -48,6 +44,7 @@ export const PreferencesForm = memo(() => {
       isPending={isPending}
       isDirty={isDirty}
       isSaved={isSaved}
+      isLoading={isLoading}
     />
   );
 });

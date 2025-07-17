@@ -4,11 +4,19 @@ import { useAuth } from '../../../../hooks/useAuth';
 const USER_PROFILE_QUERY_KEY = ['userProfile'];
 
 export const useUserProfile = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isAuthChecking } = useAuth();
 
-  return useQuery({
+  const query = useQuery({
     queryKey: USER_PROFILE_QUERY_KEY,
     queryFn: () => fetchUser(),
-    enabled: isAuthenticated,
+    enabled: isAuthenticated && !isAuthChecking,
   });
+
+  // Loading jest true, jeśli query się ładuje LUB jeśli sprawdzamy autoryzację
+  const isLoading = query.isLoading || isAuthChecking;
+
+  return {
+    ...query,
+    isLoading,
+  };
 };

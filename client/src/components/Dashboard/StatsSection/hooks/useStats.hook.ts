@@ -4,16 +4,12 @@ import { useAuth } from '../../../../hooks/useAuth';
 import { fetchStats } from '../api/fetchStats.api';
 
 export const useStats = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isAuthChecking } = useAuth();
 
-  const {
-    data: stats,
-    isLoading,
-    error,
-  } = useQuery<UserStats, Error>({
-    queryKey: ['userProgress'],
+  const query = useQuery<UserStats, Error>({
+    queryKey: ['userStats'],
     queryFn: () => fetchStats(),
-    enabled: isAuthenticated,
+    enabled: isAuthenticated && !isAuthChecking,
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 30,
     retry: (failureCount, error) => {
@@ -22,5 +18,12 @@ export const useStats = () => {
     },
   });
 
-  return { stats, isLoading, error };
+  // Loading jest true, jeśli query się ładuje LUB jeśli sprawdzamy autoryzację
+  const isLoading = query.isLoading || isAuthChecking;
+
+  return { 
+    stats: query.data, 
+    isLoading, 
+    error: query.error 
+  };
 };

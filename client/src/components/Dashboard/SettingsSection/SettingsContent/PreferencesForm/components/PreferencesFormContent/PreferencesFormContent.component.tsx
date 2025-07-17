@@ -16,6 +16,7 @@ export type PreferencesFormContentProps = {
   isPending: boolean;
   isDirty?: boolean;
   isSaved?: boolean;
+  isLoading?: boolean;
 };
 
 export const PreferencesFormContent = memo(
@@ -27,6 +28,7 @@ export const PreferencesFormContent = memo(
     onCancel,
     isSubmitting,
     isPending,
+    isLoading = false,
   }: PreferencesFormContentProps) => (
     <motion.form
       onSubmit={onSubmit}
@@ -35,15 +37,25 @@ export const PreferencesFormContent = memo(
       animate={{ opacity: 1 }}
     >
       <div className="bg-dark/30 backdrop-blur-sm rounded-xl p-4 sm:p-6 md:p-8 border border-js/10 space-y-6">
-        <NotificationsSection
-          register={register}
-          values={formValues}
-          onChange={(field, value) => setValue(field, value)}
-        />
+        {isLoading ? (
+          <div className="flex items-center justify-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-js"></div>
+            <span className="ml-3 text-js">Ładowanie preferencji...</span>
+          </div>
+        ) : (
+          <>
+            <NotificationsSection
+              register={register}
+              values={formValues}
+              onChange={(field, value) => setValue(field, value)}
+              isLoading={isLoading}
+            />
 
-        <div className="w-full h-px bg-js/10" />
+            <div className="w-full h-px bg-js/10" />
 
-        <LanguageSection register={register} />
+            <LanguageSection register={register} />
+          </>
+        )}
       </div>
 
       <FormButtons
