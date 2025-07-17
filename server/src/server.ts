@@ -15,13 +15,14 @@ const app: Application = express();
 setupLogger(app);
 
 configureServer(app);
-configureRoutes(app);
 configureGoogleSignIn(app);
+
+configureStaticFiles(app);
+
+configureRoutes(app);
 
 app.use(errorHandler);
 setupErrorHandlers(app);
-
-configureStaticFiles(app);
 
 connectDB();
 
