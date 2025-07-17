@@ -10,7 +10,7 @@ interface ApiError extends Error {
 }
 
 export const useLesson = (lessonId: string) => {
-  const { token } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   const {
     data: lesson,
@@ -20,9 +20,9 @@ export const useLesson = (lessonId: string) => {
   } = useQuery<Lesson, ApiError>({
     queryKey: ['lesson', lessonId],
     queryFn: () => {
-      return fetchLesson(lessonId, token || '');
+      return fetchLesson(lessonId);
     },
-    enabled: !!lessonId && !!token,
+    enabled: !!lessonId && isAuthenticated,
     retry: (failureCount, error) => {
       console.log('Query failed:', { failureCount, error });
       if (error?.response?.status === 404) return false;

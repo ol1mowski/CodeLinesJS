@@ -1,13 +1,13 @@
 import { API_URL } from '../../../../config/api.config';
 import { FormData } from '../hooks/useReportForm.hook';
 
-export const reportBug = async (token: string, data: FormData) => {
+export const reportBug = async (data: FormData) => {
   const response = await fetch(`${API_URL}reports`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
     },
+    credentials: 'include',
     body: JSON.stringify(data),
   });
 

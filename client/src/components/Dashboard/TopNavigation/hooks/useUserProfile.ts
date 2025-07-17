@@ -4,10 +4,11 @@ import { useAuth } from '../../../../hooks/useAuth';
 const USER_PROFILE_QUERY_KEY = ['userProfile'];
 
 export const useUserProfile = () => {
-  const { token } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   return useQuery({
     queryKey: USER_PROFILE_QUERY_KEY,
-    queryFn: () => fetchUser(token),
+    queryFn: () => fetchUser(),
+    enabled: isAuthenticated,
   });
 };

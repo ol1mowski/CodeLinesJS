@@ -1,6 +1,7 @@
 import { Application, Request, Response, RequestHandler } from 'express';
 
 import authRoutes from './auth.routes.js';
+import cvRoutes from './cv.routes.js';
 import gamesRoutes from './games.routes.js';
 import groupsRoutes from './groups.routes.js';
 import latestFeaturesRoutes from './latestFeatures.routes.js';
@@ -27,6 +28,7 @@ export const configureRoutes = (app: Application): Application => {
   });
 
   app.use('/api/auth', authRoutes);
+  app.use('/api/cv', cvRoutes);
   app.use('/api/stats', statsRoutes);
   app.use('/api/games', gamesRoutes);
   app.use('/api/groups', groupsRoutes);

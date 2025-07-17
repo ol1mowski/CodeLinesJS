@@ -1,9 +1,9 @@
 import { motion } from 'framer-motion';
 import { memo, useState } from 'react';
 import { useTechnicalInterview } from './hooks/useTechnicalInterview.hook';
-import { TechnicalInterviewHeader } from './TechnicalInterviewHeader.component';
-import { InterviewBlockCard } from './InterviewBlockCard.component';
-import { InterviewTipsSection } from './InterviewTipsSection.component';
+import { TechnicalInterviewHeader } from './components/Common/TechnicalInterviewHeader.component';
+import { InterviewBlockCard } from './components/Common/InterviewBlockCard.component';
+import { InterviewTipsSection } from './components/Common/InterviewTipsSection.component';
 import { TheorySection } from './TheorySection.component';
 import PracticeSection from './PracticeSection.component';
 import type { TechnicalInterviewView } from '../../types/recruitment.types';

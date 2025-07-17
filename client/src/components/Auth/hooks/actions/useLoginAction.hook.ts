@@ -12,7 +12,7 @@ export const useLoginAction = (state: AuthStateContext) => {
       setLoading(true);
       setError(null);
 
-      const response = await httpClient.post<{ token: string; user: User }>('auth/login', {
+      const response = await httpClient.post<{ user: User }>('auth/login', {
         email,
         password,
         rememberMe,
@@ -26,16 +26,7 @@ export const useLoginAction = (state: AuthStateContext) => {
         throw new Error('Nieznany błąd logowania. Spróbuj ponownie później.');
       }
 
-      const { token, user } = response.data;
-
-      localStorage.removeItem('token');
-      sessionStorage.removeItem('token');
-
-      if (rememberMe) {
-        localStorage.setItem('token', token);
-      } else {
-        sessionStorage.setItem('token', token);
-      }
+      const { user } = response.data;
 
       setUser(user);
       setIsAuthenticated(true);

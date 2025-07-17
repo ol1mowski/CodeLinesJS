@@ -3,6 +3,7 @@ import { login } from './login.js';
 import { forgotPassword, resetPassword } from './password.js';
 import { verifyToken } from './token.js';
 import { googleAuth } from './google.js';
+import { logout } from './logout.js';
 
 export {
   register,
@@ -10,5 +11,6 @@ export {
   forgotPassword,
   resetPassword,
   verifyToken,
-  googleAuth
+  googleAuth,
+  logout
 }; 

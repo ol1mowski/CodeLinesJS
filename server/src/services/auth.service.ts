@@ -46,7 +46,7 @@ class AuthService {
       const token = this.tokenService.generateToken(user, String(expiresIn));
 
       return {
-        token,
+          token,
         expiresIn,
         user: this.userService.sanitizeUser(user)
       };
@@ -79,7 +79,7 @@ class AuthService {
       }
       
       return {
-        token, 
+        token,
         user: {
           ...this.userService.sanitizeUser(freshUser),
           isNewUser: true

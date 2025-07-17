@@ -1,12 +1,12 @@
 import { UserStats } from '../../../../types/stats.types';
 import { API_URL } from '../../../../config/api.config';
 
-export const fetchStats = async (token: string): Promise<UserStats> => {
+export const fetchStats = async (): Promise<UserStats> => {
   const response = await fetch(`${API_URL}users/stats`, {
     headers: {
-      Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
+    credentials: 'include',
   });
 
   if (!response.ok) {

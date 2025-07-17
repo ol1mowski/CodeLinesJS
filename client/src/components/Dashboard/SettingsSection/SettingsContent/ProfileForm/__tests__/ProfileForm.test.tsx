@@ -57,7 +57,7 @@ describe('ProfileForm', () => {
       forgotPassword: vi.fn(),
       register: vi.fn(),
       loginWithGoogle: vi.fn(),
-    });
+      });
     vi.mocked(useProfile).mockReturnValue({
       profile: mockProfile,
       username: 'testuser',

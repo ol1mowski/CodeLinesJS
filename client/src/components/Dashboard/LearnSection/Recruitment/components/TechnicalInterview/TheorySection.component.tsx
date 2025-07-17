@@ -2,13 +2,13 @@ import { memo } from 'react';
 import { motion } from 'framer-motion';
 import { useTheorySection } from './hooks/useTheorySection.hook';
 import { useTest } from './hooks/useTest.hook';
-import { BackButton } from './components/BackButton.component';
-import { TheoryHeader } from './components/TheoryHeader.component';
-import { QuestionSelector } from './components/QuestionSelector.component';
-import { TestInfoSection } from './components/TestInfoSection.component';
-import { StartButton } from './components/StartButton.component';
-import { TestScreen } from './components/TestScreen.component';
-import { ResultsScreen } from './components/ResultsScreen.component';
+import { BackButton } from './components/Common/BackButton.component';
+import { TheoryHeader } from './components/Theory/TheoryHeader.component';
+import { QuestionSelector } from './components/Theory/QuestionSelector.component';
+import { TestInfoSection } from './components/Theory/TestInfoSection.component';
+import { StartButton } from './components/Theory/StartButton.component';
+import { TestScreen } from './components/Theory/TestScreen.component';
+import { ResultsScreen } from './components/Results/ResultsScreen.component';
 
 type TheorySectionProps = {
   onBack: () => void;

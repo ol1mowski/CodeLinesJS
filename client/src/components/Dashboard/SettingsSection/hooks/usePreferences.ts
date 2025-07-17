@@ -7,7 +7,7 @@ import { toast } from 'react-hot-toast';
 export const PREFERENCES_QUERY_KEY = ['preferences'];
 
 export const usePreferences = () => {
-  const { token, logout } = useAuth();
+  const { isAuthenticated } = useAuth();
   const queryClient = useQueryClient();
 
   const { 
@@ -17,13 +17,12 @@ export const usePreferences = () => {
     refetch 
   } = useQuery({
     queryKey: PREFERENCES_QUERY_KEY,
-    queryFn: () => fetchPreferences(token || ''),
-    enabled: !!token,
+    queryFn: () => fetchPreferences(),
+    enabled: isAuthenticated,
     staleTime: 1000 * 60 * 5,
     retry: (failureCount, error) => {
       if (error instanceof PreferencesError && error.code === 'AUTH_ERROR') {
         toast.error('Sesja wygasła. Zaloguj się ponownie.');
-        logout?.();
         return false;
       }
       return failureCount < 3; 
@@ -35,16 +34,16 @@ export const usePreferences = () => {
   }
 
   const updatePreferencesMutation = useMutation({
-    mutationFn: (data: PreferencesData) => updatePreferences(data, token || ''),
+    mutationFn: (data: PreferencesData) => updatePreferences(data),
     onSuccess: (newPreferences) => {
       queryClient.setQueryData(PREFERENCES_QUERY_KEY, newPreferences);
       queryClient.invalidateQueries({ queryKey: PREFERENCES_QUERY_KEY });
       toast.success('Preferencje zostały zaktualizowane');
     },
     onError: (error) => {
+
       if (error instanceof PreferencesError && error.code === 'AUTH_ERROR') {
         toast.error('Sesja wygasła. Zaloguj się ponownie.');
-        logout?.();
         return;
       }
       

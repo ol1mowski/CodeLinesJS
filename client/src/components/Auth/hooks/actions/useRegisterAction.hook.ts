@@ -1,14 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { httpClient } from '../../../../api/httpClient.api';
+import { AuthStateContext } from '../../../../types/auth.types';
 
-type AuthState = {
-  setLoading: (loading: boolean) => void;
-  setError: (error: string | null) => void;
-  setIsAuthenticated: (isAuthenticated: boolean) => void;
-  setUser?: (user: any | null) => void;
-};
-
-export const useRegisterAction = (state: AuthState) => {
+export const useRegisterAction = (state: AuthStateContext) => {
   const navigate = useNavigate();
   const { setLoading, setError, setIsAuthenticated, setUser } = state;
 
@@ -38,12 +32,7 @@ export const useRegisterAction = (state: AuthState) => {
         throw new Error(errorMsg);
       }
 
-      const { token, user } = response.data;
-
-      localStorage.removeItem('token');
-      sessionStorage.removeItem('token');
-
-      sessionStorage.setItem('token', token);
+      const { user } = response.data;
 
       if (setUser && user) {
         setUser(user);

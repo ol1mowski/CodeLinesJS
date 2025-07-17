@@ -1,4 +1,4 @@
-import { useAuth } from '../../../../hooks/useAuth';
+
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
@@ -31,7 +31,6 @@ export const securitySchema = z
   });
 
 export const useSecurityForm = ({ onSuccess, onError }: UseSecurityFormProps = {}) => {
-  const { token } = useAuth();
   const form = useForm<SecurityFormData>({
     resolver: zodResolver(securitySchema),
     defaultValues: {
@@ -42,7 +41,7 @@ export const useSecurityForm = ({ onSuccess, onError }: UseSecurityFormProps = {
   });
 
   const updatePasswordMutation = useMutation({
-    mutationFn: (data: SecurityFormData) => updatePassword(data, token || ''),
+    mutationFn: (data: SecurityFormData) => updatePassword(data),
     onSuccess: () => {
       form.reset();
       onSuccess?.();

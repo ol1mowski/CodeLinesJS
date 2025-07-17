@@ -3,7 +3,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useMutation } from '@tanstack/react-query';
 import { deleteAccount } from '../api/account';
-import { useAuth } from '../../../../hooks/useAuth';
 
 const deleteAccountSchema = z.object({
   password: z.string().min(1, 'Hasło jest wymagane'),
@@ -24,10 +23,8 @@ export const useDeleteAccountForm = ({ onSuccess, onError }: UseDeleteAccountFor
     resolver: zodResolver(deleteAccountSchema),
   });
 
-  const { token } = useAuth();
-
   const deleteAccountMutation = useMutation({
-    mutationFn: (data: DeleteAccountFormData) => deleteAccount(data, token || ''),
+    mutationFn: (data: DeleteAccountFormData) => deleteAccount(data),
     onSuccess: () => {
       form.reset();
       onSuccess?.();

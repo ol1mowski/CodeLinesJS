@@ -1,12 +1,12 @@
 import type { Lesson } from '../../types/lesson.types';
 import { API_URL } from '../../../../../config/api.config';
 
-export const fetchLesson = async (lessonId: string, token: string): Promise<Lesson> => {
+export const fetchLesson = async (lessonId: string): Promise<Lesson> => {
   const response = await fetch(`${API_URL}lessons/${lessonId}`, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
     },
+    credentials: 'include',
   });
 
   if (!response.ok) {
@@ -18,7 +18,6 @@ export const fetchLesson = async (lessonId: string, token: string): Promise<Less
 
   const responseData = await response.json();
   
-  // Sprawdzamy, czy mamy strukturę API z polem data
   if (responseData.data) {
     return responseData.data;
   }
@@ -29,22 +28,16 @@ export const fetchLesson = async (lessonId: string, token: string): Promise<Less
 export const completeLesson = async ({
   lessonId,
   pathId,
-  token,
 }: {
   lessonId: string;
   pathId?: string;
-  token: string;
 }) => {
-  if (!token) {
-    throw new Error('Brak tokenu autoryzacji');
-  }
-
   const response = await fetch(`${API_URL}lessons/${lessonId}/complete`, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
+    credentials: 'include',
     body: JSON.stringify({ pathId }),
   });
 
@@ -57,16 +50,12 @@ export const completeLesson = async ({
   return response.json();
 };
 
-export const fetchLessons = async (token: string) => {
-  if (!token) {
-    throw new Error('Brak tokenu autoryzacji');
-  }
-
+export const fetchLessons = async () => {
   const response = await fetch(`${API_URL}lessons`, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
     },
+    credentials: 'include',
   });
 
   if (!response.ok) {

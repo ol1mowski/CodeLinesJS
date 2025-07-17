@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useAuth } from '../../../../hooks/useAuth';
 import { reportBug } from '../api/reportBug.api';
 
 export type FormData = {
@@ -17,7 +16,6 @@ export type FormErrors = {
 };
 
 export const useReportForm = () => {
-  const { token } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -91,7 +89,7 @@ export const useReportForm = () => {
     setSubmitError(null);
 
     try {
-      await reportBug(token || '', formData);
+      await reportBug(formData);
 
       setSubmitSuccess(true);
       resetForm();

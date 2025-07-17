@@ -15,14 +15,13 @@ export const deleteAccount = async (
     password: string;
     confirmation: string;
   },
-  token: string
 ): Promise<void> => {
   const response = await fetch(`${API_URL}settings/account`, {
     method: 'DELETE',
     headers: {
-      Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
+    credentials: 'include',
     body: JSON.stringify(data),
   });
 

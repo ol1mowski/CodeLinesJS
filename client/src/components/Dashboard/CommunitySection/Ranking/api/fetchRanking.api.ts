@@ -7,7 +7,6 @@ interface FetchRankingParams {
 }
 
 export const fetchRanking = async (
-  token: string, 
   params: FetchRankingParams = { page: 1, limit: 10 }
 ): Promise<{
   status: string;
@@ -16,12 +15,7 @@ export const fetchRanking = async (
   data: RankingResponse;
   meta: any;
 }> => {
-  if (!token) {
-    throw new Error('Brak autoryzacji - zaloguj się, aby zobaczyć ranking');
-  }
-
   try {
-    // Dodajemy parametry paginacji do URL
     const queryParams = new URLSearchParams();
     if (params.page) queryParams.append('page', params.page.toString());
     if (params.limit) queryParams.append('limit', params.limit.toString());
@@ -31,9 +25,9 @@ export const fetchRanking = async (
     const response = await fetch(url, {
       method: 'GET',
       headers: {
-        Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
+        credentials: 'include',
     });
 
     if (response.status === 401) {

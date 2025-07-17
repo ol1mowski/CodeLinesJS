@@ -1,26 +1,28 @@
 import { useNavigate } from 'react-router-dom';
+import { httpClient } from '../../../../api/httpClient.api';
+import { AuthStateContext } from '../../../../types/auth.types';
 
-type AuthState = {
-  setLoading: (loading: boolean) => void;
-  setError: (error: string | null) => void;
-  setIsAuthenticated: (isAuthenticated: boolean) => void;
-  setUser?: (user: any | null) => void;
-};
-
-export const useLogoutAction = (state: AuthState) => {
+export const useLogoutAction = (state: AuthStateContext) => {
   const navigate = useNavigate();
   const { setLoading, setIsAuthenticated, setUser } = state;
 
-  const logout = () => {
+  const logout = async () => {
     try {
       setLoading(true);
-      localStorage.removeItem('token');
-      sessionStorage.removeItem('token');
+      
+      await httpClient.post('auth/logout', {});
       
       if (setUser) {
         setUser(null);
       }
       
+      setIsAuthenticated(false);
+      navigate('/');
+    } catch (error) {
+      console.error('Błąd podczas wylogowania:', error);
+      if (setUser) {
+        setUser(null);
+      }
       setIsAuthenticated(false);
       navigate('/');
     } finally {

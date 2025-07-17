@@ -9,7 +9,8 @@ import { FormHeader } from './components/FormHeader.component';
 const categoryOptions = [
   { value: 'bug', label: 'Błąd w aplikacji' },
   { value: 'feature', label: 'Propozycja funkcji' },
-  { value: 'content', label: 'Problem z treścią' },
+  { value: 'performance', label: 'Problem z wydajnością' },
+  { value: 'security', label: 'Problem z bezpieczeństwem' },
   { value: 'other', label: 'Inne' },
 ];
 

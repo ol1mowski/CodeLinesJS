@@ -44,12 +44,12 @@ const LearnTabs = ({
 export const LearnSection = memo(() => {
   const [activeTab, setActiveTab] = useState<TabType>('paths');
   const userId = 'current-user';
-  const { token } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   useQuery({
     queryKey: ['userProgress', userId],
-    queryFn: () => fetchUserProgress(userId, token || ''),
-    enabled: activeTab === 'lessons' && !!token,
+    queryFn: () => fetchUserProgress(userId), 
+    enabled: activeTab === 'lessons' && isAuthenticated,
   });
 
   const containerVariants = {

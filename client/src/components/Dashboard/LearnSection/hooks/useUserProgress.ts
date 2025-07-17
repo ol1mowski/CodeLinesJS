@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
+import { API_URL } from '../../../../config/api.config';
 
-const API_URL = 'http://localhost:5001/api';
 
 type ProgressUpdate = {
   lessonId: string;
@@ -27,12 +27,12 @@ export const useUserProgress = (userId: string) => {
         return null;
       }
 
-      const response = await fetch(`${API_URL}/users/${userId}/progress`, {
+      const response = await fetch(`${API_URL}users/${userId}/progress`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token') || sessionStorage.getItem('token')}`,
         },
+        credentials: 'include',
         body: JSON.stringify({
           lessonId: data.lessonId,
           points: data.points,

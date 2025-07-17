@@ -35,15 +35,15 @@ const getDifficultyLabel = (filter: FilterType) => {
 export const useLessons = () => {
   const [filter, setFilter] = useState<FilterType>('all');
   const [category] = useState<Category>('javascript');
-  const { token } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   const { data, isLoading, error, refetch } = useQuery<LessonsResponse, Error>({
     queryKey: ['lessons'],
-    queryFn: () => fetchLessons(token || ''),
+    queryFn: () => fetchLessons(),
     retry: 2,
     staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: true,
-    enabled: !!token,
+    enabled: isAuthenticated,
   });
 
   const allLessons = data?.data.lessons?.[category] ?? [];

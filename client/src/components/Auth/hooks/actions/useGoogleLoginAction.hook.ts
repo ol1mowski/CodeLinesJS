@@ -1,14 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { httpClient } from '../../../../api/httpClient.api';
+import { AuthStateContext } from '../../../../types/auth.types';
 
-type AuthState = {
-  setLoading: (loading: boolean) => void;
-  setError: (error: string | null) => void;
-  setIsAuthenticated: (isAuthenticated: boolean) => void;
-  setUser?: (user: any | null) => void;
-};
-
-export const useGoogleLoginAction = (state: AuthState) => {
+export const useGoogleLoginAction = (state: AuthStateContext) => {
   const navigate = useNavigate();
   const { setLoading, setError, setIsAuthenticated, setUser } = state;
 
@@ -38,15 +32,8 @@ export const useGoogleLoginAction = (state: AuthState) => {
       }
 
       const responseData = response.data;
-      const token = responseData.token;
-      
       const user = responseData.user || (responseData.user && responseData.user.user);
 
-      if (rememberMe) {
-        localStorage.setItem('token', token);
-      } else {
-        sessionStorage.setItem('token', token);
-      }
 
       if (setUser) {
         setUser(user);
