@@ -17,13 +17,17 @@ setupLogger(app);
 configureServer(app);
 configureRoutes(app);
 configureGoogleSignIn(app);
-configureStaticFiles(app);
 
 app.use(errorHandler);
 setupErrorHandlers(app);
 
-const PORT: number = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
-
-startServer(app, PORT);
+configureStaticFiles(app);
 
 connectDB();
+
+export default app;
+
+if (process.env.NODE_ENV !== 'production' || process.env.VERCEL !== '1') {
+  const PORT: number = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+  startServer(app, PORT);
+}
