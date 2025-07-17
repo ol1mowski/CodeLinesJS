@@ -2,7 +2,6 @@ import { memo, useCallback, useEffect, useState } from 'react';
 import { useProfile } from '../../hooks/useProfile';
 import { useProfileFormLogic } from '../../hooks/useProfileFormLogic';
 import { ProfileFormContent } from './components/ProfileFormContent/ProfileFormContent.component';
-import { LoadingScreen } from '../../../../UI/LoadingScreen/LoadingScreen.component';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
 import { PROFILE_QUERY_KEY } from '../../hooks/useProfile';
@@ -73,9 +72,6 @@ export const ProfileForm = memo(() => {
     }
   };
 
-  if (isLoading) {
-    return <LoadingScreen />;
-  }
 
   return (
     <>
@@ -96,6 +92,7 @@ export const ProfileForm = memo(() => {
         onSubmit={handleSubmit}
         isSaved={isSaved}
         isDirty={isDirty}
+        isLoading={isLoading}
       />
     </>
   );

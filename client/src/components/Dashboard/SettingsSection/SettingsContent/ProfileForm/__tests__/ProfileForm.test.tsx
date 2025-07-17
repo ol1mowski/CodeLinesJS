@@ -106,7 +106,7 @@ describe('ProfileForm', () => {
     });
 
     render(<ProfileForm />, { wrapper });
-    const loader = screen.getByRole('status');
+    const loader = screen.getByText('Ładowanie profilu...');
     expect(loader).not.toBeNull();
   });
 

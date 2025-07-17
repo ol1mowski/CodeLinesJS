@@ -87,6 +87,6 @@ describe('PreferencesForm', () => {
 
     render(<PreferencesForm />);
 
-    expect(screen.getByRole('status')).toBeDefined();
+    expect(screen.getByText('Ładowanie preferencji...')).toBeDefined();
   });
 });
