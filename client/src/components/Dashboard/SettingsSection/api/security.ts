@@ -15,20 +15,19 @@ export const updatePassword = async (
     currentPassword: string;
     newPassword: string;
   },
-  token: string
 ): Promise<void> => {
   const response = await fetch(`${API_URL}settings/security/password`, {
     method: 'PUT',
     headers: {
-      Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
+    credentials: 'include',
     body: JSON.stringify(data),
   });
 
   if (!response.ok) {
     const errorData = await response.json();
-    
+      
     const errorMessage = errorData.message || 'Wystąpił błąd podczas zmiany hasła';
     const errorCode = errorData.code || 'UNKNOWN_ERROR';
     

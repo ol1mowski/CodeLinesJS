@@ -1,14 +1,14 @@
 import type { UserProfile } from '../types/settings';
 import { API_URL } from '../../../../config/api.config';
 
-const getAuthHeaders = (token: string) => ({
-  Authorization: `Bearer ${token}`,
+const getAuthHeaders = () => ({
   'Content-Type': 'application/json',
 });
 
-export const fetchUserProfile = async (token: string): Promise<UserProfile> => {
+export const fetchUserProfile = async (): Promise<UserProfile> => {
   const response = await fetch(`${API_URL}settings/profile`, {
-    headers: getAuthHeaders(token),
+    headers: getAuthHeaders(),
+    credentials: 'include', 
   });
 
   if (!response.ok) {
@@ -28,7 +28,7 @@ export const fetchUserProfile = async (token: string): Promise<UserProfile> => {
   };
 };
 
-export const updateUserProfile = async (data: UserProfile, token: string) => {
+export const updateUserProfile = async (data: UserProfile) => {
   const apiData = {
     username: data.username,
     email: data.email,
@@ -37,7 +37,8 @@ export const updateUserProfile = async (data: UserProfile, token: string) => {
 
   const response = await fetch(`${API_URL}settings/profile`, {
     method: 'PUT',
-    headers: getAuthHeaders(token),
+    headers: getAuthHeaders(),
+    credentials: 'include',
     body: JSON.stringify(apiData),
   });
 

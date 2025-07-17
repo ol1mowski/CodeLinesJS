@@ -1,12 +1,12 @@
 import { LessonProgress } from '../../types/lesson.types';
 import { API_URL } from '../../../../../config/api.config';
 
-export const fetchUserProgress = async (userId: string, token: string) => {
+export const fetchUserProgress = async (userId: string) => {
   const response = await fetch(`${API_URL}users/${userId}/progress`, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
     },
+    credentials: 'include',
   });
   if (!response.ok) {
     throw new Error('Błąd podczas pobierania postępu');
@@ -15,12 +15,12 @@ export const fetchUserProgress = async (userId: string, token: string) => {
   return data;
 };
 
-export const fetchLessonProgress = async (userId: string, lessonId: string, token: string) => {
+export const fetchLessonProgress = async (userId: string, lessonId: string) => {
   const response = await fetch(`${API_URL}users/${userId}/lessons/${lessonId}/progress`, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
     },
+    credentials: 'include',
   });
   if (!response.ok) {
     throw new Error('Błąd podczas pobierania postępu');
@@ -32,14 +32,13 @@ export const updateLessonProgress = async (
   userId: string,
   lessonId: string,
   progress: LessonProgress,
-  token: string
 ) => {
   const response = await fetch(`${API_URL}users/${userId}/lessons/${lessonId}/progress`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
     },
+    credentials: 'include',
     body: JSON.stringify(progress),
   });
   if (!response.ok) {

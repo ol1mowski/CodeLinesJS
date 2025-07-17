@@ -7,7 +7,7 @@ import { Resources } from './Resources/Resources.component';
 import { LearningPaths } from './LearningPaths/LearningPaths.component';
 import { LearnTabs } from './LearnTabs/LearnTabs.component';
 import { Recruitment } from './Recruitment/Recruitment.component';
-import { useAuth } from './hooks/useAuth';
+import { useAuth } from '../../../hooks/useAuth';
 import { LoadingScreen } from '../../UI/LoadingScreen/LoadingScreen.component';
 import { Helmet } from 'react-helmet';
 

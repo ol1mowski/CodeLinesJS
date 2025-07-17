@@ -1,12 +1,10 @@
 import { API_URL } from '../../../../config/api.config';
 
-export const updateUserPoints = async (token: string, points: number) => {
+export const updateUserPoints = async (points: number) => {
   const response = await fetch(`${API_URL}progress/points`, {
     method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
     body: JSON.stringify({ points }),
   });
   if (!response.ok) {

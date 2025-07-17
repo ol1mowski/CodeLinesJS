@@ -1,10 +1,10 @@
 import { API_URL } from '../../../../config/api.config';
 
-export const fetchGames = async (token: string) => {
+export const fetchGames = async () => {
   const response = await fetch(`${API_URL}games`, {
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
     },
   });
   if (!response.ok) {

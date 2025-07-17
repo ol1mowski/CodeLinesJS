@@ -16,26 +16,12 @@ export const useAuth = (): AuthStateAndActions => {
   const checkAuth = async () => {
     try {
       setIsAuthChecking(true);
-      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-
-      if (!token) {
-        state.setIsAuthenticated(false);
-        return;
-      }
-
-      if (typeof token !== 'string' || token.length < 10) {
-        localStorage.removeItem('token');
-        sessionStorage.removeItem('token');
-        state.setIsAuthenticated(false);
-        return;
-      }
-
+      
       const apiUrl = API_URL.replace('www.', '');
 
       const response = await fetch(`${apiUrl}auth/verify`, {
         method: 'GET',
         headers: {
-          Authorization: `Bearer ${token}`,
           Accept: 'application/json',
         },
         mode: 'cors',
@@ -81,8 +67,6 @@ export const useAuth = (): AuthStateAndActions => {
         err instanceof Error ? err.message : 'Wystąpił błąd podczas weryfikacji tokenu'
       );
       state.setIsAuthenticated(false);
-      localStorage.removeItem('token');
-      sessionStorage.removeItem('token');
     } finally {
       setIsAuthChecking(false);
     }
@@ -92,18 +76,26 @@ export const useAuth = (): AuthStateAndActions => {
     checkAuth();
   }, []);
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    sessionStorage.removeItem('token');
-    state.setIsAuthenticated(false);
-    state.setUser(null);
-    navigate('/');
+  const logout = async () => {
+    try {
+      const apiUrl = API_URL.replace('www.', '');
+      await fetch(`${apiUrl}auth/logout`, {
+        method: 'POST',
+        credentials: 'include',
+      });
+    } catch (error) {
+      console.error('Błąd podczas wylogowania:', error);
+    } finally {
+      state.setIsAuthenticated(false);
+      state.setUser(null);
+      navigate('/');
+    }
   };
 
   const authState: AuthState = {
     ...state,
     isAuthChecking,
-    token: localStorage.getItem('token') || sessionStorage.getItem('token'),
+    token: null,
   };
 
   return {

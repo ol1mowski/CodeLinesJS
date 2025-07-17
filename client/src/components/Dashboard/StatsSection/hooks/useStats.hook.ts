@@ -4,7 +4,7 @@ import { useAuth } from '../../../../hooks/useAuth';
 import { fetchStats } from '../api/fetchStats.api';
 
 export const useStats = () => {
-  const { token, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   const {
     data: stats,
@@ -12,8 +12,8 @@ export const useStats = () => {
     error,
   } = useQuery<UserStats, Error>({
     queryKey: ['userProgress'],
-    queryFn: () => fetchStats(token!),
-    enabled: isAuthenticated && !!token,
+    queryFn: () => fetchStats('authenticated'),
+    enabled: isAuthenticated,
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 30,
     retry: (failureCount, error) => {

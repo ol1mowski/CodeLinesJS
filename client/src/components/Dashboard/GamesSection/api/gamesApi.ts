@@ -2,7 +2,12 @@ import { GamesResponse } from '../types/games.types';
 import { API_URL } from '../../../../config/api.config';
 export const fetchGames = async (): Promise<GamesResponse> => {
   try {
-    const response = await fetch(`${API_URL}games`);
+    const response = await fetch(`${API_URL}games`, {
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }

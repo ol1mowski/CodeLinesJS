@@ -7,7 +7,7 @@ export const PROFILE_QUERY_KEY = ['profile'] as const;
 
 export const useProfile = () => {
   const queryClient = useQueryClient();
-  const { token } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   const {
     data: profile,
@@ -15,13 +15,13 @@ export const useProfile = () => {
     error,
   } = useQuery({
     queryKey: PROFILE_QUERY_KEY,
-    queryFn: () => fetchUserProfile(token || ''),
-    enabled: !!token,
+    queryFn: () => fetchUserProfile('authenticated'),
+    enabled: isAuthenticated,
     staleTime: 1000 * 60 * 5,
   });
 
   const updateProfile = useMutation({
-    mutationFn: (data: UserProfile) => updateUserProfile(data, token || ''),
+    mutationFn: (data: UserProfile) => updateUserProfile(data, 'authenticated'),
     onSuccess: newProfile => {
       queryClient.setQueryData(PROFILE_QUERY_KEY, newProfile);
       queryClient.invalidateQueries({ queryKey: PROFILE_QUERY_KEY });

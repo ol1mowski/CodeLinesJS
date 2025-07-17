@@ -11,13 +11,13 @@ export class PreferencesError extends Error {
   }
 }
 
-export const fetchPreferences = async (token: string): Promise<PreferencesData> => {
+export const fetchPreferences = async (): Promise<PreferencesData> => {
   try {
     const response = await fetch(`${API_URL}settings/preferences`, {
       headers: {
-        Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
     });
 
     if (!response.ok) {
@@ -52,15 +52,14 @@ export const fetchPreferences = async (token: string): Promise<PreferencesData> 
 
 export const updatePreferences = async (
   preferences: PreferencesData,
-  token: string
 ): Promise<PreferencesData> => {
   try {
     const response = await fetch(`${API_URL}settings/preferences`, {
       method: 'PUT',
       headers: {
-        Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
       body: JSON.stringify(preferences),
     });
 

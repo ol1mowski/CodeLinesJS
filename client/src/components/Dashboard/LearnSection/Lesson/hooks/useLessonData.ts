@@ -2,13 +2,13 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fetchLesson, completeLesson } from '../../lib/api/lessons';
 import { updateLessonProgress } from '../../lib/api/progress';
-import { useAuth } from '../../hooks/useAuth';
 import type { LessonProgress } from '../../types/lesson.types';
 import { toast } from 'react-hot-toast';
 import { useLearningPaths } from '../../LearningPaths/hooks/useLearningPaths';
+import { useAuth } from '../../../../../hooks/useAuth';
 
 export const useLessonData = (lessonSlug: string) => {
-  const { userId, token } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const queryClient = useQueryClient();
   const { refetch: refetchLearningPaths } = useLearningPaths();
   const [activeSection, setActiveSection] = useState(0);
@@ -20,8 +20,8 @@ export const useLessonData = (lessonSlug: string) => {
     refetch,
   } = useQuery({
     queryKey: ['lesson', lessonSlug],
-    queryFn: () => fetchLesson(lessonSlug, token!),
-    enabled: !!lessonSlug,
+    queryFn: () => fetchLesson(lessonSlug, 'authenticated'),
+    enabled: !!lessonSlug && isAuthenticated,
     retry: false,
   });
 
@@ -39,7 +39,7 @@ export const useLessonData = (lessonSlug: string) => {
 
   const updateProgressMutation = useMutation({
     mutationFn: (progress: LessonProgress) =>
-      updateLessonProgress(userId!, lessonSlug, progress, token!),
+      updateLessonProgress(user?.id!, lessonSlug, progress, 'authenticated'),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['userProgress'] });
     },
@@ -50,7 +50,7 @@ export const useLessonData = (lessonSlug: string) => {
   };
 
   const handleSectionComplete = async (sectionId: string) => {
-    if (!userId || !lessonSlug) return;
+    if (!user?.id || !lessonSlug) return;
 
     await updateProgressMutation.mutateAsync({
       completedSections: [...(lesson?.completedSections || []), sectionId],
@@ -60,7 +60,7 @@ export const useLessonData = (lessonSlug: string) => {
   };
 
   const handleQuizComplete = async (points: number) => {
-    if (!userId || !lessonSlug) return;
+    if (!user?.id || !lessonSlug) return;
 
     await updateProgressMutation.mutateAsync({
       completedSections: lesson?.completedSections || [],
@@ -79,7 +79,7 @@ export const useLessonData = (lessonSlug: string) => {
       const result = await completeLessonMutation.mutateAsync({
         lessonId: lesson.id,
         pathId: lesson.pathId,
-        token: token!,
+        token: 'authenticated',
       });
 
       await refetch();

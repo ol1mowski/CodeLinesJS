@@ -4,6 +4,7 @@ import { register } from '../../../src/api/controllers/auth/register.js';
 import { forgotPassword, resetPassword } from '../../../src/api/controllers/auth/password.js';
 import { verifyToken } from '../../../src/api/controllers/auth/token.js';
 import { googleAuth } from '../../../src/api/controllers/auth/google.js';
+import { logout } from '../../../src/api/controllers/auth/logout.js';
 import authService from '../../../src/services/auth.service.js';
 import { AuthError } from '../../../src/utils/errors.js';
 import { mockResponseUtils } from '../../setup/setupResponseMocks.js';
@@ -52,7 +53,7 @@ describe('Auth Controllers', () => {
   });
 
   describe('login controller', () => {
-    it('should log in a user and return a token', async () => {
+    it('should log in a user and set httpOnly cookie', async () => {
       const credentials = {
         email: 'test@example.com',
         password: 'password123',
@@ -80,12 +81,22 @@ describe('Auth Controllers', () => {
         credentials.password,
         credentials.rememberMe
       );
-      expect(mockRes.success).toHaveBeenCalledWith(loginResponse, 'Logowanie zakończone pomyślnie');
+      
+      expect(mockRes.cookie).toHaveBeenCalledWith('jwt', 'jwt-token', {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'strict',
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        path: '/'
+      });
+      
+      const { token, ...responseData } = loginResponse;
+      expect(mockRes.success).toHaveBeenCalledWith(responseData, 'Logowanie zakończone pomyślnie');
       expect(mockNext).not.toHaveBeenCalled();
     });
 
     it('should call next with an error when required fields are missing', async () => {
-      mockReq.body = { email: 'test@example.com' }; // Brak hasła
+      mockReq.body = { email: 'test@example.com' };
 
       await login(mockReq, mockRes as any, mockNext);
 
@@ -112,7 +123,7 @@ describe('Auth Controllers', () => {
   });
 
   describe('register controller', () => {
-    it('should register a user and return a token', async () => {
+    it('should register a user and set httpOnly cookie', async () => {
       const userData = {
         email: 'new@example.com',
         password: 'password123',
@@ -140,17 +151,29 @@ describe('Auth Controllers', () => {
         userData.password,
         userData.username
       );
-      expect(mockRes.success).toHaveBeenCalledWith(registerResponse, 'Rejestracja zakończona pomyślnie', 201);
+      
+      expect(mockRes.cookie).toHaveBeenCalledWith('jwt', 'jwt-token', {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'strict',
+        maxAge: 24 * 60 * 60 * 1000,
+        path: '/'
+      });
+      
+      const { token, ...responseData } = registerResponse;
+      expect(mockRes.success).toHaveBeenCalledWith(responseData, 'Rejestracja zakończona pomyślnie');
       expect(mockNext).not.toHaveBeenCalled();
     });
 
     it('should call next with an error when required fields are missing', async () => {
-      mockReq.body = { email: 'new@example.com', password: 'password123' }; // Brak username
+      mockReq.body = { email: 'new@example.com', password: 'password123' };
 
       await register(mockReq, mockRes as any, mockNext);
 
       expect(mockedAuthService.registerUser).not.toHaveBeenCalled();
-      expect(mockRes.fail).toHaveBeenCalledWith('Wszystkie pola są wymagane', expect.any(Array));
+      expect(mockRes.fail).toHaveBeenCalledWith('Email, hasło i nazwa użytkownika są wymagane', [
+        { code: 'MISSING_CREDENTIALS', message: 'Email, hasło i nazwa użytkownika są wymagane' }
+      ]);
       expect(mockNext).not.toHaveBeenCalled();
     });
 
@@ -342,6 +365,21 @@ describe('Auth Controllers', () => {
       expect(mockRes.fail).toHaveBeenCalledWith('Błąd uwierzytelniania przez Google', [
         { code: 'GOOGLE_AUTH_ERROR', message: error.message || 'Błąd uwierzytelniania przez Google' }
       ]);
+    });
+  });
+
+  describe('logout controller', () => {
+    it('should clear the JWT cookie and return success message', async () => {
+      await logout(mockReq, mockRes as any, mockNext);
+
+      expect(mockRes.clearCookie).toHaveBeenCalledWith('jwt', {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'strict',
+        path: '/'
+      });
+      expect(mockRes.success).toHaveBeenCalledWith(null, 'Wylogowanie zakończone pomyślnie');
+      expect(mockNext).not.toHaveBeenCalled();
     });
   });
 }); 

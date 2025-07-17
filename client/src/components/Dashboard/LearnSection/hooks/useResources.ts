@@ -9,7 +9,7 @@ export type ResourcesResponse = {
 };
 
 export const useResources = () => {
-  const { token } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   const {
     data,
@@ -24,10 +24,10 @@ export const useResources = () => {
     meta: any;
   }, Error>({
     queryKey: ['resources'],
-    queryFn: () => fetchResources(token || ''),
+    queryFn: () => fetchResources('authenticated'),
     retry: 2,
     staleTime: 1000 * 60 * 5,
-    enabled: !!token,
+    enabled: isAuthenticated,
   });
 
   const resources = data?.data?.resources || [];

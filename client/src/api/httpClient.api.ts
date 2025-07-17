@@ -45,7 +45,7 @@ export const httpClient = {
     options: HttpRequestOptions = {}
   ): Promise<ApiResponse<T>> {
     try {
-      const { method = 'GET', headers = {}, body, requiresAuth = false } = options;
+      const { method = 'GET', headers = {}, body } = options;
 
       const apiUrl = API_URL.replace('www.', '');
       const url = `${apiUrl}${endpoint}`;
@@ -56,12 +56,6 @@ export const httpClient = {
         ...headers,
       };
 
-      if (requiresAuth) {
-        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-        if (token) {
-          requestHeaders['Authorization'] = `Bearer ${token}`;
-        }
-      }
 
       const requestOptions: RequestInit = {
         method,

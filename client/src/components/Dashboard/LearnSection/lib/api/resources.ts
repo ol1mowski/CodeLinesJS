@@ -1,15 +1,11 @@
 import { API_URL } from '../../../../../config/api.config';
 
-export const fetchResources = async (token: string) => {
-  if (!token) {
-    throw new Error('Brak tokenu autoryzacji');
-  }
-
+export const fetchResources = async () => {
   const response = await fetch(`${API_URL}resources`, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
     },
+    credentials: 'include',
   });
 
   if (!response.ok) {

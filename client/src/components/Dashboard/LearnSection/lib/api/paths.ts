@@ -1,15 +1,11 @@
 import { API_URL } from '../../../../../config/api.config';
 
-export const fetchLearningPaths = async (token: string) => {
-  if (!token) {
-    throw new Error('Brak tokenu autoryzacji');
-  }
-
+export const fetchLearningPaths = async () => {
   const response = await fetch(`${API_URL}Learning-paths`, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
     },
+    credentials: 'include',
   });
 
   if (!response.ok) {
@@ -23,16 +19,12 @@ export const fetchLearningPaths = async (token: string) => {
   return data;
 };
 
-export const fetchLearningPathProgress = async (userId: string, pathId: string, token: string) => {
-  if (!token) {
-    throw new Error('Brak tokenu autoryzacji');
-  }
-
+export const fetchLearningPathProgress = async (userId: string, pathId: string) => {
   const response = await fetch(`${API_URL}users/${userId}/paths/${pathId}/progress`, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
     },
+    credentials: 'include',
   });
   if (!response.ok) {
     throw new Error('Błąd podczas pobierania postępu ścieżki');

@@ -4,6 +4,18 @@ import matchers from '@testing-library/jest-dom/matchers';
 import { vi } from 'vitest';
 import React from 'react';
 
+
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return {
+    ...actual,
+    useNavigate: () => vi.fn(),
+    useLocation: () => ({ pathname: '/', search: '', hash: '', state: null }),
+    useParams: () => ({}),
+    useSearchParams: () => [new URLSearchParams(), vi.fn()],
+  };
+});
+
 expect.extend(matchers);
 
 vi.mock('framer-motion', async importOriginal => {

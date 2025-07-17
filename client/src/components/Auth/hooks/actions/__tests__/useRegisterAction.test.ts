@@ -18,11 +18,14 @@ describe('useRegisterAction', () => {
     setError: vi.fn(),
     setIsAuthenticated: vi.fn(),
     setUser: vi.fn(),
+    loading: false,
+    error: null,
+    isAuthenticated: false,
+    user: null,
   };
 
   const mockResponse = {
     data: {
-      token: 'test-token',
       user: { id: '1', email: 'test@example.com', username: 'testuser' },
     },
     error: null,
@@ -36,9 +39,6 @@ describe('useRegisterAction', () => {
   };
 
   beforeEach(() => {
-    localStorage.clear();
-    sessionStorage.clear();
-
     vi.clearAllMocks();
   });
 
@@ -60,7 +60,7 @@ describe('useRegisterAction', () => {
       password: 'password123',
       username: 'testuser',
     });
-    expect(sessionStorage.getItem('token')).toBe('test-token');
+
     expect(mockState.setUser).toHaveBeenCalledWith(mockResponse.data.user);
     expect(mockState.setIsAuthenticated).toHaveBeenCalledWith(true);
     expect(mockState.setLoading).toHaveBeenCalledWith(false);
@@ -77,7 +77,6 @@ describe('useRegisterAction', () => {
     expect(mockState.setError).toHaveBeenCalledWith(mockErrorResponse.error);
     expect(mockState.setIsAuthenticated).toHaveBeenCalledWith(false);
     expect(mockState.setLoading).toHaveBeenCalledWith(false);
-    expect(sessionStorage.getItem('token')).toBeNull();
   });
 
   it('should handle registration error', async () => {

@@ -19,14 +19,14 @@ export type LessonsResponse = {
 export const useLessons = (initialFilter: FilterType = 'all') => {
   const [filter, setFilter] = useState<FilterType>(initialFilter);
   const [category] = useState<Category>('javascript');
-  const { token } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   const { data, isLoading, error, refetch } = useQuery<LessonsResponse, Error>({
     queryKey: ['lessons', filter],
-    queryFn: () => fetchLessons(token || ''),
+    queryFn: () => fetchLessons('authenticated'),
     retry: 2,
     refetchOnWindowFocus: false,
-    enabled: !!token,
+    enabled: isAuthenticated,
   });
 
   const allLessons = data?.lessons?.[category] ?? [];
