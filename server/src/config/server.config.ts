@@ -121,33 +121,18 @@ export const configureServer = (app: Application): Application => {
 
   app.use(helmet(helmetConfig as HelmetOptions));
 
-  // Middleware dla żądań OPTIONS - wymusza nagłówki CORS
-  app.options('*', (req, res) => {
-    const origin = req.headers.origin;
-    if (origin && (origin === 'http://localhost:3000' || origin.includes('codelinesjs.pl'))) {
-      res.setHeader('Access-Control-Allow-Origin', origin);
-      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Requested-With, Authorization, Accept');
-      res.setHeader('Access-Control-Allow-Credentials', 'true');
-      res.setHeader('Access-Control-Max-Age', '0');
-      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-      res.setHeader('Pragma', 'no-cache');
-      res.setHeader('Expires', '0');
-    }
-    res.status(204).end();
-  });
+  const corsOptions = {
+    origin: ['http://localhost:3000', 'https://codelinesjs.pl', 'https://www.codelinesjs.pl'],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'X-Requested-With', 'Authorization', 'Accept'],
+    exposedHeaders: ['Content-Length', 'X-Requested-With'],
+    maxAge: 86400,
+    preflightContinue: false,
+    optionsSuccessStatus: 204
+  };
 
-  // Middleware CORS dla wszystkich żądań - wymusza nagłówki CORS
-  app.use((req, res, next) => {
-    const origin = req.headers.origin;
-    if (origin && (origin === 'http://localhost:3000' || origin.includes('codelinesjs.pl'))) {
-      res.setHeader('Access-Control-Allow-Origin', origin);
-      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Requested-With, Authorization, Accept');
-      res.setHeader('Access-Control-Allow-Credentials', 'true');
-    }
-    next();
-  });
+  app.use(cors(corsOptions));
   
   app.use((req, res, next) => {
     res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
@@ -156,13 +141,6 @@ export const configureServer = (app: Application): Application => {
       'Permissions-Policy',
       'identity-credentials-get=(self "https://accounts.google.com")',
     );
-    next();
-  });
-
-  app.use((req, res, next) => {
-    if (req.url.includes('fonts.gstatic.com') || req.url.match(/\.(woff|woff2|ttf|eot)$/)) {
-      res.setHeader('Access-Control-Allow-Origin', '*');
-    }
     next();
   });
 

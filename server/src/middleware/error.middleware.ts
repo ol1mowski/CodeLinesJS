@@ -79,15 +79,6 @@ export default (err: ExtendedError, req: ExtendedRequest, res: Response, next: N
 
   const requestId = req.headers['x-request-id'] || req.requestId || '';
   
-  // Dodaj nagłówki CORS do odpowiedzi błędów
-  const origin = req.headers.origin;
-  if (origin && (origin === 'http://localhost:3000' || origin.includes('codelinesjs.pl'))) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Requested-With, Authorization, Accept');
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-  }
-  
   res.setHeader('X-Content-Type-Options', 'nosniff');
 
   if (process.env.NODE_ENV === "development" || (config as any).env === "development") {

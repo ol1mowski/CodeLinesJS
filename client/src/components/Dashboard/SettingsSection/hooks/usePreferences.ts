@@ -17,7 +17,7 @@ export const usePreferences = () => {
     refetch 
   } = useQuery({
     queryKey: PREFERENCES_QUERY_KEY,
-    queryFn: () => fetchPreferences('authenticated'),
+    queryFn: () => fetchPreferences(),
     enabled: isAuthenticated,
     staleTime: 1000 * 60 * 5,
     retry: (failureCount, error) => {
@@ -34,13 +34,14 @@ export const usePreferences = () => {
   }
 
   const updatePreferencesMutation = useMutation({
-    mutationFn: (data: PreferencesData) => updatePreferences(data, 'authenticated'), // Token jest w httpOnly cookie
+    mutationFn: (data: PreferencesData) => updatePreferences(data),
     onSuccess: (newPreferences) => {
       queryClient.setQueryData(PREFERENCES_QUERY_KEY, newPreferences);
       queryClient.invalidateQueries({ queryKey: PREFERENCES_QUERY_KEY });
       toast.success('Preferencje zostały zaktualizowane');
     },
     onError: (error) => {
+
       if (error instanceof PreferencesError && error.code === 'AUTH_ERROR') {
         toast.error('Sesja wygasła. Zaloguj się ponownie.');
         return;
