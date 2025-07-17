@@ -10,7 +10,6 @@
     { "src": "/favicon.png", "dest": "/public/favicon.png" },
     { "src": "/vite.svg", "dest": "/public/vite.svg" },
     { "src": "/(.*\\.(js|css|png|jpg|svg|ico|json))", "dest": "/public/$1" },
-    { "src": "/", "dest": "/public/index.html" },
-    { "src": "/(.*)", "dest": "/src/server.ts" }
+    { "src": "/(.*)", "dest": "/public/index.html" }
   ]
 } 
