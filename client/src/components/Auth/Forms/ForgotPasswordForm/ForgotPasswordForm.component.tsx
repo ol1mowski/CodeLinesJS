@@ -32,6 +32,7 @@ const ForgotPasswordForm = () => {
             placeholder="twoj@email.com"
             icon={<FaEnvelope />}
             error={errors.email?.message}
+            styles="white"
             {...register('email')}
           />
 

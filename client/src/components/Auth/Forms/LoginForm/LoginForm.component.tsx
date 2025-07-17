@@ -50,6 +50,7 @@ const LoginForm = () => {
         placeholder="twoj@email.com"
         icon={<FaEnvelope />}
         error={errors.email?.message}
+        styles="white"
         {...register('email')}
       />
 
@@ -59,6 +60,7 @@ const LoginForm = () => {
         placeholder="Wprowadź hasło"
         icon={<FaLock />}
         error={errors.password?.message}
+        styles="white"
         {...register('password')}
         rightIcon={
           <button
@@ -73,12 +75,6 @@ const LoginForm = () => {
 
       <div className="flex items-center justify-between">
         <RememberMeCheckbox register={register} />
-        <a 
-          href="/logowanie?mode=forgot" 
-          className="text-sm text-[#f7df1e] hover:underline font-medium"
-        >
-          Zapomniałeś hasła?
-        </a>
       </div>
 
       <div className="pt-2">

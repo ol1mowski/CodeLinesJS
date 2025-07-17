@@ -27,6 +27,7 @@ const RegisterForm = () => {
         placeholder="jankowalski"
         icon={<FaUser />}
         error={errors.username?.message}
+        styles="white"
         {...register('username')}
       />
 
@@ -36,14 +37,16 @@ const RegisterForm = () => {
         placeholder="twoj@email.com"
         icon={<FaEnvelope />}
         error={errors.email?.message}
+        styles="white"
         {...register('email')}
       />
 
-      <PasswordInput label="Hasło" error={errors.password?.message} {...register('password')} />
+      <PasswordInput label="Hasło" error={errors.password?.message} styles="white" {...register('password')} />
 
       <PasswordInput
         label="Potwierdź hasło"
         error={errors.confirmPassword?.message}
+        styles="white"
         {...register('confirmPassword')}
       />
 

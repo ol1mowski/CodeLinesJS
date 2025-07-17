@@ -6,9 +6,6 @@ import { TokenErrorMessage } from './TokenErrorMessage.component';
 import { SuccessMessage } from './SuccessMessage.component';
 import { useResetPasswordForm } from './useResetPasswordForm';
 
-/**
- * Komponent formularza resetowania hasła
- */
 const ResetPasswordForm = () => {
   const { register, errors, loading, handleSubmit, errorMessage, successMessage, tokenError } =
     useResetPasswordForm();
@@ -32,12 +29,14 @@ const ResetPasswordForm = () => {
           <PasswordInput
             label="Nowe hasło"
             error={errors.password?.message}
+            styles="white"
             {...register('password')}
           />
 
           <PasswordInput
             label="Potwierdź nowe hasło"
             error={errors.confirmPassword?.message}
+            styles="white"
             {...register('confirmPassword')}
           />
 
