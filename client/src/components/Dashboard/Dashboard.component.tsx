@@ -8,8 +8,6 @@ import { FaSignOutAlt } from 'react-icons/fa';
 import { useAuth } from '../../hooks/useAuth';
 import { ErrorBoundary } from '../Common/ErrorBoundary';
 import { memo, lazy, Suspense } from 'react';
-import { useDashboardData } from './DashboardContent/hooks/useDashboardData';
-import { LoadingScreen } from '../UI/LoadingScreen/LoadingScreen.component';
 
 const DashboardErrorFallback = lazy(() => import('../Common/DashboardErrorFallback.component'));
 const LoadingSpinner = lazy(() =>
@@ -22,11 +20,6 @@ const Dashboard = memo(() => {
   const isHiddenPath = useIsHiddenPath();
   const isMobile = useMobileDetect();
   const { logout } = useAuth();
-  const { isLoading: isDashboardLoading } = useDashboardData();
-
-  if (isDashboardLoading) {
-    return <LoadingScreen />;
-  }
 
   return (
     <ErrorBoundary

@@ -48,6 +48,7 @@ export const PreferencesForm = memo(() => {
       isPending={isPending}
       isDirty={isDirty}
       isSaved={isSaved}
+      isLoading={isLoading}
     />
   );
 });

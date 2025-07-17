@@ -16,6 +16,7 @@ export type PreferencesFormContentProps = {
   isPending: boolean;
   isDirty?: boolean;
   isSaved?: boolean;
+  isLoading?: boolean;
 };
 
 export const PreferencesFormContent = memo(
@@ -27,6 +28,7 @@ export const PreferencesFormContent = memo(
     onCancel,
     isSubmitting,
     isPending,
+    isLoading = false,
   }: PreferencesFormContentProps) => (
     <motion.form
       onSubmit={onSubmit}
@@ -39,6 +41,7 @@ export const PreferencesFormContent = memo(
           register={register}
           values={formValues}
           onChange={(field, value) => setValue(field, value)}
+          isLoading={isLoading}
         />
 
         <div className="w-full h-px bg-js/10" />

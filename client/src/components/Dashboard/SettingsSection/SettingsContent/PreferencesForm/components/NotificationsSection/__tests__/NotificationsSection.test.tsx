@@ -15,6 +15,7 @@ describe('NotificationsSection', () => {
       pushNotifications: false,
     },
     onChange: mockOnChange,
+    isLoading: false,
   };
 
   beforeEach(() => {
@@ -40,4 +41,5 @@ describe('NotificationsSection', () => {
 
     expect(mockOnChange).toHaveBeenCalledWith('emailNotifications', false);
   });
+
 });
