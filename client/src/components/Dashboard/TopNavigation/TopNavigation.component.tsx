@@ -12,16 +12,6 @@ export const TopNavigation = memo(() => {
   const animations = useTopNavAnimation();
   const { data: userProfile, isLoading, error } = useUserProfile();
 
-  if (isLoading) {
-    return (
-      <nav className="w-full flex items-center justify-center min-h-[60px] bg-dark">
-        <div className="w-8 h-8">
-          <LoadingScreen />
-        </div>
-      </nav>
-    );
-  }
-
   const username = useMemo(() => {
     if (error) {
       return 'Użytkowniku';
@@ -33,6 +23,16 @@ export const TopNavigation = memo(() => {
 
     return userProfile?.data.user.username || 'Użytkowniku';
   }, [userProfile?.data.user.username, isLoading, error]);
+
+  if (isLoading) {
+    return (
+      <nav className="w-full flex items-center justify-center min-h-[60px] bg-dark">
+        <div className="w-8 h-8">
+          <LoadingScreen />
+        </div>
+      </nav>
+    );
+  }
 
   return (
     <ErrorBoundary>
