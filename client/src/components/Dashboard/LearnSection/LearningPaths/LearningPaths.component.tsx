@@ -11,7 +11,9 @@ import { PathCard } from './components/PathCard/PathCard.component';
 export const LearningPaths = memo(() => {
   const { paths, userStats, isLoading, error, refetch, isEmpty } = useLearningPaths();
 
-  if (isLoading) return <LoadingScreen />;
+  const shouldShowLoading = isLoading || (paths.length === 0 && !error);
+
+  if (shouldShowLoading) return <LoadingScreen />;
 
   if (error) {
     console.error('Learning paths error:', error);

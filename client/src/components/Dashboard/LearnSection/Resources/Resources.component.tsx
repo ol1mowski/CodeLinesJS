@@ -9,6 +9,8 @@ import { FaBookOpen, FaSadTear } from 'react-icons/fa';
 export const Resources = memo(() => {
   const { recommendedResources, otherResources, isLoading, error, refetch } = useResources();
 
+  const shouldShowLoading = isLoading || ((!recommendedResources || recommendedResources.length === 0) && (!otherResources || otherResources.length === 0) && !error);
+
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center py-12">
@@ -26,7 +28,7 @@ export const Resources = memo(() => {
     );
   }
 
-  if (isLoading) {
+  if (shouldShowLoading) {
     return (
       <div className="flex justify-center py-12">
         <LoadingScreen />

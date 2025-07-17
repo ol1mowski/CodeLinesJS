@@ -42,7 +42,9 @@ const getDifficultyLabel = (filter: FilterType) => {
 };
 
 export const LessonsList = memo(({ lessons, filter, userData, isLoading = false }: LessonsListProps) => {
-  if (isLoading) {
+  const shouldShowLoading = isLoading || lessons.length === 0;
+
+  if (shouldShowLoading) {
     return <LoadingScreen />;
   }
 

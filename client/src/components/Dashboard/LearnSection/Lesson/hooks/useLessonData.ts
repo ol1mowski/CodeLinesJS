@@ -8,7 +8,7 @@ import { useLearningPaths } from '../../LearningPaths/hooks/useLearningPaths';
 import { useAuth } from '../../../../../hooks/useAuth';
 
 export const useLessonData = (lessonSlug: string) => {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, isAuthChecking } = useAuth();
   const queryClient = useQueryClient();
   const { refetch: refetchLearningPaths } = useLearningPaths();
   const [activeSection, setActiveSection] = useState(0);
@@ -21,9 +21,11 @@ export const useLessonData = (lessonSlug: string) => {
   } = useQuery({
     queryKey: ['lesson', lessonSlug],
     queryFn: () => fetchLesson(lessonSlug),
-    enabled: !!lessonSlug && isAuthenticated,
+    enabled: !!lessonSlug && isAuthenticated && !isAuthChecking,
     retry: false,
   });
+
+  const isDataLoading = isLoading || (!lesson && !error);
 
   const isNotFound = error?.message === 'lesson_not_found';
 
@@ -102,7 +104,7 @@ export const useLessonData = (lessonSlug: string) => {
 
   return {
     lesson,
-    isLoading,
+    isLoading: isDataLoading,
     error,
     isNotFound,
     activeSection,

@@ -1,7 +1,7 @@
+import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { fetchLessons } from '../lib/api/lessons';
 import type { Lesson } from '../types/lesson.types';
-import { useState, useMemo } from 'react';
 import type { FilterType } from '../types/filter.types';
 import { useAuth } from '../../../../hooks/useAuth';
 
@@ -19,7 +19,7 @@ export type LessonsResponse = {
   };
 };
 
-const getDifficultyLabel = (filter: FilterType) => {
+const getDifficultyLabel = (filter: FilterType): string => {
   switch (filter) {
     case 'beginner':
       return 'podstawowym';
@@ -35,7 +35,7 @@ const getDifficultyLabel = (filter: FilterType) => {
 export const useLessons = () => {
   const [filter, setFilter] = useState<FilterType>('all');
   const [category] = useState<Category>('javascript');
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isAuthChecking } = useAuth();
 
   const { data, isLoading, error, refetch } = useQuery<LessonsResponse, Error>({
     queryKey: ['lessons'],
@@ -43,8 +43,10 @@ export const useLessons = () => {
     retry: 2,
     staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: true,
-    enabled: isAuthenticated,
+    enabled: isAuthenticated && !isAuthChecking,
   });
+
+  const isDataLoading = isLoading || (!data && !error);
 
   const allLessons = data?.data.lessons?.[category] ?? [];
   const lessonStats = data?.data.stats ?? { total: 0, completed: 0, progress: 0 };
@@ -80,7 +82,7 @@ export const useLessons = () => {
     filter,
     setFilter,
     resetFilter: () => setFilter('all'),
-    isLoading,
+    isLoading: isDataLoading,
     error,
     refetch,
     isEmpty,
