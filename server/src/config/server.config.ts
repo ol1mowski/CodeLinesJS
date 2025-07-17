@@ -121,27 +121,35 @@ export const configureServer = (app: Application): Application => {
 
   app.use(helmet(helmetConfig as HelmetOptions));
 
-  app.use(
-    cors({
-      origin: config.cors.origin === '*' ? true : config.cors.origin?.split(','),
-      methods: config.cors.methods,
-      allowedHeaders: config.cors.allowedHeaders,
-      exposedHeaders: config.cors.exposedHeaders,
-      credentials: config.cors.credentials,
-      maxAge: config.cors.maxAge,
-      preflightContinue: config.cors.preflightContinue,
-      optionsSuccessStatus: config.cors.optionsSuccessStatus,
-    }),
-  );
+  // Middleware dla żądań OPTIONS - wymusza nagłówki CORS
+  app.options('*', (req, res) => {
+    const origin = req.headers.origin;
+    if (origin && (origin === 'http://localhost:3000' || origin.includes('codelinesjs.pl'))) {
+      res.setHeader('Access-Control-Allow-Origin', origin);
+      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Requested-With, Authorization, Accept');
+      res.setHeader('Access-Control-Allow-Credentials', 'true');
+      res.setHeader('Access-Control-Max-Age', '0');
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+    }
+    res.status(204).end();
+  });
 
+  // Middleware CORS dla wszystkich żądań - wymusza nagłówki CORS
   app.use((req, res, next) => {
-    if (req.headers.referer && req.headers.referer.includes('accounts.google.com')) {
-      res.setHeader('Access-Control-Allow-Origin', 'https://accounts.google.com');
-      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    const origin = req.headers.origin;
+    if (origin && (origin === 'http://localhost:3000' || origin.includes('codelinesjs.pl'))) {
+      res.setHeader('Access-Control-Allow-Origin', origin);
+      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Requested-With, Authorization, Accept');
       res.setHeader('Access-Control-Allow-Credentials', 'true');
     }
-
+    next();
+  });
+  
+  app.use((req, res, next) => {
     res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
     res.setHeader('Cross-Origin-Embedder-Policy', 'unsafe-none');
     res.setHeader(
