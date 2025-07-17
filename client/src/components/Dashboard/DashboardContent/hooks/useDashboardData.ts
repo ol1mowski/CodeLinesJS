@@ -8,7 +8,7 @@ export const useDashboardData = () => {
 
   return useQuery<DashboardData, Error>({
     queryKey: ['userProgress'],
-    queryFn: () => fetchDashboardData('authenticated'),
+    queryFn: () => fetchDashboardData(),
     enabled: isAuthenticated,
     staleTime: 1000 * 60 * 5,
     refetchInterval: 1000 * 60,

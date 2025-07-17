@@ -23,7 +23,7 @@ export const useLessons = (initialFilter: FilterType = 'all') => {
 
   const { data, isLoading, error, refetch } = useQuery<LessonsResponse, Error>({
     queryKey: ['lessons', filter],
-    queryFn: () => fetchLessons('authenticated'),
+    queryFn: () => fetchLessons(),
     retry: 2,
     refetchOnWindowFocus: false,
     enabled: isAuthenticated,

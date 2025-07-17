@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { motion } from 'framer-motion';
 import { FaLaptopCode } from 'react-icons/fa';
-import type { InterviewTip, AnimationVariants } from '../../types/recruitment.types';
+import { AnimationVariants, InterviewTip } from '../../../../types/recruitment.types';
 
 type InterviewTipsSectionProps = {
   tips: InterviewTip[];

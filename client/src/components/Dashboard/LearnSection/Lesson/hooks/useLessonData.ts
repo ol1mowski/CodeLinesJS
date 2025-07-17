@@ -20,7 +20,7 @@ export const useLessonData = (lessonSlug: string) => {
     refetch,
   } = useQuery({
     queryKey: ['lesson', lessonSlug],
-    queryFn: () => fetchLesson(lessonSlug, 'authenticated'),
+    queryFn: () => fetchLesson(lessonSlug),
     enabled: !!lessonSlug && isAuthenticated,
     retry: false,
   });
@@ -39,7 +39,7 @@ export const useLessonData = (lessonSlug: string) => {
 
   const updateProgressMutation = useMutation({
     mutationFn: (progress: LessonProgress) =>
-      updateLessonProgress(user?.id!, lessonSlug, progress, 'authenticated'),
+      updateLessonProgress(user?.id!, lessonSlug, progress),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['userProgress'] });
     },
@@ -79,7 +79,6 @@ export const useLessonData = (lessonSlug: string) => {
       const result = await completeLessonMutation.mutateAsync({
         lessonId: lesson.id,
         pathId: lesson.pathId,
-        token: 'authenticated',
       });
 
       await refetch();
@@ -100,7 +99,7 @@ export const useLessonData = (lessonSlug: string) => {
       throw error;
     }
   };
-  
+
   return {
     lesson,
     isLoading,

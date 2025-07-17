@@ -48,7 +48,7 @@ export const LearnSection = memo(() => {
 
   useQuery({
     queryKey: ['userProgress', userId],
-    queryFn: () => fetchUserProgress(userId, 'authenticated'), 
+    queryFn: () => fetchUserProgress(userId), 
     enabled: activeTab === 'lessons' && isAuthenticated,
   });
 

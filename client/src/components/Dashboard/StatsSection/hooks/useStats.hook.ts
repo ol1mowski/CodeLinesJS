@@ -12,7 +12,7 @@ export const useStats = () => {
     error,
   } = useQuery<UserStats, Error>({
     queryKey: ['userProgress'],
-    queryFn: () => fetchStats('authenticated'),
+    queryFn: () => fetchStats(),
     enabled: isAuthenticated,
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 30,

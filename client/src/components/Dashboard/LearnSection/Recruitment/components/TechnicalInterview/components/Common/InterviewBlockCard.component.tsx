@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { motion } from 'framer-motion';
-import type { InterviewBlock, AnimationVariants } from '../../types/recruitment.types';
+import { AnimationVariants, InterviewBlock } from '../../../../types/recruitment.types';
 
 type InterviewBlockCardProps = {
   block: InterviewBlock;

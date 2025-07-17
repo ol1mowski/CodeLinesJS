@@ -24,7 +24,7 @@ export const useResources = () => {
     meta: any;
   }, Error>({
     queryKey: ['resources'],
-    queryFn: () => fetchResources('authenticated'),
+    queryFn: () => fetchResources(),
     retry: 2,
     staleTime: 1000 * 60 * 5,
     enabled: isAuthenticated,

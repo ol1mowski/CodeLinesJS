@@ -8,7 +8,7 @@ export const useUserProfile = () => {
 
   return useQuery({
     queryKey: USER_PROFILE_QUERY_KEY,
-    queryFn: () => fetchUser('authenticated'),
+    queryFn: () => fetchUser(),
     enabled: isAuthenticated,
   });
 };

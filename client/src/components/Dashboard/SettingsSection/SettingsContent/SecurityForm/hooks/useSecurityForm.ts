@@ -3,7 +3,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { securitySchema, type SecurityFormData } from '../schema/security.schema';
 import { useMutation } from '@tanstack/react-query';
 import { updatePassword } from '../../../api/security';
-import { useAuth } from '../../../../../../hooks/useAuth';
 
 type UseSecurityFormProps = {
   onSuccess?: () => void;
@@ -11,7 +10,6 @@ type UseSecurityFormProps = {
 };
 
 export const useSecurityForm = ({ onSuccess, onError }: UseSecurityFormProps = {}) => {
-  const { token } = useAuth();
   const form = useForm<SecurityFormData>({
     resolver: zodResolver(securitySchema),
     mode: 'onSubmit',
@@ -30,7 +28,6 @@ export const useSecurityForm = ({ onSuccess, onError }: UseSecurityFormProps = {
           currentPassword: data.currentPassword,
           newPassword: data.newPassword,
         },
-        token || ''
       ),
     onSuccess: () => {
       form.reset();

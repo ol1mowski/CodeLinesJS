@@ -39,7 +39,7 @@ export const useLessons = () => {
 
   const { data, isLoading, error, refetch } = useQuery<LessonsResponse, Error>({
     queryKey: ['lessons'],
-    queryFn: () => fetchLessons('authenticated'),
+    queryFn: () => fetchLessons(),
     retry: 2,
     staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: true,

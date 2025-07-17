@@ -8,7 +8,7 @@ export const useLearningPaths = () => {
 
   const { data, isLoading, error, refetch } = useQuery<PathsResponse, Error>({
     queryKey: ['learningPaths', 'userProgress'],
-    queryFn: () => fetchLearningPaths('authenticated'),
+    queryFn: () => fetchLearningPaths(),
     staleTime: 1000 * 60 * 5,
     retry: 2,
     refetchOnWindowFocus: true,

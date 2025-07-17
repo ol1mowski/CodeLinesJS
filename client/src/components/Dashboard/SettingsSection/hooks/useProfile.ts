@@ -15,13 +15,13 @@ export const useProfile = () => {
     error,
   } = useQuery({
     queryKey: PROFILE_QUERY_KEY,
-    queryFn: () => fetchUserProfile('authenticated'),
+    queryFn: () => fetchUserProfile(),
     enabled: isAuthenticated,
     staleTime: 1000 * 60 * 5,
   });
 
   const updateProfile = useMutation({
-    mutationFn: (data: UserProfile) => updateUserProfile(data, 'authenticated'),
+    mutationFn: (data: UserProfile) => updateUserProfile(data),
     onSuccess: newProfile => {
       queryClient.setQueryData(PROFILE_QUERY_KEY, newProfile);
       queryClient.invalidateQueries({ queryKey: PROFILE_QUERY_KEY });

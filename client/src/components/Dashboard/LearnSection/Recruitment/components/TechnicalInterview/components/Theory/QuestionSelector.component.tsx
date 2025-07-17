@@ -1,10 +1,9 @@
 import { memo } from 'react';
 import { motion } from 'framer-motion';
 import { FaQuestionCircle, FaClock } from 'react-icons/fa';
-import type { QuestionOption } from '../data/theorySection.data';
 
 type QuestionSelectorProps = {
-  options: QuestionOption[];
+  options: { value: number; label: string; time: string }[];
   selectedCount: number;
   onSelectionChange: (count: number) => void;
 };

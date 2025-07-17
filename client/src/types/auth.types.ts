@@ -16,7 +16,6 @@ export type AuthActions = {
   register: (email: string, password: string, username: string) => Promise<void>;
   loginWithGoogle: (credentialResponse: any, rememberMe?: boolean) => Promise<void>;
   resetPassword: (token: string, password: string, confirmPassword: string) => Promise<string>;
-  refreshAuth: () => Promise<void>;
 };
 
 export type AuthStateAndActions = AuthState & AuthActions;

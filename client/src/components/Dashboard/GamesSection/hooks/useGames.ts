@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Game } from '../types/api.types';
 import { fetchGames } from '../api/fetchGames.api';
-import { useAuth } from '../../../../hooks/useAuth';
 import { GameDifficulty, SortOption } from '../types/games.types';
 
 type UseGamesReturn = {
@@ -21,8 +20,7 @@ export const useGames = (): UseGamesReturn => {
       setError(null);
 
       try {
-        const { token } = useAuth();
-        const response = await fetchGames(token || '');
+        const response = await fetchGames();
         const data = await response.json();
         setGames(data.data.games);
       } catch (err) {

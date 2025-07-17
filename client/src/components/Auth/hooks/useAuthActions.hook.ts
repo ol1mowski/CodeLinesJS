@@ -13,6 +13,6 @@ export const useAuthActions = (state: AuthStateContext): AuthActions => {
   const logout = useLogoutAction(state);
   const loginWithGoogle = useGoogleLoginAction(state);
   const resetPassword = useResetPasswordAction(state);
-
+  
   return { login, register, forgotPassword, logout, loginWithGoogle, resetPassword };
 };

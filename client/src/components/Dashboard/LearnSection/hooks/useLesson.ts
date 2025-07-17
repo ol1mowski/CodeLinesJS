@@ -20,7 +20,7 @@ export const useLesson = (lessonId: string) => {
   } = useQuery<Lesson, ApiError>({
     queryKey: ['lesson', lessonId],
     queryFn: () => {
-      return fetchLesson(lessonId, 'authenticated');
+      return fetchLesson(lessonId);
     },
     enabled: !!lessonId && isAuthenticated,
     retry: (failureCount, error) => {
