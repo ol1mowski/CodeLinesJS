@@ -6,7 +6,7 @@ import { StatsCharts } from './StatsCharts/StatsCharts.component';
 import { DashboardState } from '../DashboardContent/components/DashboardState.component';
 import { LevelUpNotification } from '../../UI/Notifications/LevelUpNotification.component';
 import { LoadingScreen } from '../../UI/LoadingScreen/LoadingScreen.component';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { Badge, LegacyUserStats } from '../../../types/stats.types';
 
 export const StatsSection = memo(() => {

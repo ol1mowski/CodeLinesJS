@@ -1,6 +1,6 @@
 import { Container } from '../components/UI/Container/Container.component';
 import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { FaArrowLeft } from 'react-icons/fa';
 

@@ -9,7 +9,7 @@ import { LearnTabs } from './LearnTabs/LearnTabs.component';
 import { Recruitment } from './Recruitment/Recruitment.component';
 import { useAuth } from '../../../hooks/useAuth';
 import { LoadingScreen } from '../../UI/LoadingScreen/LoadingScreen.component';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 type TabType = 'paths' | 'lessons' | 'resources' | 'articles' | 'recruitment';
 

@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { memo, useState } from 'react';
 import { SettingsSidebar } from './SettingsSidebar/SettingsSidebar.component';
 import { SettingsContent } from './SettingsContent/SettingsContent.component';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 type SettingsView = 'profile' | 'security' | 'preferences' | 'delete';
 

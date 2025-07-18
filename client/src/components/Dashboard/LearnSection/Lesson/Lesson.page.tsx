@@ -5,7 +5,7 @@ import { LessonContent } from './components/LessonContent.component';
 import { LessonNotFound } from './components/LessonNotFound.component';
 import { ErrorMessage } from '../components/ErrorMessage.component';
 import { LoadingScreen } from '../../../UI/LoadingScreen/LoadingScreen.component';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { FaLock } from 'react-icons/fa';
 import { useStats } from '../../../Dashboard/StatsSection/hooks/useStats.hook';
 

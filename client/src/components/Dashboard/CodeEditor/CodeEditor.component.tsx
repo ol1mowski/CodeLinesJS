@@ -9,7 +9,7 @@ import { useEditor } from './hooks/useEditor.hook';
 import { defaultCode } from './constants';
 import { useFileOperations } from './hooks/useFileOperations.hook';
 import { CodeHistory } from './components/CodeHistory.component';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 export const CodeEditor = memo(() => {
   const { output, isExecuting, executeCode, clearConsole } = useCodeExecution();

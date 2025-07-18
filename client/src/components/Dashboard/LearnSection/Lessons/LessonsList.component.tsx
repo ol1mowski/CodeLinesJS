@@ -4,7 +4,7 @@ import { LessonCard } from './LessonCard.component';
 import type { Lesson } from '../types/lesson.types';
 import { FilterType } from '../types/filter.types';
 import { FaSearch, FaSadTear } from 'react-icons/fa';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { LoadingScreen } from '../../../UI/LoadingScreen/LoadingScreen.component';
 
 type LessonsListProps = {

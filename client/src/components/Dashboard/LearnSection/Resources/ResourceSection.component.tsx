@@ -2,7 +2,7 @@ import { memo } from 'react';
 import { motion } from 'framer-motion';
 import { ResourceCard } from './ResourceCard.component';
 import { type Resource } from '../types/resource.types';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 type ResourceSectionProps = {
   title: string;

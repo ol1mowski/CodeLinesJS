@@ -5,7 +5,7 @@ import { PageHeader } from './components/PageHeader.component';
 import { ReportForm } from './components/ReportForm.component';
 import { ContactSection } from './components/ContactSection.component';
 import { usePageAnimations } from './hooks/usePageAnimations.hook';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 export const ReportBugPage = memo(() => {
   const animations = usePageAnimations();
