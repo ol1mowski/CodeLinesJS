@@ -1,21 +1,21 @@
+import { useApi } from '../../../../api/hooks/useApi.hook';
 import { API_URL } from '../../../../config/api.config';
+import { User } from '../../../Auth/types/auth.types';
 
-export const updateUserPoints = async (points: number) => {
+export const updateUserPoints = async (points: number): Promise<User> => {
   try {
-    const response = await fetch(`${API_URL}progress/points`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
-      body: JSON.stringify({ points }),
-    });
+    const api = useApi<User>();
+    const response = await api.put(`${API_URL}progress/points`, { points });
 
-    if (!response.ok) {
-      throw new Error('Nie udało się zaktualizować punktów');
+    if (response.error) {
+      throw new Error(response.error);
     }
 
-    return await response.json();
+    if (!response.data) {
+      throw new Error('Brak danych z serwera');
+    }
+
+    return response.data;
   } catch (error) {
     console.error('Błąd podczas aktualizacji punktów:', error);
     throw error;

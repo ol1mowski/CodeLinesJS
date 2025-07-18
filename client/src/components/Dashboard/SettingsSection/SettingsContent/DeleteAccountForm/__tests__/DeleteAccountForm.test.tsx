@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, fireEvent, cleanup } from '@testing-library/react';
 import { DeleteAccountForm } from '../DeleteAccountForm.component';
-import { useConfirmationState } from '../../../hooks/useConfirmationState';
-import { useAccountDeletion } from '../../../hooks/useAccountDeletion';
+import { useConfirmationState } from '../../../hooks/useConfirmationState.hook';
+import { useAccountDeletion } from '../../../hooks/useAccountDeletion.hook';
 import { UseFormRegister } from 'react-hook-form';
 
 vi.mock('../../../hooks/useConfirmationState');

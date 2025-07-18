@@ -1,34 +1,36 @@
 import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { fetchLessons } from '../lib/api/lessons';
 import type { Lesson } from '../types/lesson.types';
 import type { FilterType } from '../types/filter.types';
 import { useAuth } from '../../../Auth/hooks/useAuth.hook';
+import { useApi } from '../../../../api/hooks/useApi.hook';
 
 type Category = 'javascript' | 'react';
 
-export type LessonsResponse = {
+type LessonsResponse = {
   data: {
-    lessons: Record<Category, Lesson[]>;
+    lessons: {
+      [key in Category]: Lesson[];
+    };
     stats: {
       total: number;
       completed: number;
       progress: number;
     };
-    requiredLevel: number;
+    requiredLevel?: number;
   };
 };
 
 const getDifficultyLabel = (filter: FilterType): string => {
   switch (filter) {
     case 'beginner':
-      return 'podstawowym';
+      return 'Początkujący';
     case 'intermediate':
-      return 'średnim';
+      return 'Średniozaawansowany';
     case 'advanced':
-      return 'zaawansowanym';
+      return 'Zaawansowany';
     default:
-      return '';
+      return 'Wszystkie';
   }
 };
 
@@ -36,10 +38,20 @@ export const useLessons = () => {
   const [filter, setFilter] = useState<FilterType>('all');
   const [category] = useState<Category>('javascript');
   const { isAuthenticated, isAuthChecking } = useAuth();
+  const api = useApi<LessonsResponse>();
 
   const { data, isLoading, error, refetch } = useQuery<LessonsResponse, Error>({
     queryKey: ['lessons'],
-    queryFn: () => fetchLessons(),
+    queryFn: async () => {
+      const response = await api.get('lessons');
+      if (response.error) {
+        throw new Error(response.error);
+      }
+      if (!response.data) {
+        throw new Error('Brak danych z serwera');
+      }
+      return response.data;
+    },
     retry: 2,
     staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: true,

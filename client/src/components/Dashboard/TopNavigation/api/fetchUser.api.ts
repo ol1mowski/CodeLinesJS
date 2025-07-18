@@ -1,14 +1,17 @@
 import { API_URL } from '../../../../config/api.config';
+import { useApi } from '../../../../api/hooks/useApi.hook';
 
 export const fetchUser = async () => {
-  const response = await fetch(`${API_URL}users/profile`, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    credentials: 'include',
-  });
-  if (!response.ok) {
-    throw new Error('Nie udało się pobrać danych użytkownika');
+  const api = useApi<any>();
+  const response = await api.get(`${API_URL}users/profile`);
+
+  if (response.error) {
+    throw new Error(response.error);
   }
-  return response.json();
+
+  if (!response.data) {
+    throw new Error('Brak danych z serwera');
+  }
+
+  return response.data;
 };

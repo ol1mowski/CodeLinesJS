@@ -1,28 +1,20 @@
 import type { Lesson } from '../../types/lesson.types';
 import { API_URL } from '../../../../../config/api.config';
+import { useApi } from '../../../../../api/hooks/useApi.hook';
 
 export const fetchLesson = async (lessonId: string): Promise<Lesson> => {
-  const response = await fetch(`${API_URL}lessons/${lessonId}`, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    credentials: 'include',
-  });
+  const api = useApi<any>();
+  const response = await api.get(`${API_URL}lessons/${lessonId}`);
 
-  if (!response.ok) {
-    if (response.status === 404) {
-      throw new Error('lesson_not_found');
-    }
-    throw new Error('Błąd podczas pobierania lekcji');
+  if (response.error) {
+    throw new Error(response.error);
   }
 
-  const responseData = await response.json();
-  
-  if (responseData.data) {
-    return responseData.data;
+  if (!response.data) {
+    throw new Error('Brak danych z serwera');
   }
-  
-  return responseData;
+
+  return response.data;
 };
 
 export const completeLesson = async ({
@@ -32,39 +24,31 @@ export const completeLesson = async ({
   lessonId: string;
   pathId?: string;
 }) => {
-  const response = await fetch(`${API_URL}lessons/${lessonId}/complete`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    credentials: 'include',
-    body: JSON.stringify({ pathId }),
-  });
+  const api = useApi<any>();
+  const response = await api.post(`${API_URL}lessons/${lessonId}/complete`, { pathId });
 
-  if (!response.ok) {
-    const error = await response.text();
-    console.error('API error:', error);
-    throw new Error(error || 'Błąd podczas zakończenia lekcji');
+  if (response.error) {
+    throw new Error(response.error);
   }
 
-  return response.json();
+  if (!response.data) {
+    throw new Error('Brak danych z serwera');
+  }
+
+  return response.data;
 };
 
 export const fetchLessons = async () => {
-  const response = await fetch(`${API_URL}lessons`, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    credentials: 'include',
-  });
+  const api = useApi<any>();
+  const response = await api.get(`${API_URL}lessons`);
 
-  if (!response.ok) {
-    if (response.status === 401) {
-      throw new Error('Nieautoryzowany - proszę się zalogować ponownie');
-    }
-    throw new Error('Błąd podczas pobierania lekcji');
+  if (response.error) {
+    throw new Error(response.error);
   }
 
-  const data = await response.json();
-  return data;
+  if (!response.data) {
+    throw new Error('Brak danych z serwera');
+  }
+
+  return response.data;
 };

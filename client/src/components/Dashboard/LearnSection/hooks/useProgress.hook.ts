@@ -1,16 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
-import { DashboardData } from '../types/dashboard.types';
 import { useAuth } from '../../../Auth/hooks/useAuth.hook';
 import { useApi } from '../../../../api/hooks/useApi.hook';
 
-export const useDashboardData = () => {
+export const useProgress = () => {
   const { isAuthenticated, isAuthChecking } = useAuth();
-  const api = useApi<DashboardData>();
+  const api = useApi<any>();
 
-  const query = useQuery<DashboardData, Error>({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['userProgress'],
     queryFn: async () => {
-      const response = await api.get('users/stats');
+      const response = await api.get('users/progress');
       if (response.error) {
         throw new Error(response.error);
       }
@@ -21,17 +20,12 @@ export const useDashboardData = () => {
     },
     enabled: isAuthenticated && !isAuthChecking,
     staleTime: 1000 * 60 * 5,
-    refetchInterval: 1000 * 60,
-    retry: (failureCount, error) => {
-      return failureCount < 2 && !error.message.includes('autoryzacji');
-    },
   });
 
-  // Loading jest true, jeśli query się ładuje LUB jeśli sprawdzamy autoryzację
-  const isLoading = query.isLoading || isAuthChecking;
-
   return {
-    ...query,
+    progress: data,
     isLoading,
+    error,
+    refetch,
   };
 };

@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
-import { useProfileForm } from './useProfileForm';
+import { useProfileForm } from './useProfileForm.hook';
 import { UserProfile } from '../types/settings';
-import { useProfile } from '../hooks/useProfile';
+import { useProfile } from './useProfile.hook';
 
 export const useProfileFormLogic = (profile: UserProfile | null) => {
   const { updateProfile } = useProfile();

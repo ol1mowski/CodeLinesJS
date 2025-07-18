@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { GameContent } from '../types/games.type';
 import { API_URL } from '../../../../config/api.config';
-import { useAuth } from '../../../Auth/hooks/useAuth.hook';
+import { useApi } from '../../../../api/hooks/useApi.hook';
 
 type GameContentContextType = {
   gameContent: GameContent | null;
@@ -20,22 +20,20 @@ export const GameContentProvider = ({ children }: { children: React.ReactNode })
   const fetchGameContent = useCallback(async (slug: string) => {
     setIsLoading(true);
     setError(null);
-    const { token } = useAuth();
 
     try {
-      const response = await fetch(`${API_URL}/games`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const api = useApi<any>();
+      const response = await api.get(`${API_URL}games`);
 
-      if (!response.ok) {
-        throw new Error('Nie udało się pobrać zawartości gry');
+      if (response.error) {
+        throw new Error(response.error);
       }
 
-      const data = await response.json();
-      const game = data.data.games.find((g: any) => g.slug === slug);
+      if (!response.data) {
+        throw new Error('Brak danych z serwera');
+      }
+
+      const game = response.data.games.find((g: any) => g.slug === slug);
 
       if (!game) {
         throw new Error('Nie znaleziono gry');

@@ -4,7 +4,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ProfileForm } from '../ProfileForm.component';
 import { useAuth } from '../../../../../Auth/hooks/useAuth.hook';
-import { useProfile } from '../../../hooks/useProfile';
+import { useProfile } from '../../../hooks/useProfile.hook';
 import { toast } from 'react-hot-toast';
 
 vi.mock('../../../../../../Hooks/useAuth');

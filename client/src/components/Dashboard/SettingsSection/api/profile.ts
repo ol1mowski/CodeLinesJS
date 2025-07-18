@@ -1,22 +1,20 @@
 import type { UserProfile } from '../types/settings';
 import { API_URL } from '../../../../config/api.config';
-
-const getAuthHeaders = () => ({
-  'Content-Type': 'application/json',
-});
+import { useApi } from '../../../../api/hooks/useApi.hook';
 
 export const fetchUserProfile = async (): Promise<UserProfile> => {
-  const response = await fetch(`${API_URL}settings/profile`, {
-    headers: getAuthHeaders(),
-    credentials: 'include', 
-  });
+  const api = useApi<any>();
+  const response = await api.get(`${API_URL}settings/profile`);
 
-  if (!response.ok) {
-    throw new Error('Błąd podczas pobierania profilu');
+  if (response.error) {
+    throw new Error(response.error);
   }
 
-  const responseData = await response.json();
-  const data = responseData.data || responseData;
+  if (!response.data) {
+    throw new Error('Brak danych z serwera');
+  }
+
+  const data = response.data;
   const user = data.user || data;
   
   return {
@@ -35,17 +33,16 @@ export const updateUserProfile = async (data: UserProfile) => {
     bio: data.profile?.bio || ''
   };
 
-  const response = await fetch(`${API_URL}settings/profile`, {
-    method: 'PUT',
-    headers: getAuthHeaders(),
-    credentials: 'include',
-    body: JSON.stringify(apiData),
-  });
+  const api = useApi<any>();
+  const response = await api.put(`${API_URL}settings/profile`, apiData);
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || 'Błąd podczas aktualizacji profilu');
+  if (response.error) {
+    throw new Error(response.error);
   }
 
-  return response.json();
+  if (!response.data) {
+    throw new Error('Brak danych z serwera');
+  }
+
+  return response.data;
 };

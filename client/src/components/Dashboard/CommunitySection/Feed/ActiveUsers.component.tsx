@@ -32,7 +32,7 @@ export const ActiveUsers = memo(() => {
       <div className="flex items-center gap-2">
         {visibleUsers.map(user => (
           <motion.div
-            key={user._id}
+            key={user.id}
             className="relative group"
             whileHover={{ scale: 1.1 }}
             transition={{ type: 'spring', stiffness: 400, damping: 17 }}

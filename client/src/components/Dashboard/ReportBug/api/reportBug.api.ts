@@ -1,19 +1,16 @@
-import { API_URL } from '../../../../config/api.config';
-import { FormData } from '../hooks/useReportForm.hook';
+import { useApi } from '../../../../api/hooks/useApi.hook';
+import { FormData } from '../hooks/types';
 
-export const reportBug = async (data: FormData) => {
-  const response = await fetch(`${API_URL}reports`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    credentials: 'include',
-    body: JSON.stringify(data),
-  });
+export const useReportBug = () => {
+  const api = useApi<any>();
 
-  if (!response.ok) {
-    throw new Error('Nie udało się wysłać zgłoszenia');
-  }
+  const reportBug = async (data: FormData) => {
+    const response = await api.post('reports', data);
+    if (response.error) {
+      throw new Error(response.error);
+    }
+    return response.data;
+  };
 
-  return response.json();
+  return { reportBug };
 };

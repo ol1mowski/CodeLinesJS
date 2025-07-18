@@ -1,14 +1,12 @@
 import { memo } from 'react';
+import { UseFormRegister } from 'react-hook-form';
 
 type FormFieldProps = {
   id: string;
   name: string;
   label: string;
   type?: 'text' | 'email' | 'textarea' | 'select';
-  value: string;
-  onChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => void;
+  register: UseFormRegister<any>;
   error?: string;
   placeholder?: string;
   options?: Array<{ value: string; label: string }>;
@@ -21,8 +19,7 @@ export const FormField = memo(
     name,
     label,
     type = 'text',
-    value,
-    onChange,
+    register,
     error,
     placeholder,
     options,
@@ -39,9 +36,7 @@ export const FormField = memo(
         {type === 'textarea' ? (
           <textarea
             id={id}
-            name={name}
-            value={value}
-            onChange={onChange}
+            {...register(name)}
             rows={rows}
             className={baseInputClasses}
             placeholder={placeholder}
@@ -49,9 +44,7 @@ export const FormField = memo(
         ) : type === 'select' ? (
           <select
             id={id}
-            name={name}
-            value={value}
-            onChange={onChange}
+            {...register(name)}
             className={baseInputClasses}
           >
             {options?.map(option => (
@@ -64,9 +57,7 @@ export const FormField = memo(
           <input
             type={type}
             id={id}
-            name={name}
-            value={value}
-            onChange={onChange}
+            {...register(name)}
             className={baseInputClasses}
             placeholder={placeholder}
           />

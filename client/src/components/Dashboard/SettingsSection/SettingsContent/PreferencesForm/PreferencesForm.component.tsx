@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { usePreferencesFormLogic } from '../../hooks/usePreferencesFormLogic';
+import { usePreferencesFormLogic } from '../../hooks/usePreferencesFormLogic.hook';
 import { PreferencesFormContent } from './components/PreferencesFormContent/PreferencesFormContent.component';
 import { toast } from 'react-hot-toast';
 

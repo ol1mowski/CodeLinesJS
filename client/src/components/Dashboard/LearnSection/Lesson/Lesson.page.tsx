@@ -1,5 +1,5 @@
 import { useParams, Navigate } from 'react-router-dom';
-import { useLessonData } from './hooks/useLessonData';
+import { useLessonData } from './hooks/useLessonData.hook';
 import { LessonLayout } from './components/LessonLayout.component';
 import { LessonContent } from './components/LessonContent.component';
 import { LessonNotFound } from './components/LessonNotFound.component';

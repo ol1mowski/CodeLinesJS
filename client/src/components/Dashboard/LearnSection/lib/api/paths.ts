@@ -1,33 +1,32 @@
 import { API_URL } from '../../../../../config/api.config';
+import { useApi } from '../../../../../api/hooks/useApi.hook';
 
 export const fetchLearningPaths = async () => {
-  const response = await fetch(`${API_URL}Learning-paths`, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    credentials: 'include',
-  });
+  const api = useApi<any>();
+  const response = await api.get(`${API_URL}Learning-paths`);
 
-  if (!response.ok) {
-    if (response.status === 401) {
-      throw new Error('Nieautoryzowany - proszę się zalogować ponownie');
-    }
-    throw new Error('Błąd podczas pobierania ścieżek nauki');
+  if (response.error) {
+    throw new Error(response.error);
   }
 
-  const data = await response.json();
-  return data;
+  if (!response.data) {
+    throw new Error('Brak danych z serwera');
+  }
+
+  return response.data;
 };
 
 export const fetchLearningPathProgress = async (userId: string, pathId: string) => {
-  const response = await fetch(`${API_URL}users/${userId}/paths/${pathId}/progress`, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    credentials: 'include',
-  });
-  if (!response.ok) {
-    throw new Error('Błąd podczas pobierania postępu ścieżki');
+  const api = useApi<any>();
+  const response = await api.get(`${API_URL}users/${userId}/paths/${pathId}/progress`);
+
+  if (response.error) {
+    throw new Error(response.error);
   }
-  return response.json();
+
+  if (!response.data) {
+    throw new Error('Brak danych z serwera');
+  }
+
+  return response.data;
 };

@@ -1,3 +1,4 @@
+import { useApi } from '../../../api/hooks/useApi.hook';
 import { API_URL } from '../../../config/api.config';
 
 export interface LatestFeature {
@@ -23,15 +24,18 @@ export interface LatestFeaturesResponse {
 
 export const fetchLatestFeatures = async (): Promise<LatestFeature[]> => {
   try {
-    const response = await fetch(`${API_URL}latest-features?limit=2&isActive=true&sortBy=releaseDate&sortOrder=desc`);
+    const api = useApi<any>();
+    const response = await api.get(`${API_URL}latest-features?limit=2&isActive=true&sortBy=releaseDate&sortOrder=desc`);
 
-    if (!response.ok) {
-      throw new Error('Błąd podczas pobierania najnowszych funkcji');
+    if (response.error) {
+      throw new Error(response.error);
     }
 
-    const responseData: LatestFeaturesResponse = await response.json();
-    
-    return responseData.data || [];
+    if (!response.data) {
+      throw new Error('Brak danych z serwera');
+    }
+
+    return response.data;
   } catch (error) {
     console.error('Błąd podczas pobierania najnowszych funkcji:', error);
     throw error;

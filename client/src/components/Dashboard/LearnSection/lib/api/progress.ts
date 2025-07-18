@@ -1,31 +1,35 @@
 import { LessonProgress } from '../../types/lesson.types';
 import { API_URL } from '../../../../../config/api.config';
+import { useApi } from '../../../../../api/hooks/useApi.hook';
 
 export const fetchUserProgress = async (userId: string) => {
-  const response = await fetch(`${API_URL}users/${userId}/progress`, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    credentials: 'include',
-  });
-  if (!response.ok) {
-    throw new Error('Błąd podczas pobierania postępu');
+  const api = useApi<any>();
+  const response = await api.get(`${API_URL}users/${userId}/progress`);
+
+  if (response.error) {
+    throw new Error(response.error);
   }
-  const data = await response.json();
-  return data;
+
+  if (!response.data) {
+    throw new Error('Brak danych z serwera');
+  }
+
+  return response.data;
 };
 
 export const fetchLessonProgress = async (userId: string, lessonId: string) => {
-  const response = await fetch(`${API_URL}users/${userId}/lessons/${lessonId}/progress`, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    credentials: 'include',
-  });
-  if (!response.ok) {
-    throw new Error('Błąd podczas pobierania postępu');
+  const api = useApi<any>();
+  const response = await api.get(`${API_URL}users/${userId}/lessons/${lessonId}/progress`);
+
+  if (response.error) {
+    throw new Error(response.error);
   }
-  return response.json();
+
+  if (!response.data) {
+    throw new Error('Brak danych z serwera');
+  }
+
+  return response.data;
 };
 
 export const updateLessonProgress = async (
@@ -33,16 +37,16 @@ export const updateLessonProgress = async (
   lessonId: string,
   progress: LessonProgress,
 ) => {
-  const response = await fetch(`${API_URL}users/${userId}/lessons/${lessonId}/progress`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    credentials: 'include',
-    body: JSON.stringify(progress),
-  });
-  if (!response.ok) {
-    throw new Error('Błąd podczas aktualizacji postępu');
+  const api = useApi<any>();
+  const response = await api.put(`${API_URL}users/${userId}/lessons/${lessonId}/progress`, progress);
+
+  if (response.error) {
+    throw new Error(response.error);
   }
-  return response.json();
+
+  if (!response.data) {
+    throw new Error('Brak danych z serwera');
+  }
+
+  return response.data;
 };

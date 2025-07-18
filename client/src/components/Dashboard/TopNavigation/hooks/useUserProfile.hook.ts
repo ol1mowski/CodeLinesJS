@@ -12,7 +12,6 @@ export const useUserProfile = () => {
     enabled: isAuthenticated && !isAuthChecking,
   });
 
-  // Loading jest true, jeśli query się ładuje LUB jeśli sprawdzamy autoryzację
   const isLoading = query.isLoading || isAuthChecking;
 
   return {

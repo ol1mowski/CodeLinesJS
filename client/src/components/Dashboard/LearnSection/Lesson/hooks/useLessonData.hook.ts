@@ -4,7 +4,7 @@ import { fetchLesson, completeLesson } from '../../lib/api/lessons';
 import { updateLessonProgress } from '../../lib/api/progress';
 import type { LessonProgress } from '../../types/lesson.types';
 import { toast } from 'react-hot-toast';
-import { useLearningPaths } from '../../LearningPaths/hooks/useLearningPaths';
+import { useLearningPaths } from '../../LearningPaths/hooks/useLearningPaths.hook';
 import { useAuth } from '../../../../Auth/hooks/useAuth.hook';
 
 export const useLessonData = (lessonSlug: string) => {

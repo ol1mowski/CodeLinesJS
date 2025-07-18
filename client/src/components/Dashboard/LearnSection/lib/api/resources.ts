@@ -1,20 +1,17 @@
 import { API_URL } from '../../../../../config/api.config';
+import { useApi } from '../../../../../api/hooks/useApi.hook';
 
 export const fetchResources = async () => {
-  const response = await fetch(`${API_URL}resources`, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    credentials: 'include',
-  });
+  const api = useApi<any>();
+  const response = await api.get(`${API_URL}resources`);
 
-  if (!response.ok) {
-    if (response.status === 401) {
-      throw new Error('Nieautoryzowany - proszę się zalogować ponownie');
-    }
-    throw new Error('Błąd podczas pobierania zasobów');
+  if (response.error) {
+    throw new Error(response.error);
   }
 
-  const data = await response.json();
-  return data;
+  if (!response.data) {
+    throw new Error('Brak danych z serwera');
+  }
+
+  return response.data;
 };

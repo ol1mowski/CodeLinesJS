@@ -1,19 +1,19 @@
-import { useQuery } from '@tanstack/react-query';
-import { httpClient } from '../../../../../api/httpClient.api';
-import { RankingResponse, RankingUser } from '../types/ranking.types';
 import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { RankingUser, RankingResponse } from '../types/ranking.types';
+import { useApi } from '../../../../../api/hooks/useApi.hook';
 
-export interface UseRankingResult {
+type UseRankingResult = {
   ranking: RankingUser[] | undefined;
   totalUsers: number;
-  userStats: RankingResponse['userStats'] | undefined;
+  userStats: any;
   isLoading: boolean;
   error: Error | null;
   page: number;
   limit: number;
   nextPage: () => void;
   prevPage: () => void;
-  goToPage: (page: number) => void;
+  goToPage: (pageNumber: number) => void;
   totalPages: number;
   pagination: {
     page: number;
@@ -21,7 +21,7 @@ export interface UseRankingResult {
     totalItems: number;
     totalPages: number;
   } | null;
-}
+};
 
 export const useRanking = (
   initialPage = 1,
@@ -29,6 +29,7 @@ export const useRanking = (
 ): UseRankingResult => {
   const [page, setPage] = useState(initialPage);
   const limit = initialLimit;
+  const api = useApi<RankingResponse>();
 
   const {
     data: response,
@@ -37,24 +38,20 @@ export const useRanking = (
   } = useQuery({
     queryKey: ['ranking', page, limit],
     queryFn: async () => {
-      const response = await httpClient.get<RankingResponse>(
-        `ranking?page=${page}&limit=${limit}`, 
-        { requiresAuth: true }
-      );
-
+      const response = await api.get(`ranking?page=${page}&limit=${limit}`);
       if (response.error) {
         throw new Error(response.error);
       }
-
-      return response;
+      if (!response.data) {
+        throw new Error('Brak danych z serwera');
+      }
+      return response.data;
     },
   });
 
-  const responseData = response?.data;
-  
-  const ranking = responseData?.ranking;
-  const totalUsers = responseData?.totalUsers || 0;
-  const meta = responseData?.meta;
+  const ranking = response?.ranking;
+  const totalUsers = response?.totalUsers || 0;
+  const meta = response?.meta;
   const totalPages = meta?.totalPages || Math.ceil(totalUsers / limit);
 
   const nextPage = () => {
@@ -78,7 +75,7 @@ export const useRanking = (
   return {
     ranking,
     totalUsers,
-    userStats: responseData?.userStats,
+    userStats: response?.userStats,
     isLoading,
     error: error as Error | null,
     page,

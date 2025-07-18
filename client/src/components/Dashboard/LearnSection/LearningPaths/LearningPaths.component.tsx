@@ -4,7 +4,7 @@ import { memo } from 'react';
 import { StatsSection } from './components/Stats/StatsSection.component';
 import { ErrorMessage } from '../components/ErrorMessage.component';
 import { LoadingScreen } from '../../../UI/LoadingScreen/LoadingScreen.component';
-import { useLearningPaths } from './hooks/useLearningPaths';
+import { useLearningPaths } from './hooks/useLearningPaths.hook';
 import { EmptyState } from './components/EmptyState.component';
 import { PathCard } from './components/PathCard/PathCard.component';
 

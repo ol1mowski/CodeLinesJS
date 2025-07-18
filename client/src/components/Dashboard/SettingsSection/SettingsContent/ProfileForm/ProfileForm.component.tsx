@@ -1,10 +1,10 @@
 import { memo, useCallback, useEffect, useState } from 'react';
-import { useProfile } from '../../hooks/useProfile';
-import { useProfileFormLogic } from '../../hooks/useProfileFormLogic';
+import { useProfile } from '../../hooks/useProfile.hook';
+import { useProfileFormLogic } from '../../hooks/useProfileFormLogic.hook';
 import { ProfileFormContent } from './components/ProfileFormContent/ProfileFormContent.component';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
-import { PROFILE_QUERY_KEY } from '../../hooks/useProfile';
+import { PROFILE_QUERY_KEY } from '../../hooks/useProfile.hook';
 
 export const ProfileForm = memo(() => {
   const { profile, username, email, bio, isLoading, updateProfile } = useProfile();

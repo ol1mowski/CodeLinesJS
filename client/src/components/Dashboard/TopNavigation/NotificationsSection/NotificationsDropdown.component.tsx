@@ -2,7 +2,7 @@ import { memo, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useDashboardData } from '../../DashboardContent/hooks/useDashboardData';
 import { notificationsStyles as styles } from './style/Notifications.styles';
-import { useNotifications } from './hooks/useNotifications';
+import { useNotifications } from './hooks/useNotifications.hook';
 import { NotificationItem } from './components/NotificationItem.component';
 import { NotificationsHeader } from './components/NotificationsHeader.component';
 

@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
 import { API_URL } from '../../../../config/api.config';
+import { useApi } from '../../../../api/hooks/useApi.hook';
 
 
 type ProgressUpdate = {
@@ -27,29 +28,23 @@ export const useUserProgress = (userId: string) => {
         return null;
       }
 
-      const response = await fetch(`${API_URL}users/${userId}/progress`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
+      const api = useApi<any>();
+      const response = await api.put(`${API_URL}users/${userId}/progress`, {
           lessonId: data.lessonId,
           points: data.points,
           isCompleted: data.isCompleted,
           completedSections: data.completedSections,
-        }),
-      });
+        });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Błąd odpowiedzi:', errorData);
-        throw new Error(errorData.message || 'Nie udało się zaktualizować postępu');
+      if (response.error) {
+        throw new Error(response.error);
       }
 
-      const result = await response.json();
-      console.log('Odpowiedź z serwera:', result);
-      return result;
+      if (!response.data) {
+        throw new Error('Brak danych z serwera');
+      }
+
+      return response.data;
     },
     onSuccess: data => {
       if (data) {

@@ -2,7 +2,7 @@ import { memo } from 'react';
 import { ErrorMessage } from '../components/ErrorMessage.component';
 import { LessonsHeader } from './LessonsHeader.component';
 import { LessonsList } from './LessonsList.component';
-import { useLessons } from '../hooks/useLessons';
+import { useLessons } from '../hooks/useLessons.hook';
 import { useStats } from '../../../Dashboard/StatsSection/hooks/useStats.hook';
 import { useAuth } from '../../../Auth/hooks/useAuth.hook';
 

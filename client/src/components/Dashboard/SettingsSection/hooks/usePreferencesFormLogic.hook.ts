@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { usePreferencesForm } from './usePreferencesForm';
-import { usePreferences } from './usePreferences';
+import { usePreferencesForm } from './usePreferencesForm.hook';
+import { usePreferences } from './usePreferences.hook';
 import { toast } from 'react-hot-toast';
 import { PreferencesError } from '../api/preferences';
 

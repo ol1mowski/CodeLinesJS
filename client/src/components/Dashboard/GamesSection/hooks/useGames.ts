@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Game } from '../types/api.types';
-import { fetchGames } from '../api/fetchGames.api';
-import { GameDifficulty, SortOption } from '../types/games.types';
+import { Game, GameDifficulty, SortOption } from '../types/games.types';
+import { useApi } from '../../../../api/hooks/useApi.hook';
 
 type UseGamesReturn = {
   games: Game[];
@@ -11,30 +10,31 @@ type UseGamesReturn = {
 
 export const useGames = (): UseGamesReturn => {
   const [games, setGames] = useState<Game[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const api = useApi<{ data: { games: Game[] } }>();
 
   useEffect(() => {
     const getGames = async () => {
-      setIsLoading(true);
-      setError(null);
-
       try {
-        const response = await fetchGames();
-        const data = await response.json();
-        setGames(data.data.games);
+        const response = await api.get('games');
+        if (response.error) {
+          return;
+        }
+        if (response.data) {
+          setGames(response.data.data.games);
+        }
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Wystąpił nieznany błąd');
         console.error('Błąd podczas pobierania gier:', err);
-      } finally {
-        setIsLoading(false);
       }
     };
 
     getGames();
-  }, []);
+  }, [api]);
 
-  return { games, isLoading, error };
+  return { 
+    games, 
+    isLoading: api.loading, 
+    error: api.error 
+  };
 };
 
 export const useFilteredGames = (
@@ -55,7 +55,7 @@ export const useFilteredGames = (
     .sort((a, b) => {
       switch (sortBy) {
         case 'newest':
-          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+          return new Date(b.createdAt || '').getTime() - new Date(a.createdAt || '').getTime();
         case 'popular':
           return b.completions.count - a.completions.count;
         case 'difficulty':

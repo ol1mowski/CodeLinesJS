@@ -9,12 +9,12 @@ export type ApiState<T> = {
 };
 
 export type UseApiOptions = {
-  onSuccess?: (data: any) => void;
+  onSuccess?: <T>(data: T) => void;
   onError?: (error: string, status: number) => void;
   initialLoading?: boolean;
 };
 
-export const useApi = <T = any>(options: UseApiOptions = {}) => {
+export const useApi = <T = unknown>(options: UseApiOptions = {}) => {
   const { onSuccess, onError, initialLoading = false } = options;
 
   const [state, setState] = useState<ApiState<T>>({
@@ -89,7 +89,7 @@ export const useApi = <T = any>(options: UseApiOptions = {}) => {
   const post = useCallback(
     <R = T>(
       endpoint: string,
-      body: any,
+      body: Record<string, unknown>,
       options?: Omit<HttpRequestOptions, 'method' | 'body'>
     ): Promise<ApiResponse<R>> => {
       return request<R>(endpoint, { ...options, method: 'POST', body });
@@ -100,7 +100,7 @@ export const useApi = <T = any>(options: UseApiOptions = {}) => {
   const put = useCallback(
     <R = T>(
       endpoint: string,
-      body: any,
+      body: Record<string, unknown>,
       options?: Omit<HttpRequestOptions, 'method' | 'body'>
     ): Promise<ApiResponse<R>> => {
       return request<R>(endpoint, { ...options, method: 'PUT', body });
@@ -121,7 +121,7 @@ export const useApi = <T = any>(options: UseApiOptions = {}) => {
   const patch = useCallback(
     <R = T>(
       endpoint: string,
-      body: any,
+      body: Record<string, unknown>,
       options?: Omit<HttpRequestOptions, 'method' | 'body'>
     ): Promise<ApiResponse<R>> => {
       return request<R>(endpoint, { ...options, method: 'PATCH', body });

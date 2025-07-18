@@ -1,5 +1,6 @@
 import { API_URL } from '../../../../../config/api.config';
 import { RankingResponse } from '../types/ranking.types';
+import { useApi } from '../../../../../api/hooks/useApi.hook';
 
 interface FetchRankingParams {
   page?: number;
@@ -20,15 +21,8 @@ export const fetchRanking = async (
     if (params.page) queryParams.append('page', params.page.toString());
     if (params.limit) queryParams.append('limit', params.limit.toString());
     
-    const url = `${API_URL}ranking?${queryParams.toString()}`;
-    
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-        credentials: 'include',
-    });
+    const api = useApi<any>();
+    const response = await api.get(`${API_URL}ranking?${queryParams.toString()}`);
 
     if (response.status === 401) {
       throw new Error('Brak autoryzacji - zaloguj się ponownie');
@@ -38,20 +32,16 @@ export const fetchRanking = async (
       throw new Error('Zbyt wiele zapytań. Spróbuj ponownie za chwilę');
     }
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      let errorMessage = 'Błąd podczas pobierania rankingu';
-
-      try {
-        const errorData = JSON.parse(errorText);
-        errorMessage = errorData.message || errorData.error || errorMessage;
-      } catch (e) {}
-
-      throw new Error(errorMessage);
+    if (response.error) {
+      throw new Error(response.error);
     }
 
-    return await response.json();
+    if (!response.data) {
+      throw new Error('Brak danych z serwera');
+    }
+
+    return response.data;
   } catch (error) {
-    throw error instanceof Error ? error : new Error('Nieznany błąd podczas pobierania rankingu');
+    throw error;
   }
 }; 

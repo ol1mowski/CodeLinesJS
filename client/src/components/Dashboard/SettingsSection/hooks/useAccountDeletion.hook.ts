@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useDeleteAccountForm } from './useDeleteAccountForm';
+import { useDeleteAccountForm } from './useDeleteAccountForm.hook';
 import { AccountError } from '../api/account';
 import { toast } from 'react-hot-toast';
 

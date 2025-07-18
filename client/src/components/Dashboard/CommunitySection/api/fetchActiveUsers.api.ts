@@ -1,18 +1,20 @@
 import { API_URL } from '../../../../config/api.config';
+import { useApi } from '../../../../api/hooks/useApi.hook';
 
 export const fetchActiveUsers = async () => {
   try {
-    const response = await fetch(`${API_URL}users/active`, {
-      credentials: 'include',
-    });
+    const api = useApi<any>();
+    const response = await api.get(`${API_URL}users/active`);
 
-    if (!response.ok) {
-      throw new Error('Błąd podczas pobierania aktywnych użytkowników');
+    if (response.error) {
+      throw new Error(response.error);
     }
 
-    const data = await response.json();
-    
-    return data;
+    if (!response.data) {
+      throw new Error('Brak danych z serwera');
+    }
+
+    return response.data;
   } catch (error) {
     throw error;
   }
