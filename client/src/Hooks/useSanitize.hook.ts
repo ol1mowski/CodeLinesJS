@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { sanitizeHtml, sanitizeCode, sanitizeErrorMessage } from '../utils/security';
+import { sanitizeHtml, sanitizeCode, sanitizeErrorMessage } from '../utils/security.util';
 
 type UseSanitizeReturn = {
   sanitizeHtml: (html: string) => string;

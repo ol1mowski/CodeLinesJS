@@ -1,19 +1,17 @@
 import { Container } from '../components/UI/Container/Container.component';
 import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
+import { SEO } from '../utils/seo.util';
 import { Link } from 'react-router-dom';
 import { FaArrowLeft } from 'react-icons/fa';
 
 const PrivacyPolicy = () => {
   return (
     <>
-      <Helmet>
-        <title>Polityka Prywatności | CodeLinesJS</title>
-        <meta
-          name="description"
-          content="Polityka prywatności CodeLinesJS - dowiedz się, jak chronimy Twoje dane osobowe."
-        />
-      </Helmet>
+      <SEO
+        title="Polityka Prywatności"
+        description="Polityka prywatności CodeLinesJS - dowiedz się, jak chronimy Twoje dane osobowe."
+        type="website"
+      />
       <div className="bg-gradient-to-b from-dark via-dark-medium to-dark min-h-screen py-16">
         <Container>
           <Link to="/">

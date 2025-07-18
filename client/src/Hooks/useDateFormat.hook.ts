@@ -5,7 +5,7 @@ import {
   formatShortDate,
   getDaysDifference,
   isSameDay,
-} from '../utils/format';
+} from '../utils/format.util';
 
 type UseDateFormatReturn = {
   formatDate: (date: string | Date) => string;

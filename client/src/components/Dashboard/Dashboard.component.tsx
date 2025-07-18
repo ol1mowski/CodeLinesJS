@@ -2,7 +2,7 @@ import { Link, Outlet } from 'react-router-dom';
 import { DashboardNavigation } from './Navigation/DashboardNavigation.component';
 import { TopNavigation } from './TopNavigation/TopNavigation.component';
 import { useIsHiddenPath } from '../../hooks/useIsHiddingPath.hook';
-import { Helmet } from 'react-helmet-async';
+import { SEO } from '../../utils/seo.util';
 import { useMobileDetect } from '../../hooks/useMobileDetect';
 import { FaSignOutAlt } from 'react-icons/fa';
 import { useAuth } from '../../hooks/useAuth';
@@ -34,13 +34,11 @@ const Dashboard = memo(() => {
       }
     >
       <main className="bg-gradient-to-b from-dark via-dark-medium to-dark backdrop-blur-lg flex min-h-screen">
-        <Helmet>
-          <title>Dashboard | CodeLinesJS</title>
-          <meta
-            name="description"
-            content="Panel użytkownika CodeLinesJS - dostęp do kursów, gier i statystyk nauki."
-          />
-        </Helmet>
+        <SEO
+          title="Dashboard"
+          description="Panel użytkownika CodeLinesJS - dostęp do kursów, gier i statystyk nauki."
+          type="website"
+        />
 
         <DashboardNavigation />
 

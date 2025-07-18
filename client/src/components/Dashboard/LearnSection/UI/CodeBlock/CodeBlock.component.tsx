@@ -2,7 +2,7 @@ import { memo } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { FaCopy } from 'react-icons/fa';
-import { sanitizeCode } from '../../../../../utils/security';
+import { sanitizeCode } from '../../../../../utils/security.util';
 
 const SyntaxHighlighterComponent = SyntaxHighlighter as any;
 
