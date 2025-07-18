@@ -1,8 +1,8 @@
 import { lazy, Suspense, memo } from 'react';
 import { useParams } from 'react-router-dom';
 import { GameContentProvider } from '../../../contexts/GameContentContext';
-import { Helmet } from 'react-helmet-async';
 import DOMPurify from 'dompurify';
+import { SEO } from '../../../../../../utils/seo.util';
 
 DOMPurify.setConfig({
   FORBID_ATTR: [
@@ -127,13 +127,12 @@ export const GameplayArea = memo(() => {
 
   return (
     <GameContentProvider>
-      <Helmet>
-        <title>{DOMPurify.sanitize(sanitizedSlug)} | CodeLinesJS</title>
-        <meta
-          name="description"
-          content="Gra CodeLinesJS - dołącz do nas i rozwijaj swoje umiejętności w przyjaznym środowisku."
-        />
-      </Helmet>
+      <SEO
+        title={DOMPurify.sanitize(sanitizedSlug)}
+        description="Gra CodeLinesJS - dołącz do nas i rozwijaj swoje umiejętności w przyjaznym środowisku."
+        type="website"
+      />
+
       <div className="w-full h-full">
         <Suspense fallback={<div>Ładowanie gry...</div>}>
           <GameComponent />

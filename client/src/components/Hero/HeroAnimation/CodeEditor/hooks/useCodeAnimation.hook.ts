@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { CodeLine } from '../types';
 import { TYPING_INTERVAL } from '../constants';
 import { codeLines } from '../data/codeExample';
-import { useMobileDetect } from '../../../../../hooks/useMobileDetect';
+import { useMobileDetect } from '../../../../UI/hooks/useMobileDetect.hook';
 
 export const useCodeAnimation = () => {
   const [currentLineIndex, setCurrentLineIndex] = useState(0);

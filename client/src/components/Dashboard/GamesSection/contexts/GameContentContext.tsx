@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { GameContent } from '../types/games.type';
 import { API_URL } from '../../../../config/api.config';
-import { useAuth } from '../../../../hooks/useAuth';
+import { useAuth } from '../../../Auth/hooks/useAuth.hook';
 
 type GameContentContextType = {
   gameContent: GameContent | null;

@@ -1,6 +1,6 @@
 import { MobileWrapper } from '../../UI/MobileWrapper/MobileWrapper.component';
 import { CodeEditor } from './CodeEditor/CodeEditor.component';
-import { useMobileDetect } from '../../../hooks/useMobileDetect';
+import { useMobileDetect } from '../../UI/hooks/useMobileDetect.hook';
 
 export const HeroAnimation = () => {
   const isMobile = useMobileDetect();

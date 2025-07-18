@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { API_URL } from '../config/api.config';
+import { API_URL } from '../../../config/api.config';
 import { useAuthState } from './useAuthState.hook';
-import { useAuthActions } from '../components/Auth/hooks/useAuthActions.hook';
-import { AuthStateAndActions, AuthState, User } from '../components/Auth/types/auth.types';
+import { useAuthActions } from './useAuthActions.hook';
+import { AuthStateAndActions, AuthState, User } from '../types/auth.types';
 
 export const useAuth = (): AuthStateAndActions => {
   const state = useAuthState();
@@ -102,4 +102,4 @@ export const useAuth = (): AuthStateAndActions => {
     ...actions,
     logout,
   };
-};
+}; 

@@ -28,4 +28,4 @@ export const useIsHiddenPath = (): boolean => {
 
     return exactMatch || lessonMatch;
   }, [location.pathname]);
-};
+}; 

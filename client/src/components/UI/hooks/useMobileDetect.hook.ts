@@ -28,4 +28,4 @@ export const useMobileDetect = (): boolean => {
   }, [checkMobile]);
 
   return isMobile;
-};
+}; 

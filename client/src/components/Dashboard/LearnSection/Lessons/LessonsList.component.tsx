@@ -4,8 +4,8 @@ import { LessonCard } from './LessonCard.component';
 import type { Lesson } from '../types/lesson.types';
 import { FilterType } from '../types/filter.types';
 import { FaSearch, FaSadTear } from 'react-icons/fa';
-import { Helmet } from 'react-helmet-async';
 import { LoadingScreen } from '../../../UI/LoadingScreen/LoadingScreen.component';
+import { SEO } from '../../../../utils/seo.util';
 
 type LessonsListProps = {
   lessons: Lesson[];
@@ -87,13 +87,12 @@ export const LessonsList = memo(({ lessons, filter, userData, isLoading = false 
       animate="visible"
       className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
     >
-      <Helmet>
-        <title>Lekcje | CodeLinesJS</title>
-        <meta
-          name="description"
-          content="Lekcje JavaScript - dołącz do nas i rozwijaj swoje umiejętności w przyjaznym środowisku."
-        />
-      </Helmet>
+      <SEO
+        title="Lekcje"
+        description="Lekcje JavaScript - dołącz do nas i rozwijaj swoje umiejętności w przyjaznym środowisku."
+        type="website"
+      />
+
       {processedLessons.map(lesson => (
         <LessonCard key={lesson.slug} lesson={lesson} />
       ))}

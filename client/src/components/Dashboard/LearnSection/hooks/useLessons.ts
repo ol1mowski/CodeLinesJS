@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchLessons } from '../lib/api/lessons';
 import type { Lesson } from '../types/lesson.types';
 import type { FilterType } from '../types/filter.types';
-import { useAuth } from '../../../../hooks/useAuth';
+import { useAuth } from '../../../Auth/hooks/useAuth.hook';
 
 type Category = 'javascript' | 'react';
 

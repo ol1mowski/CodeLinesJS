@@ -7,9 +7,9 @@ import { Resources } from './Resources/Resources.component';
 import { LearningPaths } from './LearningPaths/LearningPaths.component';
 import { LearnTabs } from './LearnTabs/LearnTabs.component';
 import { Recruitment } from './Recruitment/Recruitment.component';
-import { useAuth } from '../../../hooks/useAuth';
+import { useAuth } from '../../Auth/hooks/useAuth.hook';
 import { LoadingScreen } from '../../UI/LoadingScreen/LoadingScreen.component';
-import { Helmet } from 'react-helmet-async';
+import { SEO } from '../../../utils/seo.util';
 
 type TabType = 'paths' | 'lessons' | 'resources' | 'articles' | 'recruitment';
 
@@ -58,13 +58,12 @@ export const LearnSection = memo(() => {
       animate="visible"
       className="min-h-screen bg-dark/50 backdrop-blur-sm"
     >
-      <Helmet>
-        <title>Nauka | CodeLinesJS</title>
-        <meta
-          name="description"
-          content="Nauka JavaScript - dołącz do nas i rozwijaj swoje umiejętności w przyjaznym środowisku."
-        />
-      </Helmet>
+      <SEO
+        title="Nauka"
+        description="Nauka JavaScript - dołącz do nas i rozwijaj swoje umiejętności w przyjaznym środowisku."
+        type="website"
+      />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <SectionTitle
           title="Nauka JavaScript"

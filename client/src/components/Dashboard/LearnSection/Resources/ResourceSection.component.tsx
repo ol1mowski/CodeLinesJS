@@ -2,7 +2,7 @@ import { memo } from 'react';
 import { motion } from 'framer-motion';
 import { ResourceCard } from './ResourceCard.component';
 import { type Resource } from '../types/resource.types';
-import { Helmet } from 'react-helmet-async';
+import { SEO } from '../../../../utils/seo.util';
 
 type ResourceSectionProps = {
   title: string;
@@ -25,13 +25,12 @@ export const ResourceSection = memo(
   ({ title, subtitle, resources, isRecommended }: ResourceSectionProps) => {
     return (
       <section>
-        <Helmet>
-          <title>Zasoby | CodeLinesJS</title>
-          <meta
-            name="description"
-            content="Zasoby JavaScript - dołącz do nas i rozwijaj swoje umiejętności w przyjaznym środowisku."
-          />
-        </Helmet>
+        <SEO
+          title={title}
+          description="Zasoby JavaScript - dołącz do nas i rozwijaj swoje umiejętności w przyjaznym środowisku."
+          type="website"
+        />
+
         <div className="mb-4">
           <h3 className="text-xl font-bold text-js mb-1">{title}</h3>
           <p className="text-gray-400 text-sm">{subtitle}</p>

@@ -5,7 +5,7 @@ import { useState } from 'react';
 
 import { FormInput } from '../../../UI/Form/FormInput/FormInput.component';
 import { LoginFormData, loginSchema } from '../../../../schemas/auth.schema';
-import { useAuth } from '../../../../hooks/useAuth';
+import { useAuth } from '../../hooks/useAuth.hook';
 import { GoogleLoginButton } from './GoogleLoginButton.component';
 import { RememberMeCheckbox } from './RememberMeCheckbox.component';
 import { FormError } from '../../../UI/FormError/FormError.component';

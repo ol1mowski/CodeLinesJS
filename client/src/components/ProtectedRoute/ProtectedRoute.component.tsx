@@ -1,5 +1,5 @@
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../Auth/hooks/useAuth.hook';
 import { ReactNode } from 'react';
 
 type ProtectedRouteProps = {

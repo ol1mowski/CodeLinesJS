@@ -2,8 +2,8 @@ import { type ReactNode } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { AuthLeftSection } from './components/AuthLeftSection/AuthLeftSection.component';
 import { AuthFormSection } from './components/AuthFormSection/AuthFormSection.component';
-import { Helmet } from 'react-helmet-async';
 import { AuthErrorBoundary } from '../Common/ErrorBoundary';
+import { SEO } from '../../utils/seo.util';
 
 type AuthSectionProps = {
   children?: ReactNode;
@@ -39,11 +39,12 @@ export const AuthSection = ({ children, title, subtitle }: AuthSectionProps = {}
 
   return (
     <main className="min-h-screen w-full flex">
-      <Helmet>
-        <title>{getPageTitle()}</title>
-        <meta name="description" content={getPageDescription()} />
-      </Helmet>
-      
+      <SEO
+        title={getPageTitle()}
+        description={getPageDescription()}
+        type="website"
+      />
+
       <div className="hidden lg:flex w-1/2 bg-black items-center justify-center p-8">
         <AuthLeftSection />
       </div>

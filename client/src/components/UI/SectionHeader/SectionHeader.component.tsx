@@ -1,5 +1,5 @@
 import { MobileWrapper } from '../MobileWrapper/MobileWrapper.component';
-import { useMobileDetect } from '../../../hooks/useMobileDetect';
+import { useMobileDetect } from '../hooks/useMobileDetect.hook';
 
 type SectionHeaderProps = {
   badge?: string;

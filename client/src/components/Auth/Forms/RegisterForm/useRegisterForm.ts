@@ -1,5 +1,5 @@
 import { RegisterFormData, registerSchema } from '../../../../schemas/auth.schema';
-import { useAuth } from '../../../../hooks/useAuth';
+import { useAuth } from '../../hooks/useAuth.hook';
 import { useFormValidator } from '../../hooks/useFormValidator.hook';
 import { useState, useEffect } from 'react';
 

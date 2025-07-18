@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { fetchLearningPaths } from '../../lib/api/paths';
 import type { PathsResponse } from '../types/learning-paths.types';
-import { useAuth } from '../../../../../hooks/useAuth';
+import { useAuth } from '../../../../Auth/hooks/useAuth.hook';
 
 export const useLearningPaths = () => {
   const { isAuthenticated, isAuthChecking } = useAuth();

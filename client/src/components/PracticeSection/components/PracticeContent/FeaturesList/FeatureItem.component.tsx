@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { type ReactNode } from 'react';
-import { useMobileDetect } from '../../../../../hooks/useMobileDetect';
+import { useMobileDetect } from '../../../../UI/hooks/useMobileDetect.hook';
 
 type FeatureItemProps = {
   icon: ReactNode;

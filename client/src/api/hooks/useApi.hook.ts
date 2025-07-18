@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { httpClient, ApiResponse, HttpRequestOptions } from '../api/httpClient.api';
+import { httpClient, ApiResponse, HttpRequestOptions } from '../httpClient.api';
 
 export type ApiState<T> = {
   data: T | null;
@@ -139,4 +139,4 @@ export const useApi = <T = any>(options: UseApiOptions = {}) => {
     patch,
     reset,
   };
-};
+}; 

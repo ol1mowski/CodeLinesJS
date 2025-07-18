@@ -5,7 +5,7 @@ import { updateLessonProgress } from '../../lib/api/progress';
 import type { LessonProgress } from '../../types/lesson.types';
 import { toast } from 'react-hot-toast';
 import { useLearningPaths } from '../../LearningPaths/hooks/useLearningPaths';
-import { useAuth } from '../../../../../hooks/useAuth';
+import { useAuth } from '../../../../Auth/hooks/useAuth.hook';
 
 export const useLessonData = (lessonSlug: string) => {
   const { user, isAuthenticated, isAuthChecking } = useAuth();

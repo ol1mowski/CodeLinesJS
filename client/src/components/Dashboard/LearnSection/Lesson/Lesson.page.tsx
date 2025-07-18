@@ -4,10 +4,10 @@ import { LessonLayout } from './components/LessonLayout.component';
 import { LessonContent } from './components/LessonContent.component';
 import { LessonNotFound } from './components/LessonNotFound.component';
 import { ErrorMessage } from '../components/ErrorMessage.component';
-import { LoadingScreen } from '../../../UI/LoadingScreen/LoadingScreen.component';
-import { Helmet } from 'react-helmet-async';
+import { LoadingScreen } from '../../../UI/LoadingScreen/LoadingScreen.component';  
 import { FaLock } from 'react-icons/fa';
 import { useStats } from '../../../Dashboard/StatsSection/hooks/useStats.hook';
+import { SEO } from '../../../../utils/seo.util';
 
 export const LessonPage = () => {
   const { lessonSlug } = useParams<{ lessonSlug: string }>();
@@ -54,10 +54,12 @@ export const LessonPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{lesson.title} | CodeLinesJS</title>
-        <meta name="description" content={lesson.description} />
-      </Helmet>
+      <SEO
+        title={lesson.title}
+        description={lesson.description}
+        type="website"
+      />
+
       <LessonContent
         lesson={lesson}
         activeSection={activeSection}

@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useMobileDetect } from '../../../../../hooks/useMobileDetect';
+import { useMobileDetect } from '../../../../UI/hooks/useMobileDetect.hook';
 
 type NewsCardProps = {
   id: string;

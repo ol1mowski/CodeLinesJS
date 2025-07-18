@@ -2,15 +2,15 @@ import { memo, useEffect, lazy, Suspense } from 'react';
 import { useLocation, Routes, Route } from 'react-router-dom';
 import { useCommunity } from './Feed/hooks/useCommunity.hook';
 import { CommunityView } from './types/community.types';
-import { Helmet } from 'react-helmet-async';
 import { LoadingSpinner } from '../../../components/UI/LoadingSpinner/LoadingSpinner.component';
 import { CommunityNavigation } from './Navigation/CommunityNavigation.component';
+import { SEO } from '../../../utils/seo.util';
 
 const CommunityFeed = lazy(() => import('./Feed/CommunityFeed.component'));
 const CommunityRanking = lazy(() => import('./Ranking/CommunityRanking.component'));
 
 export const CommunitySection = memo(() => {
-  const location = useLocation();
+  const location = useLocation(); 
   const {
     state: { activeView },
     setActiveView,
@@ -25,13 +25,12 @@ export const CommunitySection = memo(() => {
 
   return (
     <div className="p-8 w-full min-h-screen bg-dark/50 backdrop-blur-sm">
-      <Helmet>
-        <title>Community | CodeLinesJS</title>
-        <meta
-          name="description"
-          content="Community CodeLinesJS - dołącz do nas i rozwijaj swoje umiejętności w przyjaznym środowisku."
-        />
-      </Helmet>
+      <SEO
+        title="Community"
+        description="Community CodeLinesJS - dołącz do nas i rozwijaj swoje umiejętności w przyjaznym środowisku."
+        type="website"
+      />
+
       <div className="max-w-7xl mx-auto">
         <div className="bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10 p-6 shadow-lg">
           <CommunityNavigation />

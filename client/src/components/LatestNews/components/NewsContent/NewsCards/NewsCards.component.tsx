@@ -1,4 +1,4 @@
-import { useMobileDetect } from '../../../../../hooks/useMobileDetect';
+import { useMobileDetect } from '../../../../UI/hooks/useMobileDetect.hook';
 import { useLatestFeatures } from '../../../hooks/useLatestFeatures';
 import { LatestFeature } from '../../../api/latestFeatures.api';
 import { NewsCard } from './NewsCard.component';

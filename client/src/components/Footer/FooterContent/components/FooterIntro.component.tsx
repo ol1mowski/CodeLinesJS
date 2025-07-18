@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { motion } from 'framer-motion';
-import { useMobileDetect } from '../../../../hooks/useMobileDetect';
+import { useMobileDetect } from '../../../UI/hooks/useMobileDetect.hook';
 import { Link } from 'react-router-dom';
 
 export const FooterIntro = memo(() => {

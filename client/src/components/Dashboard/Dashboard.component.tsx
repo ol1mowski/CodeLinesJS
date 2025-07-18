@@ -1,11 +1,11 @@
 import { Link, Outlet } from 'react-router-dom';
 import { DashboardNavigation } from './Navigation/DashboardNavigation.component';
 import { TopNavigation } from './TopNavigation/TopNavigation.component';
-import { useIsHiddenPath } from '../../hooks/useIsHiddingPath.hook';
+import { useIsHiddenPath } from './hooks/useIsHiddenPath.hook';
 import { SEO } from '../../utils/seo.util';
-import { useMobileDetect } from '../../hooks/useMobileDetect';
+import { useMobileDetect } from '../UI/hooks/useMobileDetect.hook';
 import { FaSignOutAlt } from 'react-icons/fa';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../Auth/hooks/useAuth.hook';
 import { ErrorBoundary } from '../Common/ErrorBoundary';
 import { memo, lazy, Suspense } from 'react';
 

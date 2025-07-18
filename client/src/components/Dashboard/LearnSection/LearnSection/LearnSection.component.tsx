@@ -6,7 +6,7 @@ import { LearningPaths } from '../LearningPaths/LearningPaths.component';
 import { Lessons } from '../Lessons/Lessons.component';
 import { Resources } from '../Resources/Resources.component';
 import { SectionTitle } from '../../../UI/SectionTitle/SectionTitle.component';
-import { useAuth } from '../../../../hooks/useAuth';
+import { useAuth } from '../../../Auth/hooks/useAuth.hook';
 
 type TabType = 'paths' | 'lessons' | 'resources';
 const LearnTabs = ({

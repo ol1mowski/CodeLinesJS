@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { RankingUser } from '../components/Dashboard/CommunitySection/Ranking/types/ranking.types';
+import { RankingUser } from '../types/ranking.types';
 
 type WorkerMessage = {
   type: string;
@@ -11,7 +11,7 @@ export const useRankingWorker = () => {
   const workerRef = useRef<Worker>();
 
   useEffect(() => {
-    workerRef.current = new Worker(new URL('../workers/rankingWorker.ts', import.meta.url), {
+    workerRef.current = new Worker(new URL('../../../../../workers/rankingWorker.ts', import.meta.url), {
       type: 'module',
     });
 
@@ -56,4 +56,4 @@ export const useRankingWorker = () => {
     sortUsers,
     calculateStats,
   };
-};
+}; 

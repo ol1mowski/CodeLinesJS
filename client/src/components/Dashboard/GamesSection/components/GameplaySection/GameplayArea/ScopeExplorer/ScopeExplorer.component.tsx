@@ -1,6 +1,5 @@
 import { memo } from 'react';
 import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
 import { ScopeExplorerStats } from './ScopeExplorerStats/ScopeExplorerStats.component';
 import { GameIntro } from '../GameIntro/GameIntro.component';
 import { useScopeExplorerData } from './hooks/useScopeExplorerData';
@@ -8,12 +7,12 @@ import { useScopeExplorerGame } from './hooks/useScopeExplorerGame';
 import { LoadingErrorContainer } from './components/LoadingErrorContainer.component';
 import { GameContent } from './components/GameContent.component';
 import { useAnimations } from './hooks/useAnimations';
-import { useSEO } from '../../../../../../../hooks/useSEO';
+import { SEO } from '../../../../../../../utils/seo.util';
 
 const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean }) => {
   const { gameContent, isLoading, error } = useScopeExplorerData();
   const { containerAnimation } = useAnimations();
-  const { pageTitle, pageDescription } = useSEO();
+  
 
   const {
     isGameStarted,
@@ -39,10 +38,11 @@ const ScopeExplorer = memo(({ isPaused = false }: { isPaused?: boolean }) => {
             <GameIntro gameContent={gameContent} onStart={handleStartGame} />
           ) : (
             <motion.div {...containerAnimation} className="w-full h-full flex flex-col">
-              <Helmet>
-                <title>{pageTitle}</title>
-                <meta name="description" content={pageDescription} />
-              </Helmet>
+              <SEO
+                title="Scope Explorer"
+                description="Zagraj w Scope Explorer - gra programistyczna, która pomoże Ci zrozumieć zakresy zmiennych w JavaScript."
+                type="website"
+              />
 
               <ScopeExplorerStats stats={gameStats} isGameOver={isGameOver} finalTime={finalTime} />
 

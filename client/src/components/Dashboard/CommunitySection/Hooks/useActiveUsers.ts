@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { fetchActiveUsers } from '../api/fetchActiveUsers.api';
-import { useAuth } from '../../../../hooks/useAuth';
+import { useAuth } from '../../../Auth/hooks/useAuth.hook';
 
 export type User = {
   _id: string;

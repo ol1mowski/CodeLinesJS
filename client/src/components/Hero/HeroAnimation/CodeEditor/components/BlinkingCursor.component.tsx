@@ -1,5 +1,5 @@
 import { CURSOR_BLINK_DURATION } from '../constants';
-import { useMobileDetect } from '../../../../../hooks/useMobileDetect';
+import { useMobileDetect } from '../../../../UI/hooks/useMobileDetect.hook';
 import { motion } from 'framer-motion';
 
 export const BlinkingCursor = () => {
