@@ -2,6 +2,9 @@ export type UserProfile = {
   username: string;
   email: string;
   avatar?: string;
+  profile?: {
+    bio?: string;
+  };
   bio?: string;
 };
 
@@ -16,4 +19,4 @@ export type UserPreferences = {
   pushNotifications: boolean;
   darkMode: boolean;
   language: 'pl' | 'en';
-};
+}; 

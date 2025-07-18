@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { GameStats } from '../../../../../types/asyncQuest.types';
+import { GameStats } from '../types/asyncQuest.types';
 import { GameIntro } from '../../GameIntro/GameIntro.component';
 import { AsyncQuestStats } from '../AsyncQuestStats/AsyncQuestStats.component';
 import { useAsyncQuestData } from '../hooks/useAsyncQuestData';

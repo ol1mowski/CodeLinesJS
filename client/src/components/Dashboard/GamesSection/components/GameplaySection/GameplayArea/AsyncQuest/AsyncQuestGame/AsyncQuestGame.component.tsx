@@ -1,7 +1,7 @@
 import { memo, useState, useCallback, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Editor from '@monaco-editor/react';
-import { AsyncChallenge } from '../../../../../types/asyncQuest.types';
+import { AsyncChallenge } from '../types/asyncQuest.types';
 import { AsyncQuestProgress } from '../AsyncQuestProgress/AsyncQuestProgress.component';
 import { useCodeExecution } from '../hooks/useCodeExecution';
 import { validateAsyncCode } from '../utils/codeValidation';

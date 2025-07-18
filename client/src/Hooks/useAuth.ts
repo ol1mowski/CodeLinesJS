@@ -3,8 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { API_URL } from '../config/api.config';
 import { useAuthState } from './useAuthState.hook';
 import { useAuthActions } from '../components/Auth/hooks/useAuthActions.hook';
-import { AuthStateAndActions, AuthState } from '../types/auth.types';
-import { User } from '../types/user.types';
+import { AuthStateAndActions, AuthState, User } from '../components/Auth/types/auth.types';
 
 export const useAuth = (): AuthStateAndActions => {
   const state = useAuthState();

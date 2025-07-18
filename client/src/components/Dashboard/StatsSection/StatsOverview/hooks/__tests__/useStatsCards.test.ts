@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { useStatsCards } from '../useStatsCards.hook';
-import { LegacyUserStats } from '../../../../../../types/stats.types';
+import { LegacyUserStats } from '../../../types/stats.types';
 
 describe('useStatsCards', () => {
   const mockStats: LegacyUserStats = {

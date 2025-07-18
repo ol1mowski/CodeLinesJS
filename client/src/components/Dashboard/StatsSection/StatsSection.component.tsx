@@ -7,7 +7,7 @@ import { DashboardState } from '../DashboardContent/components/DashboardState.co
 import { LevelUpNotification } from '../../UI/Notifications/LevelUpNotification.component';
 import { LoadingScreen } from '../../UI/LoadingScreen/LoadingScreen.component';
 import { SEO } from '../../../utils/seo.util';
-import { Badge, LegacyUserStats } from '../../../types/stats.types';
+import { Badge, LegacyUserStats } from './types/stats.types';
 
 export const StatsSection = memo(() => {
   const { stats, isLoading, error } = useStats();

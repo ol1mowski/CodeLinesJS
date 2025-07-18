@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import type { UseFormRegister, FieldErrors } from 'react-hook-form';
 import { styles } from './BioField.styles';
-import { UserProfile } from '../../../../types/settings';
+import { UserProfile } from '../../../../types/settings.types';
 
 type BioFieldProps = {
   register: UseFormRegister<UserProfile>;

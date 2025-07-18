@@ -1,4 +1,4 @@
-import { UserStats } from '../../../../types/stats.types';
+import { UserStats } from '../types/stats.types';
 import { API_URL } from '../../../../config/api.config';
 
 export const fetchStats = async (): Promise<UserStats> => {

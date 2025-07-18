@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { httpClient } from '../../../../api/httpClient.api';
-import { AuthStateContext } from '../../../../types/auth.types';
+import { AuthStateContext } from '../../types/auth.types';
 
 export const useRegisterAction = (state: AuthStateContext) => {
   const navigate = useNavigate();

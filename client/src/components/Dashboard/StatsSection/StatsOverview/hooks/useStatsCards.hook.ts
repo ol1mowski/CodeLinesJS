@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { FaTrophy, FaFire } from 'react-icons/fa';
-import { LegacyUserStats } from '../../../../../types/stats.types';
+import { LegacyUserStats } from '../../types/stats.types';
 
 export const useStatsCards = (stats: LegacyUserStats | undefined) => {
   return useMemo(() => {

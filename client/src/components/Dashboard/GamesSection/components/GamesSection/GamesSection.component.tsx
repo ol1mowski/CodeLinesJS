@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { useGames } from '../../hooks/useGames';
 import { GameCard } from '../GamesList/GameCard.component';
-import { Game as GameCardGame } from '../../../../../types/games.types';
+import { Game as GameCardGame } from '../../types/games.types';
 
 export const GamesSection = memo(() => {
   const { games, isLoading, error } = useGames();

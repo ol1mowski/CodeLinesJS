@@ -1,5 +1,5 @@
 import { createContext, useContext, ReactNode } from 'react';
-import { AuthStateAndActions } from '../../../types/auth.types';
+import { AuthStateAndActions } from '../types/auth.types';
 
 const defaultAuthContext: AuthStateAndActions = {
   isAuthenticated: false,

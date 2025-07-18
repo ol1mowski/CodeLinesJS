@@ -2,7 +2,7 @@ import { memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AsyncQuestGame } from '../AsyncQuestGame/AsyncQuestGame.component';
 import { AsyncQuestSummary } from '../AsyncQuestSummary/AsyncQuestSummary.component';
-import { GameStats } from '../../../../../types/asyncQuest.types';
+import { GameStats } from '../types/asyncQuest.types';
 import { Game } from '../../../../../types/games.types';
 
 interface GameContentProps {

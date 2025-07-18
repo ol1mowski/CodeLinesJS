@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Badge } from '../../../types/stats.types';
+import { Badge } from '../../Dashboard/StatsSection/types/stats.types';
 
 type LevelUpNotificationProps = {
   level: number;

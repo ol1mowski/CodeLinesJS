@@ -6,7 +6,7 @@ import { StatCard } from './StatCard.component';
 import { BadgesGrid } from './BadgesGrid/BadgesGrid.component';
 import { ErrorState } from './components/ErrorState.component';
 import { useStatsCards } from './hooks/useStatsCards.hook';
-import { LegacyUserStats } from '../../../../types/stats.types';
+import { LegacyUserStats } from '../types/stats.types';
 
 type StatsOverviewProps = {
   stats: LegacyUserStats;

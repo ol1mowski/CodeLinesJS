@@ -1,4 +1,4 @@
-import { RankingUser } from '../types/ranking.types';
+import { RankingUser } from '../components/Dashboard/CommunitySection/Ranking/types/ranking.types';
 
 const ctx: Worker = self as unknown as Worker;
 

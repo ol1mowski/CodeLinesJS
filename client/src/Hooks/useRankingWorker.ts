@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { RankingUser } from '../types/ranking.types';
+import { RankingUser } from '../components/Dashboard/CommunitySection/Ranking/types/ranking.types';
 
 type WorkerMessage = {
   type: string;
