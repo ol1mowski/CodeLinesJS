@@ -5,7 +5,7 @@ import { StatsOverview } from './StatsOverview/StatsOverview.component';
 import { StatsCharts } from './StatsCharts/StatsCharts.component';
 import { DashboardState } from '../DashboardContent/components/DashboardState.component';
 import { LevelUpNotification } from '../../UI/Notifications/LevelUpNotification.component';
-import { LoadingScreen } from '../../UI/LoadingScreen/LoadingScreen.component';
+import { LoadingSpinner } from '../../UI/LoadingSpinner/LoadingSpinner.component';
 import { SEO } from '../../../utils/seo.util';
 import { Badge, LegacyUserStats } from './types/stats.types';
 
@@ -28,7 +28,7 @@ export const StatsSection = memo(() => {
   }, [stats]);
 
   if (isLoading) {
-    return <LoadingScreen />;
+    return <LoadingSpinner fullScreen text="Ładowanie statystyk..." />;
   }
   
 

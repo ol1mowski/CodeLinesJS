@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { DailyChart } from './DailyChart.component';
-import { LoadingScreen } from '../../../UI/LoadingScreen/LoadingScreen.component';
+import { LoadingSpinner } from '../../../UI/LoadingSpinner/LoadingSpinner.component';
 
 type StatsChartsProps = {
   data?: {
@@ -16,7 +16,7 @@ type StatsChartsProps = {
 export const StatsCharts = memo(({ data, isLoading }: StatsChartsProps) => {
 
   if (isLoading) {
-    return <LoadingScreen />;
+    return <LoadingSpinner fullScreen text="Ładowanie statystyk..." />;
   }
 
   if (!data) {

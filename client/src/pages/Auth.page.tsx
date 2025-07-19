@@ -1,10 +1,10 @@
 import { Suspense } from 'react';
-import { LoadingScreen } from '../components/UI/LoadingScreen/LoadingScreen.component';
+import { LoadingSpinner } from '../components/UI/LoadingSpinner/LoadingSpinner.component';
 import { AuthSection } from '../components/Auth/AuthSection.component';
 
 const Auth = () => {
   return (
-    <Suspense fallback={<LoadingScreen />}>
+    <Suspense fallback={<LoadingSpinner fullScreen text="Ładowanie..." />}>
       <AuthSection />
     </Suspense>
   );

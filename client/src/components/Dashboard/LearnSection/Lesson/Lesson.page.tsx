@@ -4,7 +4,7 @@ import { LessonLayout } from './components/LessonLayout.component';
 import { LessonContent } from './components/LessonContent.component';
 import { LessonNotFound } from './components/LessonNotFound.component';
 import { ErrorMessage } from '../components/ErrorMessage.component';
-import { LoadingScreen } from '../../../UI/LoadingScreen/LoadingScreen.component';  
+import { LoadingSpinner } from '../../../UI/LoadingSpinner/LoadingSpinner.component';  
 import { FaLock } from 'react-icons/fa';
 import { useStats } from '../../../Dashboard/StatsSection/hooks/useStats.hook';
 import { SEO } from '../../../../utils/seo.util';
@@ -105,7 +105,7 @@ const LessonLocked = ({
 const LessonLoadingState = () => (
   <LessonLayout>
     <div className="flex justify-center items-center min-h-[60vh]">
-      <LoadingScreen />
+      <LoadingSpinner />
     </div>
   </LessonLayout>
 );

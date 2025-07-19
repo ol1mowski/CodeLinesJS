@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { motion } from 'framer-motion';
-import { LoadingScreen } from '../../../UI/LoadingScreen/LoadingScreen.component';
+import { LoadingSpinner } from '../../../UI/LoadingSpinner/LoadingSpinner.component';
 import { LevelProgress } from './LevelProgress.component';
 import { StatCard } from './StatCard.component';
 import { BadgesGrid } from './BadgesGrid/BadgesGrid.component';
@@ -28,7 +28,7 @@ export const StatsOverview = memo(({ stats, isLoading, error }: StatsOverviewPro
   const statsCards = useStatsCards(stats);
 
   if (isLoading) {
-    return <LoadingScreen />;
+    return <LoadingSpinner />;
   }
 
   if (error) {

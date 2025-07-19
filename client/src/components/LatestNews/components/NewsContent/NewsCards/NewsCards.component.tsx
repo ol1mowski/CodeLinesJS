@@ -2,7 +2,7 @@ import { useMobileDetect } from '../../../../hooks/useMobileDetect.hook';
 import { useLatestFeatures } from '../../../hooks/useLatestFeatures';
 import { LatestFeature } from '../../../api/latestFeatures.api';
 import { NewsCard } from './NewsCard.component';
-import { LoadingScreen } from '../../../../UI/LoadingScreen/LoadingScreen.component';
+import { LoadingSpinner } from '../../../../UI/LoadingSpinner/LoadingSpinner.component';
 import { ErrorAlert } from '../../../../UI/Alerts/ErrorAlert.component';
 
 const getCategoryDisplayName = (category: string): string => {
@@ -31,7 +31,7 @@ export const NewsCards = () => {
   const { features, isLoading, error } = useLatestFeatures();
 
   if (isLoading) {
-    return <LoadingScreen />;
+    return <LoadingSpinner fullScreen text="Ładowanie najnowszych funkcji..." />;
   }
 
   if (error) {

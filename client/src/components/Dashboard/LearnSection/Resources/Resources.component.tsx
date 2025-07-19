@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { motion } from 'framer-motion';
 import { ErrorMessage } from '../components/ErrorMessage.component';
-import { LoadingScreen } from '../../../UI/LoadingScreen/LoadingScreen.component';
+import { LoadingSpinner } from '../../../UI/LoadingSpinner/LoadingSpinner.component';
 import { ResourceSection } from './ResourceSection.component';
 import { useResources } from '../hooks/useResources.hook';
 import { FaBookOpen, FaSadTear } from 'react-icons/fa';
@@ -34,7 +34,7 @@ export const Resources = memo(() => {
   if (shouldShowLoading) {
     return (
       <div className="flex justify-center py-12">
-        <LoadingScreen />
+        <LoadingSpinner text="Ładowanie materiałów..." />
       </div>
     );
   }

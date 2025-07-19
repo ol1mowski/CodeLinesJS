@@ -1,6 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
-import { LoadingSpinner } from '../components/UI/LoadingSpinner/LoadingSpinner.component';
+import { LoadingScreen } from '../components/UI/LoadingScreen/LoadingScreen.component';
 
 const CommunitySection = lazy(() =>
   import('../components/Dashboard/CommunitySection/CommunitySection.component').then(module => ({
@@ -74,7 +74,7 @@ const Auth = lazy(() => import('../pages/Auth.page'));
 const PrivacyPolicy = lazy(() => import('../pages/PrivacyPolicy.page.tsx'));
 
 const LazyLoadWrapper = ({ children }: { children: React.ReactNode }) => (
-  <Suspense fallback={<LoadingSpinner fullScreen text="Ładowanie strony..." />}>
+  <Suspense fallback={<LoadingScreen />}>
     {children}
   </Suspense>
 );

@@ -3,7 +3,7 @@ import { memo } from 'react';
 
 import { StatsSection } from './components/Stats/StatsSection.component';
 import { ErrorMessage } from '../components/ErrorMessage.component';
-import { LoadingScreen } from '../../../UI/LoadingScreen/LoadingScreen.component';
+import { LoadingSpinner } from '../../../UI/LoadingSpinner/LoadingSpinner.component';
 import { useLearningPaths } from './hooks/useLearningPaths.hook';
 import { EmptyState } from './components/EmptyState.component';
 import { PathCard } from './components/PathCard/PathCard.component';
@@ -13,7 +13,7 @@ export const LearningPaths = memo(() => {
 
   const shouldShowLoading = isLoading || (paths.length === 0 && !error);
 
-  if (shouldShowLoading) return <LoadingScreen />;
+  if (shouldShowLoading) return <LoadingSpinner text="Ładowanie ścieżek nauki..." />;
 
   if (error) {
     console.error('Learning paths error:', error);

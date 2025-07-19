@@ -5,8 +5,8 @@ import { ErrorMessage } from '../../../../UI/ErrorMessage/ErrorMessage.component
 import { FaBookOpen, FaSadTear, FaSearch } from 'react-icons/fa';
 import type { FilterType } from '../../types/filter.types';
 import { LessonsList } from '../../Lessons/LessonsList.component';
-import { LoadingScreen } from '../../../../UI/LoadingScreen/LoadingScreen.component';
 import { LessonsFilter } from '../../Lessons/LessonsFilter.component';
+import { LoadingSpinner } from '../../../../UI/LoadingSpinner/LoadingSpinner.component';
 
 const getDifficultyLabel = (filter: string) => {
   switch (filter) {
@@ -54,7 +54,7 @@ export const Lessons = memo(() => {
   }
 
   if (isLoading) {
-    return <LoadingScreen />;
+    return <LoadingSpinner fullScreen text="Ładowanie lekcji..." />;
   }
 
   if (isEmpty) {

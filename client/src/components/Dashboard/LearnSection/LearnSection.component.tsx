@@ -8,7 +8,7 @@ import { LearningPaths } from './LearningPaths/LearningPaths.component';
 import { LearnTabs } from './LearnTabs/LearnTabs.component';
 import { Recruitment } from './Recruitment/Recruitment.component';
 import { useAuth } from '../../Auth/hooks/useAuth.hook';
-import { LoadingScreen } from '../../UI/LoadingScreen/LoadingScreen.component';
+import { LoadingSpinner } from '../../UI/LoadingSpinner/LoadingSpinner.component';
 import { SEO } from '../../../utils/seo.util';
 
 type TabType = 'paths' | 'lessons' | 'resources' | 'articles' | 'recruitment';
@@ -46,7 +46,7 @@ export const LearnSection = memo(() => {
   if (isAuthChecking || !isAuthenticated) {
     return (
       <div className="flex justify-center py-12">
-        <LoadingScreen />
+        <LoadingSpinner text="Sprawdzanie autoryzacji..." />
       </div>
     );
   }

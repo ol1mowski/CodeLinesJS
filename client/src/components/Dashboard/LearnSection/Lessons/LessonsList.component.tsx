@@ -4,7 +4,7 @@ import { LessonCard } from './LessonCard.component';
 import type { Lesson } from '../types/lesson.types';
 import { FilterType } from '../types/filter.types';
 import { FaSearch, FaSadTear } from 'react-icons/fa';
-import { LoadingScreen } from '../../../UI/LoadingScreen/LoadingScreen.component';
+import { LoadingSpinner } from '../../../UI/LoadingSpinner/LoadingSpinner.component';
 import { SEO } from '../../../../utils/seo.util';
 
 type LessonsListProps = {
@@ -45,7 +45,7 @@ export const LessonsList = memo(({ lessons, filter, userData, isLoading = false 
   const shouldShowLoading = isLoading || lessons.length === 0;
 
   if (shouldShowLoading) {
-    return <LoadingScreen />;
+    return <LoadingSpinner fullScreen text="Ładowanie lekcji..." />;
   }
 
   const processedLessons = lessons.map(lesson => ({
