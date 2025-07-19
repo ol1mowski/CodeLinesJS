@@ -11,15 +11,15 @@ export const useStatsCards = (stats: LegacyUserStats | undefined) => {
         id: 'completed-lessons',
         icon: FaTrophy,
         label: 'Ukończone Lekcje',
-        value: stats.data.achievements.completedChallenges?.toString() || '0',
+        value: stats.achievements.completedChallenges?.toString() || '0',
         gradient: 'from-amber-500 to-orange-500',
       },
       {
         id: 'current-streak',
         icon: FaFire,
         label: 'Aktualny Streak',
-        value: `${stats.data.achievements.streak.current || 0} dni`,
-        subValue: `Najlepszy: ${stats.data.achievements.streak.best || 0} dni`,
+        value: `${stats.achievements.streak.current || 0} dni`,
+        subValue: `Najlepszy: ${stats.achievements.streak.best || 0} dni`,
         gradient: 'from-red-500 to-pink-500',
       },
     ];

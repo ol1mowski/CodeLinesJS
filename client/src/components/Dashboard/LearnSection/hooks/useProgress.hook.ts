@@ -1,15 +1,16 @@
+import { httpClient } from "../../../../api/httpClient.api";
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../../../Auth/hooks/useAuth.hook';
-import { useApi } from '../../../../api/hooks/useApi.hook';
+
 
 export const useProgress = () => {
   const { isAuthenticated, isAuthChecking } = useAuth();
-  const api = useApi<any>();
+  
 
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['userProgress'],
     queryFn: async () => {
-      const response = await api.get('users/progress');
+      const response = await httpClient.get('users/progress');
       if (response.error) {
         throw new Error(response.error);
       }

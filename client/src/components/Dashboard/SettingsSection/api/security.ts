@@ -1,5 +1,4 @@
-import { API_URL } from '../../../../config/api.config';
-import { useApi } from '../../../../api/hooks/useApi.hook';
+import { httpClient } from "../../../../api/httpClient.api";
 
 export class SecurityError extends Error {
   constructor(
@@ -17,8 +16,8 @@ export const updatePassword = async (
     newPassword: string;
   },
 ): Promise<void> => {
-  const api = useApi<any>();
-  const response = await api.put(`${API_URL}settings/security/password`, data);
+  
+  const response = await httpClient.put(`settings/security/password`, data);
 
   if (response.error) {
     throw new Error(response.error);

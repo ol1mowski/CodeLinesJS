@@ -6,7 +6,7 @@ import type { PracticeTask } from './usePracticeApi.hook';
 
 export const usePracticeSection = () => {
   const [tasks, setTasks] = useState<PracticeTask[]>([]);
-  const [categories, setCategories] = useState<string[]>(['Wszystkie']);
+  const [categories, setCategories] = useState<string[]>([]);
   const [stats, setStats] = useState({
     total: 0,
     easy: 0,

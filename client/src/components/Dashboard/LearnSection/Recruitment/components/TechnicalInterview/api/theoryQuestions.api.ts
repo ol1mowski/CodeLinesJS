@@ -1,4 +1,4 @@
-import { httpClient, ApiResponse } from '../../../../../../../api/httpClient.api';
+import { httpClient, ApiResponse } from "../../../../../../../api/httpClient.api";
 
 export interface ITheoryQuestion {
   _id: string;
@@ -20,7 +20,11 @@ export interface CheckAnswerResult {
   points: number;
 }
 
-export const getTheoryQuestions = async (limit: number = 10): Promise<ApiResponse<ITheoryQuestion[]>> => {
+  export const getTheoryQuestions = async (limit: number = 10): Promise<{
+  data: ITheoryQuestion[] | null;
+  error: string | null;
+  status: number;
+}> => {
   try {
     const response = await httpClient.get<{
       success: boolean;

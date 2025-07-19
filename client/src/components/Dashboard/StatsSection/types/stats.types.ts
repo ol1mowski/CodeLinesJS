@@ -9,86 +9,82 @@ export interface Badge {
 export type UnlockedFeature = 'custom_themes' | 'create_challenges';
 
 export type UserStats = {
-  data: {
-    user: {
-      lastActive: string;
+  user: {
+    lastActive: string;
+  };
+  progress: {
+    level: number;
+    points: number;
+    pointsToNextLevel: number;
+    levelUp?: boolean;
+  };
+  achievements: {
+    streak: {
+      current: number;
+      best: number;
     };
-    progress: {
-      level: number;
+    completedChallenges: number;
+    badges: Badge[];
+  };
+  stats: {
+    daily: Array<{
+      date: string;
       points: number;
-      pointsToNextLevel: number;
-      levelUp?: boolean;
-    };
-    achievements: {
-      streak: {
-        current: number;
-        best: number;
-      };
-      completedChallenges: number;
-      badges: Badge[];
-    };
-    stats: {
-      daily: Array<{
-        date: string;
-        points: number;
-        challenges: number;
-      }>;
-      progress: Array<{
-        name: string;
-        progress: number;
-        timeSpent: number;
-      }>; 
-    };
-    learning: {
-      paths: Array<{
-        pathId: string;
-        title: string;
-        progress: {
-          completed: number;
-          total: number;
-          percentage: number;
-          status: 'active' | 'completed' | 'paused' | 'locked';
-        }
-      }>; 
-    };
+      challenges: number;
+    }>;
+    progress: Array<{
+      name: string;
+      progress: number;
+      timeSpent: number;
+    }>; 
+  };
+  learning: {
+    paths: Array<{
+      pathId: string;
+      title: string;
+      progress: {
+        completed: number;
+        total: number;
+        percentage: number;
+        status: 'active' | 'completed' | 'paused' | 'locked';
+      }
+    }>; 
   };
 };
 
 export type LegacyUserStats = {
-  data: {
-    progress: {
-      level: number;
-      points: number;
-      pointsToNextLevel: number;
+  progress: {
+    level: number;
+    points: number;
+    pointsToNextLevel: number;
+  };
+  achievements: {
+    streak: {
+      current: number;
+      best: number;
     };
-    achievements: {
-      streak: {
-        current: number;
-        best: number;
-      };
-      completedChallenges: number;
-      badges: Badge[];
-    };
+    completedChallenges: number;
     badges: Badge[];
+  };
+  badges: Badge[];
+  unlockedFeatures: UnlockedFeature[];
+  levelUp?: boolean;
+  rewards?: {
+    badges: Badge[];
+    bonusPoints: number;
     unlockedFeatures: UnlockedFeature[];
-    levelUp?: boolean;
-    rewards?: {
-      badges: Badge[];
-      bonusPoints: number;
-      unlockedFeatures: UnlockedFeature[];
-    };
-    chartData: {
-      daily: Array<{
-        date: string;
-        points: number;
-        challenges: number;
-      }>;
-      categories: Array<{
-        name: string;
-        completed: number;
-        total: number;
-      }>;
-    };
+  };
+  chartData: {
+    daily: Array<{
+      date: string;
+      points: number;
+      challenges: number;
+    }>;
+    categories: Array<{
+      name: string;
+      completed: number;
+      total: number;
+    }>;
   };
 };
 

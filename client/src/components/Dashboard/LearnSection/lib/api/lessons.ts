@@ -1,10 +1,9 @@
+import { httpClient } from "../../../../../api/httpClient.api";
 import type { Lesson } from '../../types/lesson.types';
-import { API_URL } from '../../../../../config/api.config';
-import { useApi } from '../../../../../api/hooks/useApi.hook';
 
 export const fetchLesson = async (lessonId: string): Promise<Lesson> => {
-  const api = useApi<any>();
-  const response = await api.get(`${API_URL}lessons/${lessonId}`);
+  
+  const response = await httpClient.get(`lessons/${lessonId}`);
 
   if (response.error) {
     throw new Error(response.error);
@@ -24,8 +23,8 @@ export const completeLesson = async ({
   lessonId: string;
   pathId?: string;
 }) => {
-  const api = useApi<any>();
-  const response = await api.post(`${API_URL}lessons/${lessonId}/complete`, { pathId });
+  
+  const response = await httpClient.post(`lessons/${lessonId}/complete`, { pathId });
 
   if (response.error) {
     throw new Error(response.error);
@@ -39,8 +38,8 @@ export const completeLesson = async ({
 };
 
 export const fetchLessons = async () => {
-  const api = useApi<any>();
-  const response = await api.get(`${API_URL}lessons`);
+  
+  const response = await httpClient.get(`lessons`);
 
   if (response.error) {
     throw new Error(response.error);

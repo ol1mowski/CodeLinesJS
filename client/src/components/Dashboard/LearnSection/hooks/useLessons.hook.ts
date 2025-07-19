@@ -1,24 +1,23 @@
+import { httpClient } from "../../../../api/httpClient.api";
 import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import type { Lesson } from '../types/lesson.types';
 import type { FilterType } from '../types/filter.types';
 import { useAuth } from '../../../Auth/hooks/useAuth.hook';
-import { useApi } from '../../../../api/hooks/useApi.hook';
+
 
 type Category = 'javascript' | 'react';
 
 type LessonsResponse = {
-  data: {
-    lessons: {
-      [key in Category]: Lesson[];
-    };
-    stats: {
-      total: number;
-      completed: number;
-      progress: number;
-    };
-    requiredLevel?: number;
+  lessons: {
+    [key in Category]: Lesson[];
   };
+  stats: {
+    total: number;
+    completed: number;
+    progress: number;
+  };
+  requiredLevel?: number;
 };
 
 const getDifficultyLabel = (filter: FilterType): string => {
@@ -38,12 +37,12 @@ export const useLessons = () => {
   const [filter, setFilter] = useState<FilterType>('all');
   const [category] = useState<Category>('javascript');
   const { isAuthenticated, isAuthChecking } = useAuth();
-  const api = useApi<LessonsResponse>();
+  
 
   const { data, isLoading, error, refetch } = useQuery<LessonsResponse, Error>({
     queryKey: ['lessons'],
     queryFn: async () => {
-      const response = await api.get('lessons');
+      const response = await httpClient.get('lessons');
       if (response.error) {
         throw new Error(response.error);
       }
@@ -60,8 +59,8 @@ export const useLessons = () => {
 
   const isDataLoading = isLoading || (!data && !error);
 
-  const allLessons = data?.data.lessons?.[category] ?? [];
-  const lessonStats = data?.data.stats ?? { total: 0, completed: 0, progress: 0 };
+  const allLessons = data?.lessons?.[category] ?? [];
+  const lessonStats = data?.stats ?? { total: 0, completed: 0, progress: 0 };
 
   const filteredLessons = useMemo(
     () =>
@@ -100,7 +99,7 @@ export const useLessons = () => {
     isEmpty,
     hasNoLessonsForFilter,
     filterState,
-    requiredLevel: data?.data.requiredLevel,
+    requiredLevel: data?.requiredLevel,
     stats: lessonStats,
   };
 };

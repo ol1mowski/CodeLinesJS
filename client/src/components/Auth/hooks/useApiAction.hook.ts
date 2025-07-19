@@ -1,5 +1,5 @@
+import { httpClient } from "../../../api/httpClient.api";
 import { useCallback } from 'react';
-import { httpClient } from '../../../api/httpClient.api';
 import { useErrorHandler } from './useErrorHandler.hook';
 import { AUTH_ERROR_MESSAGES } from '../constants/messages';
 

@@ -1,5 +1,4 @@
-import { useApi } from '../../../api/hooks/useApi.hook';
-import { API_URL } from '../../../config/api.config';
+import { httpClient } from "../../../api/httpClient.api";
 
 export interface LatestFeature {
   _id: string;
@@ -24,8 +23,7 @@ export interface LatestFeaturesResponse {
 
 export const fetchLatestFeatures = async (): Promise<LatestFeature[]> => {
   try {
-    const api = useApi<any>();
-    const response = await api.get(`${API_URL}latest-features?limit=2&isActive=true&sortBy=releaseDate&sortOrder=desc`);
+    const response = await httpClient.get(`latest-features?limit=2&isActive=true&sortBy=releaseDate&sortOrder=desc`);
 
     if (response.error) {
       throw new Error(response.error);

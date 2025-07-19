@@ -1,15 +1,17 @@
+import { httpClient } from "../../../api/httpClient.api";
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthState } from './useAuthState.hook';
 import { useAuthActions } from './useAuthActions.hook';
-import { useApi } from '../../../api/hooks/useApi.hook';
-import { AuthStateAndActions, AuthState, User } from '../types/auth.types';
+
+import { AuthStateAndActions, AuthState } from '../types/auth.types';
+
 
 export const useAuth = (): AuthStateAndActions => {
   const state = useAuthState();
   const actions = useAuthActions(state);
   const navigate = useNavigate();
-  const api = useApi<{ user: User }>();
+  
 
   const [isAuthChecking, setIsAuthChecking] = useState(true);
 
@@ -17,7 +19,7 @@ export const useAuth = (): AuthStateAndActions => {
     try {
       setIsAuthChecking(true);
       
-      const response = await api.get('auth/verify');
+      const response = await httpClient.get('auth/verify');
       
       if (response.error) {
         throw new Error(response.error);
@@ -45,7 +47,7 @@ export const useAuth = (): AuthStateAndActions => {
 
   const logout = async () => {
     try {
-      await api.post('auth/logout', {});
+      await httpClient.post('auth/logout', {});
     } catch (error) {
       console.error('Błąd podczas wylogowania:', error);
     } finally {

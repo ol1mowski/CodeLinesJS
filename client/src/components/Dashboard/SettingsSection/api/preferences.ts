@@ -1,5 +1,5 @@
+import { httpClient } from "../../../../api/httpClient.api";
 import { PreferencesData } from '../types/settings';
-import { API_URL } from '../../../../config/api.config';
 
 export class PreferencesError extends Error {
   constructor(
@@ -13,26 +13,17 @@ export class PreferencesError extends Error {
 
 export const fetchPreferences = async (): Promise<PreferencesData> => {
   try {
-    const response = await fetch(`${API_URL}settings/preferences`, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
-    });
+    const response = await httpClient.get(`settings/preferences`);
 
-    if (!response.ok) {
-      if (response.status === 401) {
-        throw new PreferencesError('AUTH_ERROR', 'Sesja wygasła. Zaloguj się ponownie.');
-      }
-      
-      const errorData = await response.json().catch(() => null);
-      throw new PreferencesError(
-        errorData?.code || 'UNKNOWN_ERROR', 
-        errorData?.message || 'Błąd podczas pobierania preferencji'
-      );
+    if (response.error) {
+      throw new PreferencesError('UNKNOWN_ERROR', response.error);
     }
 
-    const responseData = await response.json();
+    if (!response.data) {
+      throw new Error('Brak danych z serwera');
+    }
+
+    const responseData = response.data;
     const preferencesData = responseData.data || responseData;
     
     return {
@@ -54,29 +45,17 @@ export const updatePreferences = async (
   preferences: PreferencesData,
 ): Promise<PreferencesData> => {
   try {
-    const response = await fetch(`${API_URL}settings/preferences`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
-      body: JSON.stringify(preferences),
-    });
+    const response = await httpClient.put(`settings/preferences`, preferences);
 
-    if (!response.ok) {
-      if (response.status === 401) {
-        throw new PreferencesError('AUTH_ERROR', 'Sesja wygasła. Zaloguj się ponownie.');
-      }
-      
-      const errorData = await response.json().catch(() => ({ code: 'UNKNOWN_ERROR' }));
-      
-      throw new PreferencesError(
-        errorData?.code || 'UNKNOWN_ERROR', 
-        errorData?.message || 'Wystąpił błąd podczas aktualizacji preferencji'
-      );
+    if (response.error) {
+      throw new PreferencesError('UNKNOWN_ERROR', response.error);
     }
 
-    const responseData = await response.json();
+    if (!response.data) {
+      throw new Error('Brak danych z serwera');
+    }
+
+    const responseData = response.data;
     const preferencesData = responseData.data || responseData;
     
     return {

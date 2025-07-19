@@ -1,25 +1,22 @@
+import { httpClient } from "../../../../api/httpClient.api";
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../../../Auth/hooks/useAuth.hook';
-import { useApi } from '../../../../api/hooks/useApi.hook';
+
 import type { Resource } from '../types/resource.types';
 
 export type ResourcesResponse = {
-  data: Resource[];
-  meta: {
-    total: number;
-    page: number;
-    limit: number;
-  };
+  resources: Resource[];
+  total: number;
 };
 
 export const useResources = () => {
   const { isAuthenticated, isAuthChecking } = useAuth();
-  const api = useApi<ResourcesResponse>();
+  
 
   const { data, isLoading, error, refetch } = useQuery<ResourcesResponse, Error>({
     queryKey: ['resources'],
     queryFn: async () => {
-      const response = await api.get('resources');
+      const response = await httpClient.get<ResourcesResponse>('resources');
       if (response.error) {
         throw new Error(response.error);
       }
@@ -34,8 +31,8 @@ export const useResources = () => {
   });
 
   return {
-    resources: data?.data || [],
-    meta: data?.meta,
+    resources: data?.resources || [],
+    total: data?.total || 0,
     isLoading,
     error,
     refetch,

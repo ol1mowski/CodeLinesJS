@@ -1,10 +1,9 @@
+import { httpClient } from "../../../../api/httpClient.api";
 import type { UserProfile } from '../types/settings';
-import { API_URL } from '../../../../config/api.config';
-import { useApi } from '../../../../api/hooks/useApi.hook';
 
 export const fetchUserProfile = async (): Promise<UserProfile> => {
-  const api = useApi<any>();
-  const response = await api.get(`${API_URL}settings/profile`);
+  
+  const response = await httpClient.get(`settings/profile`);
 
   if (response.error) {
     throw new Error(response.error);
@@ -33,8 +32,8 @@ export const updateUserProfile = async (data: UserProfile) => {
     bio: data.profile?.bio || ''
   };
 
-  const api = useApi<any>();
-  const response = await api.put(`${API_URL}settings/profile`, apiData);
+  
+  const response = await httpClient.put(`settings/profile`, apiData);
 
   if (response.error) {
     throw new Error(response.error);

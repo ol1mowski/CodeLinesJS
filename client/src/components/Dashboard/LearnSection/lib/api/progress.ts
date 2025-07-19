@@ -1,10 +1,9 @@
+import { httpClient } from "../../../../../api/httpClient.api";  
 import { LessonProgress } from '../../types/lesson.types';
-import { API_URL } from '../../../../../config/api.config';
-import { useApi } from '../../../../../api/hooks/useApi.hook';
 
 export const fetchUserProgress = async (userId: string) => {
-  const api = useApi<any>();
-  const response = await api.get(`${API_URL}users/${userId}/progress`);
+  
+  const response = await httpClient.get(`users/${userId}/progress`);
 
   if (response.error) {
     throw new Error(response.error);
@@ -18,8 +17,8 @@ export const fetchUserProgress = async (userId: string) => {
 };
 
 export const fetchLessonProgress = async (userId: string, lessonId: string) => {
-  const api = useApi<any>();
-  const response = await api.get(`${API_URL}users/${userId}/lessons/${lessonId}/progress`);
+  
+  const response = await httpClient.get(`users/${userId}/lessons/${lessonId}/progress`);
 
   if (response.error) {
     throw new Error(response.error);
@@ -37,8 +36,8 @@ export const updateLessonProgress = async (
   lessonId: string,
   progress: LessonProgress,
 ) => {
-  const api = useApi<any>();
-  const response = await api.put(`${API_URL}users/${userId}/lessons/${lessonId}/progress`, progress);
+  
+  const response = await httpClient.put(`users/${userId}/lessons/${lessonId}/progress`, progress);
 
   if (response.error) {
     throw new Error(response.error);

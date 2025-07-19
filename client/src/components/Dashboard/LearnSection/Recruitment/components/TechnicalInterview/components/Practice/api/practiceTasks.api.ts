@@ -1,4 +1,4 @@
-import { httpClient, ApiResponse } from '../../../../../../../../../api/httpClient.api';
+import { httpClient, ApiResponse } from "../../../../../../../../../api/httpClient.api";
 
 export interface IPracticeTask {
   _id: string;

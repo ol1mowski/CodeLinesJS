@@ -1,6 +1,7 @@
+import { httpClient } from "../../../../api/httpClient.api";
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../../../Auth/hooks/useAuth.hook';
-import { useApi } from '../../../../api/hooks/useApi.hook';
+
 
 export type User = {
   id: string;
@@ -17,12 +18,12 @@ export type ActiveUsersResponse = {
 
 export const useActiveUsers = () => {
   const { isAuthenticated, isAuthChecking } = useAuth();
-  const api = useApi<ActiveUsersResponse>();
+  
 
   const { data, isLoading, error, refetch } = useQuery<ActiveUsersResponse, Error>({
     queryKey: ['activeUsers'],
     queryFn: async () => {
-      const response = await api.get('users/active');
+      const response = await httpClient.get('users/active');
       if (response.error) {
         throw new Error(response.error);
       }

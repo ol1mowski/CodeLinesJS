@@ -1,6 +1,6 @@
+import { httpClient } from "../../../../../api/httpClient.api";
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { useForgotPasswordAction } from '../useForgotPasswordAction.hook';
-import { httpClient } from '../../../../../api/httpClient.api';
 
 vi.mock('../../../../../api/httpClient.api', () => ({
   httpClient: {

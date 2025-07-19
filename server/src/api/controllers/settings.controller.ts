@@ -54,10 +54,10 @@ export const getProfile = async (req: Request, res: Response, next: NextFunction
       throw new AuthError('Użytkownik nie znaleziony');
     }
     
-    return res.success({
+    const response = {
       user: {
         username: user.username,
-        email: user.email,
+        email: user.email || '',
         bio: user.bio || '',
       },
       profile: user.profile || {},
@@ -67,7 +67,9 @@ export const getProfile = async (req: Request, res: Response, next: NextFunction
         totalPoints: user.stats?.points || 0,
         streak: user.stats?.streak || 0
       }
-    }, 'Profil użytkownika pobrany pomyślnie');
+    };
+    
+    return res.success(response, 'Profil użytkownika pobrany pomyślnie');
   } catch (error) {
     next(error);
   }

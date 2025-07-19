@@ -46,7 +46,7 @@ export const LessonPage = () => {
     return <LessonNotFound />;
   }
 
-  const userLevel = stats?.data?.progress.level || 0;
+  const userLevel = stats?.progress.level || 0;
 
   if (lesson.requiredLevel && userLevel < lesson.requiredLevel) {
     return <LessonLocked requiredLevel={lesson.requiredLevel} userLevel={userLevel} />;

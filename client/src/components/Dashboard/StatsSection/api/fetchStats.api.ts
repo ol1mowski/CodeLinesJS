@@ -1,10 +1,9 @@
+import { httpClient } from "../../../../api/httpClient.api";
 import { UserStats } from '../types/stats.types';
-import { API_URL } from '../../../../config/api.config';
-import { useApi } from '../../../../api/hooks/useApi.hook';
 
 export const fetchStats = async (): Promise<UserStats> => {
-  const api = useApi<any>();
-  const response = await api.get(`${API_URL}users/stats`);
+  
+  const response = await httpClient.get(`users/stats`);
 
   if (response.error) {
     throw new Error(response.error);
@@ -17,7 +16,7 @@ export const fetchStats = async (): Promise<UserStats> => {
   const data = response.data;
 
   return {
-    ...data.data,
+    ...data,
     chartData: {
       daily: data.chartData?.daily || [],
       categories: data.chartData?.categories || [],

@@ -31,8 +31,7 @@ export type DashboardNotification = {
   time: string;
 };
 
-export type DashboardData = {
-  data: DashboardStats;
+export type DashboardData = DashboardStats & {
   profile: DashboardProfile;
   notifications: DashboardNotification[];
   unreadCount: number;

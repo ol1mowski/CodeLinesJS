@@ -1,7 +1,8 @@
+import { httpClient } from "../../../../../api/httpClient.api";
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { RankingUser, RankingResponse } from '../types/ranking.types';
-import { useApi } from '../../../../../api/hooks/useApi.hook';
+import { RankingUser } from '../types/ranking.types';
+
 
 type UseRankingResult = {
   ranking: RankingUser[] | undefined;
@@ -29,7 +30,7 @@ export const useRanking = (
 ): UseRankingResult => {
   const [page, setPage] = useState(initialPage);
   const limit = initialLimit;
-  const api = useApi<RankingResponse>();
+  
 
   const {
     data: response,
@@ -38,7 +39,7 @@ export const useRanking = (
   } = useQuery({
     queryKey: ['ranking', page, limit],
     queryFn: async () => {
-      const response = await api.get(`ranking?page=${page}&limit=${limit}`);
+      const response = await httpClient.get(`ranking?page=${page}&limit=${limit}`);
       if (response.error) {
         throw new Error(response.error);
       }

@@ -1,16 +1,17 @@
+import { httpClient } from "../../../../../api/httpClient.api";
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../../../../Auth/hooks/useAuth.hook';
-import { useApi } from '../../../../../api/hooks/useApi.hook';
+
 import type { PathsResponse } from '../types/learning-paths.types';
 
 export const useLearningPaths = () => {
   const { isAuthenticated, isAuthChecking } = useAuth();
-  const api = useApi<PathsResponse>();
+  
 
   const { data, isLoading, error, refetch } = useQuery<PathsResponse, Error>({
     queryKey: ['learningPaths', 'userProgress'],
     queryFn: async () => {
-      const response = await api.get('Learning-paths');
+      const response = await httpClient.get('Learning-paths');
       if (response.error) {
         throw new Error(response.error);
       }
@@ -29,11 +30,11 @@ export const useLearningPaths = () => {
   const isDataLoading = isLoading || (!data && !error);
 
   return {
-    paths: data?.data.paths || [],
-    userStats: data?.data.userStats,
+    paths: data?.paths || [],
+    userStats: data?.userStats,
     isLoading: isDataLoading,
     error,
     refetch,
-    isEmpty: !data?.data.paths || data.data.paths.length === 0,
+    isEmpty: !data?.paths || data.paths.length === 0,
   };
 };

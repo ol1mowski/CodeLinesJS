@@ -1,5 +1,4 @@
-import { API_URL } from '../../../../config/api.config';
-import { useApi } from '../../../../api/hooks/useApi.hook';
+import { httpClient } from "../../../../api/httpClient.api";
 
 export class AccountError extends Error {
   constructor(
@@ -17,10 +16,8 @@ export const deleteAccount = async (
     confirmation: string;
   },
 ): Promise<void> => {
-  const api = useApi<any>();
-  const response = await api.delete(`${API_URL}settings/account`, {
-    body: data,
-  });
+  
+  const response = await httpClient.request(`settings/account`, { method: 'DELETE', body: data });
 
   if (response.error) {
     throw new Error(response.error);

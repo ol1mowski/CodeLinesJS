@@ -46,9 +46,9 @@ export const StatsOverview = memo(({ stats, isLoading, error }: StatsOverviewPro
   return (
     <motion.div variants={container} initial="hidden" animate="show" className="space-y-6">
       <LevelProgress
-        level={stats.data.progress.level}
-        experience={stats.data.progress.points}
-        nextLevel={stats.data.progress.pointsToNextLevel}
+        level={stats.progress.level}
+        experience={stats.progress.points}
+        nextLevel={stats.progress.pointsToNextLevel}
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -57,7 +57,7 @@ export const StatsOverview = memo(({ stats, isLoading, error }: StatsOverviewPro
         ))}
       </div>
 
-      <BadgesGrid badges={stats.data.achievements.badges} />
+      <BadgesGrid badges={stats.achievements.badges} />
     </motion.div>
   );
 });

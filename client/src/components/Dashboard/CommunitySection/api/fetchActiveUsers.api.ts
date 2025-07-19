@@ -1,10 +1,11 @@
-import { API_URL } from '../../../../config/api.config';
-import { useApi } from '../../../../api/hooks/useApi.hook';
+import { httpClient } from "../../../../api/httpClient.api";
+
+
 
 export const fetchActiveUsers = async () => {
   try {
-    const api = useApi<any>();
-    const response = await api.get(`${API_URL}users/active`);
+    
+    const response = await httpClient.get(`users/active`);
 
     if (response.error) {
       throw new Error(response.error);

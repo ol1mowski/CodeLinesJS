@@ -1,3 +1,4 @@
+
 export const sanitizeHtml = (html: string): string => {
   if (!html) return '';
 

@@ -20,8 +20,8 @@ export const TopNavigation = memo(() => {
       return 'Ładowanie...';
     }
 
-    return userProfile?.data.user.username || 'Użytkowniku';
-  }, [userProfile?.data.user.username, isLoading, error]);
+    return userProfile?.user?.username || userProfile?.username || 'Użytkowniku';
+  }, [userProfile?.user?.username, userProfile?.username, isLoading, error]);
 
 
   return (

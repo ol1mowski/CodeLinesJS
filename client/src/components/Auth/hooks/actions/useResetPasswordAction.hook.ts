@@ -1,5 +1,5 @@
+import { httpClient } from "../../../../api/httpClient.api";
 import { useNavigate } from 'react-router-dom';
-import { httpClient } from '../../../../api/httpClient.api';
 
 type AuthState = {
   setLoading: (loading: boolean) => void;

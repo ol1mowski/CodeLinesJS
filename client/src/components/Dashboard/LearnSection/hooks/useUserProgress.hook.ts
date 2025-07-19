@@ -1,7 +1,8 @@
+import { httpClient } from "../../../../api/httpClient.api";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
-import { API_URL } from '../../../../config/api.config';
-import { useApi } from '../../../../api/hooks/useApi.hook';
+
+
 
 
 type ProgressUpdate = {
@@ -28,8 +29,8 @@ export const useUserProgress = (userId: string) => {
         return null;
       }
 
-      const api = useApi<any>();
-      const response = await api.put(`${API_URL}users/${userId}/progress`, {
+      
+      const response = await httpClient.put(`users/${userId}/progress`, {
           lessonId: data.lessonId,
           points: data.points,
           isCompleted: data.isCompleted,

@@ -1,6 +1,7 @@
+import { httpClient } from "../../../../api/httpClient.api";
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../../../Auth/hooks/useAuth.hook';
-import { useApi } from '../../../../api/hooks/useApi.hook';
+
 import type { PreferencesData } from '../types/settings';
 import { toast } from 'react-hot-toast';
 
@@ -16,13 +17,13 @@ export class PreferencesError extends Error {
 
 export const usePreferences = () => {
   const { isAuthenticated, isAuthChecking } = useAuth();
-  const api = useApi<PreferencesData>();
+  
   const queryClient = useQueryClient();
 
   const { data, isLoading, error, refetch } = useQuery<PreferencesData, Error>({
     queryKey: ['preferences'],
     queryFn: async () => {
-      const response = await api.get('settings/preferences');
+      const response = await httpClient.get('settings/preferences');
       if (response.error) {
         throw new PreferencesError('API_ERROR', response.error);
       }
@@ -43,7 +44,7 @@ export const usePreferences = () => {
 
   const updatePreferences = useMutation({
     mutationFn: async (preferences: PreferencesData) => {
-      const response = await api.put('settings/preferences', preferences);
+      const response = await httpClient.put('settings/preferences', preferences);
       if (response.error) {
         throw new PreferencesError('UPDATE_ERROR', response.error);
       }

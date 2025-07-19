@@ -1,9 +1,8 @@
-import { API_URL } from '../../../../config/api.config';
-import { useApi } from '../../../../api/hooks/useApi.hook';
+import { httpClient } from "../../../../api/httpClient.api";
 
 export const fetchGames = async () => {
-  const api = useApi<any>();
-  const response = await api.get(`${API_URL}games`);
+  
+  const response = await httpClient.get(`games`);
   if (response.error) {
     throw new Error(response.error);
   }

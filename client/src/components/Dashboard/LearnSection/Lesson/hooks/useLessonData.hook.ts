@@ -33,6 +33,7 @@ export const useLessonData = (lessonSlug: string) => {
     mutationFn: completeLesson,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['userProgress'] });
+      queryClient.invalidateQueries({ queryKey: ['userStats'] });
       queryClient.invalidateQueries({ queryKey: ['lessons'] });
       queryClient.invalidateQueries({ queryKey: ['lesson', lessonSlug] });
       refetchLearningPaths();
@@ -44,6 +45,7 @@ export const useLessonData = (lessonSlug: string) => {
       updateLessonProgress(user?.id!, lessonSlug, progress),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['userProgress'] });
+      queryClient.invalidateQueries({ queryKey: ['userStats'] });
     },
   });
 
@@ -81,6 +83,42 @@ export const useLessonData = (lessonSlug: string) => {
       const result = await completeLessonMutation.mutateAsync({
         lessonId: lesson.id,
         pathId: lesson.pathId,
+      });
+
+      queryClient.setQueryData(['lesson', lessonSlug], (oldData: any) => {
+        if (oldData) {
+          return {
+            ...oldData,
+            isCompleted: true,
+            progress: {
+              ...oldData.progress,
+              isCompleted: true,
+            }
+          };
+        }
+        return oldData;
+      });
+      
+      queryClient.setQueryData(['lessons'], (oldData: any) => {
+        if (oldData?.lessons?.javascript) {
+          const updatedLessons = oldData.lessons.javascript.map((l: any) => 
+            l.id === lesson.id ? { ...l, isCompleted: true } : l
+          );
+          
+          return {
+            ...oldData,
+            lessons: {
+              ...oldData.lessons,
+              javascript: updatedLessons
+            },
+            stats: {
+              ...oldData.stats,
+              completed: (oldData.stats.completed || 0) + 1,
+              progress: oldData.stats.total ? Math.round(((oldData.stats.completed + 1) / oldData.stats.total) * 100) : 0
+            }
+          };
+        }
+        return oldData;
       });
 
       await refetch();

@@ -1,9 +1,8 @@
-import { API_URL } from '../../../../config/api.config';
-import { useApi } from '../../../../api/hooks/useApi.hook';
+import { httpClient } from "../../../../api/httpClient.api";
 
 export const updateUserPoints = async (points: number) => {
-  const api = useApi<any>();
-  const response = await api.put(`${API_URL}progress/points`, { points });
+  
+  const response = await httpClient.put(`progress/points`, { points });
   if (response.error) {
     throw new Error(response.error);
   }

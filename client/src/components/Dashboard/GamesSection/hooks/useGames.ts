@@ -1,6 +1,7 @@
+import { httpClient } from "../../../../api/httpClient.api";
 import { useState, useEffect } from 'react';
 import { Game, GameDifficulty, SortOption } from '../types/games.types';
-import { useApi } from '../../../../api/hooks/useApi.hook';
+
 
 type UseGamesReturn = {
   games: Game[];
@@ -10,30 +11,39 @@ type UseGamesReturn = {
 
 export const useGames = (): UseGamesReturn => {
   const [games, setGames] = useState<Game[]>([]);
-  const api = useApi<{ data: { games: Game[] } }>();
+  
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const getGames = async () => {
+      setIsLoading(true);
+      setError(null);
       try {
-        const response = await api.get('games');
+        const response = await httpClient.get('games');
         if (response.error) {
+          setError(response.error);
           return;
         }
         if (response.data) {
-          setGames(response.data.data.games);
+          setGames(response.data);
         }
       } catch (err) {
         console.error('Błąd podczas pobierania gier:', err);
+        setError('Wystąpił błąd podczas pobierania gier');
+      } finally {
+        setIsLoading(false);
       }
     };
 
     getGames();
-  }, [api]);
+  }, []);
 
   return { 
     games, 
-    isLoading: api.loading, 
-    error: api.error 
+    isLoading, 
+    error 
   };
 };
 

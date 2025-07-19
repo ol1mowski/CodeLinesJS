@@ -1,6 +1,7 @@
+import { httpClient } from "../../../../api/httpClient.api";
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../../../Auth/hooks/useAuth.hook';
-import { useApi } from '../../../../api/hooks/useApi.hook';
+
 import type { UserProfile } from '../types/settings';
 
 export const PROFILE_QUERY_KEY = ['userProfile'];
@@ -8,12 +9,11 @@ export const PROFILE_QUERY_KEY = ['userProfile'];
 export const useProfile = () => {
   const queryClient = useQueryClient();
   const { isAuthenticated, isAuthChecking } = useAuth();
-  const api = useApi<UserProfile>();
 
   const query = useQuery({
     queryKey: PROFILE_QUERY_KEY,
     queryFn: async () => {
-      const response = await api.get('settings/profile');
+      const response = await httpClient.get('settings/profile');
       if (response.error) {
         throw new Error(response.error);
       }
@@ -30,7 +30,7 @@ export const useProfile = () => {
 
   const updateProfile = useMutation({
     mutationFn: async (data: UserProfile) => {
-      const response = await api.put('settings/profile', data);
+      const response = await httpClient.put('settings/profile', data);
       if (response.error) {
         throw new Error(response.error);
       }
@@ -47,9 +47,9 @@ export const useProfile = () => {
 
   return { 
     profile: query.data,
-    username: query.data?.username || '',
-    email: query.data?.email || '', 
-    bio: query.data?.profile?.bio || '', 
+    username: query.data?.user?.username || '',
+    email: query.data?.user?.email || '', 
+    bio: query.data?.user?.bio || '', 
     isLoading, 
     error: query.error, 
     updateProfile 
