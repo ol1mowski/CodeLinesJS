@@ -32,11 +32,7 @@ export const useProfileForm = ({ onSubmit, defaultValues }: UseProfileFormProps)
   });
 
   const handleSubmit = async (data: UserProfile) => {
-    try {
-      await onSubmit(data);
-    } catch (error) {
-      console.error('Failed to update profile:', error);
-    }
+    await onSubmit(data);
   };
 
   return {

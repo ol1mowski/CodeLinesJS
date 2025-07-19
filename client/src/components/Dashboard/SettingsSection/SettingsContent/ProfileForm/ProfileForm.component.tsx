@@ -61,6 +61,7 @@ export const ProfileForm = memo(() => {
       setIsSaved(true);
       toast.success('Profil został zaktualizowany pomyślnie');
     } catch (error) {
+      setIsSaved(false);
       if (error instanceof Error) {
         toast.error(error.message || 'Wystąpił błąd podczas aktualizacji profilu');
       } else {

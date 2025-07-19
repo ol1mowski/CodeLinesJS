@@ -18,7 +18,6 @@ export const fetchUserProfile = async (): Promise<UserProfile> => {
   
   return {
     username: user.username || '',
-    email: user.email || '',
     profile: {
       bio: user.bio || data.profile?.bio || '',
     },
@@ -28,7 +27,6 @@ export const fetchUserProfile = async (): Promise<UserProfile> => {
 export const updateUserProfile = async (data: UserProfile) => {
   const apiData = {
     username: data.username,
-    email: data.email,
     bio: data.profile?.bio || ''
   };
 

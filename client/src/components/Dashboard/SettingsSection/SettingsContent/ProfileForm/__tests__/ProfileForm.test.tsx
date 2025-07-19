@@ -35,7 +35,6 @@ describe('ProfileForm', () => {
 
   const mockProfile = {
     username: 'testuser',
-    email: 'test@example.com',
     profile: {
       bio: 'Test bio',
     },
@@ -65,7 +64,6 @@ describe('ProfileForm', () => {
     vi.mocked(useProfile).mockReturnValue({
       profile: mockProfile,
       username: 'testuser',
-      email: 'test@example.com',
       isLoading: false,
       bio: 'Test bio',
       error: null,
@@ -86,11 +84,9 @@ describe('ProfileForm', () => {
 
     await waitFor(() => {
       const usernameInput = screen.getByPlaceholderText('Wprowadź nazwę użytkownika');
-      const emailInput = screen.getByPlaceholderText('Wprowadź adres email');
       const bioInput = screen.getByPlaceholderText('Test bio');
 
       expect(usernameInput).not.toBeNull();
-      expect(emailInput).not.toBeNull();
       expect(bioInput).not.toBeNull();
     });
   });
@@ -99,7 +95,6 @@ describe('ProfileForm', () => {
     vi.mocked(useProfile).mockReturnValue({
       profile: undefined,
       username: '',
-      email: '',
       isLoading: true,
       bio: '',
       error: null,
@@ -138,7 +133,6 @@ describe('ProfileForm', () => {
     vi.mocked(useProfile).mockReturnValue({
       profile: mockProfile,
       username: 'testuser',
-      email: 'test@example.com',
       isLoading: false,
       bio: 'Test bio',
       error: null,

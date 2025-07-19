@@ -48,7 +48,6 @@ export const useProfile = () => {
   return { 
     profile: query.data,
     username: query.data?.user?.username || '',
-    email: query.data?.user?.email || '', 
     bio: query.data?.user?.bio || '', 
     isLoading, 
     error: query.error, 
