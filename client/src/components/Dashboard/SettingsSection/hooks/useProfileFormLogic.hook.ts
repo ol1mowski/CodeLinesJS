@@ -11,7 +11,6 @@ export const useProfileFormLogic = (profile: UserProfile | null) => {
       try {
         await updateProfile.mutateAsync({
           username: data.username,
-          email: data.email,
           profile: {
             bio: data.profile?.bio || '',
           },
@@ -26,7 +25,6 @@ export const useProfileFormLogic = (profile: UserProfile | null) => {
 
   const defaultValues = {
     username: profile?.username || '',
-    email: profile?.email || '',
     profile: {
       bio: profile?.profile?.bio || '',
     },

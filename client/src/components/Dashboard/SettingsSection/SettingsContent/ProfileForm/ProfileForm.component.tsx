@@ -7,7 +7,7 @@ import { toast } from 'react-hot-toast';
 import { PROFILE_QUERY_KEY } from '../../hooks/useProfile.hook';
 
 export const ProfileForm = memo(() => {
-  const { profile, username, email, bio, isLoading, updateProfile } = useProfile();
+  const { profile, username, bio, isLoading, updateProfile } = useProfile();
   const { form, onSubmit } = useProfileFormLogic(profile || null);
   const queryClient = useQueryClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -32,10 +32,9 @@ export const ProfileForm = memo(() => {
   useEffect(() => {
     if (profile) {
       setValue('username', username);
-      setValue('email', email);
       setValue('profile.bio', bio);
     }
-  }, [profile, setValue, username, email, bio]);
+  }, [profile, setValue, username, bio]);
 
   const handleCancel = useCallback(() => {
     try {

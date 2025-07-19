@@ -8,7 +8,6 @@ const profileSchema = z.object({
     .string()
     .min(3, 'Nazwa użytkownika musi mieć minimum 3 znaki')
     .max(20, 'Nazwa użytkownika może mieć maksymalnie 20 znaków'),
-  email: z.string().email('Nieprawidłowy adres email'),
   profile: z.object({
     bio: z.string().max(160, 'Bio może mieć maksymalnie 160 znaków').optional(),
     avatar: z.string().optional(),
@@ -25,7 +24,6 @@ export const useProfileForm = ({ onSubmit, defaultValues }: UseProfileFormProps)
     resolver: zodResolver(profileSchema),
     defaultValues: {
       username: defaultValues?.username || '',
-      email: defaultValues?.email || '',
       profile: {
         bio: defaultValues?.profile?.bio || '',
         avatar: defaultValues?.profile?.avatar || '',
