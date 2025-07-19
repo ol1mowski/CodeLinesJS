@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { motion } from 'framer-motion';
 import { FooterLink } from '../types/types';
-import { useMobileDetect } from '../../../UI/hooks/useMobileDetect.hook';
+import { useMobileDetect } from '../../../hooks/useMobileDetect.hook';
 
 type FooterLinksProps = {
   title: string;

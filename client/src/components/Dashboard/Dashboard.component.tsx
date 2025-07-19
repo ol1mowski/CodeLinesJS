@@ -3,7 +3,7 @@ import { DashboardNavigation } from './Navigation/DashboardNavigation.component'
 import { TopNavigation } from './TopNavigation/TopNavigation.component';
 import { useIsHiddenPath } from './hooks/useIsHiddenPath.hook';
 import { SEO } from '../../utils/seo.util';
-import { useMobileDetect } from '../UI/hooks/useMobileDetect.hook';
+import { useMobileDetect } from '../hooks/useMobileDetect.hook';
 import { FaSignOutAlt } from 'react-icons/fa';
 import { useAuth } from '../Auth/hooks/useAuth.hook';
 import { ErrorBoundary } from '../Common/ErrorBoundary';

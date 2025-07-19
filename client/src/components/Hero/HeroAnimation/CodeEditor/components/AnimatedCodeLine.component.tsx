@@ -3,7 +3,7 @@ import { LineNumber } from './LineNumber.component';
 import { CodeContent } from './CodeContent.component';
 import { BlinkingCursor } from './BlinkingCursor.component';
 import { MobileWrapper } from '../../../../UI/MobileWrapper/MobileWrapper.component';
-import { useMobileDetect } from '../../../../UI/hooks/useMobileDetect.hook';
+import { useMobileDetect } from '../../../../hooks/useMobileDetect.hook';
 
 type AnimatedCodeLineProps = {
   lineNumber: number;

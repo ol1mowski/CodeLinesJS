@@ -4,7 +4,7 @@ import { ChatMessage } from '../../hooks/useChatState';
 import { ChatHeader } from './components/ChatHeader/ChatHeader.component';
 import { ChatMessages } from './components/ChatMessages/ChatMessages.component';
 import { ChatInput } from './components/ChatInput/ChatInput.component';
-import { useMobileDetect } from '../../../UI/hooks/useMobileDetect.hook';
+import { useMobileDetect } from '../../../hooks/useMobileDetect.hook';
 
 interface ChatWindowProps {
   messages: ChatMessage[];

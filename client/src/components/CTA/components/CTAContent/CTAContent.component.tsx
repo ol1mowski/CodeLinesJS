@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useMobileDetect } from '../../../UI/hooks/useMobileDetect.hook';
+import { useMobileDetect } from '../../../hooks/useMobileDetect.hook';
 import { PrimaryCTA } from './components/PrimaryCTA/PrimaryCTA.component';
 import { DualCTA } from './components/DualCTA/DualCTA.component';
 import { SecondaryCTA } from './components/SecondaryCTA/SecondaryCTA.component';

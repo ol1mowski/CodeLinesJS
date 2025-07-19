@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { motion } from 'framer-motion';
 import { FaQuoteLeft, FaStar, FaLinkedin } from 'react-icons/fa';
-import { useMobileDetect } from '../../UI/hooks/useMobileDetect.hook';
+import { useMobileDetect } from '../../hooks/useMobileDetect.hook';
 import { useAnimationConfig } from '../hooks/useAnimationConfig';
 import { Testimonial } from '../hooks/useTestimonials';
 

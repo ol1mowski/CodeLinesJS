@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { MobileWrapper } from '../../../UI/MobileWrapper/MobileWrapper.component';
-import { useMobileDetect } from '../../../UI/hooks/useMobileDetect.hook';
+import { useMobileDetect } from '../../../hooks/useMobileDetect.hook';
 import { useGeneralStats } from '../hooks/useGeneralStats';
 
 export const StatsGrid = memo(() => {

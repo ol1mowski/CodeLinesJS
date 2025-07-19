@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useMobileDetect } from '../../../../UI/hooks/useMobileDetect.hook';
+import { useMobileDetect } from '../../../../hooks/useMobileDetect.hook';
 
 type FeatureCardProps = {
   icon: React.ReactNode;

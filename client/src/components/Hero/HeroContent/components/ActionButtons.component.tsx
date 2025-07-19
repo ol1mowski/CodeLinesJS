@@ -1,7 +1,7 @@
 import { FaRocket, FaCode } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { MobileWrapper } from '../../../UI/MobileWrapper/MobileWrapper.component';
-import { useMobileDetect } from '../../../UI/hooks/useMobileDetect.hook';
+import { useMobileDetect } from '../../../hooks/useMobileDetect.hook';
 import { motion } from 'framer-motion';
 
 export const ActionButtons = () => {
