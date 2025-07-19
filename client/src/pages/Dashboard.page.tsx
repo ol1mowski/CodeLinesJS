@@ -1,17 +1,17 @@
 import { Link, Outlet } from 'react-router-dom';
-import { DashboardNavigation } from './Navigation/DashboardNavigation.component';
-import { TopNavigation } from './TopNavigation/TopNavigation.component';
-import { useIsHiddenPath } from './hooks/useIsHiddenPath.hook';
-import { SEO } from '../../utils/seo.util';
-import { useMobileDetect } from '../hooks/useMobileDetect.hook';
+import { DashboardNavigation } from '../components/Dashboard/Navigation/DashboardNavigation.component';
+import { TopNavigation } from '../components/Dashboard/TopNavigation/TopNavigation.component';
+import { useIsHiddenPath } from '../components/Dashboard/hooks/useIsHiddenPath.hook';
+import { SEO } from '../utils/seo.util';
+import { useMobileDetect } from '../components/hooks/useMobileDetect.hook';
 import { FaSignOutAlt } from 'react-icons/fa';
-import { useAuth } from '../Auth/hooks/useAuth.hook';
-import { ErrorBoundary } from '../Common/ErrorBoundary';
+import { useAuth } from '../components/Auth/hooks/useAuth.hook';
+import { ErrorBoundary } from '../components/Common/ErrorBoundary';
 import { memo, lazy, Suspense } from 'react';
 
-const DashboardErrorFallback = lazy(() => import('../Common/DashboardErrorFallback.component'));
+const DashboardErrorFallback = lazy(() => import('../components/Common/DashboardErrorFallback.component'));
 const LoadingSpinner = lazy(() =>
-  import('../UI/LoadingSpinner/LoadingSpinner.component').then(module => ({
+  import('../components/UI/LoadingSpinner/LoadingSpinner.component').then(module => ({
     default: module.LoadingSpinner,
   }))
 );
@@ -83,4 +83,4 @@ const Dashboard = memo(() => {
 
 Dashboard.displayName = 'Dashboard';
 
-export default Dashboard;
+export default Dashboard; 
