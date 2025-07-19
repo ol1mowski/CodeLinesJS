@@ -68,7 +68,7 @@ export interface AuthRequest extends Request {
 
 export interface UpdateProfileDTO {
   username: string;
-  email: string;
+  email?: string;
   bio?: string;
   avatar?: string;
 }
@@ -95,4 +95,4 @@ export interface UpdateAppearanceDTO {
 
 export interface DeleteAccountDTO {
   password: string;
-} 
+}

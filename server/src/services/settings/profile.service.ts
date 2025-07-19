@@ -10,10 +10,6 @@ export class ProfileService {
       throw new ValidationError('Nazwa użytkownika jest wymagana');
     }
 
-    if (!email) {
-      throw new ValidationError('Adres email jest wymagany');
-    }
-
     const existingUsername = await User.findOne({
       username,
       _id: { $ne: userId },
@@ -23,15 +19,6 @@ export class ProfileService {
       throw new ValidationError('Nazwa użytkownika jest już zajęta');
     }
 
-    const existingEmail = await User.findOne({
-      email,
-      _id: { $ne: userId },
-    });
-
-    if (existingEmail) {
-      throw new ValidationError('Adres email jest już zajęty');
-    }
-
     const user = await User.findById(userId);
 
     if (!user) {
@@ -39,7 +26,19 @@ export class ProfileService {
     }
 
     user.username = username;
-    user.email = email;
+
+    if (email) {
+      const existingEmail = await User.findOne({
+        email,
+        _id: { $ne: userId },
+      });
+
+      if (existingEmail) {
+        throw new ValidationError('Adres email jest już zajęty');
+      }
+
+      user.email = email;
+    }
 
     if (bio !== undefined) {
       if (!user.profile) {
