@@ -15,12 +15,8 @@ vi.mock('react-router-dom', () => ({
   ),
 }));
 
-vi.mock('../../../../Hooks/useAuth', () => ({
-  useAuth: vi.fn(() => ({
-    resetPassword: vi.fn().mockResolvedValue('Hasło zostało pomyślnie zresetowane'),
-    loading: false,
-    error: null,
-  })),
+vi.mock('../../hooks/useAuth.hook', () => ({
+  useAuth: vi.fn(),
 }));
 
 vi.mock('framer-motion', () => ({
@@ -39,9 +35,25 @@ vi.mock('framer-motion', () => ({
 
 describe('ResetPasswordForm', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
-    mockedToken = 'valid-token-12345';
     cleanup();
+    vi.clearAllMocks();
+    mockedToken = 'valid-token-12345'; // Resetujemy token do domyślnej wartości
+    
+    // Dodajemy domyślne wartości do mocka useAuth
+    vi.mocked(useAuth).mockReturnValue({
+      resetPassword: vi.fn(),
+      loading: false,
+      error: null,
+      login: vi.fn(),
+      register: vi.fn(),
+      forgotPassword: vi.fn(),
+      logout: vi.fn(),
+      loginWithGoogle: vi.fn(),
+      isAuthenticated: false,
+      isAuthChecking: false,
+      user: null,
+      token: null,
+    });
   });
 
   it('Renders the form correctly with a valid token', () => {

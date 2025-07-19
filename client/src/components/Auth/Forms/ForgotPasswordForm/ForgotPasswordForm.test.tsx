@@ -12,12 +12,8 @@ vi.mock('react-router-dom', () => ({
   ),
 }));
 
-vi.mock('../../../../Hooks/useAuth', () => ({
-  useAuth: vi.fn(() => ({
-    forgotPassword: vi.fn().mockResolvedValue('Link został wysłany na twój adres email'),
-    loading: false,
-    error: null,
-  })),
+vi.mock('../../hooks/useAuth.hook', () => ({
+  useAuth: vi.fn(),
 }));
 
 vi.mock('framer-motion', () => ({
@@ -38,6 +34,22 @@ describe('ForgotPasswordForm', () => {
   beforeEach(() => {
     cleanup();
     vi.clearAllMocks();
+    
+    // Dodajemy domyślne wartości do mocka useAuth
+    vi.mocked(useAuth).mockReturnValue({
+      forgotPassword: vi.fn(),
+      loading: false,
+      error: null,
+      login: vi.fn(),
+      register: vi.fn(),
+      resetPassword: vi.fn(),
+      logout: vi.fn(),
+      loginWithGoogle: vi.fn(),
+      isAuthenticated: false,
+      isAuthChecking: false,
+      user: null,
+      token: null,
+    });
   });
 
   it('Renders the form correctly', () => {

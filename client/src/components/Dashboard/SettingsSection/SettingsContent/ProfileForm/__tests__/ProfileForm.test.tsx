@@ -7,8 +7,12 @@ import { useAuth } from '../../../../../Auth/hooks/useAuth.hook';
 import { useProfile } from '../../../hooks/useProfile.hook';
 import { toast } from 'react-hot-toast';
 
-vi.mock('../../../../../../Hooks/useAuth');
-vi.mock('../../../hooks/useProfile');
+vi.mock('../../../../../Auth/hooks/useAuth.hook', () => ({
+  useAuth: vi.fn(),
+}));
+vi.mock('../../../hooks/useProfile.hook', () => ({
+  useProfile: vi.fn(),
+}));
 vi.mock('react-hot-toast', () => ({
   toast: {
     success: vi.fn(),

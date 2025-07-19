@@ -4,9 +4,10 @@ import { useAuth } from '../../../../Auth/hooks/useAuth.hook';
 import { useQuery } from '@tanstack/react-query';
 import { beforeEach, describe, expect, vi, it } from 'vitest';
 
-vi.mock('../../../../../Hooks/useAuth', () => ({
+vi.mock('../../../../Auth/hooks/useAuth.hook', () => ({
   useAuth: vi.fn(),
 }));
+
 vi.mock('@tanstack/react-query', () => ({
   useQuery: vi.fn(),
 }));
