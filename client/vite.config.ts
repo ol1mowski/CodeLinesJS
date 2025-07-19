@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import { visualizer } from 'rollup-plugin-visualizer'
 import { splitVendorChunkPlugin } from 'vite'
 import compression from 'vite-plugin-compression'
 import { fileURLToPath, URL } from 'node:url'
@@ -18,10 +17,6 @@ export default defineConfig(() => {
       }),
       splitVendorChunkPlugin(),
       compression({ algorithm: 'gzip' }),
-      visualizer({
-        open: false,
-        gzipSize: true,
-      })
     ],
     server: {
       host: '0.0.0.0',
