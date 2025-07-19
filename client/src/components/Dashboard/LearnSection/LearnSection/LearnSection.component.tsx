@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { memo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { fetchUserProgress } from '../lib/api/progress';
+import { fetchUserProgress } from '../Lesson/api/progress';
 import { LearningPaths } from '../LearningPaths/LearningPaths.component';
 import { Lessons } from '../Lessons/Lessons.component';
 import { Resources } from '../Resources/Resources.component';

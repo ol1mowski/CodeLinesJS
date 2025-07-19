@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { fetchLesson, completeLesson } from '../../lib/api/lessons';
-import { updateLessonProgress } from '../../lib/api/progress';
+import { fetchLesson, completeLesson } from '../api/lessons';
+import { updateLessonProgress } from '../api/progress';
 import type { LessonProgress } from '../../types/lesson.types';
 import { toast } from 'react-hot-toast';
 import { useLearningPaths } from '../../LearningPaths/hooks/useLearningPaths.hook';
@@ -36,6 +36,7 @@ export const useLessonData = (lessonSlug: string) => {
       queryClient.invalidateQueries({ queryKey: ['userStats'] });
       queryClient.invalidateQueries({ queryKey: ['lessons'] });
       queryClient.invalidateQueries({ queryKey: ['lesson', lessonSlug] });
+      queryClient.invalidateQueries({ queryKey: ['learningPaths'] });
       refetchLearningPaths();
     },
   });

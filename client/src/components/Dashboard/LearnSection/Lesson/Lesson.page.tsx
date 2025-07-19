@@ -13,7 +13,6 @@ export const LessonPage = () => {
   const { lessonSlug } = useParams<{ lessonSlug: string }>();
   const { stats, isLoading: isStatsLoading } = useStats();
 
-
   if (!lessonSlug) {
     return <Navigate to="/dashboard/learn" replace />;
   }
