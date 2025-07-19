@@ -32,8 +32,8 @@ export const TestScreen: React.FC<TestScreenProps> = memo(({
   );
 
   return (
-    <div className="min-h-screen bg-dark/50 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="w-full max-w-4xl">
+    <div className="min-h-screen bg-dark/50 backdrop-blur-sm p-4 md:flex md:items-center md:justify-center">
+      <div className="w-full md:max-w-4xl">
         <TestHeader
           onBack={onBack}
           currentQuestionIndex={currentQuestionIndex}

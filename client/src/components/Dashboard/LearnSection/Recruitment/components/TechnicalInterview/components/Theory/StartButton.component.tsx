@@ -3,12 +3,11 @@ import { motion } from 'framer-motion';
 import { FaPlay } from 'react-icons/fa';
 
 type StartButtonProps = {
-  questionCount: number;
   onStart: () => void;
   loading?: boolean;
 };
 
-export const StartButton = memo(({ questionCount, onStart, loading = false }: StartButtonProps) => {
+export const StartButton = memo(({ onStart, loading = false }: StartButtonProps) => {
   return (
     <motion.button
       whileHover={{ scale: loading ? 1 : 1.05 }}
@@ -27,7 +26,7 @@ export const StartButton = memo(({ questionCount, onStart, loading = false }: St
       ) : (
         <>
           <FaPlay className="w-5 h-5" />
-          Rozpocznij test ({questionCount} pytań)
+          Rozpocznij test
         </>
       )}
     </motion.button>

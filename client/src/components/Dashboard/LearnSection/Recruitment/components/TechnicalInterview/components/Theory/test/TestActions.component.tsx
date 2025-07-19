@@ -25,7 +25,7 @@ export const TestActions: React.FC<TestActionsProps> = memo(({
       <motion.button
         onClick={handleNext}
         disabled={!canProceed}
-        className={`px-8 py-4 rounded-xl font-medium text-lg transition-all duration-200 ${
+        className={`px-6 py-3 sm:px-8 sm:py-4 rounded-xl font-medium text-base sm:text-lg transition-all duration-200 ${
           canProceed
             ? 'bg-gradient-to-r from-js to-js/80 text-dark hover:shadow-lg hover:shadow-js/20'
             : 'bg-dark-700 text-gray-500 cursor-not-allowed'
