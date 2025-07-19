@@ -1,12 +1,12 @@
 import { memo } from 'react';
 import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
 import { useMethodQuizData } from './hooks/useMethodQuizData';
 import { LoadingErrorContainer } from './components/LoadingErrorContainer.component';
 import { useAnimations } from './hooks/useAnimations';
 import { useMethodQuizSEO } from './hooks/useMethodQuizSEO';
 import { useMethodQuizGame } from './hooks/useMethodQuizGame';
 import { GameContent } from './components/GameContent.component';
+import { SEO } from '../../../../../../../utils/seo.util';
 
 const GameHeader = ({ isGameStarted, onGameStart, gameStats }: any) => {
   if (isGameStarted) {
@@ -71,10 +71,11 @@ const MethodQuiz = memo(({ isPaused = false }: { isPaused?: boolean }) => {
             />
           ) : (
             <motion.div {...containerAnimation} className="w-full h-full flex flex-col">
-              <Helmet>
-                <title>{pageTitle}</title>
-                <meta name="description" content={pageDescription} />
-              </Helmet>
+              <SEO
+                title={pageTitle}
+                description={pageDescription}
+                type="website"
+              />
 
               <GameHeader
                 isGameStarted={isGameStarted}

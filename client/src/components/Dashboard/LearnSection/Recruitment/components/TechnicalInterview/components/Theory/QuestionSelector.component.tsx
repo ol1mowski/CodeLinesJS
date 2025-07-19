@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { motion } from 'framer-motion';
-import { FaQuestionCircle, FaClock } from 'react-icons/fa';
+import { FaQuestionCircle } from 'react-icons/fa';
 
 type QuestionSelectorProps = {
   options: { value: number; label: string; time: string }[];
@@ -31,10 +31,7 @@ export const QuestionSelector = memo(({ options, selectedCount, onSelectionChang
           >
             <div className="text-center">
               <div className="text-lg font-bold">{option.label}</div>
-              <div className="text-sm opacity-70 flex items-center justify-center gap-1 mt-1">
-                <FaClock className="w-3 h-3" />
-                {option.time}
-              </div>
+
             </div>
           </motion.button>
         ))}

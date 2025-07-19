@@ -1,12 +1,12 @@
 import { memo } from 'react';
 import { motion } from 'framer-motion';
-import { LoadingScreen } from '../../../UI/LoadingScreen/LoadingScreen.component';
+import { LoadingSpinner } from '../../../UI/LoadingSpinner/LoadingSpinner.component';
 import { LevelProgress } from './LevelProgress.component';
 import { StatCard } from './StatCard.component';
 import { BadgesGrid } from './BadgesGrid/BadgesGrid.component';
 import { ErrorState } from './components/ErrorState.component';
 import { useStatsCards } from './hooks/useStatsCards.hook';
-import { LegacyUserStats } from '../../../../types/stats.types';
+import { LegacyUserStats } from '../types/stats.types';
 
 type StatsOverviewProps = {
   stats: LegacyUserStats;
@@ -28,7 +28,7 @@ export const StatsOverview = memo(({ stats, isLoading, error }: StatsOverviewPro
   const statsCards = useStatsCards(stats);
 
   if (isLoading) {
-    return <LoadingScreen />;
+    return <LoadingSpinner />;
   }
 
   if (error) {
@@ -46,9 +46,9 @@ export const StatsOverview = memo(({ stats, isLoading, error }: StatsOverviewPro
   return (
     <motion.div variants={container} initial="hidden" animate="show" className="space-y-6">
       <LevelProgress
-        level={stats.data.progress.level}
-        experience={stats.data.progress.points}
-        nextLevel={stats.data.progress.pointsToNextLevel}
+        level={stats.progress.level}
+        experience={stats.progress.points}
+        nextLevel={stats.progress.pointsToNextLevel}
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -57,7 +57,7 @@ export const StatsOverview = memo(({ stats, isLoading, error }: StatsOverviewPro
         ))}
       </div>
 
-      <BadgesGrid badges={stats.data.achievements.badges} />
+      <BadgesGrid badges={stats.achievements.badges} />
     </motion.div>
   );
 });

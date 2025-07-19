@@ -13,7 +13,7 @@ export const useCountAnimation = (
   const { 
     duration = 2000, 
     delay = 0,
-    easing = (t: number) => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2 // easeInOutQuad
+    easing = (t: number) => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2
   } = options;
   
   const [count, setCount] = useState<number>(0);
@@ -36,7 +36,7 @@ export const useCountAnimation = (
     
     let startTime: number | null = null;
     let animationFrame: number;
-    let timeoutId: NodeJS.Timeout;
+    let timeoutId: ReturnType<typeof setTimeout>;
     
     timeoutId = setTimeout(() => {
       const animate = (timestamp: number) => {

@@ -1,17 +1,17 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaSignOutAlt } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../../hooks/useAuth';
-import { useNavigation } from '../../../hooks/useNavigation';
+import { useAuth } from '../../Auth/hooks/useAuth.hook';
+import { useNavigation } from './hooks/useNavigation.hook';
 import { NavigationLogo } from './components/NavigationLogo';
 import { NavigationButton } from './components/NavigationButton';
 import { NavigationSection } from './components/NavigationSection';
-import { useIsHiddenPath } from '../../../hooks/useIsHiddingPath.hook';
+import { useIsHiddenPath } from '../hooks/useIsHiddenPath.hook';
 import { navVariants } from './animations/navigationAnimations';
 import { useMemo, useCallback, memo } from 'react';
 import type { NavigationItem } from '.';
 import { navigationItems } from './constants/navigationItems';
-import { useMobileDetect, MOBILE_BREAKPOINT } from '../../../hooks/useMobileDetect';
+import { useMobileDetect, MOBILE_BREAKPOINT } from '../../hooks/useMobileDetect.hook';
 import { ErrorBoundary } from '../../Common/ErrorBoundary';
 
 const SECTION_TITLES: Record<string, string> = {

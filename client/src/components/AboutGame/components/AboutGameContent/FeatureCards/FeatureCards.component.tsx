@@ -1,5 +1,5 @@
 import { FaGamepad, FaUsers, FaTrophy } from 'react-icons/fa';
-import { useMobileDetect } from '../../../../../hooks/useMobileDetect';
+import { useMobileDetect } from '../../../../hooks/useMobileDetect.hook';
 import { FeatureCard } from './FeatureCard.component';
 
 export const FeatureCards = () => {

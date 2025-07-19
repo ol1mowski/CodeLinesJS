@@ -1,14 +1,13 @@
-import { API_URL } from '../../../../config/api.config';
+import { httpClient } from "../../../../api/httpClient.api";
 
 export const fetchGames = async () => {
-  const response = await fetch(`${API_URL}games`, {
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-  if (!response.ok) {
-    throw new Error('Nie udało się pobrać gier');
+  
+  const response = await httpClient.get(`games`);
+  if (response.error) {
+    throw new Error(response.error);
   }
-  return response.json();
+  if (!response.data) {
+    throw new Error('Brak danych z serwera');
+  }
+  return response.data;
 };

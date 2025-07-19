@@ -1,6 +1,6 @@
 import { memo } from 'react';
-import { useConfirmationState } from '../../hooks/useConfirmationState';
-import { useAccountDeletion } from '../../hooks/useAccountDeletion';
+import { useConfirmationState } from '../../hooks/useConfirmationState.hook';
+import { useAccountDeletion } from '../../hooks/useAccountDeletion.hook';
 import { InitialWarning } from './components/InitialWarning/InitialWarning.component';
 import { ConfirmationForm } from './components/ConfirmationForm/ConfirmationForm.component';
 

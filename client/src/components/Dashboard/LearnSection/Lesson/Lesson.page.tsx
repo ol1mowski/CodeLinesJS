@@ -1,18 +1,17 @@
 import { useParams, Navigate } from 'react-router-dom';
-import { useLessonData } from './hooks/useLessonData';
+import { useLessonData } from './hooks/useLessonData.hook';
 import { LessonLayout } from './components/LessonLayout.component';
 import { LessonContent } from './components/LessonContent.component';
 import { LessonNotFound } from './components/LessonNotFound.component';
 import { ErrorMessage } from '../components/ErrorMessage.component';
-import { LoadingScreen } from '../../../UI/LoadingScreen/LoadingScreen.component';
-import { Helmet } from 'react-helmet';
+import { LoadingSpinner } from '../../../UI/LoadingSpinner/LoadingSpinner.component';  
 import { FaLock } from 'react-icons/fa';
 import { useStats } from '../../../Dashboard/StatsSection/hooks/useStats.hook';
+import { SEO } from '../../../../utils/seo.util';
 
 export const LessonPage = () => {
   const { lessonSlug } = useParams<{ lessonSlug: string }>();
   const { stats, isLoading: isStatsLoading } = useStats();
-
 
   if (!lessonSlug) {
     return <Navigate to="/dashboard/learn" replace />;
@@ -46,7 +45,7 @@ export const LessonPage = () => {
     return <LessonNotFound />;
   }
 
-  const userLevel = stats?.data?.progress.level || 0;
+  const userLevel = stats?.progress.level || 0;
 
   if (lesson.requiredLevel && userLevel < lesson.requiredLevel) {
     return <LessonLocked requiredLevel={lesson.requiredLevel} userLevel={userLevel} />;
@@ -54,10 +53,12 @@ export const LessonPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{lesson.title} | CodeLinesJS</title>
-        <meta name="description" content={lesson.description} />
-      </Helmet>
+      <SEO
+        title={lesson.title}
+        description={lesson.description}
+        type="website"
+      />
+
       <LessonContent
         lesson={lesson}
         activeSection={activeSection}
@@ -104,7 +105,7 @@ const LessonLocked = ({
 const LessonLoadingState = () => (
   <LessonLayout>
     <div className="flex justify-center items-center min-h-[60vh]">
-      <LoadingScreen />
+      <LoadingSpinner />
     </div>
   </LessonLayout>
 );

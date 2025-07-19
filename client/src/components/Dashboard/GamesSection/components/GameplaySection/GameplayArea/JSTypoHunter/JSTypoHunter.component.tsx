@@ -1,17 +1,15 @@
 import { memo } from 'react';
 import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
 import { JSTypoHunterStats } from './JSTypoHunterStats/JSTypoHunterStats.component';
 import { GameIntro } from '../GameIntro/GameIntro.component';
 import { useGameData } from './hooks/useGameData';
 import { useGameState } from './hooks/useGameState';
-import { useSEO } from './hooks/useSEO';
 import { LoadingError } from './components/LoadingError.component';
 import { GameContent } from './components/GameContent.component';
+import { SEO } from '../../../../../../../utils/seo.util';  
 
 const JSTypoHunter = memo(({ isPaused = false }: { isPaused?: boolean }) => {
-  const { gameContent, isLoading, error } = useGameData();
-  const { pageTitle, pageDescription } = useSEO();
+  const { gameContent, isLoading, error } = useGameData(); 
 
   const {
     isGameStarted,
@@ -41,10 +39,11 @@ const JSTypoHunter = memo(({ isPaused = false }: { isPaused?: boolean }) => {
               animate={{ opacity: 1 }}
               className="w-full space-y-6"
             >
-              <Helmet>
-                <title>{pageTitle}</title>
-                <meta name="description" content={pageDescription} />
-              </Helmet>
+              <SEO
+                title="JSTypoHunter"
+                description="Zagraj w JSTypoHunter - gra programistyczna, która pomoże Ci zrozumieć typowanie w JavaScript."
+                type="website"
+              />
 
               <JSTypoHunterStats stats={gameStats} />
 

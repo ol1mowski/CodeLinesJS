@@ -1,22 +1,19 @@
-import { UserStats } from '../../../../types/stats.types';
-import { API_URL } from '../../../../config/api.config';
+import { httpClient } from "../../../../api/httpClient.api";
+import { UserStats } from '../types/stats.types';
 
 export const fetchStats = async (): Promise<UserStats> => {
-  const response = await fetch(`${API_URL}users/stats`, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    credentials: 'include',
-  });
+  
+  const response = await httpClient.get(`users/stats`);
 
-  if (!response.ok) {
-    if (response.status === 401) {
-      throw new Error('Brak autoryzacji');
-    }
-    throw new Error('Błąd podczas pobierania statystyk');
+  if (response.error) {
+    throw new Error(response.error);
   }
 
-  const data = await response.json();
+  if (!response.data) {
+    throw new Error('Brak danych z serwera');
+  }
+
+  const data = response.data;
 
   return {
     ...data,

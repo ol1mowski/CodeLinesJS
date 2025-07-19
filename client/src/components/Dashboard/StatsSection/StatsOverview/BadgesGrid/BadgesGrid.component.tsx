@@ -5,7 +5,7 @@ import { statsSectionStyles as styles } from '../../style/StatsSection.styles';
 import { BadgeCard } from './components/BadgeCard.component';
 import { EmptyBadges } from './components/EmptyBadges.component';
 import { container } from './animations';
-import { Badge } from '../../../../../types/stats.types';
+import { Badge } from '../../types/stats.types';
 
 type BadgesGridProps = {
   badges: Badge[];

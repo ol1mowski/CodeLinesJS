@@ -1,22 +1,22 @@
-import { API_URL } from '../../../../config/api.config';
+import { httpClient } from "../../../../api/httpClient.api";
+
 import { DashboardData } from '../types/dashboard.types';
 
-export const fetchDashboardData = async (): Promise<DashboardData> => {
-  const response = await fetch(`${API_URL}users/stats`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    credentials: 'include',
-  });
 
-  if (!response.ok) {
-    if (response.status === 401) {
-      throw new Error('Brak autoryzacji - zaloguj się ponownie');
-    }
-    const error = await response.json();
-    throw new Error(error.message || 'Błąd podczas pobierania danych');
+export const fetchDashboardData = async (): Promise<DashboardData> => {
+  
+  const response = await httpClient.get(`users/stats`);
+
+  if (response.error) {
+    throw new Error(response.error);
   }
 
-  return response.json();
+  if (!response.data) {
+    throw new Error('Brak danych z serwera');
+  }
+  if (response.status === 401) {
+    throw new Error('Brak autoryzacji - zaloguj się ponownie');
+  }
+
+  return response.data;
 };

@@ -1,6 +1,6 @@
+import { httpClient } from "../../../../../api/httpClient.api";
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { useGoogleLoginAction } from '../useGoogleLoginAction.hook';
-import { httpClient } from '../../../../../api/httpClient.api';
 
 vi.mock('react-router-dom', () => ({
   useNavigate: () => vi.fn(),

@@ -1,14 +1,13 @@
-import { API_URL } from '../../../../config/api.config';
+import { httpClient } from "../../../../api/httpClient.api";
 
 export const updateUserPoints = async (points: number) => {
-  const response = await fetch(`${API_URL}progress/points`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
-    body: JSON.stringify({ points }),
-  });
-  if (!response.ok) {
-    throw new Error('Nie udało się zaktualizować punktów');
+  
+  const response = await httpClient.put(`progress/points`, { points });
+  if (response.error) {
+    throw new Error(response.error);
   }
-  return response.json();
+  if (!response.data) {
+    throw new Error('Brak danych z serwera');
+  }
+  return response.data;
 };

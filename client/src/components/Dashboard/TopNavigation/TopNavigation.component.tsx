@@ -3,8 +3,8 @@ import { motion } from 'framer-motion';
 import { WelcomeSection } from './WelcomeSection/WelcomeSection.component';
 import { NotificationsButton } from './NotificationsSection/NotificationsButton.component';
 import { topNavigationStyles as styles } from './style/TopNavigation.styles';
-import { useTopNavAnimation } from './hooks/useTopNavAnimation';
-import { useUserProfile } from './hooks/useUserProfile';
+import { useTopNavAnimation } from './hooks/useTopNavAnimation.hook';
+import { useUserProfile } from './hooks/useUserProfile.hook';
 import { ErrorBoundary } from '../../Common/ErrorBoundary';
 
 export const TopNavigation = memo(() => {
@@ -20,8 +20,8 @@ export const TopNavigation = memo(() => {
       return 'Ładowanie...';
     }
 
-    return userProfile?.data.user.username || 'Użytkowniku';
-  }, [userProfile?.data.user.username, isLoading, error]);
+    return userProfile?.user?.username || userProfile?.username || 'Użytkowniku';
+  }, [userProfile?.user?.username, userProfile?.username, isLoading, error]);
 
 
   return (

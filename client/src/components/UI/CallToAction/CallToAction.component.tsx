@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { FaArrowRight } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
-import { useMobileDetect } from '../../../hooks/useMobileDetect';
+import { useMobileDetect } from '../../hooks/useMobileDetect.hook';
 
 type CallToActionProps = {
   text: string;

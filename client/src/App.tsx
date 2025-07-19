@@ -7,7 +7,7 @@ import { Toaster } from 'react-hot-toast';
 
 const queryClient = new QueryClient();
 
-function App() {
+const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <Toaster
@@ -41,6 +41,6 @@ function App() {
       </GoogleOAuthProvider>
     </QueryClientProvider>
   );
-}
+};
 
 export default App;

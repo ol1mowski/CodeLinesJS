@@ -9,7 +9,7 @@ import { useEditor } from './hooks/useEditor.hook';
 import { defaultCode } from './constants';
 import { useFileOperations } from './hooks/useFileOperations.hook';
 import { CodeHistory } from './components/CodeHistory.component';
-import { Helmet } from 'react-helmet';
+import { SEO } from '../../../utils/seo.util';
 
 export const CodeEditor = memo(() => {
   const { output, isExecuting, executeCode, clearConsole } = useCodeExecution();
@@ -29,13 +29,12 @@ export const CodeEditor = memo(() => {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-full p-6">
-      <Helmet>
-        <title>Edytor Kodu | CodeLinesJS</title>
-        <meta
-          name="description"
-          content="Edytor kodu JavaScript - dołącz do nas i rozwijaj swoje umiejętności w przyjaznym środowisku."
-        />
-      </Helmet>
+      <SEO
+        title="Edytor Kodu"
+        description="Edytor kodu JavaScript - dołącz do nas i rozwijaj swoje umiejętności w przyjaznym środowisku."
+        type="website"
+      />
+
       <div className="relative flex items-center justify-between mb-6">
         <h1 className="text-3xl font-bold font-space text-js">Edytor Kodu JavaScript</h1>
         <div className="flex items-center gap-4">

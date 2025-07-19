@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useMobileDetect } from '../../../../../hooks/useMobileDetect';
+import { useMobileDetect } from '../../../../hooks/useMobileDetect.hook';
 import { CodeEditor } from './CodeEditor/CodeEditor.component';
 import { PhonePreview } from './PhonePreview/PhonePreview.component';
 

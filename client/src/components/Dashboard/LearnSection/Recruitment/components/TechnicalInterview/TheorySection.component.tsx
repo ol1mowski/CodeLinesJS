@@ -111,7 +111,7 @@ export const TheorySection = memo(({ onBack }: TheorySectionProps) => {
 
           <TestInfoSection details={testInfo.details} />
 
-          <StartButton questionCount={selectedCount} onStart={handleStart} loading={loading} />
+          <StartButton onStart={handleStart} loading={loading} />
           
           {error && (
             <motion.div

@@ -7,14 +7,14 @@ import { StatsBlock } from './StatsBlock/StatsBlock.component';
 import { DashboardState } from './components/DashboardState.component';
 import { useDashboardData } from './hooks/useDashboardData';
 import { useDashboardAnimation } from './hooks/useDashboardAnimation';
-import { LoadingScreen } from '../../../components/UI/LoadingScreen/LoadingScreen.component';
+import { LoadingSpinner } from '../../../components/UI/LoadingSpinner/LoadingSpinner.component';
 
 export const DashboardContent = memo(() => {
   const { data, isLoading, error } = useDashboardData();
   const animations = useDashboardAnimation();
 
   if (isLoading) {
-    return <LoadingScreen />;
+    return <LoadingSpinner fullScreen text="Ładowanie dashboard..." />;
   }
 
   if (error) {
@@ -46,7 +46,7 @@ export const DashboardContent = memo(() => {
         </motion.div>
 
         <motion.div variants={animations.item} className={styles.card.stats}>
-          <StatsBlock stats={data.data} />
+          <StatsBlock stats={data} />
         </motion.div>
       </div>
     </motion.div>

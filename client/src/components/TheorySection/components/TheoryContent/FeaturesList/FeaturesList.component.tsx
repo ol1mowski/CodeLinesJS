@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { FaBook, FaCode, FaLaptopCode } from 'react-icons/fa';
 import { FeatureItem } from './FeatureItem.component';
-import { useMobileDetect } from '../../../../../hooks/useMobileDetect';
+import { useMobileDetect } from '../../../../hooks/useMobileDetect.hook';
 
 export const FeaturesList = () => {
   const isMobile = useMobileDetect();

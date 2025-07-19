@@ -35,7 +35,7 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
         ${icon ? 'pl-8 sm:pl-10' : 'pl-3 sm:pl-4'} 
         ${rightIcon ? 'pr-8 sm:pr-10' : 'pr-3 sm:pr-4'}
         border rounded-lg border-js/10
-        text-gray-500 placeholder-gray-400
+        text-white placeholder-gray-400
         focus:outline-none focus:ring-2
         transition-all duration-200
         ${

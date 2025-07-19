@@ -4,9 +4,8 @@ import { GamesListSkeleton } from './GamesListSkeleton.component';
 import { NoGamesFound } from './NoGamesFound.component';
 import { GameCard } from './GameCard.component';
 import { SortOption } from '../../GamesSection.component';
-import { Game as DashboardGame, GameDifficulty } from '../../types/games.types';
+import { Game as DashboardGame, GameDifficulty, Game } from '../../types/games.types';
 import { useGamesQuery } from '../../hooks/useGamesQuery';
-import { Game } from '../../../../../types/games.types';
 
 type GamesListProps = {
   sortBy: SortOption;
@@ -41,7 +40,7 @@ export const GamesList = memo(({ sortBy, searchQuery, selectedDifficulty }: Game
     .sort((a: DashboardGame, b: DashboardGame) => {
       switch (sortBy) {
         case 'newest':
-          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+          return new Date(b.createdAt || '').getTime() - new Date(a.createdAt || '').getTime();
         case 'popular':
           return b.completions.count - a.completions.count;
         case 'difficulty':

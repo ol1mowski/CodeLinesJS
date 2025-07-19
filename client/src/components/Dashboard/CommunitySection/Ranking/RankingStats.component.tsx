@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { memo } from 'react';
 import { FaTrophy, FaStar, FaCalendarDay } from 'react-icons/fa';
 import { StatCard } from './components/StatCard';
-import { LoadingScreen } from '../../../UI/LoadingScreen/LoadingScreen.component';
+import { LoadingSpinner } from '../../../UI/LoadingSpinner/LoadingSpinner.component';
 
 interface ProcessedUserStats {
   username?: string;
@@ -20,7 +20,7 @@ export const RankingStats = memo(({ currentUserStats, isLoading = false }: Ranki
   if (isLoading) {
     return (
       <div className="bg-dark/30 backdrop-blur-sm rounded-xl border border-js/10 p-6 shadow-lg">
-        <LoadingScreen />
+        <LoadingSpinner fullScreen text="Ładowanie statystyk..." />
       </div>
     );
   }

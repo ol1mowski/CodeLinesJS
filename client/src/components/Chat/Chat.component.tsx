@@ -4,7 +4,7 @@ import { ChatButton } from './components/ChatButton/ChatButton.component';
 import { ChatWindow } from './components/ChatWindow/ChatWindow.component';
 import { MessageBubble } from './components/MessageBubble/MessageBubble.component';
 import { useChatState } from './hooks/useChatState';
-import { useMobileDetect } from '../../hooks/useMobileDetect';
+import { useMobileDetect } from '../hooks/useMobileDetect.hook';
 
 export const Chat = () => {
   const [isOpen, setIsOpen] = useState(false);

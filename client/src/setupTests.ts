@@ -30,13 +30,13 @@ vi.mock('framer-motion', async importOriginal => {
 
   return {
     ...actual,
-    motion: {
-      ...actual.motion,
-      div: (props: any) => React.createElement('div', props),
-      button: (props: any) => React.createElement('button', props),
-      span: (props: any) => React.createElement('span', props),
-      a: (props: any) => React.createElement('a', props),
-    },
+          motion: {
+        ...actual.motion,
+        div: (props: any) => React.createElement('div', props),
+        button: (props: any) => React.createElement('button', props),
+        span: (props: any) => React.createElement('span', props),
+        a: (props: any) => React.createElement('a', props),
+      },
     AnimatePresence: ({ children }: { children: React.ReactNode }) =>
       React.createElement(React.Fragment, null, children),
   };
@@ -91,13 +91,13 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 });
 
-global.ResizeObserver = vi.fn().mockImplementation(() => ({
+(window as any).ResizeObserver = vi.fn().mockImplementation(() => ({
   observe: vi.fn(),
   unobserve: vi.fn(),
   disconnect: vi.fn(),
 }));
 
-global.IntersectionObserver = vi.fn().mockImplementation(() => ({
+(window as any).IntersectionObserver = vi.fn().mockImplementation(() => ({
   observe: vi.fn(),
   unobserve: vi.fn(),
   disconnect: vi.fn(),

@@ -1,11 +1,11 @@
 import { memo } from 'react';
-import { Helmet } from 'react-helmet-async';
 import { useAsyncQuestData } from './hooks/useAsyncQuestData';
 import { useAsyncQuestState } from './hooks/useAsyncQuestState';
 import { useAsyncQuestSEO } from './hooks/useAsyncQuestSEO';
 import { LoadingError } from './components/LoadingError.component';
 import { GameContent } from './components/GameContent.component';
 import { GameHeader } from './components/GameHeader.component';
+import { SEO } from '../../../../../../../utils/seo.util';
 
 const AsyncQuest = memo(() => {
   const { gameContent, isLoading, error } = useAsyncQuestData();
@@ -26,10 +26,11 @@ const AsyncQuest = memo(() => {
 
   return (
     <div className="flex flex-col h-full text-white rounded-lg shadow-xl overflow-hidden">
-      <Helmet>
-        <title>{pageTitle}</title>
-        <meta name="description" content={pageDescription} />
-      </Helmet>
+      <SEO
+        title={pageTitle}
+        description={pageDescription}
+        type="website"
+      />
 
       <LoadingError isLoading={isLoading} error={error}>
         <div className="flex flex-col h-full">

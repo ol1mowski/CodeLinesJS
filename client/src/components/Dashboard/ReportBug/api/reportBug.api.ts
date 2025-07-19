@@ -1,19 +1,17 @@
-import { API_URL } from '../../../../config/api.config';
-import { FormData } from '../hooks/useReportForm.hook';
+import { httpClient } from "../../../../api/httpClient.api";
 
-export const reportBug = async (data: FormData) => {
-  const response = await fetch(`${API_URL}reports`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    credentials: 'include',
-    body: JSON.stringify(data),
-  });
+import { FormData } from '../hooks/types';
 
-  if (!response.ok) {
-    throw new Error('Nie udało się wysłać zgłoszenia');
-  }
+export const useReportBug = () => {
+  
 
-  return response.json();
+  const reportBug = async (data: FormData) => {
+    const response = await httpClient.post('reports', data);
+    if (response.error) {
+      throw new Error(response.error);
+    }
+    return response.data;
+  };
+
+  return { reportBug };
 };

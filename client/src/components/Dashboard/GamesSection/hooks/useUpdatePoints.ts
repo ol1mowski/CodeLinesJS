@@ -8,6 +8,7 @@ export const useUpdatePoints = () => {
     mutationFn: async (points: number) => updateUserPoints(points),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['userProgress'] });
+      queryClient.invalidateQueries({ queryKey: ['userStats'] });
     },
   });
 

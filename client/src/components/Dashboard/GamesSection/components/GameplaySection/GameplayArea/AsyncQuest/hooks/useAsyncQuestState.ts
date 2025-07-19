@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { GameStats, AsyncChallenge } from '../../../../../types/asyncQuest.types';
+import { GameStats, AsyncChallenge } from '../types/asyncQuest.types';
 import { Game } from '../../../../../types/games.types';
 import { useGameTimer } from '../../JSTypoHunter/hooks/useGameTimer';
 

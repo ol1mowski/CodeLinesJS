@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { FaCheckCircle, FaTrophy, FaUsers, FaBell } from 'react-icons/fa';
 import { DashboardNotification } from '../../../DashboardContent/types/dashboard.types';
 import { notificationsStyles as styles } from '../style/Notifications.styles';
-import { formatDate } from '../../../../../utils/format';
+import { formatDate } from '../../../../../utils/format.util';
 
 const getNotificationIcon = (type: string) => {
   switch (type) {

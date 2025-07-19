@@ -5,8 +5,8 @@ import { GamesList } from './components/GamesList/GamesList.component';
 import { GamesSorting } from './components/GamesSorting/GamesSorting.component';
 import { GamesSearch } from './components/GamesSearch/GamesSearch.component';
 import { GamesDifficulty } from './components/GamesDifficulty/GamesDifficulty.component';
-import { GameDifficulty } from '../../../types/games.types';
-import { Helmet } from 'react-helmet-async';
+import { GameDifficulty } from './types/games.types';
+import { SEO } from '../../../utils/seo.util';
 
 export type ActiveCategory = 'all' | 'basics' | 'algorithms' | 'challenges' | 'competitions';
 export type SortOption = 'newest' | 'popular' | 'difficulty' | 'xp';
@@ -23,13 +23,12 @@ export const GamesSection = memo(() => {
       exit={{ opacity: 0, y: -20 }}
       className="w-full m-0 min-h-screen bg-dark/50 backdrop-blur-sm"
     >
-      <Helmet>
-        <title>Gry | CodeLinesJS</title>
-        <meta
-          name="description"
-          content="Games CodeLinesJS - dołącz do nas i rozwijaj swoje umiejętności w przyjaznym środowisku."
-        />
-      </Helmet>
+      <SEO
+        title="Gry"
+        description="Gry CodeLinesJS - dołącz do nas i rozwijaj swoje umiejętności w przyjaznym środowisku."
+        type="website"
+      />
+
       <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <GamesHeader />
 

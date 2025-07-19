@@ -1,14 +1,15 @@
-import { API_URL } from '../../../../config/api.config';
+import { httpClient } from "../../../../api/httpClient.api";
 
 export const fetchUser = async () => {
-  const response = await fetch(`${API_URL}users/profile`, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    credentials: 'include',
-  });
-  if (!response.ok) {
-    throw new Error('Nie udało się pobrać danych użytkownika');
+  const response = await httpClient.get(`users/profile`);
+
+  if (response.error) {
+    throw new Error(response.error);
   }
-  return response.json();
+
+  if (!response.data) {
+    throw new Error('Brak danych z serwera');
+  }
+
+  return response.data;
 };

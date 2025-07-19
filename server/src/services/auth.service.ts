@@ -168,6 +168,7 @@ class AuthService {
       throw new Error('Token resetowania hasła jest nieprawidłowy lub wygasł');
     }
 
+    
     user.password = password;
     user.resetPasswordToken = undefined;
     user.resetPasswordExpires = undefined;

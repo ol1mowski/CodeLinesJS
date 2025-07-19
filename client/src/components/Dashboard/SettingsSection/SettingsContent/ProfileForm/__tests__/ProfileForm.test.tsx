@@ -3,12 +3,16 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ProfileForm } from '../ProfileForm.component';
-import { useAuth } from '../../../../../../hooks/useAuth';
-import { useProfile } from '../../../hooks/useProfile';
+import { useAuth } from '../../../../../Auth/hooks/useAuth.hook';
+import { useProfile } from '../../../hooks/useProfile.hook';
 import { toast } from 'react-hot-toast';
 
-vi.mock('../../../../../../Hooks/useAuth');
-vi.mock('../../../hooks/useProfile');
+vi.mock('../../../../../Auth/hooks/useAuth.hook', () => ({
+  useAuth: vi.fn(),
+}));
+vi.mock('../../../hooks/useProfile.hook', () => ({
+  useProfile: vi.fn(),
+}));
 vi.mock('react-hot-toast', () => ({
   toast: {
     success: vi.fn(),
@@ -31,7 +35,6 @@ describe('ProfileForm', () => {
 
   const mockProfile = {
     username: 'testuser',
-    email: 'test@example.com',
     profile: {
       bio: 'Test bio',
     },
@@ -61,7 +64,6 @@ describe('ProfileForm', () => {
     vi.mocked(useProfile).mockReturnValue({
       profile: mockProfile,
       username: 'testuser',
-      email: 'test@example.com',
       isLoading: false,
       bio: 'Test bio',
       error: null,
@@ -82,11 +84,9 @@ describe('ProfileForm', () => {
 
     await waitFor(() => {
       const usernameInput = screen.getByPlaceholderText('Wprowadź nazwę użytkownika');
-      const emailInput = screen.getByPlaceholderText('Wprowadź adres email');
       const bioInput = screen.getByPlaceholderText('Test bio');
 
       expect(usernameInput).not.toBeNull();
-      expect(emailInput).not.toBeNull();
       expect(bioInput).not.toBeNull();
     });
   });
@@ -95,7 +95,6 @@ describe('ProfileForm', () => {
     vi.mocked(useProfile).mockReturnValue({
       profile: undefined,
       username: '',
-      email: '',
       isLoading: true,
       bio: '',
       error: null,
@@ -134,7 +133,6 @@ describe('ProfileForm', () => {
     vi.mocked(useProfile).mockReturnValue({
       profile: mockProfile,
       username: 'testuser',
-      email: 'test@example.com',
       isLoading: false,
       bio: 'Test bio',
       error: null,

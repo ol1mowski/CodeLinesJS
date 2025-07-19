@@ -1,51 +1,51 @@
+import { httpClient } from "../../../../api/httpClient.api";
 import { useQuery } from '@tanstack/react-query';
-import { fetchActiveUsers } from '../api/fetchActiveUsers.api';
-import { useAuth } from '../../../../hooks/useAuth';
+import { useAuth } from '../../../Auth/hooks/useAuth.hook';
+
 
 export type User = {
-  _id: string;
+  id: string;
   username: string;
-  isActive: boolean;
+  avatar?: string;
+  isOnline: boolean;
+  lastSeen: string;
 };
 
 export type ActiveUsersResponse = {
   users: User[];
-  totalActive: number;
+  total: number;
 };
 
 export const useActiveUsers = () => {
   const { isAuthenticated, isAuthChecking } = useAuth();
+  
 
-  const {
-    data,
-    isLoading,
-    error,
-    refetch,
-  } = useQuery<{
-    status: string;
-    code: number;
-    message: string;
-    data: ActiveUsersResponse;
-    meta: any;
-  }, Error>({
+  const { data, isLoading, error, refetch } = useQuery<ActiveUsersResponse, Error>({
     queryKey: ['activeUsers'],
-    queryFn: () => fetchActiveUsers(),
-    retry: 2,
-    refetchInterval: 30000,
-    staleTime: 1000 * 60,
+    queryFn: async () => {
+      const response = await httpClient.get('users/active');
+      if (response.error) {
+        throw new Error(response.error);
+      }
+      if (!response.data) {
+        throw new Error('Brak danych z serwera');
+      }
+      return response.data;
+    },
     enabled: isAuthenticated && !isAuthChecking,
+    staleTime: 1000 * 30, // 30 sekund
+    refetchInterval: 1000 * 60, // co minutę
   });
 
-  const users = data?.data?.users || [];
+  const users = data?.users || [];
   const visibleUsers = users.slice(0, 8);
   const extraUsers = users.length > 8 ? users.length - 8 : 0;
-  const totalActive = data?.data?.totalActive || 0;
 
   return {
     users,
     visibleUsers,
     extraUsers,
-    totalActive,
+    total: data?.total || 0,
     isLoading,
     error,
     refetch,

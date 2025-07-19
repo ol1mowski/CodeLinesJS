@@ -16,16 +16,16 @@ export const TestHeader: React.FC<TestHeaderProps> = memo(({
   progress
 }) => {
   return (
-    <div className="mb-8">
-      <div className="flex items-center justify-between mb-4">
+    <div className="mb-6 md:mb-8">
+      <div className="flex items-center justify-between mb-3 md:mb-4">
         <button
           onClick={onBack}
-          className="flex items-center gap-2 px-4 py-2 text-gray-400 hover:text-white transition-colors"
+          className="flex items-center gap-2 px-3 py-2 text-gray-400 hover:text-white transition-colors text-sm sm:text-base"
         >
-          <FaArrowLeft />
+          <FaArrowLeft className="w-3 h-3 sm:w-4 sm:h-4" />
           Powrót
         </button>
-        <div className="text-white text-lg font-medium">
+        <div className="text-white text-sm sm:text-lg font-medium">
           Pytanie {currentQuestionIndex + 1} z {totalQuestions}
         </div>
       </div>

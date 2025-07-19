@@ -5,9 +5,9 @@ import { StatsOverview } from './StatsOverview/StatsOverview.component';
 import { StatsCharts } from './StatsCharts/StatsCharts.component';
 import { DashboardState } from '../DashboardContent/components/DashboardState.component';
 import { LevelUpNotification } from '../../UI/Notifications/LevelUpNotification.component';
-import { LoadingScreen } from '../../UI/LoadingScreen/LoadingScreen.component';
-import { Helmet } from 'react-helmet';
-import { Badge, LegacyUserStats } from '../../../types/stats.types';
+import { LoadingSpinner } from '../../UI/LoadingSpinner/LoadingSpinner.component';
+import { SEO } from '../../../utils/seo.util';
+import { Badge, LegacyUserStats } from './types/stats.types';
 
 export const StatsSection = memo(() => {
   const { stats, isLoading, error } = useStats();
@@ -18,17 +18,17 @@ export const StatsSection = memo(() => {
   } | null>(null);
 
   useEffect(() => {
-    if (stats?.data?.progress?.levelUp) {
+    if (stats?.progress?.levelUp) {
       setLevelUpData({
-        level: stats.data.progress.level,
-        rewards: stats.data.achievements?.badges || [],
+        level: stats.progress.level,
+        rewards: stats.achievements?.badges || [],
       });
       setShowLevelUp(true);
     }
   }, [stats]);
 
   if (isLoading) {
-    return <LoadingScreen />;
+    return <LoadingSpinner fullScreen text="Ładowanie statystyk..." />;
   }
   
 
@@ -47,32 +47,30 @@ export const StatsSection = memo(() => {
 
 
   const adaptedStats: LegacyUserStats = {
-    data: {
-      progress: {
-        level: stats.data.progress.level,
-        points: stats.data.progress.points,
-        pointsToNextLevel: stats.data.progress.pointsToNextLevel
+    progress: {
+      level: stats.progress.level,
+      points: stats.progress.points,
+      pointsToNextLevel: stats.progress.pointsToNextLevel
+    },
+    achievements: {
+      streak: {
+        current: stats.achievements.streak.current,
+        best: stats.achievements.streak.best
       },
-      achievements: {
-        streak: {
-          current: stats.data.achievements.streak.current,
-          best: stats.data.achievements.streak.best
-        },
-        completedChallenges: stats.data.achievements.completedChallenges,
-        badges: stats.data.achievements.badges
-      },
-      badges: stats.data.achievements.badges,
-      unlockedFeatures: [],
-      levelUp: stats.data.progress.levelUp,
-      rewards: stats.data.achievements.badges?.length ? {
-        badges: stats.data.achievements.badges,
-        bonusPoints: 0,
-        unlockedFeatures: []
-      } : undefined,
-      chartData: {
-        daily: stats.data.stats.daily,
-        categories: []
-      }
+      completedChallenges: stats.achievements.completedChallenges,
+      badges: stats.achievements.badges
+    },
+    badges: stats.achievements.badges,
+    unlockedFeatures: [],
+    levelUp: stats.progress.levelUp,
+    rewards: stats.achievements.badges?.length ? {
+      badges: stats.achievements.badges,
+      bonusPoints: 0,
+      unlockedFeatures: []
+    } : undefined,
+    chartData: {
+      daily: stats.stats.daily,
+      categories: []
     }
   };
 
@@ -83,13 +81,11 @@ export const StatsSection = memo(() => {
         animate={{ opacity: 1 }}
         className="flex flex-col h-full p-6 gap-6"
       >
-        <Helmet>
-          <title>Statystyki i Postępy | CodeLinesJS</title>
-          <meta
-            name="description"
-            content="Statystyki i Postępy CodeLinesJS - dołącz do nas i rozwijaj swoje umiejętności w przyjaznym środowisku."
-          />
-        </Helmet>
+        <SEO
+          title="Statystyki i Postępy"
+          description="Statystyki i Postępy CodeLinesJS - dołącz do nas i rozwijaj swoje umiejętności w przyjaznym środowisku."
+          type="website"
+        />
         <motion.div
           initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
@@ -103,7 +99,7 @@ export const StatsSection = memo(() => {
             <StatsOverview stats={adaptedStats} isLoading={isLoading} error={error} />
           </div>
           <div className="flex flex-col gap-6 h-full">
-            <StatsCharts data={stats.data.stats} isLoading={isLoading} />
+            <StatsCharts data={stats.stats} isLoading={isLoading} />
           </div>
         </div>
       </motion.div>

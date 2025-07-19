@@ -1,30 +1,28 @@
 import { describe, it, expect } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { useStatsCards } from '../useStatsCards.hook';
-import { LegacyUserStats } from '../../../../../../types/stats.types';
+import { LegacyUserStats } from '../../../types/stats.types';
 
 describe('useStatsCards', () => {
   const mockStats: LegacyUserStats = {
-    data: {
-      progress: {
-        level: 5,
-        points: 1500,
-        pointsToNextLevel: 2000,
+    progress: {
+      level: 5,
+      points: 1500,
+      pointsToNextLevel: 2000,
+    },
+    achievements: {
+      completedChallenges: 25,
+      streak: {
+        current: 7,
+        best: 14
       },
-      achievements: {
-        completedChallenges: 25,
-        streak: {
-          current: 7,
-          best: 14
-        },
-        badges: []
-      },
-      badges: [],
-      unlockedFeatures: [],
-      chartData: {
-        daily: [],
-        categories: []
-      }
+      badges: []
+    },
+    badges: [],
+    unlockedFeatures: [],
+    chartData: {
+      daily: [],
+      categories: []
     }
   };
 

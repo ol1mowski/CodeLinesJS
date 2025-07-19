@@ -1,6 +1,7 @@
 import { render, fireEvent, waitFor, cleanup } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import LoginForm from './LoginForm.component';
+import { useAuth } from '../../hooks/useAuth.hook';
 
 vi.mock('react-router-dom', () => ({
   useNavigate: () => vi.fn(),
@@ -11,13 +12,8 @@ vi.mock('react-router-dom', () => ({
   ),
 }));
 
-vi.mock('../../../Hooks/useAuth', () => ({
-  useAuth: vi.fn(() => ({
-    login: vi.fn(),
-    loading: false,
-    error: null,
-    loginWithGoogle: vi.fn(),
-  })),
+vi.mock('../../hooks/useAuth.hook', () => ({
+  useAuth: vi.fn(),
 }));
 
 vi.mock('@react-oauth/google', () => ({
@@ -42,6 +38,22 @@ vi.mock('framer-motion', () => ({
 describe('LoginForm', () => {
   beforeEach(() => {
     cleanup();
+    
+    // Dodajemy domyślne wartości do mocka useAuth
+    vi.mocked(useAuth).mockReturnValue({
+      login: vi.fn(),
+      loading: false,
+      error: null,
+      loginWithGoogle: vi.fn(),
+      register: vi.fn(),
+      forgotPassword: vi.fn(),
+      resetPassword: vi.fn(),
+      logout: vi.fn(),
+      isAuthenticated: false,
+      isAuthChecking: false,
+      user: null,
+      token: null,
+    });
   });
 
   it('renders form correctly', () => {

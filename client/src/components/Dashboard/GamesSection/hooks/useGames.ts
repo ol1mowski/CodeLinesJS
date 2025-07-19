@@ -1,7 +1,7 @@
+import { httpClient } from "../../../../api/httpClient.api";
 import { useState, useEffect } from 'react';
-import { Game } from '../types/api.types';
-import { fetchGames } from '../api/fetchGames.api';
-import { GameDifficulty, SortOption } from '../types/games.types';
+import { Game, GameDifficulty, SortOption } from '../types/games.types';
+
 
 type UseGamesReturn = {
   games: Game[];
@@ -11,6 +11,8 @@ type UseGamesReturn = {
 
 export const useGames = (): UseGamesReturn => {
   const [games, setGames] = useState<Game[]>([]);
+  
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -18,14 +20,18 @@ export const useGames = (): UseGamesReturn => {
     const getGames = async () => {
       setIsLoading(true);
       setError(null);
-
       try {
-        const response = await fetchGames();
-        const data = await response.json();
-        setGames(data.data.games);
+        const response = await httpClient.get('games');
+        if (response.error) {
+          setError(response.error);
+          return;
+        }
+        if (response.data) {
+          setGames(response.data);
+        }
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Wystąpił nieznany błąd');
         console.error('Błąd podczas pobierania gier:', err);
+        setError('Wystąpił błąd podczas pobierania gier');
       } finally {
         setIsLoading(false);
       }
@@ -34,7 +40,11 @@ export const useGames = (): UseGamesReturn => {
     getGames();
   }, []);
 
-  return { games, isLoading, error };
+  return { 
+    games, 
+    isLoading, 
+    error 
+  };
 };
 
 export const useFilteredGames = (
@@ -55,7 +65,7 @@ export const useFilteredGames = (
     .sort((a, b) => {
       switch (sortBy) {
         case 'newest':
-          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+          return new Date(b.createdAt || '').getTime() - new Date(a.createdAt || '').getTime();
         case 'popular':
           return b.completions.count - a.completions.count;
         case 'difficulty':

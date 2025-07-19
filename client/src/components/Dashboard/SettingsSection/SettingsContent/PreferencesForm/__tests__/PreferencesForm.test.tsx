@@ -1,9 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { PreferencesForm } from '../PreferencesForm.component';
-import { usePreferences } from '../../../hooks/usePreferences';
+import { usePreferences } from '../../../hooks/usePreferences.hook';
 
-vi.mock('../../../hooks/usePreferences');
+vi.mock('../../../hooks/usePreferences.hook', () => ({
+  usePreferences: vi.fn(),
+}));
 vi.mock('../../../hooks/usePreferencesForm', () => ({
   usePreferencesForm: vi.fn().mockReturnValue({
     form: {

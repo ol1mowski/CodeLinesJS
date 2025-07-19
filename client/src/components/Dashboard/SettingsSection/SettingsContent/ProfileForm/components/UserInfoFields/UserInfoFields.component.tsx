@@ -1,8 +1,8 @@
 import { memo } from 'react';
-import { FaUser, FaEnvelope } from 'react-icons/fa';
+import { FaUser } from 'react-icons/fa';
 import { FormInput } from '../../../../../../UI/Form/FormInput/FormInput.component';
 import type { UseFormRegister, FieldErrors } from 'react-hook-form';
-import type { UserProfile } from '../../../../types/settings';
+import type { UserProfile } from '../../../../types/settings.types';
 import { styles } from '../../style/ProfileForm.styles';
 
 type UserInfoFieldsProps = {
@@ -22,15 +22,6 @@ export const UserInfoFields = memo(({ register, errors }: UserInfoFieldsProps) =
         {...register('username')}
       />
     </div>
-
-    <FormInput
-      type="email"
-      label="Email"
-      placeholder="Wprowadź adres email"
-      icon={<FaEnvelope />}
-      error={errors.email?.message}
-      {...register('email')}
-    />
   </>
 ));
 

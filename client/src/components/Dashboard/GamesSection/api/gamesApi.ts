@@ -1,17 +1,19 @@
+import { httpClient } from "../../../../api/httpClient.api";
 import { GamesResponse } from '../types/games.types';
-import { API_URL } from '../../../../config/api.config';
+
+
+
 export const fetchGames = async (): Promise<GamesResponse> => {
   try {
-    const response = await fetch(`${API_URL}games`, {
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    
+    const response = await httpClient.get(`games`);
+    if (response.error) {
+      throw new Error(response.error);
     }
-    return await response.json();
+    if (!response.data) {
+      throw new Error('Brak danych z serwera');
+    }
+    return response.data;
   } catch (error) {
     console.error('Błąd podczas pobierania gier:', error);
     throw error;

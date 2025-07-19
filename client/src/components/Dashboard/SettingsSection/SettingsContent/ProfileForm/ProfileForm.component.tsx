@@ -1,13 +1,13 @@
 import { memo, useCallback, useEffect, useState } from 'react';
-import { useProfile } from '../../hooks/useProfile';
-import { useProfileFormLogic } from '../../hooks/useProfileFormLogic';
+import { useProfile } from '../../hooks/useProfile.hook';
+import { useProfileFormLogic } from '../../hooks/useProfileFormLogic.hook';
 import { ProfileFormContent } from './components/ProfileFormContent/ProfileFormContent.component';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
-import { PROFILE_QUERY_KEY } from '../../hooks/useProfile';
+import { PROFILE_QUERY_KEY } from '../../hooks/useProfile.hook';
 
 export const ProfileForm = memo(() => {
-  const { profile, username, email, bio, isLoading, updateProfile } = useProfile();
+  const { profile, username, bio, isLoading, updateProfile } = useProfile();
   const { form, onSubmit } = useProfileFormLogic(profile || null);
   const queryClient = useQueryClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -32,10 +32,9 @@ export const ProfileForm = memo(() => {
   useEffect(() => {
     if (profile) {
       setValue('username', username);
-      setValue('email', email);
       setValue('profile.bio', bio);
     }
-  }, [profile, setValue, username, email, bio]);
+  }, [profile, setValue, username, bio]);
 
   const handleCancel = useCallback(() => {
     try {
@@ -62,6 +61,7 @@ export const ProfileForm = memo(() => {
       setIsSaved(true);
       toast.success('Profil został zaktualizowany pomyślnie');
     } catch (error) {
+      setIsSaved(false);
       if (error instanceof Error) {
         toast.error(error.message || 'Wystąpił błąd podczas aktualizacji profilu');
       } else {

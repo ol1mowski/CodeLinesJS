@@ -1,6 +1,5 @@
 import { memo } from 'react';
 import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
 import { useJSQuizData } from './hooks/useJSQuizData';
 import { useJSQuizGame } from './hooks/useJSQuizGame';
 import { useJSQuizSEO } from './hooks/useJSQuizSEO';
@@ -8,9 +7,10 @@ import { LoadingErrorContainer } from './components/LoadingErrorContainer.compon
 import { GameContent } from './components/GameContent.component';
 import { GameHeader } from './components/GameHeader.component';
 import { useAnimations } from './hooks/useAnimations';
+import { SEO } from '../../../../../../../utils/seo.util';
 
 const JSQuiz = memo(({ isPaused = false }: { isPaused?: boolean }) => {
-  const { gameContent, isLoading, error } = useJSQuizData();
+  const { gameContent, isLoading, error } = useJSQuizData();  
   const { containerAnimation } = useAnimations();
   const { pageTitle, pageDescription } = useJSQuizSEO();
 
@@ -43,10 +43,11 @@ const JSQuiz = memo(({ isPaused = false }: { isPaused?: boolean }) => {
             />
           ) : (
             <motion.div {...containerAnimation} className="w-full h-full flex flex-col">
-              <Helmet>
-                <title>{pageTitle}</title>
-                <meta name="description" content={pageDescription} />
-              </Helmet>
+              <SEO
+                title={pageTitle}
+                description={pageDescription}
+                type="website"
+              />
 
               <GameHeader
                 isGameStarted={isGameStarted}

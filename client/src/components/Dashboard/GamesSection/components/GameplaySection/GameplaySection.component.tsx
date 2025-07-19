@@ -2,7 +2,7 @@ import { memo } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { FaArrowLeft } from 'react-icons/fa';
-import { Game } from '../../../../../types/games.types';
+import { Game } from '../../types/games.types';
 import { GameplayHeader } from './GameplayHeader/GameplayHeader.component';
 import { GameplayArea } from './GameplayArea/GameplayArea.component';
 

@@ -2,15 +2,15 @@ import { memo } from 'react';
 import { ErrorMessage } from '../components/ErrorMessage.component';
 import { LessonsHeader } from './LessonsHeader.component';
 import { LessonsList } from './LessonsList.component';
-import { useLessons } from '../hooks/useLessons';
+import { useLessons } from '../hooks/useLessons.hook';
 import { useStats } from '../../../Dashboard/StatsSection/hooks/useStats.hook';
-import { useAuth } from '../../../../hooks/useAuth';
+import { useAuth } from '../../../Auth/hooks/useAuth.hook';
 
 export const Lessons = memo(() => {
   const { user } = useAuth();
   const { stats } = useStats();
   const userId = user?.id || 'current-user';
-  const userLevel = stats?.data?.progress?.level || 1;
+  const userLevel = stats?.progress?.level || 1;
 
   const { filteredLessons, filter, setFilter, isLoading, requiredLevel, error, refetch } =
     useLessons();

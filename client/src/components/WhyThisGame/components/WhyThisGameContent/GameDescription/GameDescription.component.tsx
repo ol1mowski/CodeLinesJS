@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useMobileDetect } from '../../../../../hooks/useMobileDetect';
+import { useMobileDetect } from '../../../../hooks/useMobileDetect.hook';
 
 export const GameDescription = () => {
   const isMobile = useMobileDetect();

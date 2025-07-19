@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { motion, MotionProps } from 'framer-motion';
-import { useMobileDetect } from '../../../hooks/useMobileDetect';
+import { useMobileDetect } from '../../hooks/useMobileDetect.hook';
 
 interface MobileWrapperProps {
   children: ReactNode;

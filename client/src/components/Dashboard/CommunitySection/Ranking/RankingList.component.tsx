@@ -2,7 +2,7 @@ import { memo } from 'react';
 import { HiOutlineTrophy, HiArrowLeft, HiArrowRight } from 'react-icons/hi2';
 import { RankingUser } from './types/ranking.types';
 import { RankingItem } from './components/RankingItem';
-import { LoadingScreen } from '../../../UI/LoadingScreen/LoadingScreen.component';
+import { LoadingSpinner } from '../../../UI/LoadingSpinner/LoadingSpinner.component';
 
 interface RankingListProps {
   users: RankingUser[];
@@ -21,7 +21,7 @@ interface RankingListProps {
 
 export const RankingList = memo(({ users, isLoading = false, pagination }: RankingListProps) => {
   if (isLoading) {
-    return <LoadingScreen />;
+    return <LoadingSpinner fullScreen text="Ładowanie rankingu..." />;
   }
 
   if (!users?.length) {

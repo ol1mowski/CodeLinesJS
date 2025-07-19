@@ -1,7 +1,7 @@
 import { memo, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FaStar, FaClock } from 'react-icons/fa';
-import { AsyncChallenge } from '../../../../../types/asyncQuest.types';
+import { AsyncChallenge } from '../types/asyncQuest.types';
 import { CategoryProgress } from '../CategoryProgress/CategoryProgress.component';
 import { useUpdatePoints } from '../../../../../hooks/useUpdatePoints';
 

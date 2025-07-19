@@ -1,6 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
-import { LoadingSpinner } from '../components/UI/LoadingSpinner/LoadingSpinner.component';
+import { LoadingScreen } from '../components/UI/LoadingScreen/LoadingScreen.component';
 
 const CommunitySection = lazy(() =>
   import('../components/Dashboard/CommunitySection/CommunitySection.component').then(module => ({
@@ -12,7 +12,7 @@ const ErrorPage = lazy(() =>
     default: module.ErrorPage,
   }))
 );
-const Dashboard = lazy(() => import('../components/Dashboard/Dashboard.component'));
+const Dashboard = lazy(() => import('../pages/Dashboard.page'));
 const ProtectedRoute = lazy(() =>
   import('../components/ProtectedRoute/ProtectedRoute.component').then(module => ({
     default: module.ProtectedRoute,
@@ -69,12 +69,12 @@ const ReportBugPage = lazy(() =>
   }))
 );
 
-const Home = lazy(() => import('../pages/Home'));
-const Auth = lazy(() => import('../pages/Auth'));
-const PrivacyPolicy = lazy(() => import('../pages/PrivacyPolicy'));
+const Home = lazy(() => import('../pages/Home.page.tsx'));
+const Auth = lazy(() => import('../pages/Auth.page'));
+const PrivacyPolicy = lazy(() => import('../pages/PrivacyPolicy.page.tsx'));
 
 const LazyLoadWrapper = ({ children }: { children: React.ReactNode }) => (
-  <Suspense fallback={<LoadingSpinner fullScreen text="Ładowanie strony..." />}>
+  <Suspense fallback={<LoadingScreen />}>
     {children}
   </Suspense>
 );

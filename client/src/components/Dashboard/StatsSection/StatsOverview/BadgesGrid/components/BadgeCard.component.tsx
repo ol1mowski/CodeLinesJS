@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 
 import { useFormatDate } from '../hooks/useFormatDate.hook';
 import { item } from '../animations';
-import { Badge } from '../../../../../../types/stats.types';
+import { Badge } from '../../../types/stats.types';
 
 type BadgeCardProps = {
   badge: Badge;

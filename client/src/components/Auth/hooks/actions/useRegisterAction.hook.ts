@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
+import { AuthStateContext, User } from '../../types/auth.types';
 import { httpClient } from '../../../../api/httpClient.api';
-import { AuthStateContext } from '../../../../types/auth.types';
 
 export const useRegisterAction = (state: AuthStateContext) => {
   const navigate = useNavigate();
@@ -11,7 +11,7 @@ export const useRegisterAction = (state: AuthStateContext) => {
       setLoading(true);
       setError(null);
 
-      const response = await httpClient.post('auth/register', {
+      const response = await httpClient.post<{ user: User }>('auth/register', {
         email,
         password,
         username,
