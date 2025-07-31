@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import DOMPurify from 'dompurify';
 
 const STORAGE_KEY = 'code_history';
 const MAX_HISTORY_LENGTH = 10;
@@ -15,10 +16,16 @@ export const useCodeHistory = () => {
   });
 
   const addToHistory = useCallback((code: string) => {
+    const sanitizedCode = DOMPurify.sanitize(code, {
+      ALLOWED_TAGS: [],
+      ALLOWED_ATTR: [],
+      KEEP_CONTENT: true
+    });
+
     setHistory(prev => {
       const newHistory = [
-        { code, timestamp: Date.now() },
-        ...prev.filter(entry => entry.code !== code),
+        { code: sanitizedCode, timestamp: Date.now() },
+        ...prev.filter(entry => entry.code !== sanitizedCode),
       ].slice(0, MAX_HISTORY_LENGTH);
 
       localStorage.setItem(STORAGE_KEY, JSON.stringify(newHistory));

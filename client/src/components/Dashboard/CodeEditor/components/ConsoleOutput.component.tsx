@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import { motion } from 'framer-motion';
 import { FaTrash } from 'react-icons/fa';
+import DOMPurify from 'dompurify';
 
 type ConsoleOutputProps = {
   output: string[];
@@ -28,9 +29,14 @@ export const ConsoleOutput = memo(({ output, onClear, isExecuting }: ConsoleOutp
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-gray-300 mb-1"
-        >
-          {log}
-        </motion.div>
+          dangerouslySetInnerHTML={{ 
+            __html: DOMPurify.sanitize(log, {
+              ALLOWED_TAGS: [], // Nie pozwalaj na żadne tagi HTML
+              ALLOWED_ATTR: [], // Nie pozwalaj na żadne atrybuty
+              KEEP_CONTENT: true // Zachowaj tekst, ale usuń HTML
+            })
+          }}
+        />
       ))}
     </div>
   </div>
